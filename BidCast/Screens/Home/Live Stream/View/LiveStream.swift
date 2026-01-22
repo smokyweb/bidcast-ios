@@ -239,6 +239,11 @@ struct LiveStream: View {
     @StateObject private var viewModelFreebie = FreebieViewModel()
     @State var wheelTitles = [FreebieUser]()
     
+    @State var isFreebieActive : Bool = false
+    @State var usersCount = 0
+    
+    @State private var freebieWinner = FreebieUser()
+    
     var body: some View {
         ZStack {
             baseContentLayer
@@ -306,7 +311,7 @@ struct LiveStream: View {
         }
         .ignoresSafeArea()
         .toolbar(.hidden, for: .tabBar)
-        .onAppear {
+        .onFirstAppear {
             setupInitialState()
             loadInitialData()
             listenForRaidEvents()
@@ -364,9 +369,40 @@ struct LiveStream: View {
                 Spacer()
                 bottomContentStack
             }
+            if navigateToRandomizer {
+                RandomizerView
+            }
             
             sideMenuView(geometry: geometry)
         }
+    }
+
+//    .presentationBackground(Color.black.opacity(0.1))
+    @ViewBuilder
+    private var RandomizerView: some View {
+        
+        RandomizerEnterTopView(
+            usersName: $viewModelFreebie.options,
+            usersData: $wheelTitles,
+            isPresented: $navigateToRandomizer,
+            roomId: $currentRoomID,
+            winnerUser: $freebieWinner,
+            didEnterFreBie: {
+                socketManagerChat.enterInFreebie(
+                    room_id: currentRoomID,
+                    userId: UserDefaults.userId
+                )
+            },
+            onShuffleEnd: { winner in
+                   print("Winner is: \(winner.name ?? "Unknown")")
+                randomWinner = winner.name ?? ""
+                randomWinnerImage = winner.profile_image ?? ""
+                navigateToRandomizer = false
+                showWinnerOnParent = true
+                   
+               }
+        )
+           
     }
     @ViewBuilder
     private var notesAndFreebieOverlay: some View {
@@ -399,36 +435,38 @@ struct LiveStream: View {
             Spacer()
             
             // MARK: - Freebie (Trailing)
-            Button(action: {
-               navigateToRandomizer = true
-            }) {
-                HStack(spacing: 10) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Freebie")
-                            .font(.custom(poppinsSemiBold, size: 13))
-                            .foregroundColor(.white)
-                        
-                        HStack(spacing: 4) {
-                            Image(systemName: "gift.fill")
-                                .font(.system(size: 12))
-                            Text("0 Entries")
-                                .font(.custom(poppinsRegular, size: 11))
+            if isFreebieActive{
+                Button(action: {
+                    navigateToRandomizer = true
+                }) {
+                    HStack(spacing: 10) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Freebie")
+                                .font(.custom(poppinsSemiBold, size: 13))
                                 .foregroundColor(.white)
+                            
+                            HStack(spacing: 4) {
+                                Image(systemName: "gift.fill")
+                                    .font(.system(size: 12))
+                                Text("\(usersCount) Entries")
+                                    .font(.custom(poppinsRegular, size: 11))
+                                    .foregroundColor(.white)
+                            }
+                            .foregroundColor(.white.opacity(0.85))
                         }
-                        .foregroundColor(.white.opacity(0.85))
                     }
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 12,
-                        bottomLeadingRadius: 12,
-                        bottomTrailingRadius: 0,
-                        topTrailingRadius: 0
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 12,
+                            bottomLeadingRadius: 12,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: 0
+                        )
+                        .fill(Color.black.opacity(0.4))
                     )
-                    .fill(Color.black.opacity(0.4))
-                )
+                }
             }
         }
         .padding(.horizontal, 0)
@@ -542,7 +580,7 @@ struct LiveStream: View {
         Button(action: { followUnfollow() }) {
             Text("Follow")
                 .font(.custom(poppinsSemiBold, size: 12.0))
-                .foregroundColor(.black)
+                .foregroundColor(.white)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
                 .background(.defaultTheme)
@@ -812,7 +850,7 @@ struct LiveStream: View {
                 waitingForProductView
             }
         }else{
-            waitingForProductView
+//            waitingForProductView
         }
     }
     
@@ -826,7 +864,7 @@ struct LiveStream: View {
             bidTime: $socketManagerChat.bidTime,
             userName: $winnerName,
             userImage: $winnerProfileImage,
-            categoryName: $categoryName, hasWon: .constant(false),
+            categoryName: $categoryName, hasWon: $socketManagerChat.hasWon,sellerId: $sellerId,
             onTap: { self.showItemDetailSheet = true }
         )
         .frame(maxWidth: .infinity)
@@ -1357,16 +1395,29 @@ struct LiveStream: View {
     
     @ViewBuilder
     private var RandomizerSheet: some View {
-        RandomizerLiveView(usersName: $viewModelFreebie.options, isPresented: $navigateToRandomizer, roomId: $currentRoomID,onWinnerSelected: { winner in
-            randomWinner = winner.name ?? ""
-            randomWinnerImage = winner.profile_image ?? ""
-            navigateToRandomizer = false
-            showWinnerOnParent = true
-//            showSpin = false
-        },didEnterFreBie: {
-            socketManagerChat.enterInFreebie(room_id : currentRoomID, userId: UserDefaults.userId)
-        })
-            .presentationBackground(Color.black.opacity(0.1))
+//        RandomizerLiveView(usersName: $viewModelFreebie.options, isPresented: $navigateToRandomizer, roomId: $currentRoomID,onWinnerSelected: { winner in
+//            randomWinner = winner.name ?? ""
+//            randomWinnerImage = winner.profile_image ?? ""
+//            navigateToRandomizer = false
+//            showWinnerOnParent = true
+////            showSpin = false
+//        },didEnterFreBie: {
+//            socketManagerChat.enterInFreebie(room_id : currentRoomID, userId: UserDefaults.userId)
+//        })
+//            .presentationBackground(Color.black.opacity(0.1))
+        
+//        RandomizerEnterTopView(
+//            usersName: $viewModelFreebie.options,
+//            isPresented: $navigateToRandomizer,
+//            roomId: $currentRoomID,
+//            didEnterFreBie: {
+//                socketManagerChat.enterInFreebie(
+//                    room_id: currentRoomID,
+//                    userId: UserDefaults.userId
+//                )
+//            }
+//        )
+//        .presentationBackground(Color.black.opacity(0.1))
     }
     @ViewBuilder
     private var winnerOverlay: some View {
@@ -2009,8 +2060,14 @@ extension LiveStream {
             
         }
         
-        socketManagerChat.listenForFreebieWinner{ userId in
-            
+        socketManagerChat.listenForFreebieWinner { user in
+            print("🏆 ===== WINNER RECEIVED =====")
+            print("   Winner Name: \(user.name ?? "unknown")")
+            print("   Winner ID: \(user.id ?? 0)")
+            DispatchQueue.main.async {
+                freebieWinner = user
+                navigateToRandomizer = true
+            }
         }
         
         socketManagerChat.listenForFreebie{ freebie,user in
@@ -2018,13 +2075,27 @@ extension LiveStream {
             guard self.currentRoomID == roomID else{
                 return
             }
+            freebieWinner = FreebieUser()
+            isFreebieActive = true
             self.wheelTitles = user
             let title = user.map { $0.name ?? ""}
             self.viewModelFreebie.options.removeAll()
             viewModelFreebie.options.append(contentsOf: title)
-            print("Freebie user data \(wheelTitles) for showId : \(showId)")
+            usersCount = user.count
+            print("Freebie user data \(wheelTitles) for showId : \(freebie.show_id ?? "")")
         }
         
+//        socketManager.listenForFreebie{ freebie,user in
+//            let roomID = freebie.room_id ?? ""
+//            guard self.roomId == roomID else{
+//                return
+//            }
+//            self.wheelTitles = user
+//            let title = user.map { $0.name ?? ""}
+//            self.viewModelFreebie.options.removeAll()
+//            viewModelFreebie.options.append(contentsOf: title)
+//            print("Freebie user data \(wheelTitles) for showId : \(showId)")
+//        }
     }
     
     @MainActor

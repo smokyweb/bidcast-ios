@@ -22,6 +22,8 @@ struct MultiSelectionCategoryScreen: View {
     @State private var categoryList: [CategoryDataModel] = []
     @State private var selectedCategoryIDs: [Int] = []
     
+    @Binding var goToAccount : Bool
+    
     var viewModel = SelectCategoryViewModel()
     
     let gridColumns = [
@@ -70,7 +72,7 @@ struct MultiSelectionCategoryScreen: View {
             // Next Button with Navigation
             CusNavLink(
                 doNavigate: $navigateToSubCategory,
-                destination: MultiSelectionSubCategoryScreen(isNavFrom : isNavFrom, selectedCategoryIDs: $selectedCategoryIDs)
+                destination: MultiSelectionSubCategoryScreen(isNavFrom : isNavFrom, selectedCategoryIDs: $selectedCategoryIDs, goToAccount: $goToAccount)
             )
             VStack{
                 PrimaryButton(

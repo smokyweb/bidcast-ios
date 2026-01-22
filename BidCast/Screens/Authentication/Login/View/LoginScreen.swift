@@ -194,7 +194,7 @@ struct LoginScreen: View {
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
                 CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
                 CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
-                CusNavLink(doNavigate: $navigateToCategories, destination: MultiSelectionCategoryScreen())
+                CusNavLink(doNavigate: $navigateToCategories, destination: MultiSelectionCategoryScreen(goToAccount:.constant(false)))
                 
             }
             

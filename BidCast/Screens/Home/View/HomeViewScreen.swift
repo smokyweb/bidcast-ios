@@ -319,7 +319,9 @@ struct HomeViewScreen: View {
         .padding(.bottom, -15)
         .onAppear{
 //            SocketManagerService.shared.setupSocket()
+            addSocketListeners()
             isActiveOnHomeScreen = true
+            
             
            
         }
@@ -340,8 +342,17 @@ struct HomeViewScreen: View {
            
 
         }
+        .onChange(of: navigateToLiveStream) { oldValue,isNavigating in
+            if !isNavigating {
+                Task {
+                    await refreshLiveShows()
+                    selectedButton = "For You"
+                }
+            }
+        }
         .onDisappear {
             isActiveOnHomeScreen = false
+            socketManager.hasAddedListeners = false
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)

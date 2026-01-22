@@ -18,6 +18,7 @@ struct CurrentProductView: View {
     @Binding var userImage: String
     @Binding var categoryName : String
     @Binding var hasWon : Bool
+    @Binding var sellerId : String
     @State var lastBid: Double = 0
     @State var showBidAmount = true
     @State private var animate = true
@@ -37,7 +38,7 @@ struct CurrentProductView: View {
                             .font(.custom(poppinsRegular, size: 13.0))
                         +
                         Text(hasWon ? "Won" : "Winning")
-                            .foregroundColor(.yellow)
+                            .foregroundColor(.defaultTheme)
                             .font(.custom(poppinsBold, size: 13.0))
                         Spacer()
                         if showBidAmount {
@@ -47,7 +48,7 @@ struct CurrentProductView: View {
                                     .font(.custom(poppinsRegular, size: 13.0))
                                 +
                                 Text("\(String(format: "%.2f", currentPrice))")
-                                    .foregroundColor(.yellow)
+                                    .foregroundColor(.defaultTheme)
                                     .font(.custom(poppinsBold, size: 13.0))
                             )
                             .transition(.opacity)
@@ -131,7 +132,7 @@ struct CurrentProductView: View {
                     
                     
                 }
-            if hasWon{
+            if hasWon && (sellerId == "\(UserDefaults.userId)"){
                 Button(action: {
                     print("Run next tapped")
                     onTapRunNext?()

@@ -33,6 +33,7 @@ struct MultiSelectionSubCategoryScreen: View {
     let columns: [GridItem] = [
         GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())
     ]
+    @Binding var goToAccount : Bool
     
     var body: some View {
         VStack(spacing: 0) {
@@ -156,7 +157,7 @@ struct MultiSelectionSubCategoryScreen: View {
                     let response = viewModel.storeFavCategoryResponse
                     if response?.status == "success" {
                         if isNavFrom == "Account"{
-                            navigateToAccount = true
+                            goToAccount = false
                         }else{
                             UserDefaults.isFirstTimeLogin = true
                             appRootManager.currentRoot = .tabBar

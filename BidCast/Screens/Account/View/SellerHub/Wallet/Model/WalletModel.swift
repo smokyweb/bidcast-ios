@@ -20,8 +20,8 @@ struct TransactionModel: Codable {
     var status: String?
     var productPrice: Int?
     var total: String?
-    var taxAmount: Double?
-    var subTotal, shippingCharges, discount: Int?
+    var taxAmount,subTotal: Double?
+    var shippingCharges, discount: Int?
     var paymentIntentID, chargeID: String?
     var createdAt: String?
     var counterpartyName: String?

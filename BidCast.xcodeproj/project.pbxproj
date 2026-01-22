@@ -214,7 +214,7 @@
 		99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099C2DC8CD930054620B /* EndPointType.swift */; };
 		99C909B02DC8CD930054620B /* CommanExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909812DC8CD930054620B /* CommanExtension.swift */; };
 		99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909942DC8CD930054620B /* NavigationContainer.swift */; };
-		99C909B22DC8CD930054620B /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909992DC8CD930054620B /* APIManager.swift */; };
+		99C909B22DC8CD930054620B /* APIManager3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909992DC8CD930054620B /* APIManager3.swift */; };
 		99C909B32DC8CD930054620B /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099D2DC8CD930054620B /* UserDefaultManager.swift */; };
 		99C909B42DC8CD930054620B /* ProjectEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099B2DC8CD930054620B /* ProjectEndPoint.swift */; };
 		99C909B52DC8CD930054620B /* UserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909872DC8CD930054620B /* UserDefaults+Extension.swift */; };
@@ -299,7 +299,7 @@
 		D4A7F9042DDDA8C5001FC705 /* AddressesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */; };
 		D4A7F9092DDDB7CA001FC705 /* AddressesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A7F9082DDDB7CA001FC705 /* AddressesList.swift */; };
 		D4AD07822F1E532200B46AEA /* IdentityVerificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AD07812F1E532200B46AEA /* IdentityVerificationScreen.swift */; };
-		D4AD444A2F1FB37900CC2963 /* APIManager2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AD44492F1FB37900CC2963 /* APIManager2.swift */; };
+		D4AD444A2F1FB37900CC2963 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AD44492F1FB37900CC2963 /* APIManager.swift */; };
 		D4B615CE2DE8280200924A3D /* NotifyMeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615C92DE8280200924A3D /* NotifyMeModel.swift */; };
 		D4B615CF2DE8280200924A3D /* NotifyMeBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615C72DE8280200924A3D /* NotifyMeBottomSheet.swift */; };
 		D4B615D02DE8280200924A3D /* NotifyMeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615CB2DE8280200924A3D /* NotifyMeViewModel.swift */; };
@@ -812,7 +812,7 @@
 		99C909952DC8CD930054620B /* CusNavLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CusNavLink.swift; sourceTree = "<group>"; };
 		99C909972DC8CD930054620B /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		99C909982DC8CD930054620B /* DatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePicker.swift; sourceTree = "<group>"; };
-		99C909992DC8CD930054620B /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		99C909992DC8CD930054620B /* APIManager3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager3.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		99C9099A2DC8CD930054620B /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		99C9099B2DC8CD930054620B /* ProjectEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEndPoint.swift; sourceTree = "<group>"; };
 		99C9099C2DC8CD930054620B /* EndPointType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPointType.swift; sourceTree = "<group>"; };
@@ -892,7 +892,7 @@
 		D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesScreen.swift; sourceTree = "<group>"; };
 		D4A7F9082DDDB7CA001FC705 /* AddressesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesList.swift; sourceTree = "<group>"; };
 		D4AD07812F1E532200B46AEA /* IdentityVerificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityVerificationScreen.swift; sourceTree = "<group>"; };
-		D4AD44492F1FB37900CC2963 /* APIManager2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager2.swift; sourceTree = "<group>"; };
+		D4AD44492F1FB37900CC2963 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		D4B615C72DE8280200924A3D /* NotifyMeBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMeBottomSheet.swift; sourceTree = "<group>"; };
 		D4B615C92DE8280200924A3D /* NotifyMeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMeModel.swift; sourceTree = "<group>"; };
 		D4B615CB2DE8280200924A3D /* NotifyMeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMeViewModel.swift; sourceTree = "<group>"; };
@@ -2449,7 +2449,7 @@
 		99C909A02DC8CD930054620B /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				D4AD44492F1FB37900CC2963 /* APIManager2.swift */,
+				D4AD44492F1FB37900CC2963 /* APIManager.swift */,
 				D66070A52ED02C8F00B81251 /* PipManager */,
 				D68399A12EB2079100F3BDA7 /* SocketManager */,
 				D4DDE7ED2DDC5C7A00A24973 /* Font */,
@@ -2459,7 +2459,7 @@
 				99C909962DC8CD930054620B /* NavigationHandler */,
 				99C909972DC8CD930054620B /* Utilities.swift */,
 				99C909982DC8CD930054620B /* DatePicker.swift */,
-				99C909992DC8CD930054620B /* APIManager.swift */,
+				99C909992DC8CD930054620B /* APIManager3.swift */,
 				99C9099A2DC8CD930054620B /* Reachability.swift */,
 				99C9099B2DC8CD930054620B /* ProjectEndPoint.swift */,
 				99C9099C2DC8CD930054620B /* EndPointType.swift */,
@@ -4869,7 +4869,7 @@
 				D6B8E3CE2EB33DB600A91DA0 /* AgoraModel.swift in Sources */,
 				35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */,
 				D4CAECA02DE722BD00705CD7 /* ShareShowSheet.swift in Sources */,
-				D4AD444A2F1FB37900CC2963 /* APIManager2.swift in Sources */,
+				D4AD444A2F1FB37900CC2963 /* APIManager.swift in Sources */,
 				D4CAEC3A2DE6D79600705CD7 /* PremierShopModel.swift in Sources */,
 				D4B6164B2DE880D600924A3D /* LiveShowTipsModel.swift in Sources */,
 				99C909A62DC8CD930054620B /* String+Extension.swift in Sources */,
@@ -4926,7 +4926,7 @@
 				99C909B02DC8CD930054620B /* CommanExtension.swift in Sources */,
 				D4BB9A132DE5C95A00C1BCBC /* PayoutRowView.swift in Sources */,
 				99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */,
-				99C909B22DC8CD930054620B /* APIManager.swift in Sources */,
+				99C909B22DC8CD930054620B /* APIManager3.swift in Sources */,
 				3504BCAC2E00040A0069182D /* RehearsalScreen.swift in Sources */,
 				D4CAEC5C2DE6F50600705CD7 /* ReferralCodeCardView.swift in Sources */,
 				35BA4A422DE86E8300EEC92A /* SendGiftScreen.swift in Sources */,

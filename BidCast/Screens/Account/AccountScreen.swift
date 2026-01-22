@@ -30,6 +30,7 @@ struct AccountScreen: View {
     @State private var isLoading: Bool = false
     @State private var sellerInfo: SellerhubInfoModel?
     @State private var selectedCredit: AccountCredit?
+    @State private var backToAccount: Bool = false
     
     @State private var hasLoadedData = false
    
@@ -300,7 +301,9 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToAddress, destination: AddressesScreen())
             CusNavLink(doNavigate: $navigationState.navigateTrustedBuyer, destination: TrustedBuyerScreen(comeFromHome: .constant(false)))
             CusNavLink(doNavigate: $navigationState.navigateToPreference, destination: PreferncesScreen())
-            CusNavLink(doNavigate: $navigationState.navigateToCategory, destination: MultiSelectionCategoryScreen(isNavFrom: "Account"))
+            
+            CusNavLink(doNavigate: $navigationState.navigateToCategory, destination: MultiSelectionCategoryScreen(isNavFrom: "Account",goToAccount: $navigationState.navigateToCategory))
+            
             CusNavLink(doNavigate: $navigationState.navigateToContactus, destination: ContactUs())
             CusNavLink(doNavigate: $navigationState.navigateToSales, destination: SalesTaxScreen())
             CusNavLink(doNavigate: $navigationState.navigateToBlockedList, destination: BlockedUserScreen())
@@ -389,7 +392,7 @@ extension AccountScreen {
             await menuViewModel.logOut()
             await SVProgressHUD.dismiss()
             
-            if menuViewModel.logOutResponse != nil {
+            if menuViewModel.logOutResponse.data != nil {
                 performUserLogout()
             }
         }

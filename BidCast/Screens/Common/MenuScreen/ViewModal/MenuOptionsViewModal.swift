@@ -62,6 +62,7 @@ final class MenuOptionsViewModel: ObservableObject {
     
     // MARK: - Logout
     func logOut() async {
+        self.errorMessage?.removeAll()
         do {
             if let response: ResponseModel<MenuOptionsModal> = try await APIManager.shared.request(
                 type: APIEndPoint.logout,

@@ -262,6 +262,8 @@ struct WalletPayoutView: View {
                 .padding(.bottom,-40)
                 
             }
+            .edgesIgnoringSafeArea(.bottom)
+            .background(.backGround)
             .navigationBarHidden(true)
             .onAppear {
                 loadData()
@@ -288,7 +290,7 @@ struct WalletPayoutView: View {
                     }, onSecondaryClick: {
                         withAnimation { showError = false }
                     })
-                .background(Color(.systemBackground))
+                .background(Color(.backGround))
                 .cornerRadius(25, corners: [.topLeft, .topRight])
             })
         }

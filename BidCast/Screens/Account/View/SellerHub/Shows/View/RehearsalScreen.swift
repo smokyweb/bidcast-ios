@@ -107,6 +107,7 @@ struct RehearsalScreen: View {
     
     @State var viewwerCount = 0
     @State private var bidCountdownSeconds = 30
+    @State var categoryid = ""
     @State private var hasCountdownStarted = false
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
@@ -159,6 +160,7 @@ struct RehearsalScreen: View {
     @State var showItemDetailSheet = false
     @State var showError = false
     @State var productId: Int = 0
+    @State var usersCount = 0
     
     @State var showNotes: String = ""
     @State var showNotesSheet = false
@@ -1053,7 +1055,7 @@ struct RehearsalScreen: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "gift.fill")
                                     .font(.system(size: 12))
-                                Text("0 Entries")
+                                Text("\(usersCount) Entries")
                                     .font(.custom(poppinsRegular, size: 11))
                                     .foregroundColor(.white)
                             }
@@ -1199,6 +1201,7 @@ struct RehearsalScreen: View {
                                 userImage: $winnerProfileImage,
                                 categoryName: $categoryName,
                                 hasWon: $socketManager.hasWon,
+                                sellerId: $sellerId,
                                 onTap: { showItemDetailSheet = true },
                                 onTapRunNext: { socketManager.runNextProduct(roomId: roomId) }
                             )
@@ -1610,7 +1613,7 @@ struct RehearsalScreen: View {
             
             // STEP 3: Join Agora Channel — runs best on background thread
             self.joinAgoraChannelIfNeeded()
-            
+            self.categoryid = "\(data.category?.id ?? 0)"
             // STEP 4: Prepare seller data (light, can stay background)
             let seller = SellerModel(
                 isFollowed: data.user?.is_followed ?? false,
@@ -1632,7 +1635,7 @@ struct RehearsalScreen: View {
                 allowBidForAll: true,
                 showTimer: ""
             )
-            
+            sellerId = "\(UserDefaults.userId)"
             // STEP 6: Socket setup in background
             self.setupLiveSocketListeners(for: roomId,showId: showId)
             
@@ -1730,6 +1733,7 @@ struct RehearsalScreen: View {
             guard self.roomId == roomID else{
                 return
             }
+            usersCount = user.count
             self.wheelTitles = user
             let title = user.map { $0.name ?? ""}
             self.viewModelFreebie.options.removeAll()
@@ -1852,7 +1856,7 @@ struct RehearsalScreen: View {
             randomWinner = winnerName.capitalizingFirstLetter()
             randomWinnerImage = winnerProfileImage
             
-            let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
+            let message = "We have a winner! \(winnerName)"
             
             SocketManagerService.shared.sendChat(
                 roomId: roomId,
@@ -2132,7 +2136,8 @@ struct RehearsalScreen: View {
             "viewer_count": "",
             "is_live": true,
             "show_detail": "Live auction room created via Rehearsal",
-            "show_timer":showTimer
+            "show_timer":showTimer,
+            "category_id":categoryid
         ]
         
         SocketManagerService.shared.createRoom(payload: payload)
