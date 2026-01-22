@@ -284,6 +284,10 @@ struct HomeViewScreen: View {
                     .cornerRadius(10)
                 }
             }
+            .refreshable {
+                await refreshLiveShows()
+            }
+
             .background(.backGround)
             .padding([.leading,.trailing],18)
             .padding(.top , 10)
@@ -367,6 +371,15 @@ struct HomeViewScreen: View {
             }
         }
     }
+    func refreshLiveShows() async {
+
+        currentPage = 1
+
+        liveShowsData.removeAll()
+
+        await fetchLiveShow()
+    }
+
     func fetchLiveShowForSocketUpdate() async {
         await viewModel.getLiveShows(
             param: GetLiveShowsRequest(
