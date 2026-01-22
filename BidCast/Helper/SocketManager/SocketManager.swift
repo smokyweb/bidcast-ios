@@ -181,6 +181,7 @@ extension SocketManagerService {
         }
         
         socket.connect()
+        logger.info("✅ Socket connected")
     }
     func disconnect() {
         socket.disconnect()

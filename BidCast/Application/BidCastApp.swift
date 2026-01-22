@@ -23,6 +23,7 @@ struct BidCastApp: App {
     @StateObject private var scheduleRequestStore = ScheduleRequestStore()
     
     @StateObject var staticAPI = StaticAPIViewModel()
+    @StateObject var socketManager = SocketManagerService.shared
     
     init() {
         let appearance = UITabBarAppearance()
@@ -40,7 +41,7 @@ struct BidCastApp: App {
         
         
         print("🚀 App starting")
-        SocketManagerService.shared.setupSocket()
+        socketManager.setupSocket()
 //        ZegoManager.shared.createEngine()
 //        ZIMChatManager.shared.initialize(appID: 1005763407, appSign: "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423")
         

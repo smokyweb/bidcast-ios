@@ -2187,12 +2187,13 @@ extension LiveStream {
         socketManagerChat.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
 //            guard let self else { return }
             print("AUCtioned data")
-            print("\(roomId)")
-            print("\(products)")
-            print("\(startingBidAmount)")
-            print("\(requireTime)")
-            print("\(counterBidTime)")
-            print("\(suddenDeath)")
+            print("RoomId -> \(roomId)")
+            print("products -> \(products)")
+            print(" ->\(startingBidAmount)")
+            print(" -> \(requireTime)")
+            print("-> \(counterBidTime)")
+            print("-> \(suddenDeath)")
+            print("Status -> \(status)")
             if status != "sold" && status != ""{
                 self.updateProducts(
                     for: roomId,

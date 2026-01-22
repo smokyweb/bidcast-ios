@@ -71,6 +71,9 @@ struct HomeViewScreen: View {
     @State var agoraToken: String = ""
     
     @State var currentPage = 1
+    
+    @StateObject var socketManager = SocketManagerService.shared
+    
     var body: some View {
         VStack(spacing:0){
             HStack(spacing: 12) {
@@ -311,24 +314,21 @@ struct HomeViewScreen: View {
         .edgesIgnoringSafeArea(.bottom)
         .padding(.bottom, -15)
         .onAppear{
-            SocketManagerService.shared.setupSocket()
+//            SocketManagerService.shared.setupSocket()
             isActiveOnHomeScreen = true
             
-            SocketManagerService.shared.observeRoomUpdates { room in
-                
-                Task{
-                    await fetchLiveShow()
-                }
-                
-            }
+           
         }
         .onFirstAppear{
+            socketManager.setupSocket()
             isActiveOnHomeScreen = true
             
             if isActiveOnHomeScreen{
                 Task { await fetchCategory(for: "for_you") }
             }
             getProfileData()
+             
+           
 
         }
         .onDisappear {
@@ -362,6 +362,32 @@ struct HomeViewScreen: View {
             }
         }
     }
+    func fetchLiveShowForSocketUpdate() async {
+        await viewModel.getLiveShows(
+            param: GetLiveShowsRequest(
+                type: selectedTab,
+                category: selectedButton == "For You" ? "for_you" : selectedButton,
+                sub_category: "",
+                search: searchText,
+                page: "1" // Only for detecting new rooms
+            )
+        )
+
+        await MainActor.run {
+            guard let socketShows = viewModel.liveShowsResponse.data else { return }
+
+            for show in socketShows {
+                guard let roomId = show.room_id else { continue }
+
+                // 🔥 Only append if it's truly new
+                if !loadedRoomIDs.contains(roomId) {
+                    liveShowsData.append(show)
+                    loadedRoomIDs.insert(roomId)
+                }
+            }
+        }
+    }
+
     
     func getProfileData(){
         Task{
@@ -582,6 +608,49 @@ struct HomeViewScreen: View {
                 liveShowsData.append(show)
                 loadedRoomIDs.insert(roomId)
             }
+        }
+        print("🟢 Setting up socket observer in onFirstAppear")
+            print("🟢 Socket connected: \(socketManager.isConnected)")
+    
+        
+//        socketManager.endStreaming(roomId: <#T##String#>, )
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("🟢 Socket connected: \(socketManager.isConnected)")
+            socketManager.observeRoomUpdates { room in
+                print("🔴 Room update received: \(room)")
+                Task {
+                    // Don't reset currentPage - keep user's position
+                    await fetchLiveShowForSocketUpdate()
+                }
+            }
+            
+//            socketManager.listenForRoomEnded(onEnd: { roomId in
+//                print("🔴 Room ended: \(roomId)")
+//                Task {
+//                    await MainActor.run {
+//                        withAnimation(.easeOut(duration: 0.3)) {
+////                            if let roomId = roomId {
+//                                liveShowsData.removeAll { $0.room_id == roomId }
+//                                loadedRoomIDs.remove(roomId)
+////                            }
+//                        }
+//                    }
+//                    
+//                    // Wait a moment before refreshing
+//                    try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+//                    
+//                    // Refresh to get accurate list
+//                    await fetchLiveShowForSocketUpdate()
+//                }
+//            })
+            socketManager.listenForRoomEnded { roomId in
+                  
+
+                   withAnimation(.easeOut(duration: 0.25)) {
+                       liveShowsData.removeAll { $0.room_id == roomId }
+                       loadedRoomIDs.remove(roomId)
+                   }
+               }
         }
     }
     
