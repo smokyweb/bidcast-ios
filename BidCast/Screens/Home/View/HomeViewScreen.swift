@@ -320,14 +320,19 @@ struct HomeViewScreen: View {
            
         }
         .onFirstAppear{
-            socketManager.setupSocket()
+            socketManager.setupSocket {
+                addSocketListeners()
+            }
+            
             isActiveOnHomeScreen = true
             
             if isActiveOnHomeScreen{
-                Task { await fetchCategory(for: "for_you") }
+                Task {
+                    await fetchCategory(for: "for_you")
+                }
             }
             getProfileData()
-             
+            
            
 
         }
@@ -609,51 +614,39 @@ struct HomeViewScreen: View {
                 loadedRoomIDs.insert(roomId)
             }
         }
-        print("🟢 Setting up socket observer in onFirstAppear")
-            print("🟢 Socket connected: \(socketManager.isConnected)")
+       
     
         
-//        socketManager.endStreaming(roomId: <#T##String#>, )
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            print("🟢 Socket connected: \(socketManager.isConnected)")
-            socketManager.observeRoomUpdates { room in
-                print("🔴 Room update received: \(room)")
-                Task {
-                    // Don't reset currentPage - keep user's position
-                    await fetchLiveShowForSocketUpdate()
-                }
-            }
-            
-//            socketManager.listenForRoomEnded(onEnd: { roomId in
-//                print("🔴 Room ended: \(roomId)")
-//                Task {
-//                    await MainActor.run {
-//                        withAnimation(.easeOut(duration: 0.3)) {
-////                            if let roomId = roomId {
-//                                liveShowsData.removeAll { $0.room_id == roomId }
-//                                loadedRoomIDs.remove(roomId)
-////                            }
-//                        }
-//                    }
-//                    
-//                    // Wait a moment before refreshing
-//                    try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-//                    
-//                    // Refresh to get accurate list
-//                    await fetchLiveShowForSocketUpdate()
-//                }
-//            })
-            socketManager.listenForRoomEnded { roomId in
-                  
+       
+    }
+    func addSocketListeners() {
+        guard socketManager.isConnected else {
+            print("⚠️ Socket not connected yet")
+            return
+        }
 
-                   withAnimation(.easeOut(duration: 0.25)) {
-                       liveShowsData.removeAll { $0.room_id == roomId }
-                       loadedRoomIDs.remove(roomId)
-                   }
-               }
+        guard !socketManager.hasAddedListeners else {
+            print("⚠️ Listeners already added")
+            return
+        }
+
+        socketManager.hasAddedListeners = true
+
+        socketManager.observeRoomUpdates { room in
+            print("🔴 Room updated:", room)
+            Task {
+                await fetchLiveShowForSocketUpdate()
+            }
+        }
+
+        socketManager.listenForRoomEnded { roomId in
+            withAnimation(.easeOut(duration: 0.25)) {
+                liveShowsData.removeAll { $0.room_id == roomId }
+                loadedRoomIDs.remove(roomId)
+            }
         }
     }
-    
+
       private func getCategoryName(for categoryType: String) -> String {
           switch categoryType {
           case "Live Now": return "live"

@@ -109,6 +109,7 @@ final class SocketManagerService: NSObject, ObservableObject {
     var onRoomsUpdated: (([String]) -> Void)?
     
     // MARK: - Private Properties
+    var hasAddedListeners = false
     private var liveSchedulerTimer: Timer?
     private var socket: SocketIOClient!
     private var socketManager: SocketManager!
@@ -156,7 +157,7 @@ final class SocketManagerService: NSObject, ObservableObject {
 // MARK: - Socket Lifecycle
 extension SocketManagerService {
 
-    func setupSocket() {
+    func setupSocket(onConnected: (() -> Void)? = nil) {
         socketManager = SocketManager(
             socketURL: URL(string: "https://node.bidcast.betaplanets.com")!,
             config: [.log(false), .compress, .reconnects(true), .path("/socket.io")]
@@ -167,12 +168,14 @@ extension SocketManagerService {
         socket.on(clientEvent: .connect) { [weak self] _, _ in
             guard let self else { return }
             self.isConnected = true
+            onConnected?()
             logger.info("✅ Socket connected")
         }
         
         socket.on(clientEvent: .disconnect) { [weak self] data, _ in
             guard let self else { return }
             self.isConnected = false
+            self.hasAddedListeners = false
             logger.warning("❌ Disconnected: \(String(describing: data))")
         }
         
