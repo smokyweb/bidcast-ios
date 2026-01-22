@@ -841,7 +841,7 @@ struct RehearsalScreen: View {
             categoryName = showsData.category?.name ?? ""
             
             //get agora token -> did not call it on preview screen
-            fetchAgoraToken()
+//            fetchAgoraToken()
         }
 //        .onDisappear {
 //            Task {
@@ -867,19 +867,58 @@ struct RehearsalScreen: View {
         }
     }
     
+//    @ViewBuilder
+//    private func videoLayer(_ geometry: GeometryProxy) -> some View {
+//        ZStack {
+//            if agoraManager.remoteUserId != nil {
+//                VideoContainerView(uiView: agoraManager.remoteVideoView)
+//            } else {
+//                VideoContainerView(uiView: agoraManager.localVideoView)
+//            }
+//        }
+//        .frame(width: geometry.size.width, height: geometry.size.height)
+//        .background(Color.black)
+//        .ignoresSafeArea()
+//    }
+    
     @ViewBuilder
     private func videoLayer(_ geometry: GeometryProxy) -> some View {
         ZStack {
-            if agoraManager.remoteUserId != nil {
-                VideoContainerView(uiView: agoraManager.remoteVideoView)
-            } else {
-                VideoContainerView(uiView: agoraManager.localVideoView)
-            }
+
+            // 🔒 Remote video view (ALWAYS mounted)
+            VideoContainerView(uiView: agoraManager.remoteVideoView)
+                .frame(
+                    width: geometry.size.width,
+                    height: geometry.size.height
+                )
+                .opacity(agoraManager.remoteUserId != nil ? 1 : 0)
+
+            // 🔒 Local video view (ALWAYS mounted)
+            VideoContainerView(uiView: agoraManager.localVideoView)
+                .frame(
+                    width: geometry.size.width,
+                    height: geometry.size.height
+                )
+                .opacity(agoraManager.remoteUserId == nil ? 1 : 0)
+
+            // ⏳ Waiting overlay
+//            if agoraManager.isJoined && agoraManager.remoteUserId == nil {
+//                VStack(spacing: 12) {
+//                    ProgressView()
+//                        .progressViewStyle(
+//                            CircularProgressViewStyle(tint: .white)
+//                        )
+//
+//                    Text("Waiting for stream…")
+//                        .font(.custom(poppinsRegular, size: 14))
+//                        .foregroundColor(.white.opacity(0.7))
+//                }
+//            }
         }
-        .frame(width: geometry.size.width, height: geometry.size.height)
         .background(Color.black)
         .ignoresSafeArea()
     }
+
 
     
     @ViewBuilder
@@ -1229,11 +1268,8 @@ struct RehearsalScreen: View {
             if showButton {
                 if !isLive {
                     Button(action: {
-                        if UserDefaults.sellerVerafied == "verified" {
-                            Task { UpdateStatus(status: false) }
-                        } else {
-                            showSellerSheet = true
-                        }
+                        fetchAgoraToken()
+                        
                     }) {
                         Text("Start Show")
                             .font(.custom(poppinsBold, size: 13))
@@ -2419,6 +2455,11 @@ extension RehearsalScreen {
             hudMsg = response?.message ?? ""
             showhudSuccess = false
             print("channelName: \(channelName), uid: \(uId), token: \(agoraToken)")
+            if UserDefaults.sellerVerafied == "verified" {
+                Task { UpdateStatus(status: false) }
+            } else {
+                showSellerSheet = true
+            }
         } else {
             hudMsg = response?.message ?? ""
             showhud = true

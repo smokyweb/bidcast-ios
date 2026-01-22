@@ -474,13 +474,43 @@ struct LiveStream: View {
     }
 
     // MARK: - Video Player View
+//    @ViewBuilder
+//    private var videoPlayerView: some View {
+//        if let _ = agoraManager.remoteUserId {
+//            VideoContainerView(uiView: agoraManager.remoteVideoView)
+//                .frame(width: screenWidth, height: screenHeight)
+//                .ignoresSafeArea()
+//                .background(Color.black)
+//        }
+//    }
     @ViewBuilder
     private var videoPlayerView: some View {
-        if let _ = agoraManager.remoteUserId {
+        // ✅ FIXED: Always show the view so Agora can attach video to it
+        ZStack {
+            // Always render the video container
             VideoContainerView(uiView: agoraManager.remoteVideoView)
                 .frame(width: screenWidth, height: screenHeight)
                 .ignoresSafeArea()
                 .background(Color.black)
+            
+            // Show loading indicator until remote user joins
+//            if agoraManager.remoteUserId == nil && agoraManager.isJoined {
+//                VStack(spacing: 16) {
+//                    ProgressView()
+//                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+//                        .scaleEffect(1.5)
+//                    
+//                    Text("Waiting for stream...")
+//                        .font(.custom(poppinsRegular, size: 14))
+//                        .foregroundColor(.white.opacity(0.7))
+//                }
+//            }
+        }
+        .onChange(of: agoraManager.remoteUserId) { newValue in
+            print("🔄 Remote User ID changed to: \(String(describing: newValue))")
+        }
+        .onChange(of: agoraManager.isJoined) { joined in
+            print("📡 Channel joined status: \(joined)")
         }
     }
     
@@ -1444,7 +1474,7 @@ struct LiveStream: View {
                         hasHostEndedRoom.toggle()
                     }
                     self.presentationMode.wrappedValue.dismiss()
-                    self.presentationMode.wrappedValue.dismiss()
+//                    self.presentationMode.wrappedValue.dismiss()
                 }
             },
             onSecondaryClick: {
@@ -1998,6 +2028,7 @@ extension LiveStream {
         socketManagerChat.listenForBidTimer(roomId: roomId)
         
         socketManagerChat.listenForRoomEnded { endedRoomId in
+            logoutRoom()
             guard roomId == endedRoomId else { return }
             presentError(title: "Stream Ended", message: "The host has ended the live stream.")
             hasHostEndedRoom = true

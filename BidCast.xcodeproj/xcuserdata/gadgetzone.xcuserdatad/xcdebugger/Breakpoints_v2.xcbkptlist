@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "690F3575-3CB3-48AE-B434-1E8CBA7CB39A"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Home/Live Stream/View/Randomizer.swift"
@@ -24,7 +24,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "CA96CFC0-C568-47AB-A9E3-6AD092ED7A83"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Account/View/MyAccount/Category/MultiSelectionSubCategoryScreen.swift"
@@ -40,7 +40,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "3612857D-4B23-48EB-B66D-776D56D8B579"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Account/View/MyAccount/Category/MultiSelectionSubCategoryScreen.swift"
@@ -49,6 +49,22 @@
             startingLineNumber = "235"
             endingLineNumber = "235"
             landmarkName = "addFavCategories(selectedCategoryIDs:selectedSubCategoryIDs:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3A5746A5-A5DF-4A07-88B4-408D42028034"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Helper/PipManager/AgoraManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "432"
+            endingLineNumber = "432"
+            landmarkName = "rtcEngine(_:didJoinedOfUid:elapsed:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

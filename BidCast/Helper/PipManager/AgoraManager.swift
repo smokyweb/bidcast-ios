@@ -1,9 +1,246 @@
+////
+////  AgoraManager.swift
+////  BidCast
+////
+////  Created by Vivek_JAM-E_328 on 28/10/25.
+////
 //
-//  AgoraManager.swift
-//  BidCast
+//import Foundation
+//import AgoraRtcKit
+//import AVFoundation
 //
-//  Created by Vivek_JAM-E_328 on 28/10/25.
+//// MARK: - Agora Manager (for Live Streaming)
+//class AgoraManager: NSObject, ObservableObject {
+//    
+//    // MARK: - Agora Credentials
+//    struct AgoraCred {
+//        static var appId = "6a0ab77ee15943df94524201d6c93877"
+////        static var channelName = "room1"
+////        static var token  = "007eJxTYHgSe7qis6f/s9mNyvXfu7QF2S/ZVm7ISrVXu6ljZKJabqvAYJZokJhkbp6aamhqaWKckmZpYmpkYmRgmGKWbGlsYW6+8S1jZkMgI0O7rzUTIwMEgvisDEX5+bmGDAwAMUEd9g=="
+//    }
+//    
+//    // MARK: - Properties
+//    private var agoraKit: AgoraRtcEngineKit?
+//    @Published var isJoined: Bool = false
+//    @Published var remoteUserId: UInt?
+//    
+//    // Video Views (bridged for SwiftUI)
+//    @Published var localVideoView = UIView()
+//    @Published var remoteVideoView = UIView()
+//    
+//    @Published private(set) var isAudioMuted = false
+////    @Published private(set) var isVideoMuted = false
+//    
+//    @Published var isFrontCamera = true
+//    
+//    @Published var zoomFactor: Double = 1.0
+//    
+//    var isHost: Bool = false
+//    
+//    // MARK: - Designated Initializer
+//    init(asHost: Bool) {
+//        self.isHost = asHost
+//        super.init()
+//        initializeAgoraEngine()
+////        if asHost {
+////            self.setupLocalVideo()
+////        }
+//    }
+//    
+//    func setupVideoFrameDelegate() {
+//        agoraKit?.setVideoFrameDelegate(self)
+//    }
+//    
+//    // MARK: - Convenience Initializer (optional)
+//    convenience override init() {
+//        self.init(asHost: false)
+//    }
+//    
+//    var sampleBufferDisplayLayer: AVSampleBufferDisplayLayer?
+//    
+//    // Add this method to get the sample buffer layer from Agora
+//    func setupPiPLayer() -> AVSampleBufferDisplayLayer? {
+//        let layer = AVSampleBufferDisplayLayer()
+//        layer.videoGravity = .resizeAspectFill
+//        sampleBufferDisplayLayer = layer
+//        return layer
+//    }
+//    
+//    func initializeAgoraEngine(asHost: Bool = false) {
+//        agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: AgoraCred.appId, delegate: self)
+//        //step 1 -> Use Agora’s “Real-Time Interactive Mode”
+//        agoraKit?.setChannelProfile(.liveBroadcasting)
+//        agoraKit?.setParameters("{\"rtc.enable_low_latency_mode\":true}")
+//        agoraKit?.setParameters("{\"che.audio.live_for_comm\":true}")
+//        //step 2 -> Disable or Reduce Hardware Encoding Delay
+//        agoraKit?.setParameters("{\"che.video.hardware_encoding\":false}")
+//        //step 3 -> Set Ultra Low Latency Mode Explicitly
+//        agoraKit?.setClientRole(.broadcaster)
+//        agoraKit?.setParameters("{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}")
+//        agoraKit?.setCameraZoomFactor(zoomFactor)
+//        agoraKit?.enableVideo()
+//        
+//        // Set video encoder configuration
+//        let videoConfig = AgoraVideoEncoderConfiguration(
+//            size: CGSize(width: 1080, height: 1920),
+//            frameRate: .fps30,
+//            bitrate: AgoraVideoBitrateStandard,
+//            orientationMode: .adaptative,
+//            mirrorMode: .auto
+//        )
+//        agoraKit?.setVideoEncoderConfiguration(videoConfig)
+//        
+//        // Enable video frame delegate for PiP
+//        setupVideoFrameDelegate()
+//    }
+//    
+//    // MARK: - Join Channel
+//    func joinChannel(asHost: Bool, channelName: String, token: String) {
+//        guard let agoraKit = agoraKit else { return }
+//        isHost = asHost
+//        let options = AgoraRtcChannelMediaOptions()
+//        options.clientRoleType = asHost ? .broadcaster : .audience
+//        options.channelProfile = .liveBroadcasting
+//        options.autoSubscribeAudio = true
+//        options.autoSubscribeVideo = true
+//        options.publishCameraTrack = asHost
+//        options.publishMicrophoneTrack = asHost
+//        options.audienceLatencyLevel = .ultraLowLatency
+//        
+//        agoraKit.joinChannel(
+//            byToken: token,
+//            channelId: channelName,
+//            uid: 0,
+//            mediaOptions: options
+//        ) { [weak self] (channel, uid, elapsed) in
+//            print("Joined channel: \(channel), UID: \(uid)")
+//            DispatchQueue.main.async {
+//                self?.isJoined = true
+//                if asHost {
+//                    self?.setupLocalVideo()
+//                }
+//            }
+//        }
+//        setupVideoFrameDelegate()
+//    }
+//    
+//    func switchCamera() {
+//        isFrontCamera.toggle()
+//        agoraKit?.switchCamera()
+//    }
+//    
+//    func adjustZoom(with factor: Double) {
+//        zoomFactor = factor
+//        agoraKit?.setCameraZoomFactor(factor)
+//    }
+//    
+//    func toggleAudioMute() {
+//        isAudioMuted.toggle()
+//        agoraKit?.muteLocalAudioStream(isAudioMuted)
+//    }
+//    
+//    // MARK: - Leave Channel
+//    func leaveChannel() {
 //
+//        remoteUserId = nil
+//        isJoined = false
+//        
+//        // Stop local video preview
+//        agoraKit?.stopPreview()
+//        // Leave the channel and release session-related resources
+//        agoraKit?.leaveChannel(nil)
+//        // Release all resources used by the Agora SDK
+//        AgoraRtcEngineKit.destroy()
+//    }
+//    
+//    func setupLocalVideo() {
+//        let videoCanvas = AgoraRtcVideoCanvas()
+//        videoCanvas.uid = 0
+//        videoCanvas.renderMode = .hidden
+//        videoCanvas.view = localVideoView
+//        // Set the local video view
+//        agoraKit?.setupLocalVideo(videoCanvas)
+//        // Enable the video module
+//        agoraKit?.enableVideo()
+////
+//        // Start the local video preview
+//        agoraKit?.startPreview()
+//    }
+//    
+//    // MARK: - Setup Remote Video
+//    private func setupRemoteVideo(uid: UInt) {
+//        guard let agoraKit = agoraKit else { return }
+//        
+//        let videoCanvas = AgoraRtcVideoCanvas()
+//        videoCanvas.uid = uid
+//        videoCanvas.view = remoteVideoView
+//        videoCanvas.renderMode = .hidden
+//        agoraKit.setupRemoteVideo(videoCanvas)
+//    }
+//}
+//
+//// MARK: - Agora Delegate
+//extension AgoraManager: AgoraRtcEngineDelegate {
+//    
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
+//        DispatchQueue.main.async {
+//            print("Remote user joined: \(uid)")
+//            self.remoteUserId = uid
+//            self.setupRemoteVideo(uid: uid)
+//            
+//            let videoCanvas = AgoraRtcVideoCanvas()
+//            videoCanvas.uid = uid
+//            videoCanvas.renderMode = .hidden
+//            videoCanvas.view = self.remoteVideoView
+//            self.agoraKit?.setupRemoteVideo(videoCanvas)
+//            
+//        }
+//    }
+//    
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
+//        DispatchQueue.main.async {
+//            print("Remote user left: \(uid)")
+//            if self.remoteUserId == uid {
+//                self.remoteUserId = nil
+//                self.remoteVideoView.removeFromSuperview()
+//            }
+//        }
+//    }
+//    
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
+//        DispatchQueue.main.async {
+//            print("Left channel")
+//            self.isJoined = false
+//        }
+//    }
+//    
+//    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
+//        print("error: \(errorCode)")
+//    }
+//}
+//
+//
+//extension AgoraManager: AgoraVideoFrameDelegate {
+//    func onCapture(_ videoFrame: AgoraOutputVideoFrame, sourceType: AgoraVideoSourceType) -> Bool {
+//        // Send frames to PiP if active
+//        if AgoraPiPManager.shared.isPiPActive {
+//            AgoraPiPManager.shared.processVideoFrame(videoFrame)
+//        }
+//        return true
+//    }
+//    
+//    func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
+//        // Send remote user frames to PiP
+//        if AgoraPiPManager.shared.isPiPActive {
+//            AgoraPiPManager.shared.processVideoFrame(videoFrame)
+//        }
+//        return true
+//    }
+//    
+//    func getVideoFormatPreference() -> AgoraVideoFormat {
+//        return .I420
+//    }
+//}
 
 import Foundation
 import AgoraRtcKit
@@ -15,8 +252,6 @@ class AgoraManager: NSObject, ObservableObject {
     // MARK: - Agora Credentials
     struct AgoraCred {
         static var appId = "6a0ab77ee15943df94524201d6c93877"
-//        static var channelName = "room1"
-//        static var token  = "007eJxTYHgSe7qis6f/s9mNyvXfu7QF2S/ZVm7ISrVXu6ljZKJabqvAYJZokJhkbp6aamhqaWKckmZpYmpkYmRgmGKWbGlsYW6+8S1jZkMgI0O7rzUTIwMEgvisDEX5+bmGDAwAMUEd9g=="
     }
     
     // MARK: - Properties
@@ -29,36 +264,24 @@ class AgoraManager: NSObject, ObservableObject {
     @Published var remoteVideoView = UIView()
     
     @Published private(set) var isAudioMuted = false
-//    @Published private(set) var isVideoMuted = false
-    
     @Published var isFrontCamera = true
-    
     @Published var zoomFactor: Double = 1.0
     
     var isHost: Bool = false
+    var sampleBufferDisplayLayer: AVSampleBufferDisplayLayer?
     
     // MARK: - Designated Initializer
     init(asHost: Bool) {
         self.isHost = asHost
         super.init()
         initializeAgoraEngine()
-//        if asHost {
-//            self.setupLocalVideo()
-//        }
     }
     
-    func setupVideoFrameDelegate() {
-        agoraKit?.setVideoFrameDelegate(self)
-    }
-    
-    // MARK: - Convenience Initializer (optional)
+    // MARK: - Convenience Initializer
     convenience override init() {
         self.init(asHost: false)
     }
     
-    var sampleBufferDisplayLayer: AVSampleBufferDisplayLayer?
-    
-    // Add this method to get the sample buffer layer from Agora
     func setupPiPLayer() -> AVSampleBufferDisplayLayer? {
         let layer = AVSampleBufferDisplayLayer()
         layer.videoGravity = .resizeAspectFill
@@ -68,13 +291,16 @@ class AgoraManager: NSObject, ObservableObject {
     
     func initializeAgoraEngine(asHost: Bool = false) {
         agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: AgoraCred.appId, delegate: self)
-        //step 1 -> Use Agora’s “Real-Time Interactive Mode”
+        
+        // Step 1: Use Agora's "Real-Time Interactive Mode"
         agoraKit?.setChannelProfile(.liveBroadcasting)
         agoraKit?.setParameters("{\"rtc.enable_low_latency_mode\":true}")
         agoraKit?.setParameters("{\"che.audio.live_for_comm\":true}")
-        //step 2 -> Disable or Reduce Hardware Encoding Delay
+        
+        // Step 2: Disable Hardware Encoding Delay
         agoraKit?.setParameters("{\"che.video.hardware_encoding\":false}")
-        //step 3 -> Set Ultra Low Latency Mode Explicitly
+        
+        // Step 3: Set Ultra Low Latency Mode
         agoraKit?.setClientRole(.broadcaster)
         agoraKit?.setParameters("{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}")
         agoraKit?.setCameraZoomFactor(zoomFactor)
@@ -89,15 +315,13 @@ class AgoraManager: NSObject, ObservableObject {
             mirrorMode: .auto
         )
         agoraKit?.setVideoEncoderConfiguration(videoConfig)
-        
-        // Enable video frame delegate for PiP
-        setupVideoFrameDelegate()
     }
     
     // MARK: - Join Channel
     func joinChannel(asHost: Bool, channelName: String, token: String) {
         guard let agoraKit = agoraKit else { return }
         isHost = asHost
+        
         let options = AgoraRtcChannelMediaOptions()
         options.clientRoleType = asHost ? .broadcaster : .audience
         options.channelProfile = .liveBroadcasting
@@ -113,15 +337,25 @@ class AgoraManager: NSObject, ObservableObject {
             uid: 0,
             mediaOptions: options
         ) { [weak self] (channel, uid, elapsed) in
-            print("Joined channel: \(channel), UID: \(uid)")
+            print("✅ Joined channel: \(channel), UID: \(uid)")
             DispatchQueue.main.async {
                 self?.isJoined = true
                 if asHost {
                     self?.setupLocalVideo()
+                } else {
+                    // ✅ Setup remote video canvas immediately for viewers
+                    self?.setupRemoteVideoCanvas()
                 }
             }
         }
-        setupVideoFrameDelegate()
+        
+        // ✅ FIXED: Only enable PiP delegate when actually needed
+        // Don't call setupVideoFrameDelegate() here - it can interfere with normal rendering
+    }
+    
+    func setupVideoFrameDelegate() {
+        // Only call this when PiP is actually needed
+        agoraKit?.setVideoFrameDelegate(self)
     }
     
     func switchCamera() {
@@ -141,15 +375,14 @@ class AgoraManager: NSObject, ObservableObject {
     
     // MARK: - Leave Channel
     func leaveChannel() {
-
         remoteUserId = nil
         isJoined = false
         
         // Stop local video preview
         agoraKit?.stopPreview()
-        // Leave the channel and release session-related resources
+        // Leave the channel
         agoraKit?.leaveChannel(nil)
-        // Release all resources used by the Agora SDK
+        // Release all resources
         AgoraRtcEngineKit.destroy()
     }
     
@@ -158,13 +391,23 @@ class AgoraManager: NSObject, ObservableObject {
         videoCanvas.uid = 0
         videoCanvas.renderMode = .hidden
         videoCanvas.view = localVideoView
-        // Set the local video view
         agoraKit?.setupLocalVideo(videoCanvas)
-        // Enable the video module
         agoraKit?.enableVideo()
-//
-        // Start the local video preview
         agoraKit?.startPreview()
+    }
+    
+    // MARK: - Setup Remote Video Canvas (call this early)
+    func setupRemoteVideoCanvas() {
+        // ✅ Setup the canvas immediately when joining as audience
+        // This prepares the view to receive video before remote user joins
+        if !isHost {
+            let videoCanvas = AgoraRtcVideoCanvas()
+            videoCanvas.uid = 0 // 0 means "any remote user"
+            videoCanvas.view = remoteVideoView
+            videoCanvas.renderMode = .hidden
+            agoraKit?.setupRemoteVideo(videoCanvas)
+            print("✅ Remote video canvas prepared for incoming stream")
+        }
     }
     
     // MARK: - Setup Remote Video
@@ -176,6 +419,8 @@ class AgoraManager: NSObject, ObservableObject {
         videoCanvas.view = remoteVideoView
         videoCanvas.renderMode = .hidden
         agoraKit.setupRemoteVideo(videoCanvas)
+        
+        print("✅ Remote video setup for UID: \(uid)")
     }
 }
 
@@ -184,57 +429,60 @@ extension AgoraManager: AgoraRtcEngineDelegate {
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
         DispatchQueue.main.async {
-            print("Remote user joined: \(uid)")
+            print("✅ Remote user joined: \(uid)")
             self.remoteUserId = uid
+            
+            // ✅ FIXED: Only setup once
             self.setupRemoteVideo(uid: uid)
-            
-            let videoCanvas = AgoraRtcVideoCanvas()
-            videoCanvas.uid = uid
-            videoCanvas.renderMode = .hidden
-            videoCanvas.view = self.remoteVideoView
-            self.agoraKit?.setupRemoteVideo(videoCanvas)
-            
         }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
         DispatchQueue.main.async {
-            print("Remote user left: \(uid)")
+            print("⚠️ Remote user left: \(uid)")
             if self.remoteUserId == uid {
                 self.remoteUserId = nil
-                self.remoteVideoView.removeFromSuperview()
             }
         }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
         DispatchQueue.main.async {
-            print("Left channel")
+            print("📤 Left channel")
             self.isJoined = false
         }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
-        print("error: \(errorCode)")
+        print("❌ Agora Error: \(errorCode.rawValue)")
+    }
+    
+    // ✅ NEW: Add these callbacks for better debugging
+    func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStateChangedOfUid uid: UInt, state: AgoraVideoRemoteState, reason: AgoraVideoRemoteReason, elapsed: Int) {
+        print("📹 Remote video state changed - UID: \(uid), State: \(state.rawValue), Reason: \(reason.rawValue)")
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoDecodedOfUid uid: UInt, size: CGSize, elapsed: Int) {
+        print("✅ First remote video frame decoded - UID: \(uid), Size: \(size)")
     }
 }
 
-
+// MARK: - Video Frame Delegate (for PiP)
 extension AgoraManager: AgoraVideoFrameDelegate {
     func onCapture(_ videoFrame: AgoraOutputVideoFrame, sourceType: AgoraVideoSourceType) -> Bool {
-        // Send frames to PiP if active
+        // ✅ FIXED: Only process if PiP is actually active
         if AgoraPiPManager.shared.isPiPActive {
             AgoraPiPManager.shared.processVideoFrame(videoFrame)
         }
-        return true
+        return true // ✅ Always return true to allow normal rendering
     }
     
     func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
-        // Send remote user frames to PiP
+        // ✅ FIXED: Only process if PiP is actually active
         if AgoraPiPManager.shared.isPiPActive {
             AgoraPiPManager.shared.processVideoFrame(videoFrame)
         }
-        return true
+        return true // ✅ Always return true to allow normal rendering
     }
     
     func getVideoFormatPreference() -> AgoraVideoFormat {
