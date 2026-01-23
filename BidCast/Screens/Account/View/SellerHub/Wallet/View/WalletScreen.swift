@@ -187,6 +187,8 @@ struct WalletPayoutView: View {
     @State var hudMsg: String = ""
     @State var showError = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    
+    @State var walletAmount : Int = 0
    
     @Environment(\.presentationMode) var presentationMode
     
@@ -194,39 +196,11 @@ struct WalletPayoutView: View {
         NavigationView {
             VStack(spacing: 0) {
 
-                HStack {
-                    Button(action: {
+                VStack {
+                    PrimaryHeader(title: "Wallet",leadingImgArr: ["chevron.left"], onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.custom(poppinsBold, size: 16))
-                            .foregroundColor(.black)
-                    }
-                    
-                    Spacer()
-                    
-                    Text("Wallet")
-                        .font(.system(size: 22, weight: .bold))
-                    
-                    Spacer()
+                    },count: .constant(0))
                 }
-                .padding(.horizontal, 20)
-//                    Button(action:{
-//
-//                PrimaryHeader(
-//                    title: "Wallet",
-//                    isForLogo: false,
-//                    leadingImgArr: ["chevron.left"],
-//                    trailingImgArr: [],
-//                    onClickLeading: { _ in
-//                        self.presentationMode.wrappedValue.dismiss()
-//                    },
-//                    count: .constant(0)
-//                )
-//                .background(Color.white)
-//                .frame(height: 50)
-                
-
                 // MARK: Segment (UNCHANGED)
                 CustomSegmentedControl(
                     preselectedIndex: $segment,
@@ -253,14 +227,29 @@ struct WalletPayoutView: View {
                             }
                         }
 
-                        Spacer(minLength: 100)
+//                        Spacer(minLength: 100)
+                      
                     }
                     .padding(.horizontal)
                     .padding(.top, 12)
                 }
                 .background(.backGround)
-                .padding(.bottom,-40)
-                
+//                .padding(.bottom,-40)
+                if segment == .wallet {
+                    if walletInfo.avaiableForPayout ?? 0 != 0{
+                        VStack(spacing: 8) {
+                            PrimaryButton(title: "Start Payout",onButtonClick: {
+                                sellerId = "\(UserDefaults.userId)"
+                           walletAmount  = walletInfo.avaiableForPayout ?? 0
+                                isTipAmountButtoClicked = true
+                               
+                            })
+                            Text("Funds typically arrive within 1–2 business days.")
+                                .font(.custom(poppinsRegular, size: 13))
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
             }
             .edgesIgnoringSafeArea(.bottom)
             .background(.backGround)
@@ -300,7 +289,7 @@ struct WalletPayoutView: View {
         )
         CusNavLink(
             doNavigate: $isTipAmountButtoClicked,
-            destination: PayoutView(sellerID: sellerId)
+            destination: PayoutView(walletAmount: $walletAmount, sellerID: sellerId)
         )
     }
 
@@ -325,23 +314,24 @@ struct WalletPayoutView: View {
                     title: "$\(walletInfo.avaiableForPayout ?? 0) available for payout",
                     desc: "These funds are available to initiate payout to your bank account."
                 )
-
+                
                 Divider()
-
+                
                 payoutRow(
                     title: "$\(walletInfo.processing ?? 0.00) processing",
                     desc: "Funds will be available after order confirmation."
                 )
-
-                Divider()
-
-                HStack(spacing: 6) {
-                    Text("Not eligible for early payout")
-                        .font(.custom(poppinsMedium, size: 14))
-                    Image(systemName: "info.circle")
-                        .font(.system(size: 14))
+                if walletInfo.avaiableForPayout ?? 0 == 0{
+                    Divider()
+                    
+                    HStack(spacing: 6) {
+                        Text("Not eligible for early payout")
+                            .font(.custom(poppinsMedium, size: 14))
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 14))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(18)
             .background(Color(.systemBackground))
@@ -393,25 +383,6 @@ struct WalletPayoutView: View {
                 .shadow(color: .black.opacity(0.05), radius: 6, y: 3)
             }
 
-            // Start Payout Button
-            VStack(spacing: 10) {
-                Button(action: {
-                    sellerId = "\(UserDefaults.userId)"
-                    isTipAmountButtoClicked = true
-                }) {
-                    Text("Start Payout")
-                        .font(.custom(poppinsBold, size: 18))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 54)
-                        .background(.defaultTheme)
-                        .cornerRadius(28)
-                }
-
-                Text("Funds typically arrive within 1–2 business days.")
-                    .font(.custom(poppinsRegular, size: 13))
-                    .foregroundColor(.gray)
-            }
         }
     }
 

@@ -14,7 +14,7 @@ struct PayoutView: View {
     @Environment(\.presentationMode) private var presentationMode
     
     @State private var enteredAmount: String = "0.00"
-    private let walletAmount: Double = 62.0
+    @Binding var walletAmount: Int
     @State var sellerID: String = ""
     
     @StateObject private var tipsViewModel = TipsViewModel()
@@ -26,6 +26,7 @@ struct PayoutView: View {
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     let minPayout = 10.0
+
     let maxPayout = 500.0
     
     // Keypad Buttons
@@ -148,6 +149,11 @@ struct PayoutView: View {
             showhud = true
             return
         }
+        guard enteredAmount < "\(walletAmount)" else{
+            hudMsg = "Please enter valid amount"
+            showhud = true
+            return
+        }
         SVProgressHUD.show()
         let request = TipAmountRequest(seller_id: sellerID,
                                        amount: enteredAmount,
@@ -174,6 +180,6 @@ struct PayoutView: View {
     }
 }
 
-#Preview {
-    PayoutView()
-}
+//#Preview {
+//    PayoutView()
+//}
