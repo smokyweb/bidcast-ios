@@ -726,7 +726,7 @@ struct ItemListRequest : Encodable {
 
 
 struct FundTransferRequest : Encodable {
-    var amount : Int
+    var amount : String
 }
 
 struct getShowRequest : Encodable {

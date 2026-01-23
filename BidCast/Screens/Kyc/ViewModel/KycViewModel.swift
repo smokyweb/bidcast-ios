@@ -18,6 +18,7 @@ final class KycViewModel: ObservableObject {
     
     // MARK: - Get checkKycDetail.
     func getKycDetail() async throws {
+        errorMessage?.removeAll()
         do {
             if let response: ResponseModel<KycDetailsModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getKycDetails,
@@ -38,6 +39,7 @@ final class KycViewModel: ObservableObject {
     
     // MARK: - Get checkKycDetail.
     func checkKycDetail() async throws {
+        errorMessage?.removeAll()
         do {
             if let response: ResponseModel<CheckKycModel> = try await APIManager.shared.request(
                 type: APIEndPoint.checkKYC,
@@ -58,6 +60,7 @@ final class KycViewModel: ObservableObject {
     
     // MARK: - fundTransfer.
     func fundTransfer(param : FundTransferRequest) async{
+        errorMessage?.removeAll()
         do {
             if let response: ResponseModel<FundTransferModel>? = try await APIManager.shared.request(
                 type: APIEndPoint.fundTransfer(param: param),

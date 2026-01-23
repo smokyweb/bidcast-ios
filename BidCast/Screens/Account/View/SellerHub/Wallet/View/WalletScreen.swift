@@ -252,6 +252,7 @@ struct WalletPayoutView: View {
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
+//            .padding(.bottom,-40)
             .background(.backGround)
             .navigationBarHidden(true)
             .onAppear {
@@ -283,6 +284,9 @@ struct WalletPayoutView: View {
                 .cornerRadius(25, corners: [.topLeft, .topRight])
             })
         }
+        .edgesIgnoringSafeArea(.bottom)
+        .padding(.bottom,-32)
+        .background(.backGround)
         CusNavLink(
             doNavigate: $navigateToAllPayouts,
             destination: FullPayoutHistoryView()

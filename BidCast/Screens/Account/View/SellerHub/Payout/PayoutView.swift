@@ -17,7 +17,7 @@ struct PayoutView: View {
     @Binding var walletAmount: Int
     @State var sellerID: String = ""
     
-    @StateObject private var tipsViewModel = TipsViewModel()
+    @StateObject private var viewModel = KycViewModel()
     @State private var sendTipsData: SendTipAmountModel?
     
     @State private var showError: Bool = false
@@ -51,7 +51,7 @@ struct PayoutView: View {
             }
             // MARK: - Wallet Display Card
             VStack(spacing: 10) {
-                Text("Wallet Amount : $\(String(format: "%.1f", walletAmount))")
+                Text("Wallet Amount : $\(walletAmount)")
                     .font(.custom(poppinsRegular, size: 16.0))
                     .foregroundColor(.black)
                 
@@ -107,7 +107,7 @@ struct PayoutView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.defaultTheme)
-                    .cornerRadius(10)
+                    .cornerRadius(32)
             }
             .padding(.horizontal)
             .padding(.vertical, 32)
@@ -115,8 +115,26 @@ struct PayoutView: View {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
                 
             }
+            .sheet(isPresented: $showError){
+                CommonBottomSheet(
+                    sheetType: $alertType,
+                    onPrimaryClick: {
+                        if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                            withAnimation { showError = false
+                                self.presentationMode.wrappedValue.dismiss()}
+                        }else{
+                            withAnimation { showError = false }
+                        }
+                    }, onSecondaryClick: {
+                        withAnimation { showError = false }
+                    })
+                .presentationDetents([.fraction(0.40)])   // ✅ Bottom-sheet height
+                .presentationCornerRadius(25)              // ✅ Rounded top corners
+                .presentationDragIndicator(.hidden)
+                .interactiveDismissDisabled(true)
+            }
         }
-        .background(Color(UIColor.systemGray6).opacity(0.5))
+        .background(.backGround)
         .ignoresSafeArea(edges: .bottom)
         Spacer()
             
@@ -149,33 +167,77 @@ struct PayoutView: View {
             showhud = true
             return
         }
-        guard enteredAmount < "\(walletAmount)" else{
+        let amt = Int(enteredAmount) ?? 0
+        guard amt < walletAmount else{
             hudMsg = "Please enter valid amount"
             showhud = true
             return
         }
         SVProgressHUD.show()
-        let request = TipAmountRequest(seller_id: sellerID,
-                                       amount: enteredAmount,
-                                       card_number: "4242")
-        await tipsViewModel.sendTipsAmountData(request: request)
-        await SVProgressHUD.dismiss()
-        
-        if tipsViewModel.sendTipAmountResponse?.status != "success" {
+        Task {
+            SVProgressHUD.show()
+            let fundRequest = FundTransferRequest(amount: enteredAmount) //toDO: change it static value for now
+            await viewModel.fundTransfer(param: fundRequest)
+            await SVProgressHUD.dismiss()
+            if viewModel.errorMessage == "" || viewModel.errorMessage == nil{
+                fundTransferSuccess()
+            }else{
+                showhud = true
+                
+                hudMsg = viewModel.errorMessage ?? ""
+            }
+        }
+//        let request = TipAmountRequest(seller_id: sellerID,
+//                                       amount: enteredAmount,
+//                                       card_number: "4242")
+//        await tipsViewModel.sendTipsAmountData(request: request)
+//        await SVProgressHUD.dismiss()
+//        
+//        if tipsViewModel.sendTipAmountResponse?.status != "success" {
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Error",
+//                message: tipsViewModel.sendTipAmountResponse?.message ?? "Something went wrong.",
+//                primaryBtnText: "",
+//                secondaryBtnText: "OK",
+//                
+//            )
+//            withAnimation(.snappy) { showError = true }
+//        } else {
+//            hudMsg = "Tip Amount Send successfully!!"
+//            showhud = true
+//            sendTipsData = tipsViewModel.sendTipAmountResponse?.data
+//            presentationMode.wrappedValue.dismiss()
+//        }
+    }
+    func fundTransferSuccess() {
+        let response = viewModel.fundTransferDict
+        if response?.status == "success" {
+//            showhud = true
+//            hudMsg = response?.message ?? ""
             alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: tipsViewModel.sendTipAmountResponse?.message ?? "Something went wrong.",
-                primaryBtnText: "",
-                secondaryBtnText: "OK",
-                sheetThemeColor: .pinkBtn
+                icon: .icSuccess,
+                title: "Success",
+                message: response?.message ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
-            withAnimation(.snappy) { showError = true }
+            showError = true
         } else {
-            hudMsg = "Tip Amount Send successfully!!"
+            
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Error",
+//                message: viewModel.errorMessage ?? "",
+//                primaryBtnText: AppString.ok.localized,
+//                secondaryBtnText:""
+//            )
+//            showError = true
+            
             showhud = true
-            sendTipsData = tipsViewModel.sendTipAmountResponse?.data
-            presentationMode.wrappedValue.dismiss()
+            
+            hudMsg = viewModel.errorMessage ?? ""
+            
         }
     }
 }

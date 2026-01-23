@@ -67,13 +67,13 @@ struct WalletTabView: View {
                                 subLabel: AppString.YouAreEligibleForEarlyPayout,
                                 tintColot: categoryList[ind].color ?? "",
                                 onTapMenuCell: {
-                                    Task {
-                                        SVProgressHUD.show()
-                                        let fundRequest = FundTransferRequest(amount: 1) //toDO: change it static value for now
-                                        await kycViewModel.fundTransfer(param: fundRequest)
-                                        await SVProgressHUD.dismiss()
-                                        fundTransferSuccess()
-                                    }
+//                                    Task {
+//                                        SVProgressHUD.show()
+//                                        let fundRequest = FundTransferRequest(amount: 1) //toDO: change it static value for now
+//                                        await kycViewModel.fundTransfer(param: fundRequest)
+//                                        await SVProgressHUD.dismiss()
+//                                        fundTransferSuccess()
+//                                    }
                                 }
                             )
                             .padding([.leading ,.trailing] ,0)
