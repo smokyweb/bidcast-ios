@@ -28,32 +28,26 @@ struct ListCell: View {
     var onTapMenuCell: (() -> Void)? = nil
     var isForIcon = false
     var imgViewSize = 50.0
-    var imgSize = 42.0
+    var imgSize = 32.0
     var body: some View {
         HStack(alignment: .center,spacing: 10){
             HStack{
                 if isComeFrom != "Wallet"{
-                    //                    AsyncImage(url: URL(string:image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
-                    //                        switch phase {
-                    //                        case .success(let image):
-                    //                            image
-                    //                                .resizable()
-                    //                                .renderingMode(.template)
-                    //                                .frame(width: 30,height: 30)
-                    //
-                    //                        default:
-                    //                            Image(image)
-                    //                                .resizable()
-                    //                        }
-                    //                    }
-                    if isForIcon{
+                
+                    if isForIcon {
                         Image(image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: imgSize,height: imgSize)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .padding(.leading ,10)
-                        
+                            .renderingMode(.template) // 👈 needed for tint
+                            .scaledToFit()
+                            .frame(width: imgSize * 0.55, height: imgSize * 0.55)
+                            .foregroundColor(.defaultTheme)
+                            .padding()
+                            .background(
+                                Circle()
+                                    .fill(.defaultThemeLight)
+                            )
+                            .frame(width: imgSize, height: imgSize)
+                            .padding(.leading, 10)
                     }else{
                         CustomProfileImage(url: image,isCircular: false,size: imgSize)
                             .frame(width: imgViewSize,height: imgViewSize)
@@ -68,11 +62,6 @@ struct ListCell: View {
                             .padding(.leading ,10)
                     }
                 }
-//                Image(image)
-//                    .resizable()
-//                    .scaledToFill()
-//                    .frame(width: 40,height: 40)
-//                    .padding(.leading ,10)
                 VStack(alignment: .leading,spacing: 3) {
                     Text(title)
                         .font(.custom(titleFontName, fixedSize: titleFontSize))

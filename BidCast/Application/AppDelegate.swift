@@ -33,6 +33,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         IQKeyboardManager.shared.keyboardDistance = 10
         IQKeyboardManager.shared.enableAutoToolbar = true
         
+        URLCache.shared.removeAllCachedResponses()
+        URLCache.shared.diskCapacity = 0
+        URLCache.shared.memoryCapacity = 0
 //        STPAPIClient.shared.publishableKey = "pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
         STPAPIClient.shared.publishableKey =
  "pk_test_51SjiEtQzmy9jx34KXrnMJIwqLx5IfCN69oZsNCptlyBfChq7NrJVc8OjS5q16nvnuobjjp3Run8icoXQHn0D9eVG00nJyhk9zM"

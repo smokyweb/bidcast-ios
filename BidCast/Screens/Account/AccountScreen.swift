@@ -451,13 +451,7 @@ extension AccountScreen {
             UserDefaults.userName.removeAll()
             UserDefaults.fullName.removeAll()
             UserDefaults.profileURL.removeAll()
-            //            SVProgressHUD.show()
-            
             UserDefaultsManager.shared.setValue(false, forKey: .isLoggedIn)
-            
-            //            UserDefaultsManager.shared.setValue(dict.data?.role_id, forKey: .userRoleId)
-            //            UserDefaultsManager.shared.setValue(dict.data?.roles?.name ??  "", forKey: .userRole)
-            
             tabBarRouter.selectedTab = 0
             
             UserDefaults.accessToken.removeAll()
@@ -465,7 +459,6 @@ extension AccountScreen {
             UserDefaults.buyerVerafied.removeAll()
             hasLoadedData = false
             sellerInfo = nil
-            // Handle remember me
             let rememberMe = UserDefaults.rememberMe
             if !rememberMe {
                 _ = KeychainManager.shared.delete(email: UserDefaults.userEmail)
@@ -473,9 +466,23 @@ extension AccountScreen {
                 UserDefaults.rememberMe = false
             }
             
-            UserDefaults.userId = -1
+            UserDefaults.isFirstShowCreated = false
+            UserDefaults.profileURL.removeAll()
+            UserDefaults.fullName.removeAll()
+            UserDefaults.userName.removeAll()
+        
+            UserDefaults.buyerVerafied.removeAll()
+            UserDefaults.sellerVerafied.removeAll()
+            UserDefaults.sellerAddress = false
+            UserDefaults.hasCardAdded = false
+            UserDefaults.userEmail.removeAll()
+            UserDefaults.default_card =  DefaultCardModel()
+            UserDefaults.default_shipping_address =  AddressModel()
+            UserDefaults.couponCount.removeAll()
+            UserDefaults.vacationMode = false
             
-            // Navigate to authentication
+            
+            UserDefaults.userId = -1
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 withAnimation {
                     appRootManager.currentRoot = .authentication

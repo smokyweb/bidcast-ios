@@ -11,7 +11,7 @@ import AlertToast
 
 struct HomeViewScreen: View {
     var deepLinkShowId: String?
-    @State private var selectedButton: String = "For You"
+    @State private var selectedButton: String = ""
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
@@ -319,7 +319,9 @@ struct HomeViewScreen: View {
         .padding(.bottom, -15)
         .onAppear{
 //            SocketManagerService.shared.setupSocket()
-            addSocketListeners()
+            socketManager.setupSocket {
+                addSocketListeners()
+            }
             isActiveOnHomeScreen = true
             
             
@@ -346,13 +348,15 @@ struct HomeViewScreen: View {
             if !isNavigating {
                 Task {
                     await refreshLiveShows()
-                    selectedButton = "For You"
+                    if !comeFromExploreScreen{
+                        selectedButton = "For You"
+                    }
                 }
             }
         }
         .onDisappear {
             isActiveOnHomeScreen = false
-            socketManager.hasAddedListeners = false
+//            socketManager.hasAddedListeners = false
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -392,15 +396,36 @@ struct HomeViewScreen: View {
     }
 
     func fetchLiveShowForSocketUpdate() async {
-        await viewModel.getLiveShows(
-            param: GetLiveShowsRequest(
-                type: selectedTab,
-                category: selectedButton == "For You" ? "for_you" : selectedButton,
-                sub_category: "",
-                search: searchText,
-                page: "1" // Only for detecting new rooms
-            )
-        )
+        
+        var apiCategory = String()
+        var subCategory = String()
+        if comeFromExploreScreen{
+            apiCategory =  showCategory
+            if showSubCategory == ""{
+                subCategory = selectedButton.isEmpty  ? "" : selectedButton
+            }else{
+                subCategory =  showSubCategory
+            }
+        }else{
+            apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+        }
+        await viewModel.getLiveShows(param: GetLiveShowsRequest(
+            type: selectedTab,
+            category: apiCategory,
+            sub_category: subCategory,
+            search: searchText,
+            page: "1"
+        ))
+        
+//        await viewModel.getLiveShows(
+//            param: GetLiveShowsRequest(
+//                type: selectedTab,
+//                category: selectedButton == "For You" ? "for_you" : selectedButton,
+//                sub_category: "",
+//                search: searchText,
+//                page: "1" // Only for detecting new rooms
+//            )
+//        )
 
         await MainActor.run {
             guard let socketShows = viewModel.liveShowsResponse.data else { return }
@@ -594,7 +619,9 @@ struct HomeViewScreen: View {
             
             // Default selection
             if selectedButton.isEmpty {
-                selectedButton = forYouCategory.name ?? "For You"
+                if !comeFromExploreScreen{
+                    selectedButton = forYouCategory.name ?? "For You"
+                }
             }
             if comeFromExploreScreen {
                 if let matchedCategory = categoryList.first(where: {
@@ -644,17 +671,19 @@ struct HomeViewScreen: View {
        
     }
     func addSocketListeners() {
-        guard socketManager.isConnected else {
-            print("⚠️ Socket not connected yet")
-            return
-        }
+//        guard socketManager else {
+//            print("⚠️ Socket not connected yet")
+//            return
+//        }
 
-        guard !socketManager.hasAddedListeners else {
-            print("⚠️ Listeners already added")
-            return
-        }
+//        guard !socketManager.hasAddedListeners else {
+//            print("⚠️ Listeners already added")
+//            return
+//        }
+        socketManager.removeRoomHandler()
+        socketManager.hasAddedListeners = false
 
-        socketManager.hasAddedListeners = true
+           socketManager.hasAddedListeners = true
 
         socketManager.observeRoomUpdates { room in
             print("🔴 Room updated:", room)

@@ -164,12 +164,23 @@ extension SocketManagerService {
         )
         
         socket = socketManager.defaultSocket
-        
-        socket.on(clientEvent: .connect) { [weak self] _, _ in
-            guard let self else { return }
-            self.isConnected = true
-            onConnected?()
-            logger.info("✅ Socket connected")
+        if socket.status != .connected{
+            socket.on(clientEvent: .connect) { [weak self] _, _ in
+                guard let self else { return }
+                
+                
+                logger.info("✅ Socket connected")
+                if socket.status == .connected{
+                    
+                    onConnected?()
+                }
+                //            onConnected?()
+            }
+        }else{
+            if socket.status == .connected{
+                logger.info("✅ Socket connected")
+                onConnected?()
+            }
         }
         
         socket.on(clientEvent: .disconnect) { [weak self] data, _ in
@@ -249,6 +260,12 @@ extension SocketManagerService{
         socket.off("next_product_set")
         print("🧹 Removed next_product_set listener")
     }
+    func removeRoomHandler(){
+        socket.off("room_update")
+           socket.off("room_ended")
+        print("🧹 Removed room listener")
+    }
+    
 }
 
 // MARK: - Raid Events -
@@ -858,14 +875,16 @@ extension SocketManagerService {
         suddenDeath: Bool
     ) {
         performIfConnected {
-            let payload: [String: Any] = [
+            var payload: [String: Any] = [
                 "room_id": roomId,
                 "products": products,
                 "starting_bid_amount": startingBidAmount,
                 "require_time": requireTime,
-                "counter_bid_time": counterBidTime,
                 "sudden_death": suddenDeath
             ]
+            if !suddenDeath{
+                payload["counter_bid_time"] = counterBidTime
+            }
             hasWon = false
             socket.emit("start_auction", payload)
             logger.info("🚀 Sent start_auction: \(payload)")
@@ -884,7 +903,7 @@ extension SocketManagerService {
     ) {
         socket.on("auction_started") { [weak self] data, _ in
             guard let self else { return }
-
+            hasWon = false
             guard
                 let json = data.first as? [String: Any],
                 let roomId = json["room_id"] as? String
