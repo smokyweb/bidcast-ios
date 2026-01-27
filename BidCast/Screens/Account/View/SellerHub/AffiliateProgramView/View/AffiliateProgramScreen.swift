@@ -58,7 +58,7 @@ struct AffiliateProgramScreen: View {
                     .padding(.horizontal)
 
                     ReferralCodeCardView(code: referralCode, onShare: {
-                        let message = "Join with my referral code: \(referralCode)".localized
+                        let message = "Join with my referral code: \(referralCode) https://testflight.apple.com/join/jYb9szF9 ".localized
                         let activityVC = UIActivityViewController(activityItems: [message], applicationActivities: nil)
                         UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
                     })
@@ -109,7 +109,7 @@ struct AffiliateProgramScreen: View {
             }
         }
         .background(.backGround)
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .bottom)
         .onAppear {
             UIScrollView.appearance().bounces = false
         }

@@ -52,7 +52,7 @@ struct ReferralCodeCardView: View {
                     .padding()
                     .background(Color.defaultTheme)
                     .foregroundColor(.white)
-                    .cornerRadius(8)
+                    .cornerRadius(32)
             }
         }
         .padding()
