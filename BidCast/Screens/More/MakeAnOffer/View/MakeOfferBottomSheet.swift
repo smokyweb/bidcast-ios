@@ -93,7 +93,7 @@ struct MakeOfferBottomSheet: View {
         PrimaryButton(title: "Send Offer") {
             let value = Double(customOffer) ?? selectedOffer
             onSendOffer(value)
-            isPresented = false
+//            isPresented = false
         }
     }
 

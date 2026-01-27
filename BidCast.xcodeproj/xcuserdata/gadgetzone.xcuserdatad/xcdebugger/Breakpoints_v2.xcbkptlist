@@ -7,33 +7,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BBF4DA07-B721-4CCB-B868-24EEBD472B94"
+            uuid = "1F0411E5-7411-4218-B508-17A6349EEC55"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Wallet/View/WalletScreen.swift"
+            filePath = "BidCast/Screens/Home/Live Stream/View/ProductDetailView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "244"
-            endingLineNumber = "244"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
             landmarkName = "body"
             landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8B8A92E7-3A26-4B23-B1A4-08D617A7F3CD"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Payout/PayoutView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "sendTipsAmountData()"
-            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1F0411E5-7411-4218-B508-17A6349EEC55 - f1eb042ac6f747df"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #2 () -&gt; BidCast.CommonBottomSheet in closure #3 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.bottomSheet&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(isPresented: SwiftUI.Binding&lt;Swift.Bool&gt;, height: CoreGraphics.CGFloat, topBarHeight: CoreGraphics.CGFloat, topBarCornerRadius: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, contentBackgroundColor: SwiftUI.Color, topBarBackgroundColor: SwiftUI.Color, showTopIndicator: Swift.Bool, onDismiss: Swift.Optional&lt;() -&gt; ()&gt;, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in BidCast.ProductDetailView.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/Live/bidcast/BidCast/Screens/Home/Live%20Stream/View/ProductDetailView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "204"
+                  endingLineNumber = "204">
+               </Location>
+               <Location
+                  uuid = "1F0411E5-7411-4218-B508-17A6349EEC55 - f1eb042ac6f7479d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #2 () -&gt; BidCast.CommonBottomSheet in closure #3 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.bottomSheet&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(isPresented: SwiftUI.Binding&lt;Swift.Bool&gt;, height: CoreGraphics.CGFloat, topBarHeight: CoreGraphics.CGFloat, topBarCornerRadius: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, contentBackgroundColor: SwiftUI.Color, topBarBackgroundColor: SwiftUI.Color, showTopIndicator: Swift.Bool, onDismiss: Swift.Optional&lt;() -&gt; ()&gt;, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in BidCast.ProductDetailView.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/Live/bidcast/BidCast/Screens/Home/Live%20Stream/View/ProductDetailView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "202"
+                  endingLineNumber = "202">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

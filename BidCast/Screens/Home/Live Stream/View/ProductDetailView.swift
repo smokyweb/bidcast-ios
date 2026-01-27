@@ -175,13 +175,38 @@ struct ProductDetailView: View {
                     let param = MakeOfferRequest(amount: text, product_id: productID)
                     await viewModel.MakeOffer(param: param)
                     await SVProgressHUD.dismiss()
-                    offerSuccess()
+                    if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                        offerSuccess()
+                    }else{
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: viewModel.errorMessage ?? "",
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
+                   
                 }
             })
             .presentationDetents([.fraction(0.7)])
             .presentationCornerRadius(25)
             .presentationDragIndicator(.hidden)
             .presentationBackground(.backGround)
+            .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+                      CommonBottomSheet(
+                          sheetType: $alertType,
+                          onPrimaryClick: {
+                              withAnimation { showError = false }
+                              makeOfferSheet = false
+                              // Handle response when primary button clicked
+                          },
+                          onSecondaryClick: {
+                              withAnimation { showError = false }
+                          }
+                      )
+                  }
         }
 
         .onFirstAppear {
