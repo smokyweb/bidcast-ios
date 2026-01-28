@@ -1240,17 +1240,25 @@ struct CouponListScreen: View {
                 }, count: .constant(0))
             }
             .background(.white)
+            
+
             ScrollView {
                 VStack(spacing: 12) {
-                    ForEach(couponArr, id: \.id) { item in
-                        CouponSelectableRow(
-                            coupon: item,
-                            isApplied: selectedCouponId == item.coupon?.id,
-                            showApplyButton: showApplyButton
-                        ) {
-                            selectedCouponId = item.coupon?.id
-                            onApply?(item)
+                    
+                    if couponArr.count != 0{
+                        ForEach(couponArr, id: \.id) { item in
+                            CouponSelectableRow(
+                                coupon: item,
+                                isApplied: selectedCouponId == item.coupon?.id,
+                                showApplyButton: showApplyButton
+                            ) {
+                                selectedCouponId = item.coupon?.id
+                                onApply?(item)
+                            }
                         }
+                    }
+                    else {
+                        NoDataView(message: "No Coupon Avalable")
                     }
                 }
                 .padding()
