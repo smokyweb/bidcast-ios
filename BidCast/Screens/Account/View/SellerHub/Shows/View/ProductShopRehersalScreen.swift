@@ -159,51 +159,61 @@ struct ProductShopRehersalScreen: View {
             ProductHeading(count: displayedProducts.count)
                 .padding(.vertical,6)
                 .padding(.horizontal, 16)
-            
-            ScrollView(showsIndicators: false) {
-                LazyVStack(spacing: 8) {
-                    if isLoading && displayedProducts.isEmpty {
-                        ForEach(0..<8) { _ in
-                            PurchasesViewShimmerView()
-                                .padding(.horizontal, 16)
-                        }
-                    } else if displayedProducts.isEmpty {
-                        NoDataView(message: "No Product Found")
-                            .frame(height: 300)
-                    } else {
-                        ForEach(displayedProducts, id: \.id) { product in
-                            let productId = product.id ?? 0
-                            
-                            ProductRehearsalListItem(
-                                product: product,
-                                roomId: roomId,
-                                isPinned: pinnedProductIds.contains(productId),
-                                actionTitle: mode.buttonTitle,
-                                onPinTapped: {
-                                    togglePin(productId)
-                                },
-                                onActionTapped: {
-                                    onProductSelected?(product)
+            if displayedProducts.isEmpty {
+                GeometryReader { geo in
+                    VStack {
+                        NoDataView(message: "Nooo Product Found")
+                            .padding(.top, -100)   // 👈 NOW THIS WILL MOVE IT
+
+                        Spacer()
+                    }
+                    .frame(width: geo.size.width, height: geo.size.height)
+                }
+
+
+            } else {
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(spacing: 8) {
+                        if isLoading && displayedProducts.isEmpty {
+                            ForEach(0..<8) { _ in
+                                PurchasesViewShimmerView()
+                                    .padding(.horizontal, 16)
+                            }
+                        } else {
+                            ForEach(displayedProducts, id: \.id) { product in
+                                let productId = product.id ?? 0
+                                
+                                ProductRehearsalListItem(
+                                    product: product,
+                                    roomId: roomId,
+                                    isPinned: pinnedProductIds.contains(productId),
+                                    actionTitle: mode.buttonTitle,
+                                    onPinTapped: {
+                                        togglePin(productId)
+                                    },
+                                    onActionTapped: {
+                                        onProductSelected?(product)
+                                    }
+                                )
+                                .onAppear {
+                                    guard let lastApiProduct = apiProducts.last,
+                                          lastApiProduct.id == product.id else { return }
+                                    loadNextPageIfNeeded()
                                 }
-                            )
-                            .onAppear {
-                                guard let lastApiProduct = apiProducts.last,
-                                      lastApiProduct.id == product.id else { return }
-                                loadNextPageIfNeeded()
                             }
                         }
+                        
+                        // Bottom Loader
+                        if isFetchingMore {
+                            ProgressView()
+                                .padding(.vertical, 16)
+                        }
                     }
-
-                    // Bottom Loader
-                    if isFetchingMore {
-                        ProgressView()
-                            .padding(.vertical, 16)
-                    }
+                    .padding(.vertical, 8)
                 }
-                .padding(.vertical, 8)
+                
+                .background(Color.backGround)
             }
-            .background(Color.backGround)
-            
             PrimaryButton(title:"Add New Product",onButtonClick : {
                 showCreateProductSheet = true
             })
