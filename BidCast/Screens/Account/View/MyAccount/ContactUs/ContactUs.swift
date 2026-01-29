@@ -167,7 +167,7 @@ struct ContactUs: View {
                             self.success()
                         }
                     }
-                },cornerRadius : 12.0, btnTextColor: .white)
+                },cornerRadius : 32, btnTextColor: .white)
             }
             .padding(.horizontal,16)
             .padding(.bottom,8)
@@ -222,6 +222,6 @@ struct ContactUs: View {
         showError = true
     }
 }
-#Preview {
-    ContactUs()
-}
+//#Preview {
+//    ContactUs()
+//}

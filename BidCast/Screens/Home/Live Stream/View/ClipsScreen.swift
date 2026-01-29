@@ -54,35 +54,39 @@ struct ClipsScreen: View {
                 .frame(height: 50)
                 .background(Color.white)
             }
-            
-            ScrollView(showsIndicators: false) {
-                
-                // MARK: Clips Grid
-                LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(clipArr.indices, id: \.self) { index in
-                        ClipImage(
-                            url: clipArr[index].thumbnailURL ?? "",
-                            onSelection: {
-                                navigateToVideoReceipt = true
-                                videoURL = clipArr[index].clipURL ?? ""
-                            }
-                        )
-                        .onAppear {
-                            Task {
-                                await handlePagination(index: index)
+            if !clipArr.isEmpty{
+                ScrollView(showsIndicators: false) {
+                    
+                    // MARK: Clips Grid
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(clipArr.indices, id: \.self) { index in
+                            ClipImage(
+                                url: clipArr[index].thumbnailURL ?? "",
+                                onSelection: {
+                                    navigateToVideoReceipt = true
+                                    videoURL = clipArr[index].clipURL ?? ""
+                                }
+                            )
+                            .onAppear {
+                                Task {
+                                    await handlePagination(index: index)
+                                }
                             }
                         }
                     }
+                    .padding(.horizontal, 16)
+                    
+                    // MARK: Loader
+                    if isFetchingMoreClips {
+                        ProgressView()
+                            .padding(.vertical, 16)
+                    }
+                    
                 }
-                .padding(.horizontal, 16)
-                
-                // MARK: Loader
-                if isFetchingMoreClips {
-                    ProgressView()
-                        .padding(.vertical, 16)
-                }
-                
             }
+            else {
+                                 NoDataView(message: "No Coupon Avalable")
+                             }
             CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
         }
         .task {

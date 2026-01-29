@@ -728,21 +728,23 @@ struct PromoteShowsScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            
+            if showsData.isEmpty {
+                NoDataView(message: "No Coupon Avalable")
+            }
             // MARK: - Scrollable Content
-            ScrollView {
-                VStack(spacing: 10) {
-                    if showsData.isEmpty {
-                        NoDataView(message: "No Promote Shows found")
-                    } else {
+            else {
+                ScrollView {
+                    VStack(spacing: 10) {
+                        
                         ForEach(showsData.indices,id: \.self) { index in
                             let data = showsData[index]
                             ShowPromotedShowCardView(show: data)
                         }
+                        
+                        Spacer().frame(height: 80)
                     }
-                    Spacer().frame(height: 80)
+                    .padding(.top)
                 }
-                .padding(.top)
             }
 //            CusNavLink(doNavigate: $navigateToReherseal,
 //                       destination: RehearsalScreen(showUd: $showID,

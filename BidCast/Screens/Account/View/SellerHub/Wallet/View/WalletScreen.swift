@@ -37,9 +37,9 @@ struct WalletStatTile: View {
 
 struct TransactionsView: View {
     @State var selectedButton: WalletSegment
-
+    
     @Binding var transactions: [TransactionModel]
-
+    
     var segmentChangeClosure: ((WalletSegment) -> Void)
     
     var body: some View {
@@ -50,16 +50,24 @@ struct TransactionsView: View {
             }
             
             // Transactions List
-            VStack(spacing: 0) {
-                ForEach(transactions, id: \.id) { transaction in
-                    TransactionRow(transaction: transaction)
-                    
-                    if transaction.id != transactions.last?.id {
-                        Divider()
-                            .padding(.horizontal, 20)
+            if transactions.count != 0 {
+                VStack(spacing: 0) {
+                    ForEach(transactions, id: \.id) { transaction in
+                        TransactionRow(transaction: transaction)
+                        
+                        if transaction.id != transactions.last?.id {
+                            Divider()
+                                .padding(.horizontal, 20)
+                        }
                     }
                 }
             }
+            
+            else {
+                NoDataView(message: "No Transactions Avalable")
+            }
+            
+            
         }
         
     }
@@ -76,7 +84,7 @@ struct Transaction1: Identifiable {
 struct TransactionRow: View {
     let transaction: TransactionModel
     @State private var isPressed = false
-
+    
     var body: some View {
         Button(action: {
             isPressed = true
@@ -86,29 +94,29 @@ struct TransactionRow: View {
         }) {
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
-//                    Text(transacti)
+                    //                    Text(transacti)
                     Text("Earnings for selling a Men's Square-Face Solitaire Ring – Engraved Setting + High-Fire Stone #3")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.black)
                         .fixedSize(horizontal: false, vertical: true)
                         .lineSpacing(2)
                     Text("\(formatISODateString(transaction.date ?? "")) • \(transaction.status ?? "")")
-//                    Text("11/18/25 • Completed")
-
+                    //                    Text("11/18/25 • Completed")
+                    
                         .font(.system(size: 13))
                         .foregroundColor(.gray)
                 }
-
+                
                 Spacer()
-
+                
                 Text("$ \(transaction.total ?? "0.00")")
-//                Text("$5.42")
+                //                Text("$5.42")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color(red: 0.0, green: 0.7, blue: 0.4))
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
-//            .background(Color.white)
+            //            .background(Color.white)
             .scaleEffect(isPressed ? 0.98 : 1.0)
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isPressed)
         }
@@ -116,22 +124,22 @@ struct TransactionRow: View {
     }
     
     
-     func formatISODateString(
-         _ dateString: String,
-         outputFormat: String = "MMM dd, yyyy"
-     ) -> String {
-         let iso = ISO8601DateFormatter()
-         iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-         guard let date = iso.date(from: dateString) else { return dateString }
-
-         let formatter = DateFormatter()
-         formatter.dateFormat = outputFormat
-         formatter.locale = Locale(identifier: "en_US_POSIX")
-         formatter.timeZone = .current
-
-         return formatter.string(from: date)
-     }
+    func formatISODateString(
+        _ dateString: String,
+        outputFormat: String = "MMM dd, yyyy"
+    ) -> String {
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        
+        guard let date = iso.date(from: dateString) else { return dateString }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = outputFormat
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = .current
+        
+        return formatter.string(from: date)
+    }
 }
 
 // MARK: - WalletData.
@@ -163,24 +171,24 @@ import SwiftUI
 import SVProgressHUD
 
 struct WalletPayoutView: View {
-
+    
     // MARK: - State
     @State private var segment: WalletScreenSegment = .wallet
     @State private var navigateToAllPayouts = false
     @State private var isTipAmountButtoClicked = false
     
     @State private var isLoading = true
-
+    
     @State private var walletInfo = WalletInfoModel()
     @State private var payoutHistory: [PayOutHistoryModel] = []
-
+    
     @StateObject private var viewModel = WalletViewModel()
     
     @State var dataTransaction = [TransactionModel]()
     
     @State var currentPage = 1
     @State var selectedButton: WalletSegment = .all
-
+    
     @State private var sellerId: String = ""
     
     @State var showhud: Bool = false
@@ -189,13 +197,13 @@ struct WalletPayoutView: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State var walletAmount : Int = 0
-   
+    
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-
+                
                 VStack {
                     PrimaryHeader(title: "Wallet",leadingImgArr: ["chevron.left"], onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
@@ -216,7 +224,7 @@ struct WalletPayoutView: View {
                 })
                 .padding(.horizontal)
                 .padding(.vertical,12)
-
+                
                 ScrollView {
                     VStack(spacing: 20) {
                         if segment == .wallet {
@@ -226,23 +234,23 @@ struct WalletPayoutView: View {
                                 
                             }
                         }
-
-//                        Spacer(minLength: 100)
-                      
+                        
+                        //                        Spacer(minLength: 100)
+                        
                     }
                     .padding(.horizontal)
                     .padding(.top, 12)
                 }
                 .background(.backGround)
-//                .padding(.bottom,-40)
+                //                .padding(.bottom,-40)
                 if segment == .wallet {
                     if walletInfo.avaiableForPayout ?? 0 != 0{
                         VStack(spacing: 8) {
                             PrimaryButton(title: "Start Payout",onButtonClick: {
                                 sellerId = "\(UserDefaults.userId)"
-                           walletAmount  = walletInfo.avaiableForPayout ?? 0
+                                walletAmount  = walletInfo.avaiableForPayout ?? 0
                                 isTipAmountButtoClicked = true
-                               
+                                
                             })
                             Text("Funds typically arrive within 1–2 business days.")
                                 .font(.custom(poppinsRegular, size: 13))
@@ -252,7 +260,7 @@ struct WalletPayoutView: View {
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
-//            .padding(.bottom,-40)
+            //            .padding(.bottom,-40)
             .background(.backGround)
             .navigationBarHidden(true)
             .onAppear {
@@ -296,22 +304,22 @@ struct WalletPayoutView: View {
             destination: PayoutView(walletAmount: $walletAmount, sellerID: sellerId)
         )
     }
-
+    
     // MARK: - Wallet Content
     private var walletContent: some View {
         VStack(spacing: 20) {
-
+            
             // Account Balance
             VStack(alignment: .leading, spacing: 6) {
                 Text("Account Balance")
                     .font(.custom(poppinsRegular, size: 14))
                     .foregroundColor(.gray)
-
+                
                 Text("\(String(format: "$%.2f", walletInfo.avaiableBalance ?? 0.00))")
                     .font(.custom(poppinsBold, size: 42))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            
             // Payout Info Card (REPLACED MIDDLE)
             VStack(spacing: 18) {
                 payoutRow(
@@ -345,33 +353,33 @@ struct WalletPayoutView: View {
                     .stroke(Color.gray.opacity(0.15))
             )
             .shadow(color: .black.opacity(0.06), radius: 8, y: 4)
-
+            
             // Help Center
             VStack(alignment: .leading, spacing: 4) {
                 Text("Need more information about receiving payouts?")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.gray)
-
+                
                 Text("Visit the Help Center")
                     .font(.custom(poppinsMedium, size: 13))
                     .foregroundColor(.defaultTheme)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            
             // Payout History Header
             HStack {
                 Text("Payout History")
                     .font(.custom(poppinsSemiBold, size: 18))
-
+                
                 Spacer()
-
+                
                 Button("See All") {
-//                    navigateToAllPayouts = true
+                    //                    navigateToAllPayouts = true
                 }
                 .font(.custom(poppinsMedium, size: 15))
                 .foregroundColor(.defaultTheme)
             }
-
+            
             // Payout History List (TOP 5)
             if isLoading {
                 PayoutHistoryShimmerView()
@@ -386,10 +394,10 @@ struct WalletPayoutView: View {
                 .cornerRadius(14)
                 .shadow(color: .black.opacity(0.05), radius: 6, y: 3)
             }
-
+            
         }
     }
-
+    
     // MARK: - Helpers
     private func payoutRow(title: String, desc: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -400,7 +408,7 @@ struct WalletPayoutView: View {
                 .foregroundColor(.gray)
         }
     }
-
+    
     private func loadData() {
         Task {
             await performAPICalls(
@@ -434,12 +442,12 @@ struct WalletPayoutView: View {
 
 // MARK: - Full Payout History Page
 struct FullPayoutHistoryView: View {
-
+    
     @State private var page = 1
     @State private var payouts: [PayOutHistoryModel] = []
     @State private var isLoading = true
     @StateObject private var viewModel = WalletViewModel()
-
+    
     var body: some View {
         ScrollView {
             LazyVStack {
@@ -463,7 +471,7 @@ struct FullPayoutHistoryView: View {
             fetch()
         }
     }
-
+    
     private func fetch() {
         Task {
             isLoading = true
@@ -472,7 +480,7 @@ struct FullPayoutHistoryView: View {
             isLoading = false
         }
     }
-
+    
     private func loadMore() {
         page += 1
         fetch()
@@ -496,7 +504,7 @@ struct PayoutHistoryShimmerView: View {
 
 ////MARK: API LOGIC For Transaction.
 extension WalletPayoutView{
-
+    
     // MARK: - Fetch Inventory List
     func fetchTransaction() {
         
@@ -526,29 +534,29 @@ extension WalletPayoutView{
             }
         }
         
-//        Task{
-//           guard Reachability.isConnectedToNetwork() else {
-//                hudMsg = "No Internet Connection"
-//                showhud = true
-//                return
-//            }
-//            SVProgressHUD.show()
-//            
-//            await SVProgressHUD.dismiss()
-//            if viewModel.errorMessage == nil || viewModel.errorMessage == ""{
-//                
-//            }else{
-//                alertType = .sheetType(
-//                    icon: .alert,
-//                    title: "Error",
-//                    message: viewModel.errorMessage ?? "".capitalizingFirstLetter(),
-//                    primaryBtnText: "",
-//                    secondaryBtnText: AppString.ok.localized
-//                )
-//            }
-//        }
+        //        Task{
+        //           guard Reachability.isConnectedToNetwork() else {
+        //                hudMsg = "No Internet Connection"
+        //                showhud = true
+        //                return
+        //            }
+        //            SVProgressHUD.show()
+        //
+        //            await SVProgressHUD.dismiss()
+        //            if viewModel.errorMessage == nil || viewModel.errorMessage == ""{
+        //
+        //            }else{
+        //                alertType = .sheetType(
+        //                    icon: .alert,
+        //                    title: "Error",
+        //                    message: viewModel.errorMessage ?? "".capitalizingFirstLetter(),
+        //                    primaryBtnText: "",
+        //                    secondaryBtnText: AppString.ok.localized
+        //                )
+        //            }
+        //        }
     }
-
+    
     //MARK: fetchMoreNotificartion.
     func fetchMoreTransaction() {
         Task{
@@ -578,23 +586,23 @@ extension WalletPayoutView{
             }
         }
     }
-
+    
     //MARK: handlePagination.
     func handlePaginationForTransaction(index: Int) {
         let isLastItem = index == dataTransaction.count - 1
         let canFetchMore = (viewModel.transactionDict.total ?? 0) > dataTransaction.count
-
+        
         if isLastItem && canFetchMore {
             fetchMoreTransaction()
         }
     }
-
+    
     //MARK: transactionSuccess.
     func transactionSuccess(){
         let response  = viewModel.transactionDict
         if response.status == "success" {
             let newData = response.data ?? [TransactionModel]()
-
+            
             if currentPage == 1 {
                 dataTransaction = newData
             } else {
@@ -612,8 +620,8 @@ extension WalletPayoutView{
             showError = true
         }
     }
-
-
+    
+    
     //MARK: payOutHistroysuccess.
     
     func payOutHistroysuccess(){
@@ -629,7 +637,7 @@ extension WalletPayoutView{
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
-
+            
         }
     }
     
@@ -647,7 +655,7 @@ extension WalletPayoutView{
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
-
+            
         }
     }
 }

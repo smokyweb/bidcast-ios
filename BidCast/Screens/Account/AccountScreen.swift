@@ -26,12 +26,16 @@ struct AccountScreen: View {
     @State private var userLogOut = false
     @State private var showError = false
     @State private var showhud = false
+    @State private var showPaymentShipping = false
+    @State private var navigateToShipping = false
+    @State var showSellerSheet = false
+    @State var navigateToSeller = false
     @State private var hudMsg = ""
     @State private var isLoading: Bool = false
     @State private var sellerInfo: SellerhubInfoModel?
     @State private var selectedCredit: AccountCredit?
     @State private var backToAccount: Bool = false
-    
+    @State var titleText = ""
     @State private var hasLoadedData = false
    
         @State private var isRefreshing = false
@@ -125,6 +129,43 @@ struct AccountScreen: View {
                 )
             }
         )
+        .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.2) {
+            PaymentAndShippingInfoSheet(
+                isPresented: $showPaymentShipping,
+                onAddInfo: {
+                    if UserDefaults.sellerAddress != true {
+                        showPaymentShipping = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            navigateToShipping = true
+                            
+                        }
+                    }
+                },
+                buttonText: $titleText
+            )
+        }
+        .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+            showSellerSheet = false
+        }) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        showSellerSheet = false
+                        if UserDefaults.buyerVerafied != "pending" {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                navigateToSeller = true
+                            }
+                        }
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        showSellerSheet = false
+                    }
+                }
+            )
+        }
         .bottomSheet(
             isPresented: $showError,
             height: screenHeight * 0.45,
@@ -150,7 +191,34 @@ struct AccountScreen: View {
             }
         )
     }
-    
+    private func handleSellerVerification() {
+        if UserDefaults.sellerVerafied == "pending" {
+            alertType = .sheetType(
+                icon: .info,
+                title: "Become a Verified Seller!",
+                message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                primaryBtnText: "OK",
+                secondaryBtnText: "",
+                buttonWidth: screenWidth - 60,
+                contentSize: 12.0
+            )
+        } else {
+            alertType = .sheetType(
+                icon: .info,
+                title: "Become a Verified Seller!",
+                message: "Before you interact with live shows.you need to become a verified seller.",
+                primaryBtnText: "OK",
+                secondaryBtnText: "",
+                buttonWidth: screenWidth - 60
+            )
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.snappy) {
+                showSellerSheet = true
+            }
+        }
+    }
     // MARK: - Header View
     private var headerView: some View {
         PrimaryHeader(
@@ -200,9 +268,34 @@ struct AccountScreen: View {
     // MARK: - Seller Hub Section
     private var sellerHubSection: some View {
         SellerHubSection(sellerInfo: $sellerInfo, isRefreshing: $isRefreshing) {
-            navigationState.navigateToTitle = true
+            
+            if UserDefaults.isFirstShowCreated {
+                if UserDefaults.sellerVerafied == "verified" {
+                    navigationState.navigateToTitle = true
+                } else {
+                    handleSellerVerification()
+                }
+            } else {
+                if UserDefaults.sellerVerafied == "verified" {
+                    navigationState.navigateToGetStarted = true
+                } else {
+                    handleSellerVerification()
+                }
+            }
         } onCreateProduct: {
-            navigationState.navigateToCreateProduct = true
+           
+            if UserDefaults.sellerVerafied == "verified" {
+                if UserDefaults.sellerAddress {
+                    navigationState.navigateToCreateProduct = true
+                } else {
+                    titleText = "Add Address"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showPaymentShipping = true
+                    }
+                }
+            } else {
+                handleSellerVerification()
+            }
         } onViewAllShows: {
             navigationState.navigateToShows = true
         }
@@ -309,6 +402,12 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToBlockedList, destination: BlockedUserScreen())
             CusNavLink(doNavigate: $navigationState.navigateToCoupons, destination: CouponListScreen(showApplyButton: false))
             CusNavLink(doNavigate: $navigationState.navigateToClips, destination: ClipsScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToClips, destination:  CreateAddress())
+            CusNavLink(doNavigate: $navigateToSeller, destination:  SellerVerificationScreen())
+
+            
+           
+
         }
     }
     
@@ -330,6 +429,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToAffilateProgram, destination: AffiliateProgramScreen(referralCode: "SELLER2025", stats: ReferralStats(totalReferrals: 0, earnings: 0.0), onShare: {}))
             CusNavLink(doNavigate: $navigationState.navigateToCreateProduct, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), /*backToPrepare: $navigationState.navigateToTitle, */showId: .constant(0)))
+            CusNavLink(doNavigate: $navigationState.navigateToGetStarted, destination:  GetStartedScreen(backToTabBar: $navigationState.navigateToGetStarted))
         }
     }
 }
@@ -403,7 +503,7 @@ extension AccountScreen {
         case .coupon:
             return UserDefaults.couponCount
         case .credit:
-            return "283"
+            return "N/A"
         
         }
     }
@@ -1114,6 +1214,7 @@ struct NavigationState {
     var navigateToSellerVerification = false
     var navigateToCreateProduct = false
     var navigateToTitle = false
+    var navigateToGetStarted = false
 }
 
 // MARK: - Account Segment Enum

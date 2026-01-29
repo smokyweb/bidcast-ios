@@ -294,7 +294,7 @@ struct FilterPageView: View {
                                 endPoint: .trailing
                             )
                         )
-                        .cornerRadius(14)
+                        .cornerRadius(32)
                         .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 20)
