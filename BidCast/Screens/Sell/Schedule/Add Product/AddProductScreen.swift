@@ -10,7 +10,7 @@ import SVProgressHUD
 import AlertToast
 
 struct AddProductsScreen: View {
-    
+ 
     @EnvironmentObject  var appRootManager: AppRootManager
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var productCount = 1
@@ -61,14 +61,16 @@ struct AddProductsScreen: View {
     @State var navigateToTab = false
     
     @Binding var fromPrepare : Bool
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     @Binding var NavFromProductLibrary : Bool
     @State var navigateToAddProduct  = false
     @State var navigateToEditProduct  = false
     @Binding var backToCreateProduct : Bool
-    var didTapBack : ((Bool,ProductManager) -> Void)?
-    var didTapEdit : ((ProductDataModel1) -> Void)?
-    var delegate: ShowStepDelegate?
+//    var didTapBack : ((Bool,ProductManager) -> Void)?
+//    var didTapEdit : ((ProductDataModel1) -> Void)?
+    var didTapBack : ((Bool, ProductManager, LetsPrepareCoordinator) -> Void)?
+    var didTapEdit : ((ProductDataModel1, LetsPrepareCoordinator) -> Void)?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
@@ -124,10 +126,12 @@ struct AddProductsScreen: View {
                     leadingImgArr:["chevron.left"],
                     onClickLeading: { _ in
                         if backToCreateProduct{
-                            didTapBack?(false,productManager)
+//                            didTapBack?(false,productManager)
+                            didTapBack?(true, productManager, coordinator)
                             backToCreateProduct = false
                         }else{
-                            didTapBack?(false,productManager)
+//                            didTapBack?(false,productManager)
+                            didTapBack?(false, productManager, coordinator)
                             self.presentationMode.wrappedValue.dismiss()
                         }
                     },
@@ -152,10 +156,12 @@ struct AddProductsScreen: View {
                             HStack(spacing: 12) {
                                 addProductOption(text: "Add another product") {
                                     if NavFromProductLibrary{
-                                        didTapBack?(true,productManager)
+//                                        didTapBack?(true,productManager)
+                                        didTapBack?(true, productManager, coordinator)
                                         presentationMode.wrappedValue.dismiss()
                                     }else{
-                                        didTapBack?(true,productManager)
+//                                        didTapBack?(true,productManager)
+                                        didTapBack?(true, productManager, coordinator)
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                                             backToCreateProduct = false
                                         }
@@ -218,7 +224,7 @@ struct AddProductsScreen: View {
                                         },
                                         onTapEdit: {
                                             
-                                            didTapEdit?(data)
+                                            didTapEdit?(data,coordinator)
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                                                 backToCreateProduct = false
                                             }
@@ -433,11 +439,30 @@ extension AddProductsScreen {
             return
         }
         
+//        if fromPrepare {
+//            backToPrepare = false
+//            delegate?.didUpdateRequest(request, thumbNail: thumbNail)
+//            return
+//        }
         if fromPrepare {
-            backToPrepare = false
-            delegate?.didUpdateRequest(request, thumbNail: thumbNail)
-            return
-        }
+//               backToPrepare = false
+            print("request: \(request)")
+//            print("delegate: \(delegate)")
+            
+            Task { @MainActor  in
+//                delegate.didUpdateRequest(request, thumbNail: thumbNail)
+                coordinator.request = request
+                coordinator.thumbNAil = thumbNail
+
+                coordinator.markCurrentStepCompleted()
+                coordinator.shouldNavigateBackToPrepare = true
+                productManager.selectedProductIDs.removeAll()
+                productManager.products.removeAll()
+                
+                print("✅ Delegate call completed")
+            }
+               return
+           }
         
         Task {
             if request.show_id != "" && request.show_id != nil {
@@ -476,7 +501,8 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
-
+                productManager.selectedProductIDs.removeAll()
+                productManager.products.removeAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
                     title: "Success",
@@ -548,7 +574,8 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
-
+                productManager.selectedProductIDs.removeAll()
+                productManager.products.removeAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
                     title: "Success",

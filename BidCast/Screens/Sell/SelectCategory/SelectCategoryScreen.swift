@@ -51,7 +51,7 @@ struct SelectCategoryScreen: View {
     @Binding var request : StoreScheduleShowRequest
     @Binding var title : String
     @Binding var fromPrepare : Bool
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     
     @State var showSubCategorySheet = false
     @State var selectedSubCategory = ""
@@ -61,7 +61,7 @@ struct SelectCategoryScreen: View {
     @State var selectedOption: Set<String> = []
     
     var viewModel = SelectCategoryViewModel()
-    var delegate: ShowStepDelegate?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     var body: some View {
@@ -320,7 +320,7 @@ struct SelectCategoryScreen: View {
                 
                 .padding(.top , 10)
             }
-            CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen(request:$request,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
+            CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen(request:$request,fromPrepare: $fromPrepare))
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.backGround)

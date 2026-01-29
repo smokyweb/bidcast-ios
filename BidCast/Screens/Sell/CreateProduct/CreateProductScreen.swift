@@ -23,7 +23,7 @@ struct CreateProductScreen: View {
     //previuos Data
     @Binding var requests : StoreScheduleShowRequest
     @Binding var thumbNail : String
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     @State var productTitle = ""
     @State var message = ""
     @State var isTappedFlash : Bool = false
@@ -77,7 +77,7 @@ struct CreateProductScreen: View {
     @State var navigateToProuct = false
     @State var comeFromProductLibrary = false
     @Binding var fromPrepare : Bool
-    var delegate: ShowStepDelegate?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     
     var isComeFrom: CreateProductNavigation = .other
     @State var editProductData: ProductDataModel1? = nil
@@ -461,24 +461,30 @@ struct CreateProductScreen: View {
             
 
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $navFromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: $navigateToAddProduct, backToCreateProduct:$navigateToAddProduct,didTapBack:{ value,manager in
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $navFromPrepare, NavFromProductLibrary: $navigateToAddProduct, backToCreateProduct:$navigateToAddProduct,didTapBack:{ value,manager,coordinat in
                 comeFromProductLibrary = value
+                
 //                productManager  = manager
-            },didTapEdit:{ product in
+            },didTapEdit:{ product,coordinat in
                 comeFromProductLibrary = true
                 editProductData = product
                 populateProductData(product)
-            } ))
+                
+            })
+                .environmentObject(productManager)
+            )
             
             //from prepare
-            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: $navigateToProuct ,didTapBack:{ value,manager in
+            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: $navigateToProuct ,didTapBack:{ value,manager,coordinat in
                 comeFromProductLibrary = value
 //                productManager  = manager
-            },didTapEdit:{ product in
+            },didTapEdit:{ product,coordinat in
                 comeFromProductLibrary = true
                 editProductData = product
                 populateProductData(product)
-            },delegate: delegate))
+            })
+                .environmentObject(productManager)
+            )
             
             CusNavLink(doNavigate: $navigateToSalesFormat,
                        destination: SalesFormatScreen(request: $request,
@@ -486,22 +492,25 @@ struct CreateProductScreen: View {
                                                       imageUrls : $imageUrls,
                                                       videoUrls: $videoUrls,
                                                       thumbNail: $thumbNail,
-                                                      backToPrepare: $backToPrepare,
                                                       fromPrepare: $fromPrepare,
                                                       backToCreateProduct:$navigateToSalesFormat,
                                                       productId: $productId,
-                                                      didTapBack:{ value, manager in
+                                                      didTapBack:{ value, manager,coordinat in
                 comeFromProductLibrary = value
                 imageUrls.removeAll()
                 videoUrls.removeAll()
                 selectedShippingProfileName.removeAll()
-//                productManager = manager
+              
+                //                productManager = manager
                 
-            },didTapEdit  : { product in
+            },didTapEdit  : { product,coordinat in
+                comeFromProductLibrary = true
+                
                 editProductData = product
                 populateProductData(product)
-                comeFromProductLibrary = true
-            },delegate: delegate)
+                
+            })
+                        .environmentObject(productManager)
             )
             
             CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())

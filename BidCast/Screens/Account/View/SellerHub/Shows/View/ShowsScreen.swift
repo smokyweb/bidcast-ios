@@ -154,7 +154,7 @@ struct ShowsScreen: View {
             CusNavLink(doNavigate: $navigateToshowTitle, destination:
                         ShowTitleTips(request : $scheduleRequest,
                                       fromPrepare:.constant(false),
-                                      backToPrepare: $navigateToshowTitle,
+//                                      backToPrepare: $navigateToshowTitle,
                                       showId: $SHowId))
            
         }

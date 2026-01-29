@@ -26,7 +26,7 @@ struct ShowTitleTips: View {
     @Binding var fromPrepare : Bool
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     @Binding var showId : Int
     
     @State private var titleCharCount: Int = 0
@@ -34,7 +34,7 @@ struct ShowTitleTips: View {
     
     private let maxTitleCharCount: Int = 100
     
-    var delegate: ShowStepDelegate?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     
     var body: some View {
         VStack(spacing:18){
@@ -157,9 +157,7 @@ struct ShowTitleTips: View {
             CusNavLink(doNavigate: $navigateToSelectCategory, destination:
                         SelectCategoryScreen(request:$request,
                                              title: $title,
-                                             fromPrepare: $fromPrepare,
-                                             backToPrepare: $backToPrepare,
-                                             delegate: delegate)
+                                             fromPrepare: $fromPrepare)
                             .environmentObject(productManager)
             )
            

@@ -165,7 +165,7 @@ struct TabbarScreen: View {
                             ShowTitleTips(
                                 request: $request,
                                 fromPrepare: .constant(false),
-                                backToPrepare: $navigateToTitle,
+//                                backToPrepare: $navigateToTitle,
                                 showId: .constant(0)
                             )
                             .environmentObject(productManager)

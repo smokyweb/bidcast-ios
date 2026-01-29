@@ -13,6 +13,7 @@ struct BidCastApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
     @StateObject var networkMonitor = NetworkMonitor.shared
+    @StateObject private var coordinator = LetsPrepareCoordinator()
     @State private var accountNavigationPath = NavigationPath()
     @StateObject var deepLink = DeepLinkManager()
 //    @EnvironmentObject var deepLink: DeepLinkManager
@@ -67,6 +68,7 @@ struct BidCastApp: App {
                         TabbarScreen()
                             .environmentObject(tabBarRouter)
                             .environmentObject(productManager)
+                            .environmentObject(coordinator)
                             .environmentObject(deepLink)
                     }
                     .id(appRootManager.currentRoot.hashValue)

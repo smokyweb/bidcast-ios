@@ -12,7 +12,7 @@ import AlertToast
 import SVProgressHUD
 
 struct SelectShowScreen: View {
-    
+
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var productManager: ProductManager
     @State private var currentIndex = 0
@@ -29,10 +29,10 @@ struct SelectShowScreen: View {
     @Binding var thumbNail : String
     @Binding var comeFromPrepareScreen : Bool
     @State var showhud: Bool = false
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     @State var hudMsg: String = ""
     
-    var delegate: ShowStepDelegate?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     
     var body: some View {
         VStack(spacing:18){
@@ -93,7 +93,13 @@ struct SelectShowScreen: View {
                 request.time = selectedTimeStr
                 print(request)
                 if comeFromPrepareScreen {
-                    delegate?.didUpdateRequest(request, thumbNail: "")
+//                    delegate?.didUpdateRequest(request, thumbNail: "")
+                    Task { @MainActor in
+                        coordinator.request = request
+                        coordinator.thumbNAil = ""
+
+                        coordinator.markCurrentStepCompleted()
+                    }
                     presentationMode.wrappedValue.dismiss()
                 }else{
                     guard !request.title.isEmpty else {
@@ -154,7 +160,6 @@ struct SelectShowScreen: View {
             CusNavLink(doNavigate: $navigateToAddProduct, destination:
                         CreateProductScreen(requests: $request,
                                             thumbNail: $thumbNail,
-                                            backToPrepare: $backToPrepare,
                                             fromPrepare: .constant(false))
                             .environmentObject(productManager)
             )

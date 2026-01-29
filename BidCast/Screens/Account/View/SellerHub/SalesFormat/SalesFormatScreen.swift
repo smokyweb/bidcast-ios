@@ -9,6 +9,7 @@ import SwiftUI
 import AlertToast
 
 struct SalesFormatScreen: View {
+    
     @State private var selectedFormat: SalesFormat = .auction
     @State private var startingBid: String = ""
     @Environment(\.presentationMode) var presentationMode
@@ -26,7 +27,7 @@ struct SalesFormatScreen: View {
     @Binding var videoUrls: [String]
     
     @Binding var thumbNail : String
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
@@ -41,9 +42,11 @@ struct SalesFormatScreen: View {
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
     @Binding var productId : String
-    var didTapBack : ((Bool,ProductManager) -> Void)?
-    var didTapEdit : ((ProductDataModel1) -> Void)?
-    var delegate: ShowStepDelegate?
+//    var didTapBack : ((Bool,ProductManager) -> Void)?
+//    var didTapEdit : ((ProductDataModel1) -> Void)?
+    var didTapBack : ((Bool, ProductManager, LetsPrepareCoordinator) -> Void)?
+    var didTapEdit : ((ProductDataModel1, LetsPrepareCoordinator) -> Void)?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     @EnvironmentObject var productManager: ProductManager
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -203,22 +206,23 @@ struct SalesFormatScreen: View {
                 videoUrls: $videoUrls,
                 request : $request,storeScheduleRequest: $storeScheduleRequest,
                 thumbNail: $thumbNail,
-                backToPrepare: $backToPrepare,
+//                backToPrepare: $backToPrepare,
                 fromPrepare:$fromPrepare,
                 backToCreateProduct: $backToCreateProduct,
                 productId: $productId,
-                didTapBack:{ value,manager in
-                    didTapBack?(value,manager)
-                },didTapEdit:{ product in
-                    didTapEdit?(product)
+                didTapBack:{ value,manager,coordinator in
+                    didTapBack?(value,manager,coordinator)
+                },didTapEdit:{ product,coordinator in
+                    didTapEdit?(product,coordinator)
                 },
-                delegate:delegate,
+              
                 onContinue: {
                     request.pricing = startingBid
                     request.weight = weight + " " + selectedUnit
                     presentationMode.wrappedValue.dismiss()
                 }
             )
+            .environmentObject(productManager)
         )
         
     }

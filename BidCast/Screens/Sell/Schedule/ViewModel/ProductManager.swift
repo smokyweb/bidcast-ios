@@ -29,6 +29,22 @@ class ProductManager: ObservableObject {
             }
         }
     }
+    func updateProduct(_ updatedProduct: ProductDataModel1) {
+            guard let productId = updatedProduct.id else {
+                print("⚠️ Cannot update product - no ID")
+                return
+            }
+            
+            // Find and replace the existing product
+            if let index = products.firstIndex(where: { $0.id == productId }) {
+                products[index] = updatedProduct
+                print("🔄 Updated product at index \(index): \(updatedProduct.title ?? "Unknown")")
+            } else {
+                // Product not found, add it instead
+                print("⚠️ Product ID \(productId) not found in list, adding instead")
+                addProduct(updatedProduct)
+            }
+        }
     
     /// Add multiple products from inventory
     func addProducts(_ productList: [ProductDataModel1]) {

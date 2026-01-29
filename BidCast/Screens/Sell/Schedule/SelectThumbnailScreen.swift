@@ -31,13 +31,13 @@ struct SelectThumbnailScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @Binding var fromPrepare : Bool
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     
     @State private var isLoadingThumbnail = false
        @State private var thumbnailURL: String = ""
     
     
-    var delegate: ShowStepDelegate?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     var body: some View {
         VStack{
             VStack{
@@ -142,11 +142,11 @@ struct SelectThumbnailScreen: View {
             },cornerRadius: 32, btnTextColor: .white)
             .padding(.top , 10)
             
-            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail, comeFromPrepareScreen: .constant(false),backToPrepare: $backToPrepare))
+            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail, comeFromPrepareScreen: .constant(false)))
             
 //            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
             
-            CusNavLink(doNavigate: $navigateToProuct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,delegate: delegate))
+            CusNavLink(doNavigate: $navigateToProuct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,fromPrepare: $fromPrepare))
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.backGround)

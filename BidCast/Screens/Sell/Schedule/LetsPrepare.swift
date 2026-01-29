@@ -9,11 +9,11 @@ import SwiftUI
 import RichText
 import SVProgressHUD
 
-struct LetsPrepare: View,ShowStepDelegate {
-    
+struct LetsPrepare: View {
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     @Environment(\.presentationMode) var presentationMode
-    @State private var currentIndex = 0
-    @State var prepare =  [LessonModel]()
+//    @State private var currentIndex = 0
+//    @State var prepare =  [LessonModel]()
     @State var isLoading  = false
     
     @State var showhud: Bool = false
@@ -21,14 +21,14 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var showError: Bool = false
     @State var showsData = HomeModel()
     var viewModel = ScheduleViewModel()
-    @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: [], is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")
+//    @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: [], is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var navigateToTips  = false
     @State var navigateToCreateScreen = false
     @State var navigateToCreateShow = false
-    @State var thumbNAil = ""
+//    @State var thumbNAil = ""
     @State var navigateToSelectShow = false
     @State var didLoadPrepare = false
     @State var navigateToshowTitle = false
@@ -41,9 +41,12 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var showId : String = ""
     
     private var currentProgress: Double {
-        guard !prepare.isEmpty else { return 0 }
-        return Double(currentIndex) / Double(prepare.count - 1)
+        guard !coordinator.prepare.isEmpty else { return 0 }
+        return Double(coordinator.currentIndex) / Double(coordinator.prepare.count - 1)
     }
+    
+    
+
     
     @Binding var backToTabBar : Bool
     var body: some View {
@@ -69,11 +72,11 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
-                    ForEach(prepare.indices, id: \.self) { idx in
+                    ForEach(coordinator.prepare.indices, id: \.self) { idx in
                         StepCard(
-                            prepare: prepare[idx],
+                            prepare: coordinator.prepare[idx],
                             index: idx + 1,
-                            isCurrent: idx == currentIndex
+                            isCurrent: idx == coordinator.currentIndex
                         ) {
                             if idx == 0 {
                                 navigateToSelectShow = true
@@ -93,8 +96,8 @@ struct LetsPrepare: View,ShowStepDelegate {
                             //                            goToNextStep()
                         }
                         .onTapGesture {
-                          if !prepare[idx].isLocked {
-                            currentIndex = idx
+                          if !coordinator.prepare[idx].isLocked {
+                            coordinator.currentIndex = idx
                           }
                         }
                     }
@@ -123,7 +126,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             
             
-            CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),backToPrepare: .constant(false), delegate: self))
+            CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $coordinator.request, thumbNail: $coordinator.thumbNAil, comeFromPrepareScreen: .constant(true)))
             
             CusNavLink(doNavigate: $navigateToRehearsal,
                        destination: RehearsalScreen(showUd: .constant(""),
@@ -142,7 +145,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                                                     backToTabBar: $backToTabBar,
                                                     showsData: $showsData ))
             
-            CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, showId: .constant(0), delegate: self))
+            CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $coordinator.request,fromPrepare:.constant(true), showId: .constant(0)))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
             
             
@@ -197,63 +200,115 @@ struct LetsPrepare: View,ShowStepDelegate {
                 }
             }else{
                 if rehearsalNavigation{
-                    if prepare.indices.contains(currentIndex) {
-                        prepare[currentIndex].isDone = true
+                    if coordinator.prepare.indices.contains(coordinator.currentIndex) {
+                        coordinator.prepare[coordinator.currentIndex].isDone = true
                     }
                     
                     // ✅ Unlock next step:
-                    let nextIndex = currentIndex + 1
-                    if prepare.indices.contains(nextIndex) {
-                        prepare[nextIndex].status = "unlocked"
+                    let nextIndex = coordinator.currentIndex + 1
+                    if coordinator.prepare.indices.contains(nextIndex) {
+                        coordinator.prepare[nextIndex].status = "unlocked"
                     }
                     
-                    currentIndex = nextIndex
-                    print("🔓 Next unlocked: ", prepare)
+                    coordinator.currentIndex = nextIndex
+                    print("🔓 Next unlocked: ", coordinator.prepare)
                     rehearsalNavigation = false
                     
                 }else if referScreenNavigation{
-                    if prepare.indices.contains(currentIndex) {
-                        prepare[currentIndex].isDone = true
+                    if coordinator.prepare.indices.contains(coordinator.currentIndex) {
+                        coordinator.prepare[coordinator.currentIndex].isDone = true
                     }
                     
                     // ✅ Unlock next step:
-                    let nextIndex = currentIndex + 1
-                    if prepare.indices.contains(nextIndex) {
-                        prepare[nextIndex].status = "unlocked"
+                    let nextIndex = coordinator.currentIndex + 1
+                    if coordinator.prepare.indices.contains(nextIndex) {
+                        coordinator.prepare[nextIndex].status = "unlocked"
                     }
                     
-                    currentIndex = nextIndex
-                    print("🔓 Next unlocked: ", prepare)
+                    coordinator.currentIndex = nextIndex
+                    print("🔓 Next unlocked: ", coordinator.prepare)
                     referScreenNavigation = false
                 }
             }
         }
+        .onChange(of: coordinator.shouldNavigateBackToPrepare) { shouldNavigate in
+                   if shouldNavigate {
+                       // ✅ Dismiss all presented sheets and navigate back
+                       navigateToSelectShow = false
+                       navigateToRehearsal = false
+                       navigateForLive = false
+                       navigateToshowTitle = false
+                       navigateToReferScreen = false
+                       
+                       // Reset the flag
+                       coordinator.resetNavigation()
+                   }
+               }
         .refreshable {
             didLoadPrepare = false
         }
        
     }
     
-    func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail:String) {
-        didLoadPrepare = true
-            self.request = request
-        self.thumbNAil = thumbNail
-            print("✅ Parent got updated request:\(request) thumbail \(thumbNail)")
-        if prepare.indices.contains(currentIndex) {
-              prepare[currentIndex].isDone = true
-          }
-
-          // ✅ Unlock next step:
-          let nextIndex = currentIndex + 1
-          if prepare.indices.contains(nextIndex) {
-              prepare[nextIndex].status = "unlocked"
-          }
-
-          currentIndex = nextIndex
-          print("🔓 Next unlocked: ", prepare)
-        }
+//    func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail:String) {
+//        didLoadPrepare = true
+//            self.request = request
+//        self.thumbNAil = thumbNail
+//            print("✅ Parent got updated request:\(request) thumbail \(thumbNail)")
+//        if prepare.indices.contains(currentIndex) {
+//              prepare[currentIndex].isDone = true
+//          }
+//
+//          // ✅ Unlock next step:
+//          let nextIndex = currentIndex + 1
+//          if prepare.indices.contains(nextIndex) {
+//              prepare[nextIndex].status = "unlocked"
+//          }
+//
+//          currentIndex = nextIndex
+//          print("🔓 Next unlocked: ", prepare)
+//        }
+//    func didUpdateRequest(_ request: StoreScheduleShowRequest, thumbNail: String) {
+//        print("📍 didUpdateRequest called")
+//        print("   request.product_ids: \(request.product_ids)")
+//        print("   thumbNail: \(thumbNail)")
+//        print("   self exists: \(type(of: self))")
+//        print("   prepare count: \(prepare.count)")
+//        print("   currentIndex: \(currentIndex)")
+//        
+//        // ✅ Use Task with @MainActor
+//        Task { @MainActor in
+//            print("📍 Inside MainActor - START")
+//            
+//            didLoadPrepare = true
+//            self.request = request
+//            self.thumbNAil = thumbNail
+//            
+//            print("📍 Properties updated")
+//            print("✅ Parent got updated request:\(request) thumbail \(thumbNail)")
+//            
+//            if prepare.indices.contains(currentIndex) {
+//                prepare[currentIndex].isDone = true
+//                print("📍 Marked step \(currentIndex) as done")
+//            }
+//
+//            let nextIndex = currentIndex + 1
+//            if prepare.indices.contains(nextIndex) {
+//                prepare[nextIndex].status = "unlocked"
+//                print("📍 Unlocked step \(nextIndex)")
+//            }
+//
+//            currentIndex = nextIndex
+//            print("📍 Updated currentIndex to \(nextIndex)")
+//            print("🔓 Next unlocked: ", prepare)
+//            print("📍 Inside MainActor - END")
+//        }
+//        
+//        print("📍 didUpdateRequest - END")
+//    }
     
     func storeScheduleSHow(){
+        let request = coordinator.request
         guard !request.title.isEmpty else {
             hudMsg = "Please enter title"
                 showhud = true
@@ -269,7 +324,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                 showhud = true
                 return
         }
-        guard !thumbNAil.isEmpty else {
+        guard !coordinator.thumbNAil.isEmpty else {
             hudMsg = "Please select thumbnail image"
                 showhud = true
                 return
@@ -297,7 +352,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                 }
                 SVProgressHUD.show()
                 var thumbImage = [String]()
-                thumbImage.append(thumbNAil)
+                thumbImage.append(coordinator.thumbNAil)
                 self.viewModel.errorMessage = ""
                 var param: [String: Any] = [
                     "title": request.title,
@@ -319,7 +374,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                 let prodIds = request.product_ids.joined(separator: ",")
                 param["product_ids"] = prodIds
                 viewModel.errorMessage?.removeAll()
-                try await viewModel.storeScheduleShow(param: param,images: [thumbNAil],key: "thumbnail[]")
+                try await viewModel.storeScheduleShow(param: param,images: [coordinator.thumbNAil],key: "thumbnail[]")
                 await SVProgressHUD.dismiss()
                 
                 if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
@@ -352,7 +407,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                         steps[idx].status = "locked"
                     }
 
-                    prepare = steps
+                    coordinator.prepare = steps
         } else {
             print("API error: \(dict?.status ?? "")")
         }
@@ -388,19 +443,19 @@ struct LetsPrepare: View,ShowStepDelegate {
     }
     
     private func goToNextStep() {
-        if currentIndex < prepare.count - 1 {
-            currentIndex += 1
+        if coordinator.currentIndex < coordinator.prepare.count - 1 {
+            coordinator.currentIndex += 1
         }else{
             navigateToTips = true
         }
     }
     
     private func unlockNextStep() {
-        let nextIndex = currentIndex + 1
-        if prepare.indices.contains(nextIndex) {
-            prepare[currentIndex].isDone = true
-            prepare[nextIndex].status = "unlocked"
-            currentIndex = nextIndex
+        let nextIndex = coordinator.currentIndex + 1
+        if coordinator.prepare.indices.contains(nextIndex) {
+            coordinator.prepare[coordinator.currentIndex].isDone = true
+            coordinator.prepare[nextIndex].status = "unlocked"
+            coordinator.currentIndex = nextIndex
         }
     }
 }
@@ -412,8 +467,8 @@ struct LetsPrepare: View,ShowStepDelegate {
 
 
 
-protocol ShowStepDelegate {
-    func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail: String)
+protocol ShowStepDelegate {  // ✅ Add AnyObject for weak references
+    func didUpdateRequest(_ request: StoreScheduleShowRequest, thumbNail: String)
 }
 
 
@@ -423,4 +478,80 @@ extension String {
             .split(separator: ",")
             .compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
     }
+}
+
+
+final class LetsPrepareCoordinator: ObservableObject {
+    
+    @Published var request = StoreScheduleShowRequest(
+        title: "", date: "", time: "", category_id: "",
+        auction_type_id: "", product_ids: [],
+        is_explicit: false, show_discoverability: "",
+        repeat_value: "", is_repeat: false, language: "english"
+    )
+
+    @Published var thumbNAil = ""
+    @Published var currentIndex = 0
+    @Published var prepare: [LessonModel] = []
+    @Published var shouldNavigateBackToPrepare = false
+
+//    func didUpdateRequest(_ request: StoreScheduleShowRequest, thumbNail: String) {
+//        print("📍 didUpdateRequest called")
+//        print("   request.product_ids: \(request.product_ids)")
+//        print("   thumbNail: \(thumbNail)")
+//        print("   self exists: \(type(of: self))")
+//        print("   prepare count: \(prepare.count)")
+//        print("   currentIndex: \(currentIndex)")
+//        
+//        // ✅ Use Task with @MainActor
+//        Task { @MainActor in
+//            print("📍 Inside MainActor - START")
+//            
+//            self.request = request
+//            self.thumbNAil = thumbNail
+//            
+//            print("📍 Properties updated")
+//            print("✅ Parent got updated request:\(request) thumbail \(thumbNail)")
+//            
+//            if prepare.indices.contains(currentIndex) {
+//                prepare[currentIndex].isDone = true
+//                print("📍 Marked step \(currentIndex) as done")
+//            }
+//
+//            let nextIndex = currentIndex + 1
+//            if prepare.indices.contains(nextIndex) {
+//                prepare[nextIndex].status = "unlocked"
+//                print("📍 Unlocked step \(nextIndex)")
+//            }
+//
+//            currentIndex = nextIndex
+//            print("📍 Updated currentIndex to \(nextIndex)")
+//            print("🔓 Next unlocked: ", prepare)
+//            print("📍 Inside MainActor - END")
+//        }
+//        
+//        print("📍 didUpdateRequest - END")
+//    }
+    
+    @MainActor
+    func markCurrentStepCompleted() {
+        if prepare.indices.contains(currentIndex) {
+            prepare[currentIndex].isDone = true
+        }
+
+        let nextIndex = currentIndex + 1
+        if prepare.indices.contains(nextIndex) {
+            prepare[nextIndex].status = "unlocked"
+        }
+
+        currentIndex = nextIndex
+        print("📍 Updated currentIndex to \(nextIndex)")
+        print("🔓 Next unlocked: ", prepare)
+        print("📍 Inside MainActor - END")
+    }
+    
+    func resetNavigation() {
+           shouldNavigateBackToPrepare = false
+       }
+
 }

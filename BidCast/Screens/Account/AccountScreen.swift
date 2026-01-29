@@ -329,7 +329,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToAnalytics, destination: AnalyticsScreen())
             CusNavLink(doNavigate: $navigationState.navigateToAffilateProgram, destination: AffiliateProgramScreen(referralCode: "SELLER2025", stats: ReferralStats(totalReferrals: 0, earnings: 0.0), onShare: {}))
             CusNavLink(doNavigate: $navigationState.navigateToCreateProduct, destination: ListProductScreen())
-            CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), backToPrepare: $navigationState.navigateToTitle, showId: .constant(0)))
+            CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), /*backToPrepare: $navigationState.navigateToTitle, */showId: .constant(0)))
         }
     }
 }
@@ -573,7 +573,7 @@ struct SellerHubSection: View {
             CusNavLink(doNavigate: $navigateToshowTitle, destination:
                         ShowTitleTips(request : $scheduleRequest,
                                       fromPrepare:.constant(false),
-                                      backToPrepare: $navigateToshowTitle,
+//                                      backToPrepare: $navigateToshowTitle,
                                       showId:$SHowId) )
         }
         .padding(.horizontal, 12)

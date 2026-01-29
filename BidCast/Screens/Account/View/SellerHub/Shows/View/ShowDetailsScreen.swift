@@ -78,7 +78,7 @@ struct ShowDetailsScreen: View {
             CusNavLink(doNavigate: $navigateToshowTitle, destination:
                         ShowTitleTips(request : $scheduleRequest,
                                       fromPrepare:.constant(false),
-                                      backToPrepare: $navigateToshowTitle,
+//                                      backToPrepare: $navigateToshowTitle,
                                       showId: $showID))
         }
         .background(Color.backGround)

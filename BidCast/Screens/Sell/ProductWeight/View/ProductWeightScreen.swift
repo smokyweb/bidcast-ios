@@ -11,6 +11,7 @@ import AlertToast
 
 struct ProductWeightScreen: View {
     
+
     @Environment(\.presentationMode) var presentationMode
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -44,7 +45,7 @@ struct ProductWeightScreen: View {
     @StateObject private var viewModel =  ListProductViewModel()
     @State var navigateToAddProduct = false
     @Binding var thumbNail : String
-    @Binding var backToPrepare : Bool
+//    @Binding var backToPrepare : Bool
     @State var navigateToProuct = false
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
@@ -53,10 +54,10 @@ struct ProductWeightScreen: View {
     
     @EnvironmentObject var productManager: ProductManager
     
-    var didTapBack : ((Bool,ProductManager) -> Void)?
-    var didTapEdit : ((ProductDataModel1) -> Void)?
+    var didTapBack : ((Bool,ProductManager,LetsPrepareCoordinator) -> Void)?
+    var didTapEdit : ((ProductDataModel1,LetsPrepareCoordinator) -> Void)?
     
-    var delegate: ShowStepDelegate?
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     
     var onContinue: () -> Void
     
@@ -227,34 +228,33 @@ struct ProductWeightScreen: View {
                     request:$storeScheduleRequest,
                     thumbNail: $thumbNail,
                     fromPrepare: .constant(false),
-                    backToPrepare: $backToPrepare,
                     NavFromProductLibrary: .constant(false),
                     backToCreateProduct: $backToCreateProduct,
-                    didTapBack:{ value,maanger in
-                        didTapBack?(value,maanger)
-                    },didTapEdit: { product in
-                       didTapEdit?(product)
+                    didTapBack:{ value,maanger,coordinator in
+                        didTapBack?(value,maanger,coordinator)
+                    },didTapEdit: { product ,coordinator in
+                       didTapEdit?(product,coordinator)
                       
-                    }
+                    },
                 )
             )
             CusNavLink(
                 doNavigate: $navigateToProuct,
                 destination: AddProductsScreen(
+                    
                     request:$storeScheduleRequest,
                     thumbNail: $thumbNail,
                    
                     fromPrepare: $fromPrepare,
-                    backToPrepare: $backToPrepare,
                     NavFromProductLibrary: .constant(false),
                     backToCreateProduct: $backToCreateProduct,
-                    didTapBack:{ value,maanger in
-                        didTapBack?(value,maanger)
-                    },didTapEdit: { product in
-                       didTapEdit?(product)
+                    didTapBack:{ value,maanger,coordinator in
+                        didTapBack?(value,maanger,coordinator)
+                    },didTapEdit: { product ,coordinator in
+                       didTapEdit?(product,coordinator)
                       
                     },
-                    delegate: delegate
+                   
                 ).environmentObject(productManager)
             )
         }
@@ -278,6 +278,7 @@ struct ProductWeightScreen: View {
                 CommonBottomSheet(
                     sheetType: $alertType,
                     onPrimaryClick: {
+                        productId = ""
                         if self.fromPrepare {
                             navigateToProuct = true
                         } else {
@@ -580,16 +581,60 @@ struct ProductWeightScreen: View {
     //    }
     
     
+//    func storeSuccess(){
+//        let response = viewModel.storeProductResponse
+//        request = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
+//        imageUrls = []
+//        videoUrls = []
+//        
+//        if response?.status == "success"{
+//           
+//            if let newProduct = response?.data {
+//                DispatchQueue.main.async { [weak productManager] in
+//                    productManager?.addProduct(newProduct)
+//                }
+//            }
+//            
+//            alertType = .sheetType(
+//                icon: .success,
+//                title: response?.status?.capitalized ?? "",
+//                message: response?.message?.capitalized ?? "",
+//                primaryBtnText: AppString.ok.localized,
+//                secondaryBtnText: ""
+//            )
+//            showError = true
+//        }else{
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: response?.error_type?.capitalized ?? "",
+//                message: response?.message?.capitalized ?? "",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            showError = true
+//        }
+//    }
+//    @MainActor
     func storeSuccess(){
         let response = viewModel.storeProductResponse
+        
         request = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
         imageUrls = []
         videoUrls = []
         
         if response?.status == "success"{
-           
-            if let newProduct = response?.data {
-                productManager.addProduct(newProduct)
+            
+            if let updatedProduct = response?.data {
+                // ✅ FIX: Check if we're updating or creating
+                if !productId.isEmpty {
+                    // UPDATE existing product
+                    print("🔄 Updating product with ID: \(productId)")
+                    productManager.updateProduct(updatedProduct)
+                } else {
+                    // CREATE new product
+                    print("➕ Adding new product")
+                    productManager.addProduct(updatedProduct)
+                }
             }
             
             alertType = .sheetType(
@@ -600,7 +645,7 @@ struct ProductWeightScreen: View {
                 secondaryBtnText: ""
             )
             showError = true
-        }else{
+        } else {
             alertType = .sheetType(
                 icon: .alert,
                 title: response?.error_type?.capitalized ?? "",
