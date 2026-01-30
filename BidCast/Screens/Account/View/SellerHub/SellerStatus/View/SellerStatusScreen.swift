@@ -51,7 +51,7 @@ struct SellerStatusScreen: View {
                     let seller = sellerData.live_sell_vendor
                     let market = sellerData.marketplace_vendor
                     if seller != nil {
-                        SellerStatusCardView(title: seller?.title ?? "", status: seller?.status ?? "", icon: "cart.fill", subtitle: seller?.submitted ?? "",statusColor: .darkGreen)
+                        SellerStatusCardView(title: seller?.title ?? "", status: seller?.status ?? "", icon: "cart.fill", subtitle: seller?.submitted ?? "",statusColor: .gray)
                     }
                     if market != nil {
                         SellerStatusCardView(title: market?.title ?? "", status: market?.status ?? "", icon: "video.fill", subtitle: market?.vendor_since ?? "",statusColor: .darkYellow)

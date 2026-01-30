@@ -947,7 +947,7 @@ struct RehearsalScreen: View {
             productDataFromEvent: $productListData,
             categoryId: "\(showsData.category_id ?? 0)",
             onTapCancel: {
-                showShopSheet = false
+                showFreeBie = false
             },
             onProductSelected: { product in
                 selectedFreebie = product

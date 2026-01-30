@@ -18,7 +18,8 @@ struct CustomProfileImage: View {
     var profileIconTapped: (() -> Void) = { }
     
     var body: some View {
-        if let url = url, !url.isEmpty, let imageURL = URL(string: url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "") {
+        if let url = url, !url.isEmpty, let imageURL = URL(string: url)
+ {
             CachedAsyncImage(
                 url: imageURL,
                 placeholder: AnyView(

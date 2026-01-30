@@ -1287,13 +1287,17 @@ extension ProductCardView {
 // MARK: - Product Image Extension
 extension ProductCardView {
     var productImageView: some View {
-        CustomProfileImage(
-            url: product.images?.first ?? "",
-            isCircular: false,
-            size: 120
-        )
-        .frame(width: 120, height: 120)
-    }
+          let imageURL =
+              product.thumbnail?.first ??
+              product.images?.first
+
+          return CustomProfileImage(
+              url: imageURL,
+              isCircular: false,
+              size: 120
+          )
+          .frame(width: 120, height: 120)
+      }
 }
 
 // MARK: - Product Details Extension
