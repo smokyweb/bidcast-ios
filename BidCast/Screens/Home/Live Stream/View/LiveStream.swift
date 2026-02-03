@@ -924,7 +924,7 @@ struct LiveStream: View {
                 swipeToBidSection
             }
             else{
-                PrimaryButton(title: "Buy Now",onButtonClick: {
+                PrimaryButton(title: "Buy Now",isOutLine: false,onButtonClick: {
                     if UserDefaults.allowBidForAllUser {
                         self.sendBid(
                             roomId: currentRoomID,

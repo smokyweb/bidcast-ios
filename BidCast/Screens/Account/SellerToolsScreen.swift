@@ -173,6 +173,9 @@ struct SellerToolsScreen: View {
                 ToolsRowItem(icon: "tips", title: "Tips") {
                     navigationState.navigateToTips = true
                 }
+                ToolsRowItem(icon: "tips", title: "Surprise Sets") {
+                    navigationState.navigateToSurprise = true
+                }
             }
         }
     }
@@ -247,8 +250,8 @@ struct SellerToolsScreen: View {
 //                backToPrepare: .constant(false),
 //                fromPrepare: .constant(false),
 //                backToCreateProduct: .constant(false), onContinue: {}))
-//            
-            
+//
+            CusNavLink(doNavigate: $navigationState.navigateToSurprise, destination: SurpriseSetScreen())
             
             CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigateToIdentityVerification, destination: IdentityVerificationScreen())
@@ -354,6 +357,7 @@ struct SellerToolsNavigationState {
     var navigateToWallet = false
     var navigateToOffers = false
     var navigateToTips = false
+    var navigateToSurprise = false
     
     // Promotion Section
     var navigateToAffiliate = false
