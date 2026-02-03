@@ -335,7 +335,7 @@ struct CreateSurpriseScreen: View {
             )
         }
         if segment != .Buyit {
-            trimmedPrice.removeAll()
+            trimmedPrice = "0"
         }
         let param = SurpriseRequest(name: surpriseName,
                                     type: type,
