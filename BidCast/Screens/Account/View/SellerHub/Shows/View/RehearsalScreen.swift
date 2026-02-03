@@ -108,6 +108,7 @@ struct RehearsalScreen: View {
     @State var viewwerCount = 0
     @State private var bidCountdownSeconds = 30
     @State var categoryid = ""
+    @State private var auctionTypeId : Int = 0
     @State private var hasCountdownStarted = false
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
@@ -384,7 +385,7 @@ struct RehearsalScreen: View {
                         startingBidAmount: bid,
                         requireTime: reqTime,
                         counterBidTime: counterTime,
-                        suddenDeath: suddenDeath
+                        suddenDeath: suddenDeath,auctionTypeId:self.auctionTypeId
                     )
                 },
                 onShowToast: { message in
@@ -934,7 +935,18 @@ struct RehearsalScreen: View {
             onProductSelected: { product in
                 auctionedProductData = product
                 nextProductId = "\(product.id ?? 0)"
-                showAuctionSheet = true
+                if self.auctionTypeId != 5{
+                    showAuctionSheet = true
+                }else{
+                    showAuctionSheet = false
+                    showShopSheet = false
+                    hasAuctionStarted = true
+                    socketManager.startAuction(
+                        roomId: roomId,
+                        products: [nextProductId],
+                        auctionTypeId:self.auctionTypeId
+                    )
+                }
             }
         )
     }
@@ -1233,6 +1245,7 @@ struct RehearsalScreen: View {
                         if auctionedProductData != nil {
                             CurrentProductView(
                                 product: auctionedProductData,
+                                auctionTypeId:$auctionTypeId,
                                 currentPrice: $currentPrice,
                                 suddenDeath: $sudden_Death,
                                 bidTime: $socketManager.bidTime,
@@ -1651,6 +1664,7 @@ struct RehearsalScreen: View {
             self.joinAgoraChannelIfNeeded()
             self.categoryid = "\(data.category?.id ?? 0)"
             // STEP 4: Prepare seller data (light, can stay background)
+            self.auctionTypeId = data.auction?.id ?? 0
             let seller = SellerModel(
                 isFollowed: data.user?.is_followed ?? false,
                 id: "\(data.user?.id ?? 0)",
@@ -1669,7 +1683,7 @@ struct RehearsalScreen: View {
                 time: data.time ?? "",
                 date: data.date ?? "",
                 allowBidForAll: true,
-                showTimer: ""
+                showTimer: "",auctionTypeId: data.auction?.id ?? 0
             )
             sellerId = "\(UserDefaults.userId)"
             // STEP 6: Socket setup in background
@@ -1831,7 +1845,18 @@ struct RehearsalScreen: View {
             }
 //            auctionedProductData = product.first ?? ProductDataModel1()
             nextProductId = "\(product.id ?? 0)"
-            showAuctionSheet = true
+           
+            if self.auctionTypeId != 5{
+                socketManager.startAuction(
+                    roomId: roomId,
+                    products: [nextProductId],auctionTypeId:self.auctionTypeId
+                )
+                showAuctionSheet = false
+                showShopSheet = false
+                hasAuctionStarted = true
+            }else{
+                showAuctionSheet = true
+            }
         }
         socketManager.listenForRunNextProductError { roomID , message in
             print("No Pinned products found for \(roomID)")
@@ -1868,7 +1893,13 @@ struct RehearsalScreen: View {
         // Update only matching room
         guard self.roomId == roomId else { return }
         self.auctionedProductData = products.first ?? ProductDataModel1()
-        currentPrice = startingBidAmount
+        
+        if startingBidAmount == 0.0{
+            let price = Double(products.first?.pricing ?? "") ?? 0.0
+            currentPrice = price
+        }else{
+            currentPrice = startingBidAmount
+        }
        sudden_Death = suddenDeath
         print("🟢 Products updated for room:", roomId)
     }
@@ -2135,7 +2166,8 @@ struct RehearsalScreen: View {
         time: String,
         date: String,
         allowBidForAll: Bool,
-        showTimer:String
+        showTimer:String,
+        auctionTypeId : Int = -1
     ) {
         
 //        let productPayload = products.map { product in
@@ -2173,9 +2205,15 @@ struct RehearsalScreen: View {
             "is_live": true,
             "show_detail": "Live auction room created via Rehearsal",
             "show_timer":showTimer,
-            "category_id":categoryid
+            "category_id":categoryid,
+            "auction_type_id":auctionTypeId
         ]
-        
+        guard auctionTypeId != -1 else{
+           
+            hudMsg = "Auction Type missing"
+            showhud = true
+            return
+        }
         SocketManagerService.shared.createRoom(payload: payload)
     }
     

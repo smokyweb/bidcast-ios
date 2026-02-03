@@ -53,10 +53,13 @@ struct RoomModel: Codable {
     let time: String?
     let show_id: String?
     let allow_bid_for_all: Bool?
-    let bid_count_down: String?
+    var bid_count_down: String?
     let show_timer: String?
     var is_room_created : Bool?
     var productCount : Int?
+    var auction_type_id: Int?
+    var category_id: String?
+    var date: String?
     var id: String { room_id ?? "" }
 }
 
@@ -869,22 +872,41 @@ extension SocketManagerService {
     func startAuction(
         roomId: String,
         products: [String],
-        startingBidAmount: String,
-        requireTime: Int,
-        counterBidTime: Int,
-        suddenDeath: Bool
+        startingBidAmount: String? = nil,
+        requireTime: Int? = nil,
+        counterBidTime: Int? = nil,
+        suddenDeath: Bool? = nil,
+        auctionTypeId:Int
     ) {
         performIfConnected {
+//            var payload: [String: Any] = [
+//                "room_id": roomId,
+//                "products": products,
+//                "starting_bid_amount": startingBidAmount,
+//                "require_time": requireTime,
+//                "sudden_death": suddenDeath,
+//                "auction_type_id":auctionTypeId
+//            ]
             var payload: [String: Any] = [
                 "room_id": roomId,
                 "products": products,
-                "starting_bid_amount": startingBidAmount,
-                "require_time": requireTime,
-                "sudden_death": suddenDeath
+                "auction_type_id": auctionTypeId
             ]
-            if !suddenDeath{
-                payload["counter_bid_time"] = counterBidTime
+            if let startingBidAmount {
+                payload["starting_bid_amount"] = startingBidAmount
             }
+            if let requireTime {
+                payload["require_time"] = requireTime
+            }
+            if let suddenDeath {
+                payload["sudden_death"] = suddenDeath
+                
+                if suddenDeath == false, let counterBidTime {
+                    payload["counter_bid_time"] = counterBidTime
+                }
+            }
+
+           
             hasWon = false
             socket.emit("start_auction", payload)
             logger.info("🚀 Sent start_auction: \(payload)")

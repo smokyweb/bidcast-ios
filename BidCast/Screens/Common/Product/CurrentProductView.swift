@@ -10,7 +10,7 @@ import SwiftUI
 struct CurrentProductView: View {
     
     let product: ProductDataModel1
-    
+    @Binding var auctionTypeId: Int
     @Binding var currentPrice: Double
     @Binding var suddenDeath : Bool
     @Binding var bidTime: String
@@ -110,20 +110,24 @@ struct CurrentProductView: View {
                             .font(.custom(poppinsBold, size: 13))
                             .foregroundColor(.white)
                         if hasWon{
-                            Text("Sold")
-                                .font(.custom(poppinsBold, size: 13))
-                                .foregroundColor(.danger)
+                            if userName != ""{
+                                Text("Sold")
+                                    .font(.custom(poppinsBold, size: 13))
+                                    .foregroundColor(.danger)
+                            }
                         }else{
-                            HStack(spacing: 4) {
-                                if suddenDeath{
-                                    Text("💀")
+                            if auctionTypeId != 5{
+                                HStack(spacing: 4) {
+                                    if suddenDeath{
+                                        Text("💀")
+                                            .font(.custom(poppinsSemiBold, size: 13))
+                                            .foregroundColor(timeToSeconds(bidTime) < 10 ? .red : .white)
+                                    }
+                                    
+                                    Text(bidTime)
                                         .font(.custom(poppinsSemiBold, size: 13))
                                         .foregroundColor(timeToSeconds(bidTime) < 10 ? .red : .white)
                                 }
-                                
-                                Text(bidTime)
-                                    .font(.custom(poppinsSemiBold, size: 13))
-                                    .foregroundColor(timeToSeconds(bidTime) < 10 ? .red : .white)
                             }
                         }
                     }

@@ -125,6 +125,7 @@ struct LiveStream: View {
     @Binding var agoraToken: String
     
     @State var isFollowing: Bool = false
+    @State private var auctionTypeId = -1
     
     @State private var sellerInfo: SellerInfoResponse? = nil
     
@@ -889,6 +890,7 @@ struct LiveStream: View {
     private func currentProductCard(product: ProductDataModel1) -> some View {
         CurrentProductView(
             product: product,
+            auctionTypeId:$auctionTypeId,
             currentPrice: $currentPrice,
             suddenDeath: $sudden_Death,
             bidTime: $socketManagerChat.bidTime,
@@ -917,8 +919,34 @@ struct LiveStream: View {
     @ViewBuilder
     private var biddingControls: some View {
         HStack(spacing: 8) {
-            customBidButton
-            swipeToBidSection
+            if self.auctionTypeId != 5{
+                customBidButton
+                swipeToBidSection
+            }
+            else{
+                PrimaryButton(title: "Buy Now",onButtonClick: {
+                    if UserDefaults.allowBidForAllUser {
+                        self.sendBid(
+                            roomId: currentRoomID,
+                            bidAmount: currentPrice.description,
+                            productId: currentProductID ?? "", auctionTypeId: auctionTypeId
+                            
+                            
+                        )
+                    } else {
+                        if handleBidding(){
+                            self.sendBid(
+                                roomId: currentRoomID,
+                                bidAmount: currentPrice.description,
+                                productId: currentProductID ?? "", auctionTypeId: auctionTypeId
+                                
+                                
+                            )
+                        }
+                    }
+                })
+            }
+            
         }
         .padding(.horizontal)
         .onAppear {
@@ -990,9 +1018,10 @@ struct LiveStream: View {
             Text("Bid: $\(Int(nextBid))")
                 .font(.custom(poppinsSemiBold, size: 14))
                 .foregroundColor(.black)
+           
+                chevronAnimation(offset: 3)
+                chevronAnimation(offset: 6)
             
-            chevronAnimation(offset: 3)
-            chevronAnimation(offset: 6)
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
@@ -2041,7 +2070,9 @@ extension LiveStream {
             winnerProfileID = Int(bid.user_id ?? "") ?? 0
             winnerProfileImage = bid.user_image ?? ""
             winnerAmount = bid.bid_amount ?? ""
-            currentPrice = Double(winnerAmount) ?? 0.0
+            if winnerName != ""{
+                currentPrice = Double(winnerAmount) ?? 0.0
+            }
         }
         
         SocketManagerService.shared.getAllowBidForAll(forRoom: roomId) { allowed in
@@ -2146,7 +2177,12 @@ extension LiveStream {
 
         // Optional: set current product
         self.currentProductID = "\(products.first?.id ?? 0)"
-        currentPrice = startingBidAmount
+        if startingBidAmount == 0.0{
+            let price = Double(products.first?.pricing ?? "") ?? 0.0
+            currentPrice = price
+        }else{
+            currentPrice = startingBidAmount
+        }
         sudden_Death = suddenDeath
         // Auction config
 //        self.startingBidAmount = startingBidAmount
@@ -2183,6 +2219,7 @@ extension LiveStream {
                 randomWinner = winnerName.capitalizingFirstLetter()
             }
             randomWinnerImage = winnerProfileImage
+            currentPrice = Double(winnerAmount) ?? 0.0
         }
         
 //        let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
@@ -2255,9 +2292,10 @@ extension LiveStream {
             )
             return
         }
-        
-        categoryId = socketRooms[matchingRoomIndex].products?.first?.category?.id ?? 0
-        sellerId = "\(socketRooms[matchingRoomIndex].products?.first?.user?.id ?? 0)"
+        let currentRoomData = socketRooms[matchingRoomIndex]
+        categoryId = currentRoomData.products?.first?.category?.id ?? 0
+        sellerId = "\(currentRoomData.products?.first?.user?.id ?? 0)"
+        auctionTypeId = currentRoomData.auction_type_id ?? 0
         self.agoraToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
         if !agoraToken.isEmpty && !roomId.isEmpty {
             print("🎥 Joining Agora with token: \(agoraToken)")
@@ -2373,14 +2411,15 @@ extension LiveStream {
         }
     }
 
-    func sendBid(roomId: String, bidAmount: String, productId: String) {
+    func sendBid(roomId: String, bidAmount: String, productId: String,auctionTypeId :Int) {
         let data: [String: Any] = [
             "room_id": roomId,
             "bid_amount": bidAmount,
             "user_name": UserDefaults.userName,
             "user_image": UserDefaults.profileURL,
             "user_id": "\(UserDefaults.userId)",
-            "product_id": productId
+            "product_id": productId,
+            "auction_type_id":auctionTypeId
         ]
         socketManagerChat.sendBid(payload: data)
         currentPrice = Double(bidAmount) ?? 0.0
@@ -2398,6 +2437,7 @@ extension LiveStream {
             productId = 0
             self.currentPrice = 0.0
             self.currentProductIndex = -1
+        auctionedProductData = nil
         socketManagerChat.leaveShow(showId: showId, UserId: "\(UserDefaults.userId)")
         }
 
@@ -2425,7 +2465,9 @@ extension LiveStream {
             self.sendBid(
                 roomId: currentRoomID,
                 bidAmount: newPrice.description,
-                productId: currentProductID ?? ""
+                productId: currentProductID ?? "", auctionTypeId: auctionTypeId
+                
+                
             )
         }
 
@@ -2435,7 +2477,7 @@ extension LiveStream {
             self.sendBid(
                 roomId: currentRoomId,
                 bidAmount: "\(amount)",
-                productId: currentProductID ?? ""
+                productId: currentProductID ?? "", auctionTypeId: auctionTypeId
             )
             
             currentPrice = amount
