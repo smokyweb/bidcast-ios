@@ -11,7 +11,7 @@ struct SurpriseRequest: Encodable {
     var name: String
     var type: String
     var description: String
-    var price: String
+    var price: String? = nil
     var shippingProfileId: Int
     var quickSpin: Int
     var autoRandomizer: Int

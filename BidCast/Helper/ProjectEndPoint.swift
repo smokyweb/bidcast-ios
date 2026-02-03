@@ -148,6 +148,7 @@ enum APIEndPoint{
     case updateVacation(param:vacationRequest)
     case makeClip(param:ClipRequest)
     case createSurprise(param:SurpriseRequest)
+    case getSurprise
 }
 
 extension APIEndPoint: EndPointType {
@@ -502,6 +503,8 @@ extension APIEndPoint: EndPointType {
             return "get-clips?seller_id=\(param.sellerId ?? "")&page=\(param.page)"
         case .createSurprise:
             return "store-surprise-product"
+        case .getSurprise:
+            return "get-surprise-product"
         }
     }
     
@@ -796,6 +799,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .createSurprise(param: let param):
             return .post
+        case .getSurprise:
+            return .get
         }
     }
     
@@ -1096,6 +1101,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .createSurprise(param: let param):
             return param
+        case .getSurprise:
+            return nil
         }
     }
     
@@ -1378,6 +1385,8 @@ extension APIEndPoint: EndPointType {
         case .getclip:
             return nil
         case .createSurprise:
+            return nil
+        case .getSurprise:
             return nil
         }
     }

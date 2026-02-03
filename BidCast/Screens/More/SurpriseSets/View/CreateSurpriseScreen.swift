@@ -289,7 +289,7 @@ struct CreateSurpriseScreen: View {
     private func validateAndSubmit() {
         let trimmedName  = surpriseName.trimmingCharacters(in: .whitespaces)
         let trimmedDesc  = surpriseDescription.trimmingCharacters(in: .whitespaces)
-        let trimmedPrice = buyInPrice.trimmingCharacters(in: .whitespaces)
+        var trimmedPrice = buyInPrice.trimmingCharacters(in: .whitespaces)
       
         // Name
         if trimmedName.isEmpty {
@@ -333,6 +333,9 @@ struct CreateSurpriseScreen: View {
                 quantity: $0.quantity,
                 description: $0.description
             )
+        }
+        if segment != .Buyit {
+            trimmedPrice.removeAll()
         }
         let param = SurpriseRequest(name: surpriseName,
                                     type: type,
