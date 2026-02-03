@@ -172,7 +172,7 @@ struct ContactUs: View {
             .padding(.horizontal,16)
             .padding(.bottom,8)
             .background(.backGround)
-            .shadow(radius: 3)
+//            .shadow(radius: 3)
            
         }
         .toast(isPresenting: $showhud) {

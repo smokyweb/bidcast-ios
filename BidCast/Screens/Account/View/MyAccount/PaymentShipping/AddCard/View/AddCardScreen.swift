@@ -69,11 +69,11 @@ struct AddCardScreen: View {
                         .foregroundColor(.white)
                         .font(.headline)
                     
-                    TextField("Enter Name", text: $cardHolderName)
-                        .foregroundColor(.gray)
+                 
+                    Text(cardHolderName.isEmpty ? "NAME" : cardHolderName)
                         .font(.custom(poppinsMedium, size: 13.0))
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .padding(.bottom, 10)
+                        .foregroundColor(.white)
+                        .font(.headline)
                     
                     HStack {
                         Text(cvv.isEmpty ? "CVV" : cvv)

@@ -107,7 +107,7 @@ struct NotificationScreen: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(.defaultTheme)
-                        .cornerRadius(12)
+                        .cornerRadius(32)
                         .padding(.horizontal)
                         .padding(.bottom, 10)
                 }

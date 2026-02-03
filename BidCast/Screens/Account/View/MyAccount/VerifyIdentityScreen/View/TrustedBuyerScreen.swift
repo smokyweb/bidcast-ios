@@ -218,7 +218,7 @@ struct TrustedBuyerScreen: View {
         }
         .bottomSheet(
             isPresented: $showError,
-            height: screenHeight / 2.3,
+            height: screenHeight / 3.3,
             topBarCornerRadius: 25,
             showTopIndicator: false,onDismiss: {
                 showError = true

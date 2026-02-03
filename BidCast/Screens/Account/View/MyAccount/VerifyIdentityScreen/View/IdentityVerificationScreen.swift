@@ -304,19 +304,19 @@ struct KycDetailsView: View {
     var body: some View {
         VStack(spacing: 0) {
 
-            KycDetailRow(title: "Phone", value: details.phone)
+            KycDetailRow(title: "Phone", value: details.phone ?? "N/A")
             Divider()
 
-            KycDetailRow(title: "City", value: details.city)
+            KycDetailRow(title: "City", value: details.city ?? "N/A")
             Divider()
 
-            KycDetailRow(title: "Country", value: details.country)
+            KycDetailRow(title: "Country", value: details.country ?? "N/A")
             Divider()
 
-            KycDetailRow(title: "Postal Code", value: details.postalCode)
+            KycDetailRow(title: "Postal Code", value: details.postalCode ?? "N/A")
             Divider()
 
-            KycDetailRow(title: "Bank ID", value: details.bankID)
+            KycDetailRow(title: "Bank ID", value: details.bankID ?? "N/A")
             Divider()
 
             KycDetailRow(title: "Routing Number", value: details.rountingNumber)

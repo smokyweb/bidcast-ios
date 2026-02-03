@@ -79,7 +79,7 @@ struct EditClipScreen: View {
 
             if isLoading {
                 ProgressView("Preparing video…")
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
             } else if let localVideoURL {
                 VideoTrimmerView(
                     localVideoURL: localVideoURL,

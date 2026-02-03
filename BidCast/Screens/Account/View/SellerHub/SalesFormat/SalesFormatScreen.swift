@@ -32,7 +32,8 @@ struct SalesFormatScreen: View {
     @State var hudMsg: String = ""
     @State var showError: Bool = false
     
-   
+    @State private var priceText: String = ""
+
     
     
     @State var isTappedFlash: Bool = false
@@ -62,6 +63,11 @@ struct SalesFormatScreen: View {
                 )
             }.frame(height:40)
                 .background(.white)
+                .onAppear {
+                    priceText = formatPrice(request.pricing)
+                }
+
+
             
             ScrollView{
                 HStack(alignment: .top, spacing: 8) {
@@ -99,9 +105,8 @@ struct SalesFormatScreen: View {
                 }
                 Spacer()
                 // Starting Bid
-                
                 VStack(alignment: .leading, spacing: 12) {
-                    AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "$0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
+                    AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "$0.0".localized, icon: .menuProfile, text:$priceText,isIconDisplay : false, isForPrice:true,
                                   custFontName : poppinsSemiBold,
                                   custFontSize : 13.0,
                                   enteredText:  { price in
@@ -217,7 +222,7 @@ struct SalesFormatScreen: View {
                 },
               
                 onContinue: {
-                    request.pricing = startingBid
+                    request.pricing = priceText
                     request.weight = weight + " " + selectedUnit
                     presentationMode.wrappedValue.dismiss()
                 }
@@ -226,6 +231,25 @@ struct SalesFormatScreen: View {
         )
         
     }
+    func formatPrice(_ value: String) -> String {
+        // Trim spaces
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // If already decimal → do nothing
+        if trimmed.contains("."),
+           let dotIndex = trimmed.firstIndex(of: "."),
+           trimmed.distance(from: dotIndex, to: trimmed.endIndex) > 1 {
+            return trimmed
+        }
+
+        // If integer (1, 101, 0) → convert to .00
+        if let number = Double(trimmed), !trimmed.contains(".") {
+            return String(format: "%.2f", number)
+        }
+
+        return trimmed
+    }
+
     
     // Format Button View
     private func formatButton(title: String, systemImage: String, isSelected: Bool) -> some View {

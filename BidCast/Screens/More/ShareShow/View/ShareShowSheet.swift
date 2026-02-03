@@ -56,8 +56,10 @@ struct DynamicShareBottomSheetView: View {
             Button {
                 isPresented = false
             } label: {
-                Image(systemName: "xmark")
+                Image(systemName: "xmark.circle.fill")
                     .font(.title3)
+                    .foregroundColor(.black)   // ✅ make it black
+
             }
         }
         .padding()

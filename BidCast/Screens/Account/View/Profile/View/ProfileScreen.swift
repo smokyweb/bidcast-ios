@@ -270,7 +270,7 @@ struct ProfileScreen: View {
                                                 .padding(.vertical, 4)
                                         }
                                     } else if productData.isEmpty {
-                                        NoDataView(message: "No Product Found")
+                                        NoDataView(message: "No Product Found",yPosition:screenWidth/3.5)
                                     } else {
                                         ForEach(productData.indices, id: \.self) { index in
                                             var product = productData[index]
@@ -341,7 +341,7 @@ struct ProfileScreen: View {
                         
                         else if selectedTab == "Reviews" {
                             if totalRatingArr.isEmpty {
-                                NoDataView(message: "No ratings Found")
+                                NoDataView(message: "No ratings Found",yPosition:screenWidth/3.5)
                             } else {
                                 ForEach(totalRatingArr, id: \.id) { review in
                                     ReviewCard(
