@@ -90,9 +90,24 @@ struct HomeViewScreen: View {
                     }
                     
                 }
-                SearchBarView(placeholder: "What are you looking for?") { debouncedText in
-//                    if debouncedText == "" { return }
-                    self.searchText = debouncedText
+                VStack(spacing:8){
+                    SearchBarView(placeholder: "What are you looking for?") { debouncedText in
+                        //                    if debouncedText == "" { return }
+                        self.searchText = debouncedText
+                    }
+                    if comeFromExploreScreen {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(showCategory)
+                                .font(.custom(poppinsBold, size: 18))
+                                .foregroundColor(.black)
+
+                         
+                        }
+                        .padding(.leading, 4)
+                        .padding(.bottom, 6)
+                    }
+
+                  
                 }
                 Spacer()
                 HeaderMenuIconView(
