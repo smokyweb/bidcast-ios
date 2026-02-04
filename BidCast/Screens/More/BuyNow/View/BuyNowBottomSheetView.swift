@@ -82,7 +82,7 @@ struct BuyNowBottomSheetView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     HStack(spacing: 12) {
-                        AsyncImage(url: URL(string: productImage)) { image in
+                        AsyncImage(url: URL(string: purchaseDetail.product?.images?.first ?? "")) { image in
                             image.resizable()
                         }placeholder: {
                             Color.gray.opacity(0.3)

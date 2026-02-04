@@ -771,6 +771,7 @@ struct MessageRow: View {
                 }
                 Text(message.message)
                     .font(.system(size: 15))
+                    .lineLimit(3)
             }
         }
         .padding()

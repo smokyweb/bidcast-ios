@@ -64,7 +64,7 @@ struct SendTipView: View {
                                     onTap: {
                                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                             selectedAmount = amount
-                                            customAmount = ""
+                                            customAmount = String(selectedAmount ?? 0.0)
                                         }
                                     }
                                 )
