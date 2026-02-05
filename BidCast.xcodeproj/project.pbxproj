@@ -527,6 +527,8 @@
 		D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D82DD46BBE0005A78E /* BundleEx.swift */; };
 		D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569DA2DD46BE50005A78E /* LanguagePickerView.swift */; };
 		D4E569E92DD49A970005A78E /* AppString.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569E82DD49A970005A78E /* AppString.swift */; };
+		D4EB86C72F349ACA00F6C3FA /* ManageProductSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EB86C62F349ACA00F6C3FA /* ManageProductSheet.swift */; };
+		D4EB86C92F349CA700F6C3FA /* ProductSurpriseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EB86C82F349CA700F6C3FA /* ProductSurpriseCard.swift */; };
 		D4F2EA1D2EAA4410001CD4CB /* SellerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F2EA1C2EAA4410001CD4CB /* SellerScreen.swift */; };
 		D4F72B532DF96FE9008A6859 /* ShippingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */; };
 		D4F72B552DF973F7008A6859 /* SummaryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B542DF973F7008A6859 /* SummaryRow.swift */; };
@@ -1134,6 +1136,8 @@
 		D4E569E42DD498900005A78E /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D4E569E52DD4990B0005A78E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D4E569E82DD49A970005A78E /* AppString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppString.swift; sourceTree = "<group>"; };
+		D4EB86C62F349ACA00F6C3FA /* ManageProductSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageProductSheet.swift; sourceTree = "<group>"; };
+		D4EB86C82F349CA700F6C3FA /* ProductSurpriseCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductSurpriseCard.swift; sourceTree = "<group>"; };
 		D4F2EA1C2EAA4410001CD4CB /* SellerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerScreen.swift; sourceTree = "<group>"; };
 		D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingStepView.swift; sourceTree = "<group>"; };
 		D4F72B542DF973F7008A6859 /* SummaryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryRow.swift; sourceTree = "<group>"; };
@@ -2614,6 +2618,8 @@
 				D4086A112F31D4E30015E2F2 /* CreateSurpriseScreen.swift */,
 				D4086A182F31E4140015E2F2 /* ManageProductScreen.swift */,
 				D48611792F32001900CA2565 /* AddProductRowScreen.swift */,
+				D4EB86C62F349ACA00F6C3FA /* ManageProductSheet.swift */,
+				D4EB86C82F349CA700F6C3FA /* ProductSurpriseCard.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4716,6 +4722,7 @@
 				355AE9752DD1F98C00CD3D17 /* HomeViewScreen.swift in Sources */,
 				99C9091C2DC8CD790054620B /* NewsViewModel.swift in Sources */,
 				99C9091D2DC8CD790054620B /* MenuScreen.swift in Sources */,
+				D4EB86C72F349ACA00F6C3FA /* ManageProductSheet.swift in Sources */,
 				D4E569D72DD46BA10005A78E /* LanguageManager.swift in Sources */,
 				D4B615E22DE8312200924A3D /* MakeOfferBottomSheet.swift in Sources */,
 				35987D2B2DE5C7A500D6C2C9 /* PaymentAndShipping Screen.swift in Sources */,
@@ -4771,6 +4778,7 @@
 				D65B7EE12ED579CB000B52EC /* ProductDetailView.swift in Sources */,
 				D4B615D92DE82A5400924A3D /* BuyNowBottomSheetView.swift in Sources */,
 				99C909DE2DC8CDDC0054620B /* NewsResponseModel.swift in Sources */,
+				D4EB86C92F349CA700F6C3FA /* ProductSurpriseCard.swift in Sources */,
 				D678E3542EC88342005283BF /* HomeCategoryView.swift in Sources */,
 				D67DA9642E9D0A4A00ED6556 /* CurrentProductView.swift in Sources */,
 				99C909DF2DC8CDDC0054620B /* UserDetailModal.swift in Sources */,

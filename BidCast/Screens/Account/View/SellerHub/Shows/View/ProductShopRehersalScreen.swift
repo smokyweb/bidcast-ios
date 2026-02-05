@@ -13,6 +13,7 @@ enum RehearsalProductSegment: String, CaseIterable, CustomStringConvertible {
     case auction = "Auction"
     case offers = "Offers"
     case sold = "Sold"
+    case Surprise = "Surprise Sets"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
@@ -61,7 +62,6 @@ struct ProductShopRehersalScreen: View {
     @State private var type = ""
     @State private var status = ""
     
-    
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
@@ -77,7 +77,7 @@ struct ProductShopRehersalScreen: View {
     @State var productViewModel = ProductViewModel()
     
     @State private var totalCount = 0
-    
+    @Binding var auctionTypeId : Int
     @Binding var productDataFromEvent: [ProductDataModel1]
     @State private var productDataFromAPI: [ProductDataModel1] = []
     @State private var sortedProductData: [ProductDataModel1] = []
@@ -85,6 +85,7 @@ struct ProductShopRehersalScreen: View {
     
     @State private var apiProducts: [ProductDataModel1] = []
     @State private var displayedProducts: [ProductDataModel1] = []
+    @State private var surpriseSetData: [ProductSurpriseData] = []
     
     var categoryId: String = "-1"
     @State var currentPage: Int = 1
@@ -92,14 +93,51 @@ struct ProductShopRehersalScreen: View {
     
     var onTapCancel: (() -> Void)?
     var onProductSelected: ((ProductDataModel1) -> Void)?
+    var onSurpriseSetSelected: ((ProductSurpriseData) -> Void)?
+    var onSurpriseSetUnitSelected: ((ProductItemResponse,String,Int,Int,Bool) -> Void)?
     @State private var socketListenersConfigured = false
     
     // NEW: State for Create Product Sheet
     @State private var showCreateProductSheet = false
     var onProductCreated: (() -> Void)?
     
+    // State for Manage Product Sheet
+    @State private var showManageProductSheet = false
+    @State private var selectedSurpriseSet: ProductSurpriseData?
+    
+    // State for Add Action Sheet
+    @State private var showAddActionSheet = false
+    @State private var showCreateSurpriseSheet = false
+    
     private var eventProductIds: Set<Int> {
         Set(productDataFromEvent.compactMap { $0.id })
+    }
+    
+    init(
+        mode: RehearsalSelectionMode = .auction,
+        roomId: String,
+        auctionTypeId: Binding<Int>,
+        productDataFromEvent: Binding<[ProductDataModel1]>,
+        categoryId: String = "-1",
+        onTapCancel: (() -> Void)? = nil,
+        onProductSelected: ((ProductDataModel1) -> Void)? = nil,
+        onSurpriseSetSelected: ((ProductSurpriseData) -> Void)? = nil,
+        onSurpriseSetUnitSelected:((ProductItemResponse,String,Int,Int,Bool) -> Void)?,
+        onProductCreated: (() -> Void)? = nil
+    ) {
+        self.mode = mode
+        self.roomId = roomId
+        self._auctionTypeId = auctionTypeId
+        self._productDataFromEvent = productDataFromEvent
+        self.categoryId = categoryId
+        self.onTapCancel = onTapCancel
+        self.onProductSelected = onProductSelected
+        self.onSurpriseSetSelected = onSurpriseSetSelected
+        self.onSurpriseSetUnitSelected = onSurpriseSetUnitSelected
+        self.onProductCreated = onProductCreated
+        
+        // Set initial segment based on auctionTypeId
+        self._segment = State(initialValue: auctionTypeId.wrappedValue == 9 ? .Surprise : .buynow)
     }
     
     var body: some View {
@@ -130,47 +168,95 @@ struct ProductShopRehersalScreen: View {
             GenericTabView(selectedTab: $segment) {
                 if segment == .auction {
                     resetData()
+                    guard auctionTypeId != 9 else { return }
                     self.saleType = "auction"
                     self.type = ""
                     self.status = ""
                     fetchProduct()
                 } else if segment == .offers {
                     resetData()
+                    guard auctionTypeId != 9 else { return }
                     self.saleType = "accept_offers"
                     self.type = ""
                     self.status = ""
                     fetchProduct()
                 } else if segment == .buynow {
                     resetData()
+                    guard auctionTypeId != 9 else { return }
                     self.saleType = ""
                     self.status = ""
                     self.type = "buy_now"
                     fetchProduct()
-                }else if segment == .sold{
+                } else if segment == .sold {
                     resetData()
+                    guard auctionTypeId != 9 else { return }
                     self.saleType = ""
                     self.status = "inactive"
                     self.type = "buy_now"
                     fetchProduct()
+                    
+                } else if segment == .Surprise {
+                    resetData()
+                    fetchSurpriseSet()
                 }
             }
             
             // MARK: - Heading
-            ProductHeading(count: displayedProducts.count)
+            ProductHeading(count: segment == .Surprise ? surpriseSetData.count : displayedProducts.count)
                 .padding(.vertical,6)
                 .padding(.horizontal, 16)
-            if displayedProducts.isEmpty {
+            
+            if segment == .Surprise {
+                // MARK: - Surprise Sets Content
+                if surpriseSetData.isEmpty && !isLoading {
+                    GeometryReader { geo in
+                        VStack {
+                            NoDataView(message: "No Surprise Sets found")
+                                .padding(.top, -100)
+                            Spacer()
+                        }
+                        .frame(width: geo.size.width, height: geo.size.height)
+                    }
+                } else {
+                    ScrollView(showsIndicators: false) {
+                        LazyVStack(spacing: 12) {
+                            if isLoading {
+                                ForEach(0..<4, id: \.self) { _ in
+                                    PurchasesViewShimmerView()
+                                        .padding(.horizontal, 16)
+                                }
+                            } else {
+                                ForEach(surpriseSetData, id: \.id) { surpriseSet in
+                                    ProductSurpriseCard(
+                                        data: surpriseSet,
+                                        onManageProducts: {
+                                            selectedSurpriseSet = surpriseSet
+                                            showManageProductSheet = true
+                                        },
+                                        onPin: {
+                                            // Handle pin action
+                                        },
+                                        onTap: {
+                                            onSurpriseSetSelected?(surpriseSet)
+                                        }
+                                    )
+                                    .padding(.horizontal, 16)
+                                }
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                    .background(Color.backGround)
+                }
+            } else if displayedProducts.isEmpty {
                 GeometryReader { geo in
                     VStack {
-                        NoDataView(message: "Nooo Product Found")
-                            .padding(.top, -100)   // 👈 NOW THIS WILL MOVE IT
-
+                        NoDataView(message: "No Product found")
+                            .padding(.top, -100)
                         Spacer()
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
                 }
-
-
             } else {
                 ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: 8) {
@@ -214,15 +300,18 @@ struct ProductShopRehersalScreen: View {
                 
                 .background(Color.backGround)
             }
-            PrimaryButton(title:"Add New Product",onButtonClick : {
-                showCreateProductSheet = true
+            PrimaryButton(title: "Add New", onButtonClick: {
+                showAddActionSheet = true
             })
         }
         .edgesIgnoringSafeArea(.top)
         .background(Color.backGround)
         .onAppear {
             setupSocketListeners()
-            if displayedProducts.isEmpty {
+            if auctionTypeId == 9 {
+                segment = .Surprise
+                fetchSurpriseSet()
+            } else if displayedProducts.isEmpty {
                 fetchProduct()
             }
         }
@@ -265,6 +354,38 @@ struct ProductShopRehersalScreen: View {
                 )
             }
         )
+        .sheet(isPresented: $showManageProductSheet) {
+            if let surpriseSet = selectedSurpriseSet {
+                ManageProductSheet(
+                    surpriseData: surpriseSet,
+                    onStartAuction: { product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+                        // Get the first available unit ID from the product
+                        let unitId = product.units?.first(where: { $0.status != "sold" })?.id ?? product.units?.first?.id ?? 0
+                        onSurpriseSetUnitSelected?(product, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
+                        showManageProductSheet = false
+                    }
+                )
+            }
+        }
+        .sheet(isPresented: $showCreateSurpriseSheet) {
+            CreateSurpriseScreen()
+                .onDisappear {
+                    // Refresh surprise set list after creating
+                    if segment == .Surprise {
+                        resetData()
+                        fetchSurpriseSet()
+                    }
+                }
+        }
+        .confirmationDialog("What would you like to create?", isPresented: $showAddActionSheet, titleVisibility: .visible) {
+            Button("Create Product") {
+                showCreateProductSheet = true
+            }
+            Button("Create Surprise Set") {
+                showCreateSurpriseSheet = true
+            }
+            Button("Cancel", role: .cancel) {}
+        }
     }
     
     // MARK: - Setup Socket Listeners
@@ -338,6 +459,7 @@ extension ProductShopRehersalScreen {
             isLoading = true
         }
         isFetchingMore = true
+        guard auctionTypeId != 9 else { return }
         
         Task {
             await performAPICalls(
@@ -437,8 +559,34 @@ extension ProductShopRehersalScreen {
         isFetchingMore = false
         updateSortedProducts()
     }
-
-
+    
+    // MARK: - Fetch Surprise Set
+    func fetchSurpriseSet() {
+        isLoading = true
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: false,
+                onError: { error in
+                    isLoading = false
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: productViewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText: ""
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    isLoading = false
+                    surpriseSetData = productViewModel.getSurpriseResponse?.data ?? []
+                }
+            ) {
+                try await productViewModel.getSurpiseSet()
+            }
+        }
+    }
 }
 
 // MARK: - Product List Heading
@@ -468,7 +616,7 @@ struct ProductRehearsalListItem: View {
             
             // Product Image
             CustomProfileImage(
-                url: product.images?.first ?? "",
+                url: product.thumbnail?.first ?? "",
                 isCircular: false,
                 cornerRadius: 12,
                 size: 100,

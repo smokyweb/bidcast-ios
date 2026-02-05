@@ -30,6 +30,7 @@ final class SurpriseViewModel: ObservableObject {
     // MARK: - getShippingProfiles
     func getShippingProfiles() async throws{
         requestType = .create
+        self.errorMessage?.removeAll()
         do {
             let response: ResponseModal<[StoreShippingModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getShippinProfiles,
@@ -48,7 +49,9 @@ final class SurpriseViewModel: ObservableObject {
     // MARK: - getShippingProfiles
     func getSurpiseSet() async throws{
         requestType = .create
+        self.errorMessage?.removeAll()
         do {
+            
             let response: ResponseModal<[ProductSurpriseData]> = try await APIManager.shared.request(
                 type: APIEndPoint.getSurprise,
                 header: true)
@@ -66,6 +69,7 @@ final class SurpriseViewModel: ObservableObject {
    
     func storeSurpriseSet(param:SurpriseRequest) async throws {
         requestType = .shipping
+        self.errorMessage?.removeAll()
         do {
             let response: ResponseModal<ProductSurpriseData> = try await APIManager.shared.request(
                 type: APIEndPoint.createSurprise(param: param),

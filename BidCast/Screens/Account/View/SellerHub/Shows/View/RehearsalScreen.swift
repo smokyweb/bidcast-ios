@@ -927,6 +927,7 @@ struct RehearsalScreen: View {
         ProductShopRehersalScreen(
             mode: .auction,
             roomId: roomId,
+            auctionTypeId: $auctionTypeId,
             productDataFromEvent: $productListData,
             categoryId: "\(showsData.category_id ?? 0)",
             onTapCancel: {
@@ -935,18 +936,31 @@ struct RehearsalScreen: View {
             onProductSelected: { product in
                 auctionedProductData = product
                 nextProductId = "\(product.id ?? 0)"
-                if self.auctionTypeId != 5{
+                if self.auctionTypeId == 8{
                     showAuctionSheet = true
                 }else{
-                    showAuctionSheet = false
-                    showShopSheet = false
-                    hasAuctionStarted = true
-                    socketManager.startAuction(
-                        roomId: roomId,
-                        products: [nextProductId],
-                        auctionTypeId:self.auctionTypeId
-                    )
+                    if self.auctionTypeId == 5{
+                        showAuctionSheet = false
+                        showShopSheet = false
+                        hasAuctionStarted = true
+                        socketManager.startAuction(
+                            roomId: roomId,
+                            products: [nextProductId],
+                            auctionTypeId:self.auctionTypeId
+                        )
+                    }
                 }
+            },onSurpriseSetSelected:{ surprise in
+                showAuctionSheet = true
+            },onSurpriseSetUnitSelected : { product,bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+//                socketManager.startAuctionBreakSpot(roomId: roomId,
+//                                                    productSetId: <#T##Int#>,
+//                                                    productSetItemId: product.productSetId ?? 0,
+//                                                    productSetItemUnitId: product.units,
+//                                                    startingBidAmount: <#T##Double#>, \
+//                                                    requireTime: <#T##Int#>,
+//                                                    counterBidTime: <#T##Int#>,
+//                                                    suddenDeath: <#T##Bool#>)
             }
         )
     }
@@ -956,6 +970,7 @@ struct RehearsalScreen: View {
         ProductShopRehersalScreen(
             mode: .freebie,
             roomId: roomId,
+            auctionTypeId: $auctionTypeId,
             productDataFromEvent: $productListData,
             categoryId: "\(showsData.category_id ?? 0)",
             onTapCancel: {
@@ -967,6 +982,8 @@ struct RehearsalScreen: View {
                 socketManager.createFreebie(room_id: self.roomId, productId: "\(product.id ?? 0)", time: 100)
                 showFreeBie = false
                 navigateToRandomizer = true
+            }, onSurpriseSetUnitSelected: {_,_,_,_,_  in
+                
             }
         )
     }
@@ -1236,7 +1253,7 @@ struct RehearsalScreen: View {
                             remainingTime: remainingTimer ?? 0,
                             onPollCardTapped: { showLivePollScreen = true }
                         )
-                        .preferredColorScheme(.dark)
+                        .preferredColorScheme(.light)
                         .padding()
                     }
                     
@@ -1846,7 +1863,7 @@ struct RehearsalScreen: View {
 //            auctionedProductData = product.first ?? ProductDataModel1()
             nextProductId = "\(product.id ?? 0)"
            
-            if self.auctionTypeId != 5{
+            if self.auctionTypeId == 8{
                 socketManager.startAuction(
                     roomId: roomId,
                     products: [nextProductId],auctionTypeId:self.auctionTypeId

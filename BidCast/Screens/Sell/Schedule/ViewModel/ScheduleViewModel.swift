@@ -274,6 +274,7 @@ final class ProductViewModel: ObservableObject {
     // MARK: - Get Product
     @Published var productsResponse: ResponseModelPaginate<[ProductDataModel1]>?
     @Published var productsResponse1: ResponseModelPaginate<[ProductDataModel1]>?
+    @Published var getSurpriseResponse: ResponseModal<[ProductSurpriseData]>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
     
@@ -311,6 +312,24 @@ final class ProductViewModel: ObservableObject {
             self.productsResponse1 = response
         }
         catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    // MARK: - getShippingProfiles
+    func getSurpiseSet() async throws{
+        
+        do {
+            let response: ResponseModal<[ProductSurpriseData]> = try await APIManager.shared.request(
+                type: APIEndPoint.getSurprise,
+                header: true)
+            self.getSurpriseResponse = response
+        } catch(let error) {
             if let dataError = error as? DataError {
                 self.errorMessage = dataError.getErrorMessage()
             }

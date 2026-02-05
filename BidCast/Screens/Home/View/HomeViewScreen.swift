@@ -96,15 +96,15 @@ struct HomeViewScreen: View {
                         self.searchText = debouncedText
                     }
                     if comeFromExploreScreen {
-                        VStack(alignment: .leading, spacing: 4) {
+//                        VStack(alignment: .leading, spacing: 4) {
                             Text(showCategory)
-                                .font(.custom(poppinsBold, size: 18))
+                                .font(.custom(poppinsSemiBold, size: 16))
                                 .foregroundColor(.black)
 
                          
-                        }
-                        .padding(.leading, 4)
-                        .padding(.bottom, 6)
+//                        }
+//                        .padding(.leading, 4)
+//                        .padding(.bottom, 6)
                     }
 
                   
@@ -333,16 +333,7 @@ struct HomeViewScreen: View {
         .edgesIgnoringSafeArea(.bottom)
         .padding(.bottom, -15)
         .onAppear{
-//            SocketManagerService.shared.setupSocket()
-            socketManager.setupSocket {
-                addSocketListeners()
-            }
-            isActiveOnHomeScreen = true
-            
-            
-           
-        }
-        .onFirstAppear{
+
             socketManager.setupSocket {
                 addSocketListeners()
             }
@@ -352,12 +343,11 @@ struct HomeViewScreen: View {
             if isActiveOnHomeScreen{
                 Task {
                     await fetchCategory(for: "for_you")
+                    // Fetch live shows AFTER category loads
+                    await fetchLiveShow()
                 }
             }
             getProfileData()
-            
-           
-
         }
         .onChange(of: navigateToLiveStream) { oldValue,isNavigating in
             if !isNavigating {
@@ -402,11 +392,10 @@ struct HomeViewScreen: View {
         }
     }
     func refreshLiveShows() async {
-
         currentPage = 1
-
+        loadedRoomIDs.removeAll()
         liveShowsData.removeAll()
-
+        isLoadingShowAPI = true
         await fetchLiveShow()
     }
 
@@ -460,7 +449,6 @@ struct HomeViewScreen: View {
     
     func getProfileData(){
         Task{
-            liveShowsData.removeAll()
             guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
@@ -470,12 +458,7 @@ struct HomeViewScreen: View {
                 await self.viewModel.getProfile()
             }
             
-            if isActiveOnHomeScreen{
-                
-                await fetchLiveShow()
-            }
-            
-            
+            // Note: fetchLiveShow() is now called in onFirstAppear after fetchCategory completes
             
             if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
                 let response = self.viewModel.accountInfo.data

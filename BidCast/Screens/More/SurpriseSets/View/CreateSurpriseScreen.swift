@@ -151,24 +151,26 @@ struct CreateSurpriseScreen: View {
                         }
                     )
                     .padding(.horizontal,12)
-                    ToggleInfoCard(
-                        items: [
-                            .init(
-                                title: "Auto-Randomize",
-                                description: "After each product sells, the buyer will be randomly assigned. Turn off if you want to randomize manually.",
-                                tint: .defaultTheme,
-                                isOn: $isAutoRandomizeOn
-                            ),
-                            .init(
-                                title: "Quick Spin",
-                                description: "Turn off if you want a slower spin animation. This does not affect randomization.",
-                                tint: .defaultTheme,
-                                isOn: $isQuickSpinOn
-                            )
-                        ]
-                    )
-                    .padding(.horizontal, 12)
-                    .padding(.top, 8)
+                    if segment == .Auction{
+                        ToggleInfoCard(
+                            items: [
+                                .init(
+                                    title: "Auto-Randomize",
+                                    description: "After each product sells, the buyer will be randomly assigned. Turn off if you want to randomize manually.",
+                                    tint: .defaultTheme,
+                                    isOn: $isAutoRandomizeOn
+                                ),
+                                .init(
+                                    title: "Quick Spin",
+                                    description: "Turn off if you want a slower spin animation. This does not affect randomization.",
+                                    tint: .defaultTheme,
+                                    isOn: $isQuickSpinOn
+                                )
+                            ]
+                        )
+                        .padding(.horizontal, 12)
+                        .padding(.top, 8)
+                    }
 
                     
                 }
@@ -209,13 +211,15 @@ struct CreateSurpriseScreen: View {
             .ignoresSafeArea(.keyboard)
         )
         .sheet(isPresented: $navigateToAddProduct){
-            ManageProductScreen(onCancel:{
-                navigateToAddProduct = false
-            },onAdded: { price , product in
-                navigateToAddProduct = false
-                productRows = product
-                buyInPrice = price
-            })
+            ManageProductScreen(
+                isBuyItNow: segment == .Buyit,
+                onCancel:{
+                    navigateToAddProduct = false
+                },onAdded: { price , product in
+                    navigateToAddProduct = false
+                    productRows = product
+                    buyInPrice = price
+                })
             .presentationDetents([.fraction(0.60)])   // ✅ Bottom-sheet height
             .presentationCornerRadius(25)              // ✅ Rounded top corners
             .presentationDragIndicator(.hidden)
@@ -433,7 +437,7 @@ struct ToggleInfoCard: View {
     let items: [Item]
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 12) {
             ForEach(items.indices, id: \.self) { index in
                 let item = items[index]
 
@@ -456,14 +460,10 @@ struct ToggleInfoCard: View {
                         .tint(item.tint)
                 }
                 .padding()
-
-                if index != items.count - 1 {
-                    Divider()
-                }
+                .background(Color.white)
+                .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.05), radius: 5)
             }
         }
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 5)
     }
 }

@@ -1132,6 +1132,233 @@ extension SocketManagerService {
         socket.off("auction_started")
         print("🧹 Removed auction listeners")
     }
+    
+    func startAuctionBreakSpot(
+           roomId: String,
+           productSetId: Int,
+           productSetItemId: Int,
+           productSetItemUnitId: Int,
+           startingBidAmount: Double,
+           requireTime: Int,
+           counterBidTime: Int,
+           suddenDeath: Bool
+       ) {
+           performIfConnected {
+               let payload: [String: Any] = [
+                   "room_id": roomId,
+                   "productSetId": productSetId,
+                   "productSetItemId": productSetItemId,
+                   "productSetItemUnitId": productSetItemUnitId,
+                   "starting_bid_amount": startingBidAmount,
+                   "require_time": requireTime,
+                   "counter_bid_time": counterBidTime,
+                   "sudden_death": suddenDeath
+               ]
+               
+               hasWon = false
+               socket.emit("start_auction_break_spot", payload)
+               logger.info("🎁 Sent start_auction_break_spot: \(payload)")
+           }
+       }
+       
+       /// Listens for `auction_started_break_spot` event
+       func listenForAuctionStartedBreakSpot(
+           completion: @escaping (
+               _ status: String,
+               _ roomId: String,
+               _ productSetId: Int,
+               _ productSetItemId: Int,
+               _ productSetItemUnitId: Int,
+               _ startingBidAmount: String,
+               _ requireTime: Int,
+               _ counterBidTime: Int,
+               _ suddenDeath: Bool
+           ) -> Void
+       ) {
+           socket.on("auction_started_break_spot") { [weak self] data, _ in
+               guard let self else { return }
+               hasWon = false
+               
+               guard
+                   let json = data.first as? [String: Any],
+                   let roomId = json["room_id"] as? String
+               else {
+                   print("❌ Invalid auction_started_break_spot payload:", data)
+                   return
+               }
+               
+               let status = json["status"] as? String ?? ""
+               let productSetId = json["productSetId"] as? Int ?? 0
+               let productSetItemId = json["productSetItemId"] as? Int ?? 0
+               let productSetItemUnitId = json["productSetItemUnitId"] as? Int ?? 0
+               let startingBidAmount = json["starting_bid_amount"] as? String ?? "0"
+               let requireTime = json["require_time"] as? Int ?? 30
+               let counterBidTime = json["counter_bid_time"] as? Int ?? 0
+               let suddenDeath = json["sudden_death"] as? Bool ?? false
+               
+               self.countdownTimer = counterBidTime
+               
+               DispatchQueue.main.async {
+                   completion(
+                       status,
+                       roomId,
+                       productSetId,
+                       productSetItemId,
+                       productSetItemUnitId,
+                       startingBidAmount,
+                       requireTime,
+                       counterBidTime,
+                       suddenDeath
+                   )
+               }
+               
+               self.logger.info("🎁 auction_started_break_spot received for room \(roomId)")
+           }
+       }
+       
+       /// Listens for `bid_timer_update_break_spot` event
+       func listenForBidTimerUpdateBreakSpot(
+           roomId: String,
+           onUpdate: @escaping (_ remaining: Int) -> Void
+       ) {
+           socket.on("bid_timer_update_break_spot") { [weak self] data, _ in
+               guard let self,
+                     let json = data.first as? [String: Any],
+                     let roomID = json["room_id"] as? String,
+                     let remaining = json["remaining"] as? Int,
+                     roomID == roomId else { return }
+               
+               DispatchQueue.main.async {
+                   onUpdate(remaining)
+               }
+               
+               self.logger.info("⏱️ bid_timer_update_break_spot: \(remaining)s remaining")
+           }
+       }
+       
+       /// Listens for `auction_ended_break_spot` event
+       func listenForAuctionEndedBreakSpot(
+           completion: @escaping (
+               _ roomId: String,
+               _ productSetId: Int,
+               _ productSetItemId: Int,
+               _ productSetItemUnitId: Int,
+               _ message: String?
+           ) -> Void
+       ) {
+           socket.on("auction_ended_break_spot") { [weak self] data, _ in
+               guard let self else { return }
+               
+               guard
+                   let json = data.first as? [String: Any],
+                   let roomId = json["room_id"] as? String
+               else {
+                   print("❌ Invalid auction_ended_break_spot payload:", data)
+                   return
+               }
+               
+               let productSetId = json["productSetId"] as? Int ?? 0
+               let productSetItemId = json["productSetItemId"] as? Int ?? 0
+               let productSetItemUnitId = json["productSetItemUnitId"] as? Int ?? 0
+               let message = json["message"] as? String
+               
+               DispatchQueue.main.async {
+                   completion(roomId, productSetId, productSetItemId, productSetItemUnitId, message)
+               }
+               
+               self.logger.info("🏁 auction_ended_break_spot received for room \(roomId)")
+           }
+       }
+       
+       /// Listens for `bid_finalized_break_spot` event
+       func listenForBidFinalizedBreakSpot(
+           completion: @escaping (
+               _ roomId: String,
+               _ productSetId: Int,
+               _ productSetItemId: Int,
+               _ productSetItemUnitId: Int,
+               _ winner: HighestBid?
+           ) -> Void
+       ) {
+           socket.on("bid_finalized_break_spot") { [weak self] data, _ in
+               guard let self else { return }
+               
+               guard
+                   let json = data.first as? [String: Any],
+                   let roomId = json["room_id"] as? String
+               else {
+                   print("❌ Invalid bid_finalized_break_spot payload:", data)
+                   return
+               }
+               
+               let productSetId = json["productSetId"] as? Int ?? 0
+               let productSetItemId = json["productSetItemId"] as? Int ?? 0
+               let productSetItemUnitId = json["productSetItemUnitId"] as? Int ?? 0
+               
+               // Parse winner info
+               var winner: HighestBid?
+               if let winnerJson = json["winner"] as? [String: Any] {
+                   do {
+                       let decodedWinner = try JSONSerialization.data(withJSONObject: winnerJson)
+                       winner = try JSONDecoder().decode(HighestBid.self, from: decodedWinner)
+                   } catch {
+                       print("❌ Failed to decode break spot winner:", error)
+                   }
+               }
+               
+               hasWon = true
+               
+               DispatchQueue.main.async {
+                   completion(roomId, productSetId, productSetItemId, productSetItemUnitId, winner)
+               }
+               
+               self.logger.info("🏆 bid_finalized_break_spot received for room \(roomId), winner: \(winner?.user_name ?? "unknown")")
+           }
+       }
+       
+       /// Listens for `auction_order_failed` event
+       func listenForAuctionOrderFailed(
+           completion: @escaping (
+               _ roomId: String,
+               _ productSetId: Int?,
+               _ productSetItemId: Int?,
+               _ errorMessage: String?,
+               _ errorCode: String?
+           ) -> Void
+       ) {
+           socket.on("auction_order_failed") { [weak self] data, _ in
+               guard let self else { return }
+               
+               guard
+                   let json = data.first as? [String: Any],
+                   let roomId = json["room_id"] as? String
+               else {
+                   print("❌ Invalid auction_order_failed payload:", data)
+                   return
+               }
+               
+               let productSetId = json["productSetId"] as? Int
+               let productSetItemId = json["productSetItemId"] as? Int
+               let errorMessage = json["message"] as? String ?? json["error"] as? String
+               let errorCode = json["error_code"] as? String
+               
+               DispatchQueue.main.async {
+                   completion(roomId, productSetId, productSetItemId, errorMessage, errorCode)
+               }
+               
+               self.logger.error("❌ auction_order_failed for room \(roomId): \(errorMessage ?? "Unknown error")")
+           }
+       }
+       
+       // MARK: - Remove Break Spot Listeners
+       func removeBreakSpotListeners() {
+           socket.off("auction_started_break_spot")
+           socket.off("bid_timer_update_break_spot")
+           socket.off("auction_ended_break_spot")
+           socket.off("bid_finalized_break_spot")
+           socket.off("auction_order_failed")
+           print("🧹 Removed all break spot auction listeners")
+       }
 }
 
 

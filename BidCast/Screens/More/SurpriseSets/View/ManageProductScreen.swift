@@ -35,6 +35,7 @@ struct ManageProductScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
+    var isBuyItNow: Bool = true
     var onCancel : () -> () = { }
     var onAdded : (String,[ProductRow]) -> () = {_,_ in }
     
@@ -59,21 +60,23 @@ struct ManageProductScreen: View {
 
             ScrollView(showsIndicators:false){
                 VStack(alignment:.leading,spacing:12){
-                    AuthTextField(
-                        floatingLabel: "Buy-in Price",
-                        placeholder: "Enter price".localized,
-                        icon: .menuProfile,
-                        text: $buyInPrice,
-                        isIconDisplay : false,
-                        isForPrice: true,
-                        custFontName : robotoMedium,
-                        custFontSize : 14.0,
-                        enteredText:  { title in
-                            buyInPrice = title
-                        })
-                    .keyboardType(.numberPad)
-                    .padding([.top,.bottom],4)
-                    .padding(.horizontal,-12)
+                    if isBuyItNow {
+                        AuthTextField(
+                            floatingLabel: "Buy-in Price",
+                            placeholder: "Enter price".localized,
+                            icon: .menuProfile,
+                            text: $buyInPrice,
+                            isIconDisplay : false,
+                            isForPrice: true,
+                            custFontName : robotoMedium,
+                            custFontSize : 14.0,
+                            enteredText:  { title in
+                                buyInPrice = title
+                            })
+                        .keyboardType(.numberPad)
+                        .padding([.top,.bottom],4)
+                        .padding(.horizontal,-12)
+                    }
                     
                     // MARK: - Product Table
                     ProductTableView(rows: $productRows, onAdd: {
@@ -164,18 +167,20 @@ struct ManageProductScreen: View {
     private func validateAndConfirm() {
         let trimmedPrice = buyInPrice.trimmingCharacters(in: .whitespaces)
         
-        // ---------- Buy-in Price ----------
-        if trimmedPrice.isEmpty {
-            showValidationError("Buy-in price is required.")
-            return
-        }
-        guard let priceValue = Double(trimmedPrice) else {
-            showValidationError("Buy-in price must be a valid number.")
-            return
-        }
-        if priceValue <= 0 {
-            showValidationError("Buy-in price must be greater than zero.")
-            return
+        // ---------- Buy-in Price (only for Buy It Now) ----------
+        if isBuyItNow {
+            if trimmedPrice.isEmpty {
+                showValidationError("Buy-in price is required.")
+                return
+            }
+            guard let priceValue = Double(trimmedPrice) else {
+                showValidationError("Buy-in price must be a valid number.")
+                return
+            }
+            if priceValue <= 0 {
+                showValidationError("Buy-in price must be greater than zero.")
+                return
+            }
         }
         
         // ---------- At least one product ----------
@@ -263,6 +268,7 @@ struct ProductTableView: View {
             }
             .padding(.horizontal, 8)
             .padding(.bottom, 8)
+            .background(.defaultThemeLight)
             
             Divider()
                 .padding(.horizontal, 4)
@@ -280,7 +286,7 @@ struct ProductTableView: View {
                     }) {
                         Image(systemName: "trash")
                             .font(.system(size: 15))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.darkRed)
                     }
                     .frame(width: 28)
                     .disabled(rows.count <= 0)
@@ -293,29 +299,29 @@ struct ProductTableView: View {
                         .frame(width: 24, alignment: .center)
                     
                     // Product Name
-                    TextField("", text: $rows[index].name)
+                    Text(rows[index].name)
                         .font(.custom(robotoMedium, size: 14))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
                     
                     // Description
-                    TextField("", text: $rows[index].description)
+                    Text(rows[index].description)
                         .font(.custom(robotoRegular, size: 14))
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
                     
                     // Quantity
-                    TextField("", value: $rows[index].quantity, formatter: NumberFormatter())
+                    Text("\(rows[index].quantity)")
                         .font(.custom(robotoMedium, size: 14))
                         .foregroundColor(.black)
                         .frame(width: 64)
                         .multilineTextAlignment(.center)
-                        .keyboardType(.numberPad)
                 }
                 .padding(.vertical, 10)
                 .padding(.horizontal, 8)
+                .background(index % 2 == 0 ? Color.white : Color.defaultThemeLight)
                 
                 Divider()
                     .padding(.horizontal, 4)
@@ -329,13 +335,13 @@ struct ProductTableView: View {
             }) {
                 HStack(spacing: 4) {
                     Image(systemName: "plus")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.custom(poppinsSemiBold, size: 13))
                     Text("Add Product")
-                        .font(.custom(robotoMedium, size: 14))
+                        .font(.custom(poppinsSemiBold, size: 13))
                 }
                 .foregroundColor(.blue)
             }
-            .padding(.top, 10)
+            .padding(.vertical, 10)
             .padding(.horizontal, 8)
         }
         .background(Color.white)

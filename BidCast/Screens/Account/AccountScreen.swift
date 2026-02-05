@@ -319,7 +319,7 @@ struct AccountScreen: View {
             topLabel: { credit in creditCount(for: credit) },
             bottomLabel: { $0.description },
             selection: $selectedCredit,
-            onItemTap: { credit in           
+            onItemTap: { credit in
                 print("Selected coupon:", credit)
                 if credit == .coupon{
                     navigationState.navigateToCoupons = true
@@ -552,7 +552,6 @@ extension AccountScreen {
             UserDefaults.fullName.removeAll()
             UserDefaults.profileURL.removeAll()
             UserDefaultsManager.shared.setValue(false, forKey: .isLoggedIn)
-            tabBarRouter.selectedTab = 0
             
             UserDefaults.accessToken.removeAll()
             UserDefaults.sellerVerafied.removeAll()
