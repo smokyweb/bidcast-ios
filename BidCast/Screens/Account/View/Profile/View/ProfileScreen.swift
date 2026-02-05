@@ -304,12 +304,12 @@ struct ProfileScreen: View {
                                         let show = scheduleShowArr[i]
                                         ImageCollectionView(profileImg: show.user?.profile_image ?? "",
                                                             profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
-                                                            textSize: 14.0,
+                                                            textSize: 12.0,
                                                             image: show.imgThumbnail?.first ?? "",
                                                             category: show.category?.name ?? "",
                                                             title2:show.title ?? "",
                                                             categorySize: 14,
-                                                            title2Size: 16.0,
+                                                            title2Size: 13.0,
                                                             liveCount:  0,
                                                             onTapProfile: {
                                             //                                userId = "\(show.user?.id ?? 0)"

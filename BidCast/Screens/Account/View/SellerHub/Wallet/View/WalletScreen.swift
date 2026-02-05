@@ -454,6 +454,7 @@ struct FullPayoutHistoryView: View {
                 if isLoading {
                     PayoutHistoryShimmerView()
                 } else {
+                    Text("hello")
                     ForEach(payouts) { payout in
                         PayoutRowView(payout: payout)
                             .onAppear {

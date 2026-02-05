@@ -333,7 +333,6 @@ struct HomeViewScreen: View {
         .edgesIgnoringSafeArea(.bottom)
         .padding(.bottom, -15)
         .onAppear{
-
             socketManager.setupSocket {
                 addSocketListeners()
             }

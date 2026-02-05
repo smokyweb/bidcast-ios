@@ -26,7 +26,9 @@ struct TrustedBuyerScreen: View {
     @State private var isPhotoSelected = false
     @State var navigateToCreateAddress = false
     @State var imageURL = ""
-    
+    @State var SavedImageURL = ""
+
+    @State private var isVerified = false
     @State private var showImageSourceActionSheet = false
     @State private var showImagePicker = false
     @State private var imagePickerSourceType: UIImagePickerController.SourceType = .photoLibrary
@@ -48,50 +50,57 @@ struct TrustedBuyerScreen: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-
+                    
                     // MARK: - Step Header
                     VStack(spacing: 8) {
                         Image(systemName: "person.crop.circle.badge.checkmark")
                             .resizable()
                             .frame(width: 60, height: 50)
                             .foregroundColor(.defaultTheme)
-
-                        Text("Verify Your Identity")
+                        
+                        Text(isVerified ? "Identity Verification Submitted" : "Verify Your Identity")
                             .font(.custom(poppinsSemiBold, size: 13))
-
-                        Text("To become a Trusted Buyer, we need to verify your identity. This helps create a safe trading environment.")
+                        
+                        Text(
+                            isVerified
+                            ? "Your identity has already been submitted for verification. We’re reviewing your details to make you a Trusted Buyer."
+                            : "To become a Trusted Buyer, we need to verify your identity. This helps create a safe trading environment."
+                        )
                             .font(.custom(poppinsRegular, size: 12))
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 32)
                     }
                     .padding(.top, 20)
-
+                    
                     // MARK: - Step Indicator
                     HStack(spacing: 0) {
-                        StepCircle(step: "1", label: "Upload", isActive: false)
+                        StepCircle(step: "1", label: "Upload", isActive: isVerified)
                         Rectangle()
                             .fill(Color.gray.opacity(0.4))
                             .frame(height: 1)
                             .frame(maxWidth: .infinity)
-                        StepCircle(step: "2", label: "Review", isActive: false)
+                        StepCircle(step: "2", label: "Review", isActive: isVerified)
                         Rectangle()
                             .fill(Color.gray.opacity(0.4))
                             .frame(height: 1)
                             .frame(maxWidth: .infinity)
-                        StepCircle(step: "3", label: "Verified", isActive: false)
+                        StepCircle(step: "3", label: "Verified", isActive: isVerified)
                     }
                     .padding(.horizontal, 12)
-
+                    
                     // MARK: - Upload Card
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Upload ID Photo")
+                        Text(isVerified ? "ID Already Verified" : "Upload ID Photo")
                             .font(.custom(poppinsSemiBold, size: 13))
-
-                        Text("Please upload a clear photo of your valid government-issued ID (driver’s license or passport).")
-                            .font(.custom(poppinsRegular, size: 12))
+                        
+                        Text(
+                            isVerified
+                            ? "Your ID has already been uploaded and is under review."
+                            : "Please upload a clear photo of your valid government-issued ID (driver’s license or passport)."
+                        )                            .font(.custom(poppinsRegular, size: 12))
                             .foregroundColor(.gray)
-
+                        
                         VStack(spacing: 12) {
                             if let image = uploadedImage {
                                 image
@@ -100,7 +109,22 @@ struct TrustedBuyerScreen: View {
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 150)
                                     .cornerRadius(8)
-                            } else {
+                            }
+                            else if isVerified {
+                                VStack(spacing: 8) {
+                                    CustomProfileImage(
+                                        url: SavedImageURL,
+                                        isCircular: false,
+                                        size: screenWidth,
+                                        height: 150
+                                    )
+                                    .cornerRadius(8)
+
+                                    Spacer()
+                                }
+                            }
+
+                            else {
                                 VStack(spacing: 8) {
                                     Image(systemName: "idcard")
                                         .resizable()
@@ -117,41 +141,43 @@ struct TrustedBuyerScreen: View {
                                         .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [5]))
                                 )
                             }
-
-                            Button {
-                                showImageSourceActionSheet = true
-                            } label: {
-                                Text("Choose File")
-                                    .font(.custom(poppinsBold, size: 11))
-                                    .padding()
-                                    .frame(width: 150)
-                                    .background(.defaultTheme)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(75)
+                            
+                            if !isVerified{
+                                Button {
+                                    showImageSourceActionSheet = true
+                                } label: {
+                                    Text("Choose File")
+                                        .font(.custom(poppinsBold, size: 11))
+                                        .padding()
+                                        .frame(width: 150)
+                                        .background(.defaultTheme)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(75)
+                                }
+                                .frame(width: 150)
                             }
-                            .frame(width: 150)
-//                            .onChange(of: selectedPhoto) { newItem in
-//                                Task {
-//                                    if let data = try? await newItem?.loadTransferable(type: Data.self),
-//                                       let uiImage = UIImage(data: data) {
-//                                        uploadedImage = Image(uiImage: uiImage)
-//                                        isPhotoSelected = true
-//                                    }
-//                                }
-//                            }
+                            //                            .onChange(of: selectedPhoto) { newItem in
+                            //                                Task {
+                            //                                    if let data = try? await newItem?.loadTransferable(type: Data.self),
+                            //                                       let uiImage = UIImage(data: data) {
+                            //                                        uploadedImage = Image(uiImage: uiImage)
+                            //                                        isPhotoSelected = true
+                            //                                    }
+                            //                                }
+                            //                            }
                         }
                     }
                     .padding(16)
                     .background(Color.white.opacity(0.4))
                     .cornerRadius(12)
                     .padding(.horizontal, 12)
-
+                    
                     // MARK: - Requirements Checklist
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Requirements")
                             .font(.custom(poppinsSemiBold, size: 13))
                             .padding(.bottom, 8)
-
+                        
                         requirementItem("Government-issued ID (driver’s license or passport)")
                         requirementItem("Clear, well-lit photo")
                         requirementItem("All corners visible")
@@ -162,6 +188,8 @@ struct TrustedBuyerScreen: View {
                     .background(Color.white.opacity(0.4))
                     .cornerRadius(12)
                     .padding(.horizontal, 12)
+                    
+                    if !isVerified{
 
                     // MARK: - Submit Button
                     Button(action: handleSubmit) {
@@ -177,6 +205,7 @@ struct TrustedBuyerScreen: View {
                     .padding(.horizontal, 12)
                     .padding(.bottom, 32)
                 }
+                }
                 .frame(maxWidth: .infinity)
             }
             .background(Color.backGround)
@@ -184,6 +213,16 @@ struct TrustedBuyerScreen: View {
 
             CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
         }
+        .onAppear {
+            Task {
+                SVProgressHUD.show()
+                await viewModel.getBuyerVerificationStatus()
+                await SVProgressHUD.dismiss()
+                handleSuccessTrusted()
+            }
+        }
+
+
         .fullScreenCover(isPresented: $showImagePicker) {
             ImagePicker(sourceType: imagePickerSourceType) { image,url  in
                 if let image = image {
@@ -301,6 +340,26 @@ struct TrustedBuyerScreen: View {
         .frame(maxWidth: .infinity)
     }
 
+    func handleSuccessTrusted() {
+        let response = viewModel.getBuyerVerificationStatusDict
+
+        if response.status == "success" {
+            SavedImageURL = response.data?.image ?? ""
+            let status = response.data?.status
+            isVerified = (status == "pending" || status == "verified")
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+        }
+    }
+
+    
     func handleSuccess() {
         SVProgressHUD.dismiss()
         let response = viewModel.addTrustedBuyerDict
