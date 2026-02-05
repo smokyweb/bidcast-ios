@@ -115,7 +115,7 @@ struct TrustedBuyerScreen: View {
                                     CustomProfileImage(
                                         url: SavedImageURL,
                                         isCircular: false,
-                                        size: screenWidth,
+                                        size: .infinity,
                                         height: 150
                                     )
                                     .cornerRadius(8)
