@@ -285,6 +285,7 @@
 		D45D7A382E389AAD003A3842 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A372E389AAD003A3842 /* ChatScreen.swift */; };
 		D45D7A3C2E389AE4003A3842 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A3B2E389AE4003A3842 /* ChatViewModel.swift */; };
 		D45D7A3E2E389B34003A3842 /* ChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A3D2E389B34003A3842 /* ChatModel.swift */; };
+		D468418D2F35C7E100337DF9 /* CurrentSurpriseSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D468418C2F35C7E100337DF9 /* CurrentSurpriseSetView.swift */; };
 		D4848BA62E97E8A100DC8B85 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = D4848BA52E97E8A100DC8B85 /* Stripe */; };
 		D4848BA82E97E8A100DC8B85 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = D4848BA72E97E8A100DC8B85 /* StripeApplePay */; };
 		D4848BAA2E97E8A100DC8B85 /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = D4848BA92E97E8A100DC8B85 /* StripeCardScan */; };
@@ -890,6 +891,7 @@
 		D45D7A372E389AAD003A3842 /* ChatScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
 		D45D7A3B2E389AE4003A3842 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		D45D7A3D2E389B34003A3842 /* ChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModel.swift; sourceTree = "<group>"; };
+		D468418C2F35C7E100337DF9 /* CurrentSurpriseSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSurpriseSetView.swift; sourceTree = "<group>"; };
 		D48611792F32001900CA2565 /* AddProductRowScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductRowScreen.swift; sourceTree = "<group>"; };
 		D49A95672DD704CD006044A7 /* FAQScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQScreen.swift; sourceTree = "<group>"; };
 		D49A95692DD70952006044A7 /* FAQCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQCell.swift; sourceTree = "<group>"; };
@@ -4362,6 +4364,7 @@
 		D67DA9622E9D0A2500ED6556 /* Product */ = {
 			isa = PBXGroup;
 			children = (
+				D468418C2F35C7E100337DF9 /* CurrentSurpriseSetView.swift */,
 				D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */,
 			);
 			path = Product;
@@ -4876,6 +4879,7 @@
 				99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */,
 				99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */,
 				358B9D152DDEFB9900932250 /* SelectShowScreen.swift in Sources */,
+				D468418D2F35C7E100337DF9 /* CurrentSurpriseSetView.swift in Sources */,
 				D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */,
 				D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */,
 				D4BA9C292DE4A4E700DFF6E6 /* TipsModel.swift in Sources */,

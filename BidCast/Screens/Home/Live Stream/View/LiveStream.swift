@@ -245,6 +245,11 @@ struct LiveStream: View {
     
     @State private var freebieWinner = FreebieUser()
     
+    // Add these state variables to LiveStream struct
+    @State private var isSurpriseSetAuctionActive: Bool = false
+    @State private var currentSurpriseSetData: ProductSurpriseData?
+    @State private var surpriseSetBidTime: Int = 0
+    
     var body: some View {
         ZStack {
             baseContentLayer
@@ -860,28 +865,54 @@ struct LiveStream: View {
         )
     }
     //MARK: Product detail section
+//    @ViewBuilder
+//    private var productDetailsView: some View {
+//       
+//      
+//        if isAuctionStartedForCurrentRoom {
+//            let currentProducts = auctionedProductData
+//            let product = currentProducts
+//            if product != nil /*&& product?.status != "sold"*/{
+//                VStack(alignment: .leading, spacing: 12) {
+//                    currentProductCard(product: product ?? ProductDataModel1() )
+//                    if product?.status != "sold"{
+//                        biddingControls
+//                    }else{
+//                        waitingForProductView
+//                    }
+//                }
+//                
+//            } else {
+//                waitingForProductView
+//            }
+//        }else{
+////            waitingForProductView
+//        }
+//    }
     @ViewBuilder
     private var productDetailsView: some View {
-       
-      
         if isAuctionStartedForCurrentRoom {
-            let currentProducts = auctionedProductData
-            let product = currentProducts
-            if product != nil /*&& product?.status != "sold"*/{
+            // Check if it's a surprise set auction
+            if isSurpriseSetAuctionActive, let surpriseSet = currentSurpriseSetData {
                 VStack(alignment: .leading, spacing: 12) {
-                    currentProductCard(product: product ?? ProductDataModel1() )
-                    if product?.status != "sold"{
+                    surpriseSetProductCard(surpriseSet: surpriseSet)
+                    
+                    biddingControls
+                }
+            }
+            // Regular product auction
+            else if let product = auctionedProductData {
+                VStack(alignment: .leading, spacing: 12) {
+                    currentProductCard(product: product)
+                    if product.status != "sold" {
                         biddingControls
-                    }else{
+                    } else {
                         waitingForProductView
                     }
                 }
-                
             } else {
                 waitingForProductView
             }
-        }else{
-//            waitingForProductView
         }
     }
     
@@ -906,6 +937,32 @@ struct LiveStream: View {
     }
     
     @ViewBuilder
+    private func surpriseSetProductCard(surpriseSet: ProductSurpriseData) -> some View {
+        CurrentSurpriseSetView(
+            surpriseSet: surpriseSet,
+            currentPrice: $currentPrice,
+            suddenDeath: $sudden_Death,
+            bidTime: $surpriseSetBidTime,
+            userName: $winnerName,
+            userImage: $winnerProfileImage,
+            hasWon: $socketManagerChat.hasWon,
+            sellerId: $sellerId,
+            onTap: {
+                // Handle tap on surprise set if needed
+                print("Tapped surprise set")
+            },
+            onTapRunNext: {
+                // Only host can run next - viewers shouldn't see this button
+                print("Run next not available for viewers")
+            }
+        )
+        .frame(maxWidth: .infinity)
+        .background(Color.black.opacity(0.3))
+        .cornerRadius(10)
+        .padding(.horizontal, 16)
+    }
+    
+    @ViewBuilder
     private var waitingForProductView: some View {
         Text("Awaiting next product...")
             .font(.custom(poppinsBold, size: 14.0))
@@ -919,18 +976,19 @@ struct LiveStream: View {
     @ViewBuilder
     private var biddingControls: some View {
         HStack(spacing: 8) {
-            if self.auctionTypeId != 5{
+            if self.auctionTypeId == 8{
                 customBidButton
                 swipeToBidSection
             }
             else{
+                
                 PrimaryButton(title: "Buy Now",isOutLine: false,onButtonClick: {
+                    
                     if UserDefaults.allowBidForAllUser {
                         self.sendBid(
                             roomId: currentRoomID,
                             bidAmount: currentPrice.description,
                             productId: currentProductID ?? "", auctionTypeId: auctionTypeId
-                            
                             
                         )
                     } else {
@@ -944,8 +1002,11 @@ struct LiveStream: View {
                             )
                         }
                     }
+                    
                 })
             }
+                
+            
             
         }
         .padding(.horizontal)
@@ -2093,32 +2154,8 @@ extension LiveStream {
             fetchProducts(for: roomId)
         }
         
-//        socketManagerChat.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
-////            guard let self else { return }
-//            print("AUCtioned data")
-//            print("\(roomId)")
-//            print("\(products)")
-//            print("\(startingBidAmount)")
-//            print("\(requireTime)")
-//            print("\(counterBidTime)")
-//            print("\(suddenDeath)")
-//                self.updateProducts(
-//                    for: roomId,
-//                    products: products,
-//                    startingBidAmount: Double(startingBidAmount) ?? 0.0,
-//                    requireTime: requireTime,
-//                    counterBidTime: counterBidTime,
-//                    suddenDeath: suddenDeath
-//                )
-//
-//                // 🔥 unlock product details for this room
-//                self.auctionStartedRooms.insert(roomId)
-//           
-//        }
-//        
         socketManagerChat.listenForAuctionNextProduct { roomID,products,source  in
             guard roomId == roomID else { return}
-//            self.auctionedProductData = products
             
         }
         
@@ -2146,19 +2183,142 @@ extension LiveStream {
             usersCount = user.count
             print("Freebie user data \(wheelTitles) for showId : \(freebie.show_id ?? "")")
         }
-        
-//        socketManager.listenForFreebie{ freebie,user in
-//            let roomID = freebie.room_id ?? ""
-//            guard self.roomId == roomID else{
-//                return
-//            }
-//            self.wheelTitles = user
-//            let title = user.map { $0.name ?? ""}
-//            self.viewModelFreebie.options.removeAll()
-//            viewModelFreebie.options.append(contentsOf: title)
-//            print("Freebie user data \(wheelTitles) for showId : \(showId)")
-//        }
+       
+
+        // MARK: - Break Spot (Surprise Set) Listeners
+        socketManagerChat.listenForAuctionStartedBreakSpot { response,status, roomID, productSetId, productSetItemId, productSetItemUnitId, startingBidAmount, requireTime, counterBidTime, suddenDeath in
+            guard self.currentRoomID == roomID else { return }
+            self.auctionStartedRooms.insert(roomID)
+            print("🎁 Surprise Set Auction Started - Set: \(productSetId), Item: \(productSetItemId), Unit: \(productSetItemUnitId)")
+            
+            DispatchQueue.main.async {
+                self.isSurpriseSetAuctionActive = true
+                
+                self.updateCurrentSurpriseSet(from: response)
+                
+                self.currentPrice = Double(startingBidAmount) ?? 0.0
+                self.sudden_Death = suddenDeath
+                self.currentProductID = "\(productSetId)_\(productSetItemId)_\(productSetItemUnitId)"
+               
+            }
+        }
+
+        socketManagerChat.listenForBidTimerUpdateBreakSpot(roomId: roomId) { remaining in
+            DispatchQueue.main.async {
+                self.surpriseSetBidTime = remaining
+                self.socketManagerChat.bidTime = self.socketManagerChat.formatElapsedTime(seconds: remaining)
+            }
+        }
+
+        socketManagerChat.listenForAuctionEndedBreakSpot { roomID, productSetId, productSetItemId, productSetItemUnitId, message in
+            guard self.currentRoomID == roomID else { return }
+            print("🏁 Surprise Set Auction Ended - Set: \(productSetId), Message: \(message ?? "N/A")")
+            
+            DispatchQueue.main.async {
+                self.isSurpriseSetAuctionActive = false
+                self.currentSurpriseSetData = nil
+            }
+        }
+
+        socketManagerChat.listenForBidFinalizedBreakSpot { roomID, productSetId, productSetItemId, productSetItemUnitId, winner in
+            guard self.currentRoomID == roomID else { return }
+            print("🏆 Surprise Set Winner - \(winner?.user_name ?? "No winner")")
+            
+            DispatchQueue.main.async {
+                self.isSurpriseSetAuctionActive = false
+                
+                if let winner = winner {
+                    self.winnerName = winner.user_name ?? ""
+                    self.winnerProfileID = Int(winner.user_id ?? "") ?? 0
+                    self.winnerProfileImage = winner.user_image ?? ""
+                    self.winnerAmount = winner.bid_amount ?? ""
+                    self.currentPrice = Double(self.winnerAmount) ?? 0.0
+                    
+                    if !self.winnerName.isEmpty {
+                        self.showWinnerOnParent = true
+                        if self.winnerProfileID == UserDefaults.userId {
+                            self.randomWinner = "You"
+                        } else {
+                            self.randomWinner = self.winnerName.capitalizingFirstLetter()
+                        }
+                        self.randomWinnerImage = self.winnerProfileImage
+                    }
+                }
+                
+                self.currentSurpriseSetData = nil
+            }
+        }
+
+        socketManagerChat.listenForAuctionOrderFailed { roomID, productSetId, productSetItemId, errorMessage, errorCode in
+            guard self.currentRoomID == roomID else { return }
+            print("❌ Surprise Set Order Failed - \(errorMessage ?? "Unknown error")")
+            
+            DispatchQueue.main.async {
+                self.hudMsg = errorMessage ?? "Order failed"
+                self.showHud = true
+                self.isSurpriseSetAuctionActive = false
+                self.currentSurpriseSetData = nil
+            }
+        }
+      
+        // Listen for highest bid updates on surprise sets
+        socketManagerChat.listenForHighestBidBreakSpot(forRoom: roomId) { highestBid in
+            guard let bid = highestBid else { return }
+            
+            // Only update if surprise set auction is active
+            guard self.isSurpriseSetAuctionActive else { return }
+            
+            DispatchQueue.main.async {
+                print("🏆 Highest Bid (Surprise Set): \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+                self.winnerName = bid.user_name ?? ""
+                self.winnerProfileID = Int(bid.user_id ?? "") ?? 0
+                self.winnerProfileImage = bid.user_image ?? ""
+                self.winnerAmount = bid.bid_amount ?? ""
+                
+                if self.winnerName != "" {
+                    self.currentPrice = Double(self.winnerAmount) ?? 0.0
+                }
+            }
+        }
     }
+    private func updateCurrentSurpriseSet(from response: AuctionStartedBreakSpotResponse) {
+
+        // 1️⃣ Map product_set_item → ProductItemResponse array
+        var items: [ProductItemResponse]? = nil
+
+        if let productSetItem = response.surpriseSetDetails?.productSetItem {
+            let item = ProductItemResponse(
+                id: productSetItem.id ?? 0,
+                name: productSetItem.name,
+                quantity: productSetItem.quantity,
+                soldQuantity: productSetItem.soldQuantity,
+                description: productSetItem.description,
+                status: productSetItem.status
+            )
+            items = [item]
+        }
+
+        // 2️⃣ Map product_set → ProductSurpriseData
+        if let productSet = response.surpriseSetDetails?.productSet {
+
+            let surpriseData = ProductSurpriseData(
+                name: productSet.name,
+                type: productSet.type,
+                description: productSet.description,
+                price: productSet.price,
+                shippingProfileId: nil,
+                quickSpin: nil,
+                autoRandomizer: nil,
+                userId: nil,
+                isLiveBid: nil,
+                id: productSet.id ?? 0,
+                items: items
+            )
+
+            self.currentSurpriseSetData = surpriseData
+        }
+    }
+
     
     @MainActor
     private func updateProducts(
@@ -2192,8 +2352,6 @@ extension LiveStream {
 
         print("🟢 Products updated for room:", roomId)
     }
-
-
     private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
         fetchProducts(for: roomId)
         
@@ -2203,38 +2361,65 @@ extension LiveStream {
         let amount = winner?.bid_amount ?? ""
         
         print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
-//        auctionedProductData = nil
         
         maxBidAmountSheet = false
         winnerName = name
         winnerProfileID = id
         winnerProfileImage = image
         winnerAmount = amount
-        auctionedProductData?.status = "sold"
-        if !winnerName.isEmpty{
+        
+        // Mark as sold based on auction type
+        if isSurpriseSetAuctionActive {
+            // Surprise set completed
+            isSurpriseSetAuctionActive = false
+            currentSurpriseSetData = nil
+        } else {
+            auctionedProductData?.status = "sold"
+        }
+        
+        if !winnerName.isEmpty {
             showWinnerOnParent = true
-            if winnerProfileID == UserDefaults.userId{
+            if winnerProfileID == UserDefaults.userId {
                 randomWinner = "You"
-            }else{
+            } else {
                 randomWinner = winnerName.capitalizingFirstLetter()
             }
             randomWinnerImage = winnerProfileImage
             currentPrice = Double(winnerAmount) ?? 0.0
+            self.auctionStartedRooms.remove(roomId)
         }
-        
-//        let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
-//        let roomId = liveShowsData[currentIndex].room_id ?? ""
-//        let userId = UserDefaults.userId
-//        let userName = UserDefaults.userName
-//        let userImage = UserDefaults.profileURL
-//        SocketManagerService.shared.sendChat(
-//            roomId: roomId,
-//            message: message,
-//            userId: userId,
-//            userName: userName,
-//            userImage: userImage
-//        )
     }
+
+//    private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
+//        fetchProducts(for: roomId)
+//        
+//        let name = winner?.user_name ?? ""
+//        let id = Int(winner?.user_id ?? "") ?? 0
+//        let image = winner?.user_image ?? ""
+//        let amount = winner?.bid_amount ?? ""
+//        
+//        print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
+////        auctionedProductData = nil
+//        
+//        maxBidAmountSheet = false
+//        winnerName = name
+//        winnerProfileID = id
+//        winnerProfileImage = image
+//        winnerAmount = amount
+//        auctionedProductData?.status = "sold"
+//        if !winnerName.isEmpty{
+//            showWinnerOnParent = true
+//            if winnerProfileID == UserDefaults.userId{
+//                randomWinner = "You"
+//            }else{
+//                randomWinner = winnerName.capitalizingFirstLetter()
+//            }
+//            randomWinnerImage = winnerProfileImage
+//            currentPrice = Double(winnerAmount) ?? 0.0
+//        }
+//        
+//
+//    }
 
     private func handleBuyerVerification() {
         switch UserDefaults.buyerVerafied {
@@ -2411,35 +2596,96 @@ extension LiveStream {
         }
     }
 
-    func sendBid(roomId: String, bidAmount: String, productId: String,auctionTypeId :Int) {
-        let data: [String: Any] = [
-            "room_id": roomId,
-            "bid_amount": bidAmount,
-            "user_name": UserDefaults.userName,
-            "user_image": UserDefaults.profileURL,
-            "user_id": "\(UserDefaults.userId)",
-            "product_id": productId,
-            "auction_type_id":auctionTypeId
-        ]
-        socketManagerChat.sendBid(payload: data)
+//    func sendBid(roomId: String, bidAmount: String, productId: String,auctionTypeId :Int) {
+//        let data: [String: Any] = [
+//            "room_id": roomId,
+//            "bid_amount": bidAmount,
+//            "user_name": UserDefaults.userName,
+//            "user_image": UserDefaults.profileURL,
+//            "user_id": "\(UserDefaults.userId)",
+//            "product_id": productId,
+//            "auction_type_id":auctionTypeId
+//        ]
+//        socketManagerChat.sendBid(payload: data)
+//        currentPrice = Double(bidAmount) ?? 0.0
+//        let price = String(format: "%.2f", currentPrice)
+//        commentText = "Current highest bid : $\(price)"
+//        commentText = ""
+//    }
+    
+    func sendBid(roomId: String, bidAmount: String, productId: String, auctionTypeId: Int) {
+        // Check if this is a surprise set auction
+        if isSurpriseSetAuctionActive{
+           let components = productId.split(separator: "_").map(String.init)
+            if components.count == 3{
+                // This is a surprise set bid
+                let productSetId = Int(components[0]) ?? 0
+                        let productSetItemId = Int(components[1]) ?? 0
+                        let productSetItemUnitId = Int(components[2]) ?? 0
+                        
+                        socketManagerChat.placeBidBreakSpot(
+                            roomId: roomId,
+                            bidAmount: bidAmount,
+                            userName: UserDefaults.userName,
+                            userImage: UserDefaults.profileURL,
+                            userId: "\(UserDefaults.userId)",
+                            productSetId: productSetId,
+                            productSetItemId: productSetItemId,
+                            productSetItemUnitId: productSetItemUnitId,
+                            productSetType: currentSurpriseSetData?.type ?? ""
+                        )
+            }
+
+        } else {
+            // Regular product bid
+            let data: [String: Any] = [
+                "room_id": roomId,
+                "bid_amount": bidAmount,
+                "user_name": UserDefaults.userName,
+                "user_image": UserDefaults.profileURL,
+                "user_id": "\(UserDefaults.userId)",
+                "product_id": productId,
+                "auction_type_id": auctionTypeId
+            ]
+            socketManagerChat.sendBid(payload: data)
+        }
+        
         currentPrice = Double(bidAmount) ?? 0.0
         let price = String(format: "%.2f", currentPrice)
         commentText = "Current highest bid : $\(price)"
         commentText = ""
     }
 
+//    func logoutRoom() {
+//        agoraManager.leaveChannel()
+//        SocketManagerService.shared.chats.removeAll()
+//            self.comments.removeAll()
+//            SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
+//            currentProductID = nil
+//            productId = 0
+//            self.currentPrice = 0.0
+//            self.currentProductIndex = -1
+//        auctionedProductData = nil
+//        socketManagerChat.leaveShow(showId: showId, UserId: "\(UserDefaults.userId)")
+//        }
     func logoutRoom() {
         agoraManager.leaveChannel()
         SocketManagerService.shared.chats.removeAll()
-            self.comments.removeAll()
-            SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
-            currentProductID = nil
-            productId = 0
-            self.currentPrice = 0.0
-            self.currentProductIndex = -1
+        self.comments.removeAll()
+        SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
+        currentProductID = nil
+        productId = 0
+        self.currentPrice = 0.0
+        self.currentProductIndex = -1
         auctionedProductData = nil
+        
+        // Clean up surprise set state
+        isSurpriseSetAuctionActive = false
+        currentSurpriseSetData = nil
+        surpriseSetBidTime = 0
+        
         socketManagerChat.leaveShow(showId: showId, UserId: "\(UserDefaults.userId)")
-        }
+    }
 
         func incrementPrice() {
             let increment: Double

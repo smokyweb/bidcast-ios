@@ -126,7 +126,7 @@ final class SocketManagerService: NSObject, ObservableObject {
 
     
     // MARK: - Helpers
-    private func formatElapsedTime(seconds: Int) -> String {
+    func formatElapsedTime(seconds: Int) -> String {
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
         let secs = seconds % 60
@@ -1164,6 +1164,7 @@ extension SocketManagerService {
        /// Listens for `auction_started_break_spot` event
        func listenForAuctionStartedBreakSpot(
            completion: @escaping (
+            _ responseData:AuctionStartedBreakSpotResponse,
                _ status: String,
                _ roomId: String,
                _ productSetId: Int,
@@ -1176,43 +1177,42 @@ extension SocketManagerService {
            ) -> Void
        ) {
            socket.on("auction_started_break_spot") { [weak self] data, _ in
-               guard let self else { return }
-               hasWon = false
-               
-               guard
-                   let json = data.first as? [String: Any],
-                   let roomId = json["room_id"] as? String
+               guard let self,
+                     let json = data.first as? [String: Any],
+                     let jsonData = try? JSONSerialization.data(withJSONObject: json)
                else {
-                   print("❌ Invalid auction_started_break_spot payload:", data)
+                   print("❌ Invalid socket payload")
                    return
                }
-               
-               let status = json["status"] as? String ?? ""
-               let productSetId = json["productSetId"] as? Int ?? 0
-               let productSetItemId = json["productSetItemId"] as? Int ?? 0
-               let productSetItemUnitId = json["productSetItemUnitId"] as? Int ?? 0
-               let startingBidAmount = json["starting_bid_amount"] as? String ?? "0"
-               let requireTime = json["require_time"] as? Int ?? 30
-               let counterBidTime = json["counter_bid_time"] as? Int ?? 0
-               let suddenDeath = json["sudden_death"] as? Bool ?? false
-               
-               self.countdownTimer = counterBidTime
-               
-               DispatchQueue.main.async {
-                   completion(
-                       status,
-                       roomId,
-                       productSetId,
-                       productSetItemId,
-                       productSetItemUnitId,
-                       startingBidAmount,
-                       requireTime,
-                       counterBidTime,
-                       suddenDeath
+
+               do {
+                   let response = try JSONDecoder().decode(
+                       AuctionStartedBreakSpotResponse.self,
+                       from: jsonData
                    )
+
+                   self.countdownTimer = response.counterBidTime ?? 0
+
+                   DispatchQueue.main.async {
+                       completion(
+                            response,
+                           response.status ?? "",
+                           response.roomId ?? "",
+                           response.productSetId ?? 0,
+                           response.productSetItemId ?? 0,
+                           response.productSetItemUnitId ?? 0,
+                           String(response.startingBidAmount ?? 0),
+                           response.requireTime ?? 30,
+                           response.counterBidTime ?? 0,
+                           response.suddenDeath ?? false
+                       )
+                   }
+
+                   self.logger.info("🎁 auction_started_break_spot received")
+
+               } catch {
+                   print("❌ Decoding error:", error)
                }
-               
-               self.logger.info("🎁 auction_started_break_spot received for room \(roomId)")
            }
        }
        
@@ -1349,6 +1349,78 @@ extension SocketManagerService {
                self.logger.error("❌ auction_order_failed for room \(roomId): \(errorMessage ?? "Unknown error")")
            }
        }
+        /// Place a bid for break spot auction
+        func placeBidBreakSpot(
+            roomId: String,
+            bidAmount: String,
+            userName: String,
+            userImage: String,
+            userId: String,
+            productSetId: Int,
+            productSetItemId: Int,
+            productSetItemUnitId: Int,
+            productSetType: String
+        ) {
+            performIfConnected {
+                let payload: [String: Any] = [
+                    "room_id": roomId,
+                    "bid_amount": bidAmount,
+                    "user_name": userName,
+                    "user_image": userImage,
+                    "user_id": userId,
+                    "product_set_id": productSetId,
+                    "product_set_item_id": productSetItemId,
+                    "product_set_item_unit_id": productSetItemUnitId,
+                    "product_set_type": productSetType
+                ]
+                
+                socket.emit("place_bid_break_spot", payload)
+                logger.info("💰 Sent place_bid_break_spot: \(payload)")
+            }
+        }
+        
+        /// Listen for highest bid updates in break spot auction
+        func listenForHighestBidBreakSpot(
+            forRoom roomId: String,
+            completion: ((_ highestBid: HighestBid?) -> Void)? = nil
+        ) {
+            socket.on("get_highest_bid_break_spot") { [weak self] data, _ in
+                guard let self,
+                      let json = data.first as? [String: Any],
+                      let incomingRoomId = json["room_id"] as? String else {
+                    print("❌ Invalid get_highest_bid_break_spot payload:", data)
+                    return
+                }
+                
+                // Only handle updates for the specified room
+                guard incomingRoomId == roomId else {
+                    return
+                }
+                
+                // Parse highest bid info
+                var highestBid: HighestBid?
+                if let bidJson = json["highest_bid"] as? [String: Any] {
+                    do {
+                        let decodedData = try JSONSerialization.data(withJSONObject: bidJson)
+                        highestBid = try JSONDecoder().decode(HighestBid.self, from: decodedData)
+                    } catch {
+                        print("❌ Failed to decode get_highest_bid_break_spot:", error)
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    completion?(highestBid)
+                    self.logger.info("✅ [\(incomingRoomId)] Highest Bid (Break Spot): \(highestBid?.user_name ?? "unknown") - \(highestBid?.bid_amount ?? "0")")
+                }
+            }
+        }
+        
+        /// Remove break spot bid listeners
+        func removeBreakSpotBidListeners() {
+            socket.off("get_highest_bid_break_spot")
+            print("🧹 Removed break spot bid listeners")
+        }
+    
        
        // MARK: - Remove Break Spot Listeners
        func removeBreakSpotListeners() {

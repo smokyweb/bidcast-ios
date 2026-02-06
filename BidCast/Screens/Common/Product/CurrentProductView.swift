@@ -2,7 +2,7 @@
 //  ProductDetailsView.swift
 //  BidCast
 //
-//  Created by Vivek-JAM_E-328 on 13/10/25.
+//  Created by Ankit-JAM_E-294 on 13/10/25.
 //
 
 import SwiftUI

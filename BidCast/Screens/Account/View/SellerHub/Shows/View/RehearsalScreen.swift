@@ -199,6 +199,11 @@ struct RehearsalScreen: View {
     
     @State private var sudden_Death = false
     
+    // Surprise Set Auction Tracking States
+    @State private var currentSurpriseSetData: ProductSurpriseData?
+    @State private var surpriseSetBidTime: Int = 0
+    @State private var isSurpriseSetAuctionActive: Bool = false
+    
     @StateObject private var viewModelFreebie = RandomizerViewModel()
     var body: some View {
         GeometryReader { geometry in
@@ -415,6 +420,9 @@ struct RehearsalScreen: View {
                         showSurpriseAuctionSheet = false
                         showShopSheet = false
                         hasAuctionStarted = true
+                        
+                        // Store the surprise set data for UI display
+                        currentSurpriseSetData = surpriseSet
                         
                         // Get first available item and unit
                         let firstItem = surpriseSet.items?.first
@@ -999,8 +1007,12 @@ struct RehearsalScreen: View {
             },onSurpriseSetSelected:{ surprise in
                 // Store the surprise set and show auction settings sheet
                 selectedSurpriseSetForAuction = surprise
+                currentSurpriseSetData = surprise
                 showSurpriseAuctionSheet = true
             } ,onSurpriseSetUnitSelected : { surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+                // Store the surprise set data for UI display
+                currentSurpriseSetData = surpriseData
+                
                 // Get first available item and unit
                 let firstItem = surpriseData.items?.first
                 let firstAvailableUnit = firstItem?.units?.first(where: { $0.status != "sold" }) ?? firstItem?.units?.first
@@ -1314,10 +1326,35 @@ struct RehearsalScreen: View {
                     
                     // MARK: - Product Details
                     if hasAuctionStarted {
-                        if auctionedProductData != nil {
+                        // Show Surprise Set View when surprise set auction is active
+                        if isSurpriseSetAuctionActive, let surpriseSet = currentSurpriseSetData {
+                            CurrentSurpriseSetView(
+                                surpriseSet: surpriseSet,
+                                currentPrice: $currentPrice,
+                                suddenDeath: $sudden_Death,
+                                bidTime: $surpriseSetBidTime,
+                                userName: $winnerName,
+                                userImage: $winnerProfileImage,
+                                hasWon: $socketManager.hasWon,
+                                sellerId: $sellerId,
+                                onTap: {
+                                    // Handle tap on surprise set
+                                },
+                                onTapRunNext: {
+                                    // Run next surprise set item
+                                    showShopSheet = true
+                                }
+                            )
+                            .frame(maxWidth: .infinity)
+                            .background(Color.black.opacity(0.3))
+                            .cornerRadius(10)
+                            .padding(.horizontal, 16)
+                        }
+                        // Show regular product view for normal auctions
+                        else if !isSurpriseSetAuctionActive, auctionedProductData.id != nil {
                             CurrentProductView(
                                 product: auctionedProductData,
-                                auctionTypeId:$auctionTypeId,
+                                auctionTypeId: $auctionTypeId,
                                 currentPrice: $currentPrice,
                                 suddenDeath: $sudden_Death,
                                 bidTime: $socketManager.bidTime,
@@ -1332,15 +1369,15 @@ struct RehearsalScreen: View {
                             .frame(maxWidth: .infinity)
                             .background(Color.black.opacity(0.3))
                             .cornerRadius(10)
-                            .padding(.horizontal,16)
+                            .padding(.horizontal, 16)
                         }
                     } else {
                         Text("Awaiting for product...")
                             .font(.custom(poppinsSemiBold, size: 14))
                             .foregroundColor(.white)
                             .padding(.horizontal)
-                            .padding(.leading,16)
-                            .padding(.trailing,16)
+                            .padding(.leading, 16)
+                            .padding(.trailing, 16)
                     }
                 }
                 .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
@@ -1945,13 +1982,71 @@ struct RehearsalScreen: View {
         FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
             DispatchQueue.main.async {
                 self.messageList = messages
-//                self.isLoadingMessages = false
-//                self.showFloatingChat = true
-                
             }
         }
         
+        // MARK: - Break Spot Listeners
+        socketManager.listenForAuctionStartedBreakSpot { response , status, roomID, productSetId, productSetItemId, productSetItemUnitId, startingBidAmount, requireTime, counterBidTime, suddenDeath in
+            guard self.roomId == roomID else { return }
+            print("🎁 Surprise Set Auction Started - Set: \(productSetId), Item: \(productSetItemId), Unit: \(productSetItemUnitId)")
+            
+            DispatchQueue.main.async {
+                self.isSurpriseSetAuctionActive = true
+                self.hasAuctionStarted = true
+                self.currentPrice = Double(startingBidAmount) ?? 0.0
+                self.sudden_Death = suddenDeath
+            }
+        }
         
+        socketManager.listenForBidTimerUpdateBreakSpot(roomId: roomId) { remaining in
+            DispatchQueue.main.async {
+                self.surpriseSetBidTime = remaining
+                self.socketManager.bidTime = self.socketManager.formatElapsedTime(seconds: remaining)
+            }
+        }
+        
+        socketManager.listenForAuctionEndedBreakSpot { roomID, productSetId, productSetItemId, productSetItemUnitId, message in
+            guard self.roomId == roomID else { return }
+            print("🏁 Surprise Set Auction Ended - Set: \(productSetId), Message: \(message ?? "N/A")")
+            
+            DispatchQueue.main.async {
+                self.isSurpriseSetAuctionActive = false
+            }
+        }
+        
+        socketManager.listenForBidFinalizedBreakSpot { roomID, productSetId, productSetItemId, productSetItemUnitId, winner in
+            guard self.roomId == roomID else { return }
+            print("🏆 Surprise Set Winner - \(winner?.user_name ?? "No winner")")
+            
+            DispatchQueue.main.async {
+                self.isSurpriseSetAuctionActive = false
+                
+                if let winner = winner {
+                    self.winnerName = winner.user_name ?? ""
+                    self.winnerProfileID = Int(winner.user_id ?? "") ?? 0
+                    self.winnerProfileImage = winner.user_image ?? ""
+                    self.winnerAmount = winner.bid_amount ?? ""
+                    self.currentPrice = Double(self.winnerAmount) ?? 0.0
+                    
+                    if !self.winnerName.isEmpty {
+                        self.showWinnerOnParent = true
+                        self.randomWinner = self.winnerName.capitalizingFirstLetter()
+                        self.randomWinnerImage = self.winnerProfileImage
+                    }
+                }
+            }
+        }
+        
+        socketManager.listenForAuctionOrderFailed { roomID, productSetId, productSetItemId, errorMessage, errorCode in
+            guard self.roomId == roomID else { return }
+            print("❌ Surprise Set Order Failed - \(errorMessage ?? "Unknown error")")
+            
+            DispatchQueue.main.async {
+                self.hudMsg = errorMessage ?? "Order failed"
+                self.showhudAlert = true
+                self.isSurpriseSetAuctionActive = false
+            }
+        }
     }
     @MainActor
     private func updateProducts(

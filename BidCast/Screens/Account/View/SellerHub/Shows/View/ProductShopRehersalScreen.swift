@@ -226,7 +226,7 @@ struct ProductShopRehersalScreen: View {
                                         .padding(.horizontal, 16)
                                 }
                             } else {
-                                ForEach(surpriseSetData, id: \.id) { surpriseSet in
+                            ForEach(surpriseSetData, id: \.id) { surpriseSet in
                                     ProductSurpriseCard(
                                         data: surpriseSet,
                                         onManageProducts: {
@@ -237,7 +237,14 @@ struct ProductShopRehersalScreen: View {
                                             // Handle pin action
                                         },
                                         onTap: {
-                                            onSurpriseSetSelected?(surpriseSet)
+                                            // Check if type is buy_now or auction
+                                            if surpriseSet.type == "auction" {
+                                                // For auction type, show auction settings sheet
+                                                onSurpriseSetSelected?(surpriseSet)
+                                            } else {
+                                                // For buy_now type, start directly without auction sheet
+                                                onSurpriseSetUnitSelected?(surpriseSet, "\(surpriseSet.price ?? 0)", 0, 0, false)
+                                            }
                                         }
                                     )
                                     .padding(.horizontal, 16)
