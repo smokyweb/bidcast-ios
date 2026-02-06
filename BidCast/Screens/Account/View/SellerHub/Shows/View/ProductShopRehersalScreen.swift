@@ -94,7 +94,7 @@ struct ProductShopRehersalScreen: View {
     var onTapCancel: (() -> Void)?
     var onProductSelected: ((ProductDataModel1) -> Void)?
     var onSurpriseSetSelected: ((ProductSurpriseData) -> Void)?
-    var onSurpriseSetUnitSelected: ((ProductItemResponse,String,Int,Int,Bool) -> Void)?
+    var onSurpriseSetUnitSelected: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)?
     @State private var socketListenersConfigured = false
     
     // NEW: State for Create Product Sheet
@@ -122,7 +122,7 @@ struct ProductShopRehersalScreen: View {
         onTapCancel: (() -> Void)? = nil,
         onProductSelected: ((ProductDataModel1) -> Void)? = nil,
         onSurpriseSetSelected: ((ProductSurpriseData) -> Void)? = nil,
-        onSurpriseSetUnitSelected:((ProductItemResponse,String,Int,Int,Bool) -> Void)?,
+        onSurpriseSetUnitSelected: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)?,
         onProductCreated: (() -> Void)? = nil
     ) {
         self.mode = mode
@@ -360,8 +360,7 @@ struct ProductShopRehersalScreen: View {
                     surpriseData: surpriseSet,
                     onStartAuction: { product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
                         // Get the first available unit ID from the product
-                        let unitId = product.units?.first(where: { $0.status != "sold" })?.id ?? product.units?.first?.id ?? 0
-                        onSurpriseSetUnitSelected?(product, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
+                        onSurpriseSetUnitSelected?(surpriseSet, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
                         showManageProductSheet = false
                     }
                 )

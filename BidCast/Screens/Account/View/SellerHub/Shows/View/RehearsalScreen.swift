@@ -179,6 +179,10 @@ struct RehearsalScreen: View {
     @State private var showFloatingChat: Bool = false
     @State private var selectedChatMessage: ChatMessage?
     
+    // Surprise Set Auction States
+    @State private var selectedSurpriseSetForAuction: ProductSurpriseData?
+    @State private var showSurpriseAuctionSheet: Bool = false
+    
     @State private var showWinnerOnParent = false
     @State private var randomWinner: String = ""
     @State private var randomWinnerImage: String = ""
@@ -398,6 +402,48 @@ struct RehearsalScreen: View {
             .presentationDragIndicator(.hidden)        // optional
         }
         
+        // Surprise Set Auction Sheet
+        .sheet(isPresented: $showSurpriseAuctionSheet) {
+            if let surpriseSet = selectedSurpriseSetForAuction {
+                AuctionSettingsSheet(
+                    startingBid: "\(surpriseSet.price ?? 0)",
+                    onTapCancel: {
+                        showSurpriseAuctionSheet = false
+                        selectedSurpriseSetForAuction = nil
+                    },
+                    onStartAuction: { bid, reqTime, counterTime, suddenDeath in
+                        showSurpriseAuctionSheet = false
+                        showShopSheet = false
+                        hasAuctionStarted = true
+                        
+                        // Get first available item and unit
+                        let firstItem = surpriseSet.items?.first
+                        let firstAvailableUnit = firstItem?.units?.first(where: { $0.status != "sold" }) ?? firstItem?.units?.first
+                        
+                        socketManager.startAuctionBreakSpot(
+                            roomId: roomId,
+                            productSetId: surpriseSet.id,
+                            productSetItemId: firstItem?.id ?? 0,
+                            productSetItemUnitId: firstAvailableUnit?.id ?? 0,
+                            startingBidAmount: Double(bid) ?? 0,
+                            requireTime: reqTime,
+                            counterBidTime: counterTime,
+                            suddenDeath: suddenDeath
+                        )
+                        
+                        selectedSurpriseSetForAuction = nil
+                    },
+                    onShowToast: { message in
+                        hudMsg = message
+                        showhudAlert = true
+                    }
+                )
+                .presentationDetents([.fraction(0.70)])
+                .presentationCornerRadius(25)
+                .presentationDragIndicator(.hidden)
+            }
+        }
+        
         .bottomSheet(
             isPresented: $showSellSheet,
             height: sheetHeight, // Adjust as needed
@@ -524,7 +570,7 @@ struct RehearsalScreen: View {
 //                        onShare: { platform in
 //                            print("Shared to \(platform)")
 //                        }
-//                        
+//
 //                    )
                     
                     DynamicShareBottomSheetView(
@@ -619,7 +665,7 @@ struct RehearsalScreen: View {
 //            showTipSetting = false
 //            showSellSheet = false
 //        }) {
-//            
+//
 //        }
         .sheet(isPresented: $showTipSetting) {
             TipSettingsSheet(
@@ -749,7 +795,7 @@ struct RehearsalScreen: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
 //        .onAppear {
-//            
+//
 //            logoutRoom()
 //            showTopBadge = true
 //            agoraManager.setupLocalVideo()
@@ -951,16 +997,25 @@ struct RehearsalScreen: View {
                     }
                 }
             },onSurpriseSetSelected:{ surprise in
-                showAuctionSheet = true
-            },onSurpriseSetUnitSelected : { product,bidAmount, requiredTime, counterBidTime, isSuddenDeath in
-//                socketManager.startAuctionBreakSpot(roomId: roomId,
-//                                                    productSetId: <#T##Int#>,
-//                                                    productSetItemId: product.productSetId ?? 0,
-//                                                    productSetItemUnitId: product.units,
-//                                                    startingBidAmount: <#T##Double#>, \
-//                                                    requireTime: <#T##Int#>,
-//                                                    counterBidTime: <#T##Int#>,
-//                                                    suddenDeath: <#T##Bool#>)
+                // Store the surprise set and show auction settings sheet
+                selectedSurpriseSetForAuction = surprise
+                showSurpriseAuctionSheet = true
+            } ,onSurpriseSetUnitSelected : { surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+                // Get first available item and unit
+                let firstItem = surpriseData.items?.first
+                let firstAvailableUnit = firstItem?.units?.first(where: { $0.status != "sold" }) ?? firstItem?.units?.first
+                
+                socketManager.startAuctionBreakSpot(
+                    roomId: roomId,
+                    productSetId: surpriseData.id,
+                    productSetItemId: firstItem?.id ?? 0,
+                    productSetItemUnitId: firstAvailableUnit?.id ?? 0,
+                    startingBidAmount: Double(bidAmount) ?? 0,
+                    requireTime: requiredTime,
+                    counterBidTime: counterBidTime,
+                    suddenDeath: isSuddenDeath
+                )
+                showShopSheet = false
             }
         )
     }
@@ -982,8 +1037,8 @@ struct RehearsalScreen: View {
                 socketManager.createFreebie(room_id: self.roomId, productId: "\(product.id ?? 0)", time: 100)
                 showFreeBie = false
                 navigateToRandomizer = true
-            }, onSurpriseSetUnitSelected: {_,_,_,_,_  in
-                
+            }, onSurpriseSetUnitSelected: { _, _, _, _, _ in
+                            // Freebie mode - no action needed for surprise sets
             }
         )
     }

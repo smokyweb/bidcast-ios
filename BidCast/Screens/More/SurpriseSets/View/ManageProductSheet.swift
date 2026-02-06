@@ -33,7 +33,7 @@ struct ManageProductSheet: View {
     @Environment(\.presentationMode) var presentationMode
     
     let surpriseData: ProductSurpriseData
-    var onStartAuction: ((ProductItemResponse,String,Int,Int,Bool) -> Void)?
+    var onStartAuction: ((ProductSurpriseData,String,Int,Int,Bool) -> Void)?
     
     @State private var isAutoRandomizeOn: Bool = false
     @State private var isQuickSpinOn: Bool = false
@@ -104,7 +104,7 @@ struct ManageProductSheet: View {
     
     init(
         surpriseData: ProductSurpriseData,
-        onStartAuction: ((ProductItemResponse, String, Int, Int, Bool) -> Void)? = nil
+        onStartAuction: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)? = nil
     ) {
         self.surpriseData = surpriseData
         self.onStartAuction = onStartAuction
@@ -261,9 +261,8 @@ struct ManageProductSheet: View {
                 },
                 onStartAuction: { bidAmount, requiredTime, counterBidTime, isSuddenDeath in
                     showAuctionSheet = false
-                    if let product = selectedProductForAuction {
-                        onStartAuction?(product,bidAmount, requiredTime, counterBidTime, isSuddenDeath)
-                    }
+                    // Pass the full surpriseData for auction start
+                    onStartAuction?(surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
                 }
             )
             .presentationDetents([.fraction(0.70)])
