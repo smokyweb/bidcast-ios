@@ -2043,15 +2043,11 @@ struct RehearsalScreen: View {
             }
         }
         
-        socketManager.listenForAuctionOrderFailed { roomID, productSetId, productSetItemId, errorMessage, errorCode in
+        socketManager.listenForAuctionOrderFailed { roomID, productSetId, userid  in
             guard self.roomId == roomID else { return }
-            print("❌ Surprise Set Order Failed - \(errorMessage ?? "Unknown error")")
+            print("❌ Surprise Set Order Failed - )")
             
-            DispatchQueue.main.async {
-                self.hudMsg = errorMessage ?? "Order failed"
-                self.showhudAlert = true
-                self.isSurpriseSetAuctionActive = false
-            }
+          
         }
         socketManager.listenForHighestBidBreakSpot(forRoom: roomId) { highestBid in
             guard let bid = highestBid else { return }

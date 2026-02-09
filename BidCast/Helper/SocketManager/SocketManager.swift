@@ -71,6 +71,10 @@ struct HighestBid: Codable {
     var user_id: String?
     var product_id: String?
     var placed_at: String?
+    
+    var product_set_id: Int?
+        var product_set_item_id: Int?
+        var product_set_item_unit_id: Int?
 }
 // MARK: - 🎁 Raid Model -
 struct RaidInfo: Codable {
@@ -1184,7 +1188,7 @@ extension SocketManagerService {
                    print("❌ Invalid socket payload")
                    return
                }
-
+               hasWon = false
                do {
                    let response = try JSONDecoder().decode(
                        AuctionStartedBreakSpotResponse.self,
@@ -1317,38 +1321,34 @@ extension SocketManagerService {
        }
        
        /// Listens for `auction_order_failed` event
-       func listenForAuctionOrderFailed(
-           completion: @escaping (
-               _ roomId: String,
-               _ productSetId: Int?,
-               _ productSetItemId: Int?,
-               _ errorMessage: String?,
-               _ errorCode: String?
-           ) -> Void
-       ) {
-           socket.on("auction_order_failed") { [weak self] data, _ in
-               guard let self else { return }
-               
-               guard
-                   let json = data.first as? [String: Any],
-                   let roomId = json["room_id"] as? String
-               else {
-                   print("❌ Invalid auction_order_failed payload:", data)
-                   return
-               }
-               
-               let productSetId = json["productSetId"] as? Int
-               let productSetItemId = json["productSetItemId"] as? Int
-               let errorMessage = json["message"] as? String ?? json["error"] as? String
-               let errorCode = json["error_code"] as? String
-               
-               DispatchQueue.main.async {
-                   completion(roomId, productSetId, productSetItemId, errorMessage, errorCode)
-               }
-               
-               self.logger.error("❌ auction_order_failed for room \(roomId): \(errorMessage ?? "Unknown error")")
-           }
-       }
+    func listenForAuctionOrderFailed(
+        completion: @escaping (
+            _ roomId: String,
+            _ productSetId: Int,
+            _ userId: Int
+        ) -> Void
+    ) {
+        socket.on("auction_order_failed") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String,
+                  let productSetId = json["productSetId"] as? Int,
+                  let userId = json["user_id"] as? Int
+            else {
+                print("❌ Invalid auction_order_failed payload:", data)
+                return
+            }
+
+            DispatchQueue.main.async {
+                completion(roomId, productSetId, userId)
+            }
+
+            self.logger.error(
+                "❌ [\(roomId)] auction_order_failed | productSetId: \(productSetId) | userId: \(userId)"
+            )
+        }
+    }
+
         /// Place a bid for break spot auction
         func placeBidBreakSpot(
             roomId: String,
@@ -1380,40 +1380,42 @@ extension SocketManagerService {
         }
         
         /// Listen for highest bid updates in break spot auction
-        func listenForHighestBidBreakSpot(
-            forRoom roomId: String,
-            completion: ((_ highestBid: HighestBid?) -> Void)? = nil
-        ) {
-            socket.on("get_highest_bid_break_spot") { [weak self] data, _ in
-                guard let self,
-                      let json = data.first as? [String: Any],
-                      let incomingRoomId = json["room_id"] as? String else {
-                    print("❌ Invalid get_highest_bid_break_spot payload:", data)
-                    return
-                }
-                
-                // Only handle updates for the specified room
-                guard incomingRoomId == roomId else {
-                    return
-                }
-                
-                // Parse highest bid info
-                var highestBid: HighestBid?
-                if let bidJson = json["highest_bid"] as? [String: Any] {
-                    do {
-                        let decodedData = try JSONSerialization.data(withJSONObject: bidJson)
-                        highestBid = try JSONDecoder().decode(HighestBid.self, from: decodedData)
-                    } catch {
-                        print("❌ Failed to decode get_highest_bid_break_spot:", error)
-                    }
-                }
-                
-                DispatchQueue.main.async {
-                    completion?(highestBid)
-                    self.logger.info("✅ [\(incomingRoomId)] Highest Bid (Break Spot): \(highestBid?.user_name ?? "unknown") - \(highestBid?.bid_amount ?? "0")")
+    func listenForHighestBidBreakSpot(
+        forRoom roomId: String,
+        completion: ((_ highestBid: HighestBid?) -> Void)? = nil
+    ) {
+        socket.on("get_highest_bid_break_spot") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let incomingRoomId = json["room_id"] as? String else {
+                print("❌ Invalid get_highest_bid_break_spot payload:", data)
+                return
+            }
+
+            // Handle only matching room
+            guard incomingRoomId == roomId else { return }
+
+            var highestBid: HighestBid?
+
+            /// 🔴 FIX: backend sends `get_highest_bid`, NOT `highest_bid`
+            if let bidJson = json["get_highest_bid"] as? [String: Any] {
+                do {
+                    let decodedData = try JSONSerialization.data(withJSONObject: bidJson)
+                    highestBid = try JSONDecoder().decode(HighestBid.self, from: decodedData)
+                } catch {
+                    print("❌ Failed to decode get_highest_bid_break_spot:", error)
                 }
             }
+
+            DispatchQueue.main.async {
+                completion?(highestBid)
+                self.logger.info(
+                    "✅ [\(incomingRoomId)] Highest Bid: \(highestBid?.user_name ?? "unknown") - \(highestBid?.bid_amount ?? "0")"
+                )
+            }
         }
+    }
+
         
         /// Remove break spot bid listeners
         func removeBreakSpotBidListeners() {
