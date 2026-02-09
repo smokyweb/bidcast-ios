@@ -973,47 +973,123 @@ struct LiveStream: View {
     }
     
     //MARK: Bid  section
+//    @ViewBuilder
+//    private var biddingControls: some View {
+//        HStack(spacing: 8) {
+//            if self.auctionTypeId != 5 {
+//                if auctionTypeId == 9{
+//                    if currentSurpriseSetData?.type == "auction"{
+//                        customBidButton
+//                        swipeToBidSection
+//                    }else{
+//                        PrimaryButton(title: "Buy Now",isOutLine: false,onButtonClick: {
+//                            
+//                            if UserDefaults.allowBidForAllUser {
+//                                self.sendBid(
+//                                    roomId: currentRoomID,
+//                                    bidAmount: currentPrice.description,
+//                                    productId: currentProductID ?? "", auctionTypeId: auctionTypeId
+//                                    
+//                                )
+//                            } else {
+//                                if handleBidding(){
+//                                    self.sendBid(
+//                                        roomId: currentRoomID,
+//                                        bidAmount: currentPrice.description,
+//                                        productId: currentProductID ?? "", auctionTypeId: auctionTypeId
+//                                        
+//                                        
+//                                    )
+//                                }
+//                            }
+//                            
+//                        })
+//                    }
+//                }else{
+//                    customBidButton
+//                    swipeToBidSection
+//                }
+//            }
+//            else{
+//                
+//                PrimaryButton(title: "Buy Now",isOutLine: false,onButtonClick: {
+//                    
+//                    if UserDefaults.allowBidForAllUser {
+//                        self.sendBid(
+//                            roomId: currentRoomID,
+//                            bidAmount: currentPrice.description,
+//                            productId: currentProductID ?? "", auctionTypeId: auctionTypeId
+//                            
+//                        )
+//                    } else {
+//                        if handleBidding(){
+//                            self.sendBid(
+//                                roomId: currentRoomID,
+//                                bidAmount: currentPrice.description,
+//                                productId: currentProductID ?? "", auctionTypeId: auctionTypeId
+//                                
+//                                
+//                            )
+//                        }
+//                    }
+//                    
+//                })
+//            }
+//                
+//            
+//            
+//        }
+//        .padding(.horizontal)
+//        .onAppear {
+//            setupBiddingIfNeeded()
+//        }
+//    }
+    
+    private var shouldShowBuyNow: Bool {
+        if auctionTypeId == 5 {
+            return true
+        }
+
+        if auctionTypeId == 9 {
+            return currentSurpriseSetData?.type != "auction"
+        }
+
+        return false
+    }
+    
     @ViewBuilder
     private var biddingControls: some View {
         HStack(spacing: 8) {
-            if self.auctionTypeId == 8{
+            if shouldShowBuyNow {
+                buyNowButton
+            } else {
                 customBidButton
                 swipeToBidSection
             }
-            else{
-                
-                PrimaryButton(title: "Buy Now",isOutLine: false,onButtonClick: {
-                    
-                    if UserDefaults.allowBidForAllUser {
-                        self.sendBid(
-                            roomId: currentRoomID,
-                            bidAmount: currentPrice.description,
-                            productId: currentProductID ?? "", auctionTypeId: auctionTypeId
-                            
-                        )
-                    } else {
-                        if handleBidding(){
-                            self.sendBid(
-                                roomId: currentRoomID,
-                                bidAmount: currentPrice.description,
-                                productId: currentProductID ?? "", auctionTypeId: auctionTypeId
-                                
-                                
-                            )
-                        }
-                    }
-                    
-                })
-            }
-                
-            
-            
         }
         .padding(.horizontal)
         .onAppear {
             setupBiddingIfNeeded()
         }
     }
+    private var buyNowButton: some View {
+        PrimaryButton(
+            title: "Buy Now",
+            isOutLine: false
+        ) {
+            if UserDefaults.allowBidForAllUser || handleBidding() {
+                sendBid(
+                    roomId: currentRoomID,
+                    bidAmount: currentPrice.description,
+                    productId: currentProductID ?? "",
+                    auctionTypeId: auctionTypeId
+                )
+            }
+        }
+    }
+
+
+    
     //MARK: Cusotm bid section
     @ViewBuilder
     private var customBidButton: some View {

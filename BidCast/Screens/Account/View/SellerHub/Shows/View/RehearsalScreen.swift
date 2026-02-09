@@ -1986,13 +1986,18 @@ struct RehearsalScreen: View {
         }
         
         // MARK: - Break Spot Listeners
-        socketManager.listenForAuctionStartedBreakSpot { response , status, roomID, productSetId, productSetItemId, productSetItemUnitId, startingBidAmount, requireTime, counterBidTime, suddenDeath in
+     
+        socketManager.listenForAuctionStartedBreakSpot { response, status, roomID, productSetId, productSetItemId, productSetItemUnitId, startingBidAmount, requireTime, counterBidTime, suddenDeath in
             guard self.roomId == roomID else { return }
             print("🎁 Surprise Set Auction Started - Set: \(productSetId), Item: \(productSetItemId), Unit: \(productSetItemUnitId)")
             
             DispatchQueue.main.async {
                 self.isSurpriseSetAuctionActive = true
                 self.hasAuctionStarted = true
+                
+                // Update the surprise set data
+                self.updateCurrentSurpriseSet(from: response)
+                
                 self.currentPrice = Double(startingBidAmount) ?? 0.0
                 self.sudden_Death = suddenDeath
             }
@@ -2011,6 +2016,7 @@ struct RehearsalScreen: View {
             
             DispatchQueue.main.async {
                 self.isSurpriseSetAuctionActive = false
+//                self.currentSurpriseSetData = nil
             }
         }
         
@@ -2047,7 +2053,61 @@ struct RehearsalScreen: View {
                 self.isSurpriseSetAuctionActive = false
             }
         }
+        socketManager.listenForHighestBidBreakSpot(forRoom: roomId) { highestBid in
+            guard let bid = highestBid else { return }
+            
+            // Only update if surprise set auction is active
+            guard self.isSurpriseSetAuctionActive else { return }
+            
+            DispatchQueue.main.async {
+                print("🏆 Highest Bid (Surprise Set): \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+                self.winnerName = bid.user_name ?? ""
+                self.winnerProfileID = Int(bid.user_id ?? "") ?? 0
+                self.winnerProfileImage = bid.user_image ?? ""
+                self.winnerAmount = bid.bid_amount ?? ""
+                
+                if self.winnerName != "" {
+                    self.currentPrice = Double(self.winnerAmount) ?? 0.0
+                }
+            }
+        }
     }
+    private func updateCurrentSurpriseSet(from response: AuctionStartedBreakSpotResponse) {
+        // Map product_set_item → ProductItemResponse array
+        var items: [ProductItemResponse]? = nil
+
+        if let productSetItem = response.surpriseSetDetails?.productSetItem {
+            let item = ProductItemResponse(
+                id: productSetItem.id ?? 0,
+                name: productSetItem.name,
+                quantity: productSetItem.quantity,
+                soldQuantity: productSetItem.soldQuantity,
+                description: productSetItem.description,
+                status: productSetItem.status
+            )
+            items = [item]
+        }
+
+        // Map product_set → ProductSurpriseData
+        if let productSet = response.surpriseSetDetails?.productSet {
+            let surpriseData = ProductSurpriseData(
+                name: productSet.name,
+                type: productSet.type,
+                description: productSet.description,
+                price: productSet.price,
+                shippingProfileId: nil,
+                quickSpin: nil,
+                autoRandomizer: nil,
+                userId: nil,
+                isLiveBid: nil,
+                id: productSet.id ?? 0,
+                items: items
+            )
+
+            self.currentSurpriseSetData = surpriseData
+        }
+    }
+    
     @MainActor
     private func updateProducts(
         for roomId: String,
@@ -2201,14 +2261,15 @@ struct RehearsalScreen: View {
             SocketManagerService.shared.chats.removeAll()
             self.comments.removeAll()
             
-            // remove the room entry from manager so stale product state is not retained
+            // remove the room entry from manager
             if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.roomId }) {
                 SocketManagerService.shared.rooms.remove(at: idx)
             }
             
-            // call reset helper if available (keeps compatibility with existing commented call)
-            // this method was used previously in this file as a comment; if implemented in the service it will do additional cleanup
-            //            SocketManagerService.shared.reset(with: self.roomId)
+            // ✅ Clean up surprise set state
+            isSurpriseSetAuctionActive = false
+            currentSurpriseSetData = nil
+            surpriseSetBidTime = 0
             
             // local UI / model cleanup
             initialSelectedProductId = ""
@@ -2218,7 +2279,6 @@ struct RehearsalScreen: View {
             previewResetTrigger.toggle()
             self.showLiveControls = false
             self.showPreLiveControls = true
-            
             
             // navigate / dismiss
             if comeFromPrepare {
@@ -2248,6 +2308,7 @@ struct RehearsalScreen: View {
         self.currentPrice = 0.0
         initialSelectedProductId = ""
     }
+    
     
     
     //this func is not calling
