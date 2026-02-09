@@ -3,16 +3,17 @@
 //  BidCast
 //
 //  Created by JamTech on 15/11/25.
+//  Updated with Pagination Support
 //
 
 import SwiftUI
 import AlertToast
 
-// MARK: - LiveAuctionView
+// MARK: - LiveAuctionView with Pagination
 struct LiveAuctionView: View {
    // MARK: - Data States
     @Binding var liveShowsData: [HomeModel]
-    @Binding var isLoadingAPI:Bool
+    @Binding var isLoadingAPI: Bool
     @Binding var currentPage: Int
     
     @State private var scrollOffset: CGFloat = 0
@@ -21,6 +22,12 @@ struct LiveAuctionView: View {
     var onTapProfileName: ((Int) -> Void)?
     var onTapMainImage: ((Int) -> Void)?
     var onTapCategory: ((Int) -> Void)?
+    
+    // MARK: - Pagination Properties
+    var totalItems: Int = 0
+    var hasMorePages: Bool = true
+    var isLoadingMore: Bool = false
+    var onLoadMore: (() -> Void)?
     
     let columns = [
         GridItem(.flexible(), spacing: 6),
@@ -37,12 +44,11 @@ struct LiveAuctionView: View {
                             LiveAuctionShimmerView()
                         }
                     }
-//                    .padding(.horizontal, 12)
                     
                 } else if !isLoadingAPI && liveShowsData.isEmpty {
                     // 2️⃣ NO DATA VIEW
                     NoDataView1(message: "No live shows found")
-                    .padding(.top, 40)
+                        .padding(.top, 40)
                     
                 } else {
                     // 3️⃣ LIVE SHOWS GRID
@@ -63,19 +69,51 @@ struct LiveAuctionView: View {
                                     onTapCategory?(index)
                                 }
                             )
+                            .onAppear {
+                                // 🔥 PAGINATION TRIGGER
+                                checkForPagination(at: index)
+                            }
                         }
+                        
                         // Reading the offset
                         OffsetReader()
                             .frame(height: 0)
                     }
-//                    .padding(.horizontal, 12)
                     
-                    // PAGINATION LOADER
-                    if isLoadingAPI && currentPage > 1 {
+                    // 4️⃣ PAGINATION LOADER (Bottom)
+                    if isLoadingMore && currentPage > 1 {
                         HStack {
                             Spacer()
-                            ProgressView()
-                                .padding()
+                            VStack(spacing: 8) {
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                                Text("Loading more shows...")
+                                    .font(.custom(poppinsRegular, size: 12))
+                                    .foregroundColor(.gray)
+                            }
+                            .padding()
+                            Spacer()
+                        }
+                    }
+                    
+                    // 5️⃣ END OF RESULTS MESSAGE
+                    if !hasMorePages && !liveShowsData.isEmpty && !isLoadingAPI {
+                        HStack {
+                            Spacer()
+                            VStack(spacing: 8) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.green.opacity(0.6))
+                                
+                                Text("You've seen all shows")
+                                    .font(.custom(poppinsSemiBold, size: 14))
+                                    .foregroundColor(.gray)
+                                
+                                Text("Pull down to refresh")
+                                    .font(.custom(poppinsRegular, size: 12))
+                                    .foregroundColor(.gray.opacity(0.7))
+                            }
+                            .padding(.vertical, 20)
                             Spacer()
                         }
                     }
@@ -84,8 +122,24 @@ struct LiveAuctionView: View {
             .coordinateSpace(name: "scroll")
             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
                 scrollOffset = value
-                print("Scrolling Offset →", scrollOffset)
+                // Optional: You can use this for pull-to-refresh or other scroll effects
             }
+        }
+    }
+    
+    // MARK: - Pagination Check
+    /// Triggers pagination when user scrolls near the end
+    private func checkForPagination(at index: Int) {
+        // Don't trigger if already loading or no more pages
+        guard !isLoadingMore, hasMorePages else { return }
+        
+        // Trigger when user is within 3 items from the end
+        let threshold = 3
+        let isNearEnd = index >= liveShowsData.count - threshold
+        
+        if isNearEnd {
+            print("📄 Pagination triggered at index \(index)")
+            onLoadMore?()
         }
     }
 }
@@ -114,7 +168,7 @@ struct LiveAuctionCardView: View {
                     onTapProfile?()
                 }
                 
-                Text( auction.user?.username?.capitalizingFirstLetter() ?? auction.user?.name?.capitalizingFirstLetter() ?? "Unknown")
+                Text(auction.user?.username?.capitalizingFirstLetter() ?? auction.user?.name?.capitalizingFirstLetter() ?? "Unknown")
                     .font(.custom(poppinsSemiBold, size: 12))
                     .foregroundColor(.black)
                     .lineLimit(1)
@@ -124,7 +178,6 @@ struct LiveAuctionCardView: View {
                 
                 Spacer()
             }
-//            .padding(.horizontal, 10)
             .padding(.vertical, 3)
             
             // MARK: Thumbnail with Live Badge (Tappable)
@@ -135,8 +188,7 @@ struct LiveAuctionCardView: View {
                     height: 260,
                     cornerRadius: 0
                 )
-                
-                .contentShape(Rectangle()) // Makes entire area tappable
+                .contentShape(Rectangle())
                 .onTapGesture {
                     onTapMainImage?()
                 }
@@ -148,10 +200,6 @@ struct LiveAuctionCardView: View {
                 
                 // Live Badge
                 HStack(spacing: 5) {
-//                    Image(systemName: "dot.radiowaves.left.and.right")
-//                        .foregroundColor(.white)
-//                        .font(.system(size: 11, weight: .bold))
-//                    
                     Text("Live • \(auction.latest_viewer_count ?? 0)")
                         .font(.custom(poppinsSemiBold, size: 12))
                         .foregroundColor(.white)
@@ -162,7 +210,6 @@ struct LiveAuctionCardView: View {
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 2)
                 .padding(10)
-//                .allowsHitTesting(false) // Badge doesn't intercept taps
             }
             .cornerRadius(14)
             .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
@@ -173,7 +220,6 @@ struct LiveAuctionCardView: View {
                     .font(.custom(poppinsSemiBold, size: 12))
                     .foregroundColor(.black)
                     .lineLimit(2)
-//                    .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 4) {
                     Text(auction.category?.name?.capitalizingFirstLetter() ?? "General")
@@ -186,7 +232,6 @@ struct LiveAuctionCardView: View {
                     Spacer()
                 }
             }
-//            .padding(.horizontal, 10)
             .padding(.vertical, 5)
         }
         .background(Color.clear)
@@ -283,42 +328,6 @@ struct LiveAuctionShimmerView: View {
     }
 }
 
-// MARK: - Pulse Shimmer Effect
-//struct PulseShimmerView: View {
-//    @State private var isAnimating = false
-//    
-//    var body: some View {
-//        LinearGradient(
-//            colors: [
-//                Color.gray.opacity(0.3),
-//                Color.gray.opacity(0.15),
-//                Color.gray.opacity(0.3)
-//            ],
-//            startPoint: .leading,
-//            endPoint: .trailing
-//        )
-//        .mask(
-//            Rectangle()
-//                .fill(
-//                    LinearGradient(
-//                        colors: [.clear, .black, .clear],
-//                        startPoint: .leading,
-//                        endPoint: .trailing
-//                    )
-//                )
-//                .offset(x: isAnimating ? 400 : -400)
-//        )
-//        .onAppear {
-//            withAnimation(
-//                .linear(duration: 1.5)
-//                .repeatForever(autoreverses: false)
-//            ) {
-//                isAnimating = true
-//            }
-//        }
-//    }
-//}
-
 // MARK: - No Data View
 struct NoDataView1: View {
     let message: String
@@ -339,6 +348,7 @@ struct NoDataView1: View {
     }
 }
 
+// MARK: - Scroll Offset Tracking
 struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {

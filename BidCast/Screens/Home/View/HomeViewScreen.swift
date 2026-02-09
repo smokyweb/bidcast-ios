@@ -3,6 +3,7 @@
 //  BidCast
 //
 //  Created by Ankit-JAM-E-294 on 12/05/25.
+//  Updated with Pagination Integration
 //
 
 import SwiftUI
@@ -70,7 +71,11 @@ struct HomeViewScreen: View {
     @State private var loadedRoomIDs = Set<String>()
     @State var agoraToken: String = ""
     
+    // MARK: - Pagination Properties
     @State var currentPage = 1
+    @State private var isLoadingMore = false
+    @State private var hasMorePages = true
+    @State private var totalItems = 0
     
     @StateObject var socketManager = SocketManagerService.shared
     
@@ -86,30 +91,28 @@ struct HomeViewScreen: View {
                             .font(.custom(poppinsBold, size: 16))
                             .foregroundColor(.primary)
                             .frame(width: 36, height: 36)
-                        
                     }
-                    
                 }
+                
                 VStack(spacing:8){
                     SearchBarView(placeholder: "What are you looking for?") { debouncedText in
-                        //                    if debouncedText == "" { return }
                         self.searchText = debouncedText
+                        // Reset pagination on search
+                        resetPagination()
+                        Task {
+                            await fetchLiveShow()
+                        }
                     }
+                    
                     if comeFromExploreScreen {
-//                        VStack(alignment: .leading, spacing: 4) {
-                            Text(showCategory)
-                                .font(.custom(poppinsSemiBold, size: 16))
-                                .foregroundColor(.black)
-
-                         
-//                        }
-//                        .padding(.leading, 4)
-//                        .padding(.bottom, 6)
+                        Text(showCategory)
+                            .font(.custom(poppinsSemiBold, size: 16))
+                            .foregroundColor(.black)
                     }
-
-                  
                 }
+                
                 Spacer()
+                
                 HeaderMenuIconView(
                     didTapMenuButton: {
                         navigateToNoti = true
@@ -121,124 +124,33 @@ struct HomeViewScreen: View {
             .padding(.vertical, 4)
             .background(.white)
             
+            // MARK: - Category Horizontal Scrolls
             if !comeFromExploreScreen {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    if isLoadingCategoryAPI {
-                        LazyHGrid(rows: rows, spacing: 16) {
-                            ForEach(0..<5, id: \.self) { _ in
-                                CategoryCardFullShimmerView(
-                                    width: 90,
-                                    height: 120,
-                                    cornerRadius: 9
-                                )
-                            }
-                        }
-                    } else {
-                        LazyHGrid(rows: rows, spacing: 8) {
-                            ForEach(categoryList.indices, id: \.self) { ind in
-                                HomeCategoryCardView(
-                                    title: categoryList[ind].name ?? "",
-                                    imageURL: categoryList[ind].image ?? "",
-                                    backgroundColor: categoryList[ind].color ?? "#CCCCCC",
-                                    isSelected: selectedButton == categoryList[ind].name
-                                )
-                                .onTapGesture {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        selectedButton = categoryList[ind].name ?? ""
-                                        Task {
-                                            await fetchLiveShow()
-                                        }
-                                    }
-                                }
-                                
-                            }
-                            // 🔥 ADD THIS: The final “See All Categories” card
-                            HomeCategoryCardView(
-                                title: "See All Categories",
-                                imageURL: "",                   // icon handled separately
-                                backgroundColor: "#000000",
-                                isSelected: false,
-                                isScrolling: false,
-                                isSeeAll: true                  // NEW PARAM
-                            )
-                            .onTapGesture {
-//                                tabBarManager.selectedTab = 1
-                                goToExplore()
-                            }
-
-                        }
-                        .frame(height: 140)
-                        .padding(.leading)
-                    }
-                }
-                .background(.backGround)
-//                .padding([.leading,.trailing],18)
-                .padding(.top , 5)
-                
+                categoryScrollView
             }
             
-            if comeFromExploreScreen && categoryList.count != 0 && showSubCategory == ""{
-                ScrollView(.horizontal, showsIndicators: false) {
-                    if isLoadingCategoryAPI {
-                        LazyHGrid(rows: rows, spacing: 16) {
-                            ForEach(0..<5, id: \.self) { _ in
-                                CategoryCardFullShimmerView(
-                                    width: 90,
-                                    height: 120,
-                                    cornerRadius: 9
-                                )
-                            }
-                        }
-                    } else {
-                        LazyHGrid(rows: rows, spacing: 8) {
-                            ForEach(categoryList.indices, id: \.self) { ind in
-                                HomeCategoryCardView(
-                                    title: categoryList[ind].name ?? "",
-                                    imageURL: categoryList[ind].image ?? "",
-                                    backgroundColor: categoryList[ind].color ?? "#CCCCCC",
-                                    isSelected: selectedButton == categoryList[ind].name
-                                )
-                                .onTapGesture {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        selectedButton = categoryList[ind].name ?? ""
-                                        Task {
-                                            await fetchLiveShow()
-                                        }
-                                    }
-                                }
-                                
-                            }
-                        }
-                        .frame(height: 140)
-                        .padding(.leading)
-                    }
-                }
-                .background(.backGround)
-//                .padding([.leading,.trailing],18)
-                .padding(.top , 5)
-                
+            if comeFromExploreScreen && categoryList.count != 0 && showSubCategory == "" {
+                categoryScrollView
             }
           
-            
             ScrollView(showsIndicators:false){
-                VStack(alignment: .leading,spacing: 8){
-                    // MARK: - Category Horizontal Scroll
-                    
+                VStack(alignment: .leading, spacing: 8){
                     // MARK: - Filter Pills
                     PillsSelectorView(
                         titles: categoryFilterTitles,
                         selectedIndex: $selectedCategoryIndex,
-                                      backgroundStyle: .none,
-                                      underlineEnabled: false,
+                        backgroundStyle: .none,
+                        underlineEnabled: false,
                         onSelectionChanged: { index, data in
                             let selectedCategory = categoryFilterTitles[index]
                             selectedTab = getCategoryName(for: selectedCategory)
+                            resetPagination()
                             Task {
                                 await fetchLiveShow()
                             }
                         })
                    
-                    // MARK: - Live Auction View
+                    // MARK: - Live Auction View with Pagination
                     LiveAuctionView(
                         liveShowsData: $liveShowsData,
                         isLoadingAPI: $isLoadingShowAPI,
@@ -259,28 +171,29 @@ struct HomeViewScreen: View {
                         },
                         onTapMainImage: { index in
                             let item = liveShowsData[index]
-                            print(" tapped the card!,inex \(index)")
+                            print("🎯 Tapped card at index \(index)")
                             self.index = index
                             self.currentRoomId = item.room_id ?? ""
                             self.agoraToken = item.rtc_token ?? ""
                             userId = "\(item.user?.id ?? 0)"
                             userImage = item.user?.profile_image ?? ""
                             userName = item.user?.username ?? ""
-                            self.selectedButton =  selectedButton == "For You" ? "for_you" : selectedButton
-                           if selectedTab == "upcoming"{
+                            self.selectedButton = selectedButton == "For You" ? "for_you" : selectedButton
+                            
+                            if selectedTab == "upcoming" {
                                 selectedShowUserName = item.user?.name ?? ""
                                 selectedShowUserImage = item.user?.profile_image ?? ""
                                 selectedShowStartAt = item.time ?? ""
                                 selectedShowStartDate = item.date ?? ""
                                 upCommingSheet = true
-                            }else  if selectedTab == "popular"{
-                                if item.is_live == false{
+                            } else if selectedTab == "popular" {
+                                if item.is_live == false {
                                     hudMsg = "This show is not live yet"
                                     showhud = true
-                                }else{
+                                } else {
                                     navigateToLiveStream = true
                                 }
-                            }else{
+                            } else {
                                 categoryName = item.category?.name ?? ""
                                 navigateToLiveStream = true
                             }
@@ -290,69 +203,76 @@ struct HomeViewScreen: View {
                             self.liveShowsData.removeAll()
                             self.category = item.category?.name ?? ""
                             navigateToCategoryDetailScreen = true
+                        },
+                        totalItems: totalItems,
+                        hasMorePages: hasMorePages,
+                        isLoadingMore: isLoadingMore,
+                        onLoadMore: {
+                            fetchMoreShows()
                         }
                     )
                     .padding(.bottom, 20)
-                    .onAppear{
-                        handlePagination(index: index)
-                    }
                     .cornerRadius(10)
                 }
             }
             .refreshable {
                 await refreshLiveShows()
             }
-
             .background(.backGround)
-            .padding([.leading,.trailing],18)
-            .padding(.top , 10)
+            .padding([.leading,.trailing], 18)
+            .padding(.top, 10)
             
-            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId,
-                                                                                  categoryName: $categoryName,
-                                                                                  currentStreamIndex :self.$index,
-                                                                                  userId : $userId,
-                                                                                  agoraToken: $agoraToken,
-                                                                                  comeFromHome: $navigateToLiveStream,
-                                                                                  category: $selectedButton,
-                                                                                  search:self.$searchText,
-                                                                                  currentPage:self.$currentPage
-                                                                                 ))
+            // MARK: - Navigation Links
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(
+                currentRoomID: $currentRoomId,
+                categoryName: $categoryName,
+                currentStreamIndex: self.$index,
+                userId: $userId,
+                agoraToken: $agoraToken,
+                comeFromHome: $navigateToLiveStream,
+                category: $selectedButton,
+                search: self.$searchText,
+                currentPage: self.$currentPage
+            ))
             
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(
-                id:$userId,
+                id: $userId,
                 isComeFrom: .constant("Home"),
                 userName: $userName,
-                userImage: $userImage))
+                userImage: $userImage
+            ))
             
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
-//            CusNavLink(doNavigate: $navigateToNoti, destination: RandomizerView())
           
-            CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,showSubCategory: $subCategory,comeFromExploreScreen : $navigateToCategoryDetailScreen))
+            CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(
+                showCategory: $category,
+                showSubCategory: $subCategory,
+                comeFromExploreScreen: $navigateToCategoryDetailScreen
+            ))
         }
         .background(.backGround)
         .edgesIgnoringSafeArea(.bottom)
         .padding(.bottom, -15)
-        .onAppear{
+        .onAppear {
             socketManager.setupSocket {
                 addSocketListeners()
             }
             
             isActiveOnHomeScreen = true
             
-            if isActiveOnHomeScreen{
+            if isActiveOnHomeScreen {
                 Task {
                     await fetchCategory(for: "for_you")
-                    // Fetch live shows AFTER category loads
                     await fetchLiveShow()
                 }
             }
             getProfileData()
         }
-        .onChange(of: navigateToLiveStream) { oldValue,isNavigating in
+        .onChange(of: navigateToLiveStream) { oldValue, isNavigating in
             if !isNavigating {
                 Task {
                     await refreshLiveShows()
-                    if !comeFromExploreScreen{
+                    if !comeFromExploreScreen {
                         selectedButton = "For You"
                     }
                 }
@@ -360,7 +280,6 @@ struct HomeViewScreen: View {
         }
         .onDisappear {
             isActiveOnHomeScreen = false
-//            socketManager.hasAddedListeners = false
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -370,7 +289,7 @@ struct HomeViewScreen: View {
                 profileImage: selectedShowUserImage,
                 username: selectedShowUserName,
                 showStartAt: selectedShowStartAt,
-                showStartDate : selectedShowStartDate,
+                showStartDate: selectedShowStartDate,
                 onDismiss: {
                     upCommingSheet = false
                 }
@@ -390,28 +309,98 @@ struct HomeViewScreen: View {
             }
         }
     }
-    func refreshLiveShows() async {
+    
+    // MARK: - Category Scroll View
+    private var categoryScrollView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            if isLoadingCategoryAPI {
+                LazyHGrid(rows: rows, spacing: 16) {
+                    ForEach(0..<5, id: \.self) { _ in
+                        CategoryCardFullShimmerView(
+                            width: 90,
+                            height: 120,
+                            cornerRadius: 9
+                        )
+                    }
+                }
+            } else {
+                LazyHGrid(rows: rows, spacing: 8) {
+                    ForEach(categoryList.indices, id: \.self) { ind in
+                        HomeCategoryCardView(
+                            title: categoryList[ind].name ?? "",
+                            imageURL: categoryList[ind].image ?? "",
+                            backgroundColor: categoryList[ind].color ?? "#CCCCCC",
+                            isSelected: selectedButton == categoryList[ind].name
+                        )
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                selectedButton = categoryList[ind].name ?? ""
+                                resetPagination()
+                                Task {
+                                    await fetchLiveShow()
+                                }
+                            }
+                        }
+                    }
+                    
+                    if !comeFromExploreScreen {
+                        HomeCategoryCardView(
+                            title: "See All Categories",
+                            imageURL: "",
+                            backgroundColor: "#000000",
+                            isSelected: false,
+                            isScrolling: false,
+                            isSeeAll: true
+                        )
+                        .onTapGesture {
+                            goToExplore()
+                        }
+                    }
+                }
+                .frame(height: 140)
+                .padding(.leading)
+            }
+        }
+        .background(.backGround)
+        .padding(.top, 5)
+    }
+    
+    // MARK: - Pagination Helper Functions
+    
+    /// Resets pagination to initial state
+    private func resetPagination() {
         currentPage = 1
+        hasMorePages = true
+        isLoadingMore = false
         loadedRoomIDs.removeAll()
         liveShowsData.removeAll()
+        totalItems = 0
+    }
+    
+    /// Refreshes the live shows list (pull to refresh)
+    func refreshLiveShows() async {
+        print("🔄 Refreshing live shows...")
+        resetPagination()
         isLoadingShowAPI = true
         await fetchLiveShow()
     }
 
+    /// Fetches live shows for socket updates (page 1 only)
     func fetchLiveShowForSocketUpdate() async {
-        
         var apiCategory = String()
         var subCategory = String()
-        if comeFromExploreScreen{
-            apiCategory =  showCategory
-            if showSubCategory == ""{
-                subCategory = selectedButton.isEmpty  ? "" : selectedButton
-            }else{
-                subCategory =  showSubCategory
+        
+        if comeFromExploreScreen {
+            apiCategory = showCategory
+            if showSubCategory == "" {
+                subCategory = selectedButton.isEmpty ? "" : selectedButton
+            } else {
+                subCategory = showSubCategory
             }
-        }else{
+        } else {
             apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
         }
+        
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
             type: selectedTab,
             category: apiCategory,
@@ -419,16 +408,6 @@ struct HomeViewScreen: View {
             search: searchText,
             page: "1"
         ))
-        
-//        await viewModel.getLiveShows(
-//            param: GetLiveShowsRequest(
-//                type: selectedTab,
-//                category: selectedButton == "For You" ? "for_you" : selectedButton,
-//                sub_category: "",
-//                search: searchText,
-//                page: "1" // Only for detecting new rooms
-//            )
-//        )
 
         await MainActor.run {
             guard let socketShows = viewModel.liveShowsResponse.data else { return }
@@ -436,28 +415,26 @@ struct HomeViewScreen: View {
             for show in socketShows {
                 guard let roomId = show.room_id else { continue }
 
-                // 🔥 Only append if it's truly new
                 if !loadedRoomIDs.contains(roomId) {
-                    liveShowsData.append(show)
+                    liveShowsData.insert(show, at: 0)
                     loadedRoomIDs.insert(roomId)
+                    totalItems += 1
                 }
             }
         }
     }
 
-    
-    func getProfileData(){
-        Task{
+    func getProfileData() {
+        Task {
             guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
             }
-            if isActiveOnHomeScreen{
+            
+            if isActiveOnHomeScreen {
                 await self.viewModel.getProfile()
             }
-            
-            // Note: fetchLiveShow() is now called in onFirstAppear after fetchCategory completes
             
             if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
                 let response = self.viewModel.accountInfo.data
@@ -475,35 +452,44 @@ struct HomeViewScreen: View {
                 UserDefaults.default_shipping_address = response?.default_shipping_address ?? AddressModel()
                 UserDefaults.couponCount = "\(response?.coupon_count ?? 0)"
                 UserDefaults.vacationMode = response?.vacation_mode == "true" ? true : false
-                
-            }else{
-                
             }
         }
     }
     
     func goToExplore() {
-        tabBarRouter.selectedTab = 1 // Explore tab index
+        tabBarRouter.selectedTab = 1
     }
     
+    /// Main function to fetch live shows with pagination support
     func fetchLiveShow() async {
-        if currentPage == 1 {
-            liveShowsData.removeAll()
-            loadedRoomIDs.removeAll()
+        // Prevent duplicate requests
+        guard !isLoadingMore else {
+            print("⚠️ Already loading, skipping request")
+            return
         }
-        isLoadingShowAPI = true
+        
+        if currentPage == 1 {
+            isLoadingShowAPI = true
+            print("📥 Loading page 1 (initial load)")
+        } else {
+            isLoadingMore = true
+            print("📥 Loading page \(currentPage) (pagination)")
+        }
+        
         var apiCategory = String()
         var subCategory = String()
-        if comeFromExploreScreen{
-            apiCategory =  showCategory
-            if showSubCategory == ""{
-                subCategory = selectedButton.isEmpty  ? "" : selectedButton
-            }else{
-                subCategory =  showSubCategory
+        
+        if comeFromExploreScreen {
+            apiCategory = showCategory
+            if showSubCategory == "" {
+                subCategory = selectedButton.isEmpty ? "" : selectedButton
+            } else {
+                subCategory = showSubCategory
             }
-        }else{
+        } else {
             apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
         }
+        
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
             type: selectedTab,
             category: apiCategory,
@@ -515,22 +501,17 @@ struct HomeViewScreen: View {
         success()
     }
 
-    
-    func handlePagination(index: Int) {
-        let isLastItem = index == liveShowsData.count - 1
-        let canFetchMore = (viewModel.liveShowsResponse.total ?? 0) > liveShowsData.count
-        
-        if isLastItem && canFetchMore {
-            fetchMoreShows()
-        }
-    }
-    
+    /// Fetches the next page of shows
     func fetchMoreShows() {
+        guard !isLoadingMore, hasMorePages else {
+            print("⚠️ Cannot fetch more - isLoadingMore: \(isLoadingMore), hasMorePages: \(hasMorePages)")
+            return
+        }
+        
         Task {
-            let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
             currentPage += 1
-            await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory,search: searchText,page: "\(currentPage)"))
-            success()
+            print("📄 Fetching page \(currentPage)")
+            await fetchLiveShow()
         }
     }
     
@@ -541,6 +522,7 @@ struct HomeViewScreen: View {
             showhud = true
             return
         }
+        
         SVProgressHUD.show()
         categoryList.removeAll()
         isLoadingCategoryAPI = true
@@ -548,7 +530,8 @@ struct HomeViewScreen: View {
         await SVProgressHUD.dismiss()
         await categorySuccess()
     }
-    func fetchSubCategories(categoryId : String) async {
+    
+    func fetchSubCategories(categoryId: String) async {
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
             showhud = true
@@ -558,13 +541,13 @@ struct HomeViewScreen: View {
         isLoadingCategoryAPI = true
         categoryList.removeAll()
 
-        // 🔥 Call category API with parent category
         await categoryViewModel.getCategoryList(
             param: CategoryRequest(category_id: categoryId)
         )
 
         subCategorySuccess()
     }
+    
     func subCategorySuccess() {
         let response = categoryViewModel.categoryResponse
 
@@ -581,45 +564,38 @@ struct HomeViewScreen: View {
         }
 
         isLoadingCategoryAPI = false
-
         let subCategories = response.data ?? []
         categoryList = subCategories
-
-       
-       
     }
-
     
     // MARK: - categorySuccess
     func categorySuccess() async {
         let response = categoryViewModel.categoryResponse
+        
         if response.status == "success" {
             isLoadingCategoryAPI = false
-            // Filter only selected categories
             var categories = (response.data ?? []).filter { $0.is_selected == true }
             
-            // Always add "For You" at first
             let forYouCategory = CategoryDataModel(
-                id : -1,
+                id: -1,
                 name: "For You",
                 image: "",
                 thumbnail: "",
                 color: "",
-                subLabel : "",
-                is_selected : false,
-                usage_count : ""
+                subLabel: "",
+                is_selected: false,
+                usage_count: ""
             )
             
             categories.insert(forYouCategory, at: 0)
-            
             self.categoryList = categories
             
-            // Default selection
             if selectedButton.isEmpty {
-                if !comeFromExploreScreen{
+                if !comeFromExploreScreen {
                     selectedButton = forYouCategory.name ?? "For You"
                 }
             }
+            
             if comeFromExploreScreen {
                 if let matchedCategory = categoryList.first(where: {
                     ($0.name ?? "").caseInsensitiveCompare(showCategory) == .orderedSame
@@ -641,9 +617,12 @@ struct HomeViewScreen: View {
         }
     }
     
+    /// Processes the API response and updates pagination state
     func success() {
         let response = viewModel.liveShowsResponse
+        
         guard response.status == "success", let newShows = response.data else {
+            print("❌ API Error: \(response.message ?? "Unknown error")")
             showError = true
             alertType = .sheetType(
                 icon: .alert,
@@ -652,35 +631,39 @@ struct HomeViewScreen: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            isLoadingShowAPI = false
+            isLoadingMore = false
             return
         }
-        isLoadingShowAPI = false
         
+        // Update total items count
+        totalItems = response.total ?? 0
+        print("📊 Total items: \(totalItems), Current loaded: \(liveShowsData.count)")
+        
+        // Add new shows, avoiding duplicates
+        var addedCount = 0
         for show in newShows {
             if let roomId = show.room_id, !loadedRoomIDs.contains(roomId) {
                 liveShowsData.append(show)
                 loadedRoomIDs.insert(roomId)
+                addedCount += 1
             }
         }
-       
-    
+        print("✅ Added \(addedCount) new shows (Page \(currentPage))")
         
-       
+        // Check if there are more pages
+        hasMorePages = liveShowsData.count < totalItems
+        print("📄 Has more pages: \(hasMorePages)")
+        
+        // Reset loading states
+        isLoadingShowAPI = false
+        isLoadingMore = false
     }
+    
     func addSocketListeners() {
-//        guard socketManager else {
-//            print("⚠️ Socket not connected yet")
-//            return
-//        }
-
-//        guard !socketManager.hasAddedListeners else {
-//            print("⚠️ Listeners already added")
-//            return
-//        }
         socketManager.removeRoomHandler()
         socketManager.hasAddedListeners = false
-
-           socketManager.hasAddedListeners = true
+        socketManager.hasAddedListeners = true
 
         socketManager.observeRoomUpdates { room in
             print("🔴 Room updated:", room)
@@ -693,25 +676,22 @@ struct HomeViewScreen: View {
             withAnimation(.easeOut(duration: 0.25)) {
                 liveShowsData.removeAll { $0.room_id == roomId }
                 loadedRoomIDs.remove(roomId)
+                totalItems = max(0, totalItems - 1)
             }
         }
     }
 
-      private func getCategoryName(for categoryType: String) -> String {
-          switch categoryType {
-          case "Live Now": return "live"
-          case "Popular": return "popular"
-          default: return "upcoming"
-          }
-      }
+    private func getCategoryName(for categoryType: String) -> String {
+        switch categoryType {
+        case "Live Now": return "live"
+        case "Popular": return "popular"
+        default: return "upcoming"
+        }
+    }
 }
 
-//#Preview {
-//    HomeViewScreen()
-//}
-
+// MARK: - Button Title Label (keeping your existing component)
 struct ButtonTitleLabel: View {
-    
     var titles: [String] = ["Live Now", "Popular", "Coming Soon"]
     var fontName = poppinsRegular
     var selectedFontName = poppinsSemiBold
