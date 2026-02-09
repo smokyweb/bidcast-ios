@@ -2325,13 +2325,11 @@ extension LiveStream {
             }
         }
 
-        socketManagerChat.listenForAuctionOrderFailed { roomID, productSetId, productSetItemId, errorMessage, errorCode in
+        socketManagerChat.listenForAuctionOrderFailed { roomID, productSetId, userid  in
             guard self.currentRoomID == roomID else { return }
-            print("❌ Surprise Set Order Failed - \(errorMessage ?? "Unknown error")")
-            
+            print("❌ Surprise Set Order Failed - )")
             DispatchQueue.main.async {
-                self.hudMsg = errorMessage ?? "Order failed"
-                self.showHud = true
+               
                 self.isSurpriseSetAuctionActive = false
                 self.currentSurpriseSetData = nil
             }
