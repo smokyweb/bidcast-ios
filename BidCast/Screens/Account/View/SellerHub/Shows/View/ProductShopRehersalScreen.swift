@@ -197,6 +197,7 @@ struct ProductShopRehersalScreen: View {
                     
                 } else if segment == .Surprise {
                     resetData()
+                    guard auctionTypeId == 9 else { return }
                     fetchSurpriseSet()
                 }
             }
@@ -316,9 +317,11 @@ struct ProductShopRehersalScreen: View {
         .onAppear {
             setupSocketListeners()
             if auctionTypeId == 9 {
+                self.resetData()
                 segment = .Surprise
                 fetchSurpriseSet()
             } else if displayedProducts.isEmpty {
+                resetData()
                 fetchProduct()
             }
         }
