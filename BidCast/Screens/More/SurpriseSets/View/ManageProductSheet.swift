@@ -32,7 +32,8 @@ struct AvailableProduct: Identifiable {
 struct ManageProductSheet: View {
     @Environment(\.presentationMode) var presentationMode
     
-    let surpriseData: ProductSurpriseData
+    @Binding var surpriseData: ProductSurpriseData
+//    let surpriseData: ProductSurpriseData
     var onStartAuction: ((ProductSurpriseData,String,Int,Int,Bool) -> Void)?
     
     @State private var isAutoRandomizeOn: Bool = false
@@ -41,7 +42,7 @@ struct ManageProductSheet: View {
     // State for Auction Sheet
     @State private var showAuctionSheet = false
     @State private var selectedProductForAuction: ProductItemResponse?
-    
+    var didUpdate: () -> Void
     // Computed properties for dynamic data
     private var productTitle: String {
         surpriseData.name ?? "Untitled"
@@ -103,13 +104,20 @@ struct ManageProductSheet: View {
     }
     
     init(
-        surpriseData: ProductSurpriseData,
-        onStartAuction: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)? = nil
+        surpriseData: Binding<ProductSurpriseData>,
+        onStartAuction: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)? = nil,
+        didUpdate: @escaping () -> Void = {}
     ) {
-        self.surpriseData = surpriseData
+        self._surpriseData = surpriseData
         self.onStartAuction = onStartAuction
-        _isAutoRandomizeOn = State(initialValue: (surpriseData.autoRandomizer ?? 0) == 1)
-        _isQuickSpinOn = State(initialValue: (surpriseData.quickSpin ?? 0) == 1)
+        self.didUpdate = didUpdate
+        _isAutoRandomizeOn = State(
+               initialValue: (surpriseData.wrappedValue.autoRandomizer ?? 0) == 1
+           )
+
+           _isQuickSpinOn = State(
+               initialValue: (surpriseData.wrappedValue.quickSpin ?? 0) == 1
+           )
     }
     
     var body: some View {
@@ -117,7 +125,7 @@ struct ManageProductSheet: View {
             VStack(spacing: 0) {
                 // Header
                 HStack {
-                    Text("manage Product Set")
+                    Text("Manage Product Set")
                         .font(.custom(poppinsSemiBold, size: 18))
                         .foregroundColor(.black)
                     
@@ -242,7 +250,8 @@ struct ManageProductSheet: View {
                         AuctionProductSections(
                             unsoldUnits: allUnsoldUnits,
                             availableItems: availableProducts,
-                            isAuctionType: isAuctionType
+                            isAuctionType: isAuctionType,
+                            didUpdate: didUpdate
                         )
                         .padding(.horizontal, 16)
                         .padding(.bottom, 20)
@@ -278,6 +287,7 @@ struct UpNextCard: View {
     let soldCount: Int
     let totalCount: Int
     var onStartAuction: (() -> Void)?
+   
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -320,6 +330,7 @@ struct AuctionProductSections: View {
     let unsoldUnits: [(unit: ProductSetUnit, productName: String)]
     let availableItems: [ProductItemResponse]
     let isAuctionType: Bool
+    var didUpdate : () -> () = {  }
     
     @State private var isUnsoldExpanded: Bool = true
     @State private var isAvailableExpanded: Bool = false
@@ -353,7 +364,10 @@ struct AuctionProductSections: View {
                                 UnsoldUnitRow(
                                     unit: item.unit,
                                     productName: item.productName,
-                                    index: index + 1
+                                    index: index + 1,
+                                    unitId:Int(item.unit.id),
+                                    didUpdate: didUpdate
+                                    
                                 )
                             }
                         }
@@ -440,44 +454,210 @@ struct CollapsibleUnitSection<Content: View>: View {
     }
 }
 
+
+struct CollapsibleUnitSectionforproduct<Content: View>: View {
+    let title: String
+    let count: Int
+    @Binding var isExpanded: Bool
+    let accentColor: Color
+    @ViewBuilder let content: Content
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header - Entire row is tappable
+        
+            
+            // Expanded Content
+            if isExpanded {
+//                Divider()
+//                    .padding(.horizontal, 12)
+                
+                content
+            }
+        }
+        .background(Color.backGround)
+        .cornerRadius(12)
+    }
+}
+
 // MARK: - Unsold Unit Row (with #1, #2 index)
 struct UnsoldUnitRow: View {
+    let viewModel = SurpriseViewModel()
     let unit: ProductSetUnit
     let productName: String
     let index: Int
-    
-    var body: some View {
-        HStack(alignment: .center, spacing: 10) {
-            // Index number
-            Text("#\(index)")
-                .font(.custom(poppinsSemiBold, size: 14))
-                .foregroundColor(.defaultTheme)
-                .frame(width: 36, alignment: .leading)
+    let unitId: Int
+    var didUpdate: () -> Void
+
+
+    @State private var isUnsoldExpanded: Bool = false
+    @State private var price: String = ""
+    @State private var description: String = ""
+//    @State private var unitId: String = ""
+
+    init(
+    unit: ProductSetUnit,
+     productName: String,
+     index: Int,
+     unitId: Int,
+     didUpdate: @escaping () -> Void
+ ) {
+     self.unit = unit
+     self.productName = productName
+     self.index = index
+     self.unitId = unitId
+     self.didUpdate = didUpdate
+
+     // Initialize State properly
+     _price = State(initialValue: "\(unit.price ?? 0)")
+     _description = State(initialValue: unit.description ?? "")
+ }
             
-            // Unit Info
-            VStack(alignment: .leading, spacing: 2) {
-                Text(unit.name ?? "Unit #\(unit.id)")
-                    .font(.custom(poppinsSemiBold, size: 13))
-                    .foregroundColor(.black)
+    var body: some View {
+        VStack(spacing: 0){
+            HStack(alignment: .center, spacing: 10) {
+                // Index number
+                Text("#\(index)")
+                    .font(.custom(poppinsSemiBold, size: 14))
+                    .foregroundColor(.defaultTheme)
+                    .frame(width: 36, alignment: .leading)
                 
-                Text(productName)
-                    .font(.custom(poppinsRegular, size: 11))
-                    .foregroundColor(.gray)
+                // Unit Info
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(unit.name ?? "Unit #\(unit.id)")
+                        .font(.custom(poppinsSemiBold, size: 13))
+                        .foregroundColor(.black)
+                    
+                    Text(unit.description ?? "")
+                        .font(.custom(poppinsRegular, size: 11))
+                        .foregroundColor(.gray)
+                    
+                    
+                    let price = unit.price ?? 0
+                    Text(Double(price).compactCurrency())
+                        .font(.custom(poppinsSemiBold, size: 13))
+                        .foregroundColor(.defaultTheme)
+                    
+                }
+                
+                Spacer()
+                
+                HStack(spacing: 12) {
+
+                    Button {
+                        if isUnsoldExpanded {
+                            
+                            Task {
+                                do {
+                                    try await viewModel.editProductPrice(
+                                        param: EditProductUnitRequest(
+                                            unit_id: String(unitId),
+                                            price: price,
+                                            description: description
+                                        )
+                                        
+                                    )
+                                    success()
+                                } catch {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                        }
+                        isUnsoldExpanded.toggle()
+
+                        
+                    } label: {
+                        Image(systemName: !isUnsoldExpanded ? "pencil" : "checkmark")
+                            .foregroundColor(!isUnsoldExpanded ? .black : .defaultTheme)
+                            .font(.system(size: 16, weight: .semibold))
+                            .frame(width: 36, height: 36)
+                            .background(
+                                Circle()
+                                    .fill(Color.defaultThemeLight)
+                                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                            )
+                    }
+
+                    Button {
+                        print("Pin tapped")
+                    } label: {
+                        Image(systemName: "pin.fill")
+                            .foregroundColor(.black)
+                            .font(.system(size: 16, weight: .semibold))
+                            .frame(width: 36, height: 36)
+                            .background(
+                                Circle()
+                                    .fill(Color.defaultThemeLight)
+                                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                            )
+                    }
+                }
+
+                
+                
+                // Price
+                //            if let price = unit.price {
+                //                Text(Double(price).compactCurrency())
+                //                    .font(.custom(poppinsSemiBold, size: 13))
+                //                    .foregroundColor(.defaultTheme)
+                //            }
+                
+            }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 10)
+            .background(Color.backGround)
+            .cornerRadius(8)
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isUnsoldExpanded.toggle()
+                }
             }
             
-            Spacer()
-            
-            // Price
-            if let price = unit.price {
-                Text(Double(price).compactCurrency())
-                    .font(.custom(poppinsSemiBold, size: 13))
-                    .foregroundColor(.defaultTheme)
+            CollapsibleUnitSectionforproduct(
+                title: "Unsold",
+                count: unit.price ?? 0,
+                isExpanded: $isUnsoldExpanded,
+                accentColor: .orange
+            ) {
+                VStack(alignment: .leading, spacing: 8){
+                AuthTextField(floatingLabel: "Price ($)".localized, placeholder: "Enter Price".localized, icon: .menuProfile, text: $price ,isIconDisplay : false,
+                              custFontName : robotoMedium,
+                              custFontSize : 14.0,
+//                              height : 20.0 ,
+                              enteredText:  { quantity in
+                    //                    request.width = quantity
+                })
+                .keyboardType(.decimalPad)
+                .padding(.vertical,4)
+                
+                AuthTextField(floatingLabel: "Description ".localized, placeholder: "Enter Description".localized, icon: .menuProfile, text:$description ,isIconDisplay : false,
+                              custFontName : robotoMedium,
+                              custFontSize : 14.0,
+                              enteredText:  { quantity in
+                    //                    request.width = quantity
+                })
+                .keyboardType(.decimalPad)
+                .padding(.vertical,4)
+            }
+            .background(Color.backGround)
+                
+            }
+
+        }
+        .background(Color.backGround)
+        .cornerRadius(14)
+        .padding(.vertical,4)
+
+
+    }
+   private func success() {
+        if let dict = viewModel.editProductPricedict {
+            if dict.status == "success" {
+                didUpdate()
+            } else {
+                print("API error: \(dict.status ?? "")")
             }
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 10)
-        .background(Color.backGround)
-        .cornerRadius(8)
     }
 }
 

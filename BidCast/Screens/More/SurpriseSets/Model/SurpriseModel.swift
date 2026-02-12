@@ -54,6 +54,8 @@ struct ProductSetUnit: Codable {
     }
 }
 
+
+
 // MARK: - Product Item Response (Updated)
 struct ProductItemResponse: Codable {
     var id: Int
@@ -76,6 +78,25 @@ struct ProductItemResponse: Codable {
         case units
     }
 }
+
+struct EditProductUnitResponse: Codable {
+    let id: Int
+    let productSetItemId: Int
+    let name: String
+    let description: String
+    let status: String
+    let price: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case productSetItemId = "product_set_item_id"
+        case name
+        case description
+        case status
+        case price
+    }
+}
+
 
 // MARK: - Product Surprise Data (Updated)
 struct ProductSurpriseData: Codable {

@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "638DF449-7701-49C9-B38F-48BE8A1AEC86"
+            uuid = "D441D3A4-E6E0-4EB8-BE22-BC77E17F95BD"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
+            filePath = "BidCast/Screens/More/SurpriseSets/View/ManageProductSheet.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1015"
-            endingLineNumber = "1015"
-            landmarkName = "LiveStream"
+            startingLineNumber = "656"
+            endingLineNumber = "656"
+            landmarkName = "AvailableItemRow"
             landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>

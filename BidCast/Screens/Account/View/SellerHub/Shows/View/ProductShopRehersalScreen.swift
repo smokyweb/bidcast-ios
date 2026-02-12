@@ -109,6 +109,9 @@ struct ProductShopRehersalScreen: View {
     @State private var showAddActionSheet = false
     @State private var showCreateSurpriseSheet = false
     
+//    @State private var selectedSurpriseSet: ProductSurpriseData?
+
+    
     private var eventProductIds: Set<Int> {
         Set(productDataFromEvent.compactMap { $0.id })
     }
@@ -365,17 +368,20 @@ struct ProductShopRehersalScreen: View {
             }
         )
         .sheet(isPresented: $showManageProductSheet) {
-            if let surpriseSet = selectedSurpriseSet {
-                ManageProductSheet(
-                    surpriseData: surpriseSet,
-                    onStartAuction: { product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
-                        // Get the first available unit ID from the product
-                        onSurpriseSetUnitSelected?(surpriseSet, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
-                        showManageProductSheet = false
-                    }
-                )
-            }
-        }
+            if let index = surpriseSetData.firstIndex(where: { $0.id == selectedSurpriseSet?.id }) {
+
+                   ManageProductSheet(
+                       surpriseData: $surpriseSetData[index],   // 👈 Binding here
+                       onStartAuction: { product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+                           onSurpriseSetUnitSelected?(product, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
+                           showManageProductSheet = false
+                       },
+                       didUpdate: {
+                           fetchSurpriseSet()   // optional
+                       }
+                   )
+               }
+           }
         .sheet(isPresented: $showCreateSurpriseSheet) {
             CreateSurpriseScreen()
                 .onDisappear {

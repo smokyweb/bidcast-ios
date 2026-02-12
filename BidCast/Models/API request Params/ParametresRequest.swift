@@ -690,6 +690,12 @@ struct StoreScheduleShowRequest: Encodable {
     }
 }
 
+struct EditProductUnitRequest: Encodable {
+    let unit_id: String
+    let price: String
+    let description: String
+}
+
 struct ProductRequest : Encodable {
     var user_id: String?
     var search: String?

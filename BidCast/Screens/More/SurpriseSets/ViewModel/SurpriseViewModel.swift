@@ -18,7 +18,9 @@ final class SurpriseViewModel: ObservableObject {
         case product
         case none
     }
-   
+    
+    @Published var editProductPricedict: ResponseModal<EditProductUnitResponse>?
+
     @Published var getShippingProfilesResponse: ResponseModal<[StoreShippingModel]>?
     @Published var surpriseResponse: ResponseModal<ProductSurpriseData>?
     @Published var getSurpriseResponse: ResponseModal<[ProductSurpriseData]>?
@@ -67,6 +69,8 @@ final class SurpriseViewModel: ObservableObject {
         }
     }
    
+    
+    
     func storeSurpriseSet(param:SurpriseRequest) async throws {
         requestType = .shipping
         self.errorMessage?.removeAll()
@@ -75,6 +79,27 @@ final class SurpriseViewModel: ObservableObject {
                 type: APIEndPoint.createSurprise(param: param),
                 header: true)
             self.surpriseResponse = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
+    
+    
+    func editProductPrice(param:EditProductUnitRequest) async throws {
+        requestType = .shipping
+        self.errorMessage?.removeAll()
+        do {
+            let response: ResponseModal<EditProductUnitResponse> = try await APIManager.shared.request(
+                type: APIEndPoint.editProductPrice(param: param),
+                header: true)
+            self.editProductPricedict = response
         } catch(let error) {
             if let dataError = error as? DataError {
                 self.errorMessage = dataError.getErrorMessage()
