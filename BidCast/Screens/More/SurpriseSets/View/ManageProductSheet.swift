@@ -36,6 +36,7 @@ struct ManageProductSheet: View {
 //    let surpriseData: ProductSurpriseData
     var onStartAuction: ((ProductSurpriseData,String,Int,Int,Bool) -> Void)?
     
+    var viewModel = SurpriseViewModel()
     @State private var isAutoRandomizeOn: Bool = false
     @State private var isQuickSpinOn: Bool = false
     
@@ -43,6 +44,8 @@ struct ManageProductSheet: View {
     @State private var showAuctionSheet = false
     @State private var selectedProductForAuction: ProductItemResponse?
     var didUpdate: () -> Void
+    
+    var onClickAuction: () -> Void
     // Computed properties for dynamic data
     private var productTitle: String {
         surpriseData.name ?? "Untitled"
@@ -106,11 +109,13 @@ struct ManageProductSheet: View {
     init(
         surpriseData: Binding<ProductSurpriseData>,
         onStartAuction: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)? = nil,
-        didUpdate: @escaping () -> Void = {}
+        didUpdate: @escaping () -> Void = {},
+        onClickAuction: @escaping () -> Void = {}
     ) {
         self._surpriseData = surpriseData
         self.onStartAuction = onStartAuction
         self.didUpdate = didUpdate
+        self.onClickAuction = onClickAuction
         _isAutoRandomizeOn = State(
                initialValue: (surpriseData.wrappedValue.autoRandomizer ?? 0) == 1
            )
@@ -119,7 +124,8 @@ struct ManageProductSheet: View {
                initialValue: (surpriseData.wrappedValue.quickSpin ?? 0) == 1
            )
     }
-    
+    @State var isdelete: Bool = false
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "DELETE", message: "Are you sure you want to delete this?", primaryBtnText: "DELETE", secondaryBtnText: "CANCEL")
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -185,6 +191,7 @@ struct ManageProductSheet: View {
                                     
                                     Text(type == "auction" ? "Auction" : "Buy It Now")
                                         .font(.custom(poppinsRegular, size: 12))
+                                    
                                 }
                                 .foregroundColor(.defaultTheme)
                                 .padding(.horizontal, 12)
@@ -192,11 +199,56 @@ struct ManageProductSheet: View {
                                 .background(.defaultThemeLight)
                                 .cornerRadius(12)
                                 
+                                Button {
+                                    print("Delete tapped")
+                                    isdelete = true
+                                    
+                                    
+                                } label: {
+                                    Image(systemName: "trash.fill") // ✅ correct SF Symbol
+                                        .foregroundColor(.red)
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .frame(width: 24, height: 24)
+                                        .background(
+                                            Circle()
+                                                .fill(Color.defaultThemeLight)
+                                                .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                        )
+                                }
+                                
+                                Button {
+                                    print("Pin tapped")
+//                                        if let product = availableProducts.first {
+//                                            selectedProductForAuction = product
+//                                            showAuctionSheet = true
+//                                        }
+//                                    
+                                    
+                                } label: {
+                                    Image(systemName: "pin")
+                                        .foregroundColor(.black)
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .frame(width: 24, height: 24)
+                                        .background(
+                                            Circle()
+                                                .fill(Color.defaultThemeLight)
+                                                .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                        )
+                                }
+                                Spacer()
+                                
+                                
+                                
+                                
+                                
                                 Spacer()
                             }
                             .padding(.horizontal, 16)
                         }
 //
+                        
+                       
+                        
 //                        // Action Buttons
 //                        HStack(spacing: 12) {
 //                            ActionTools(
@@ -226,6 +278,7 @@ struct ManageProductSheet: View {
                             )
                             .padding(.horizontal, 16)
                         }
+
                         
                         // Toggle Cards
                         ToggleInfoCardNew(
@@ -251,7 +304,14 @@ struct ManageProductSheet: View {
                             unsoldUnits: allUnsoldUnits,
                             availableItems: availableProducts,
                             isAuctionType: isAuctionType,
-                            didUpdate: didUpdate
+                            didUpdate: didUpdate,
+                            onClickAuction : {
+                                if let product = availableProducts.first {
+                                    selectedProductForAuction = product
+                                    showAuctionSheet = true
+                                }
+                            }
+                            
                         )
                         .padding(.horizontal, 16)
                         .padding(.bottom, 20)
@@ -260,6 +320,37 @@ struct ManageProductSheet: View {
                 }
             }
             .background(.backGround)
+        }
+        
+       
+        .bottomSheet(isPresented: $isdelete, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+            CommonBottomSheet(
+                sheetType: $alertType
+,
+                onPrimaryClick: {
+                    withAnimation { isdelete = false }
+                    
+                    
+                    Task {
+                        do {
+                            try await viewModel.deleteProduct(param: DeleteProductSetRequest(product_set_id: String(surpriseData.id)))
+                                
+                            
+                            success()
+                        } catch {
+                            print(error.localizedDescription)
+                        }
+                    }
+                    presentationMode.wrappedValue.dismiss()
+
+                    // Handle response when primary button clicked
+                },
+                onSecondaryClick: {
+                    withAnimation { isdelete = false }
+                    
+                    
+                }
+            )
         }
         
         .sheet(isPresented:$showAuctionSheet){
@@ -279,6 +370,17 @@ struct ManageProductSheet: View {
             .presentationDragIndicator(.hidden)
         }
     }
+    private func success() {
+         if let dict = viewModel.deleteProductPricedict {
+             if dict.status == "success" {
+                 didUpdate()
+            
+             } else {
+                 print("API error: \(dict.status ?? "")")
+             }
+         }
+     }
+        
 }
 
 // MARK: - Up Next Card
@@ -310,7 +412,7 @@ struct UpNextCard: View {
             Button(action: {
                 onStartAuction?()
             }) {
-                Text("Start Auction")
+                Text("Starttt Auction")
                     .font(.custom(poppinsSemiBold, size: 14))
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
@@ -331,6 +433,7 @@ struct AuctionProductSections: View {
     let availableItems: [ProductItemResponse]
     let isAuctionType: Bool
     var didUpdate : () -> () = {  }
+    var onClickAuction : () -> () = {  }
     
     @State private var isUnsoldExpanded: Bool = true
     @State private var isAvailableExpanded: Bool = false
@@ -366,7 +469,8 @@ struct AuctionProductSections: View {
                                     productName: item.productName,
                                     index: index + 1,
                                     unitId:Int(item.unit.id),
-                                    didUpdate: didUpdate
+                                    didUpdate: didUpdate,
+                                    onClickAuction: onClickAuction
                                     
                                 )
                             }
@@ -488,6 +592,8 @@ struct UnsoldUnitRow: View {
     let index: Int
     let unitId: Int
     var didUpdate: () -> Void
+    var onClickAuction: () -> Void
+
 
 
     @State private var isUnsoldExpanded: Bool = false
@@ -500,13 +606,15 @@ struct UnsoldUnitRow: View {
      productName: String,
      index: Int,
      unitId: Int,
-     didUpdate: @escaping () -> Void
+     didUpdate: @escaping () -> Void,
+    onClickAuction: @escaping () -> Void
  ) {
      self.unit = unit
      self.productName = productName
      self.index = index
      self.unitId = unitId
      self.didUpdate = didUpdate
+     self.onClickAuction = onClickAuction
 
      // Initialize State properly
      _price = State(initialValue: "\(unit.price ?? 0)")
@@ -541,9 +649,23 @@ struct UnsoldUnitRow: View {
                 }
                 
                 Spacer()
-                
+                VStack(){
+//                    tabby
+//                    Button(action: {
+//                        onClickAuction()
+//                        
+//                             }) {
+//                                 Text("Starttt Auction")
+//                                     .font(.custom(poppinsSemiBold, size: 14))
+//                                     .foregroundColor(.white)
+//                                     .padding(.horizontal, 20)
+//                                     .padding(.vertical, 10)
+//                                     .background(Color.defaultTheme)
+//                                     .cornerRadius(20)
+//                             }
+                    
                 HStack(spacing: 12) {
-
+                    
                     Button {
                         if isUnsoldExpanded {
                             
@@ -564,7 +686,7 @@ struct UnsoldUnitRow: View {
                             }
                         }
                         isUnsoldExpanded.toggle()
-
+                        
                         
                     } label: {
                         Image(systemName: !isUnsoldExpanded ? "pencil" : "checkmark")
@@ -577,7 +699,7 @@ struct UnsoldUnitRow: View {
                                     .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                             )
                     }
-
+                    
                     Button {
                         print("Pin tapped")
                     } label: {
@@ -592,6 +714,7 @@ struct UnsoldUnitRow: View {
                             )
                     }
                 }
+            }
 
                 
                 

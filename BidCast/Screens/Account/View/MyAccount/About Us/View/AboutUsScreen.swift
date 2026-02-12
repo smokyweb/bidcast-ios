@@ -12,6 +12,8 @@ struct AboutUsScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @State var showError: Bool = false
+    
+
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showhud: Bool = false
     @State var hudMsg: String = ""

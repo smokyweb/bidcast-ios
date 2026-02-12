@@ -150,6 +150,8 @@ enum APIEndPoint{
     case createSurprise(param:SurpriseRequest)
     case getSurprise
     case editProductPrice(param:EditProductUnitRequest)
+    case deleteProductSuppriseSet(param:DeleteProductSetRequest)
+
 }
 
 extension APIEndPoint: EndPointType {
@@ -508,6 +510,8 @@ extension APIEndPoint: EndPointType {
             return "get-surprise-product"
         case .editProductPrice(param: let param):
             return "edit-product-set-item-unit"
+        case .deleteProductSuppriseSet(param: let param):
+            return "delete-product-set"
         }
     }
     
@@ -805,6 +809,8 @@ extension APIEndPoint: EndPointType {
         case .getSurprise:
             return .get
         case .editProductPrice(param: let param):
+            return .post
+        case .deleteProductSuppriseSet(param: let param):
             return .post
         }
     }
@@ -1110,6 +1116,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .editProductPrice(param: let param):
             return param
+        case .deleteProductSuppriseSet(param: let param):
+            return param
         }
     }
     
@@ -1396,6 +1404,8 @@ extension APIEndPoint: EndPointType {
         case .getSurprise:
             return nil
         case .editProductPrice(param: let param):
+            return nil
+        case .deleteProductSuppriseSet(param: let param):
             return nil
         }
     }

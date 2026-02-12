@@ -696,6 +696,10 @@ struct EditProductUnitRequest: Encodable {
     let description: String
 }
 
+struct DeleteProductSetRequest: Encodable {
+    var product_set_id: String
+}
+
 struct ProductRequest : Encodable {
     var user_id: String?
     var search: String?
