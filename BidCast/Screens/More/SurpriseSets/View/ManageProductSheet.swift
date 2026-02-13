@@ -218,11 +218,11 @@ struct ManageProductSheet: View {
                                 
                                 Button {
                                     print("Pin tapped")
-//                                        if let product = availableProducts.first {
-//                                            selectedProductForAuction = product
-//                                            showAuctionSheet = true
-//                                        }
-//                                    
+                                        if let product = availableProducts.first {
+                                            selectedProductForAuction = product
+                                            showAuctionSheet = true
+                                        }
+                                    
                                     
                                 } label: {
                                     Image(systemName: "pin")
@@ -264,20 +264,20 @@ struct ManageProductSheet: View {
 //                        .padding(.horizontal, 20)
                         
                         // Up Next Card (Only for Auction type)
-                        if surpriseData.type == "auction" {
-                            UpNextCard(
-                                productName: productTitle,
-                                soldCount: availableProducts.reduce(0) { $0 + ($1.soldQuantity ?? 0) },
-                                totalCount: totalQuantity,
-                                onStartAuction: {
-                                    if let product = availableProducts.first {
-                                        selectedProductForAuction = product
-                                        showAuctionSheet = true
-                                    }
-                                }
-                            )
-                            .padding(.horizontal, 16)
-                        }
+//                        if surpriseData.type == "auction" {
+//                            UpNextCard(
+//                                productName: productTitle,
+//                                soldCount: availableProducts.reduce(0) { $0 + ($1.soldQuantity ?? 0) },
+//                                totalCount: totalQuantity,
+//                                onStartAuction: {
+//                                    if let product = availableProducts.first {
+//                                        selectedProductForAuction = product
+//                                        showAuctionSheet = true
+//                                    }
+//                                }
+//                            )
+//                            .padding(.horizontal, 16)
+//                        }
 
                         
                         // Toggle Cards
@@ -650,19 +650,18 @@ struct UnsoldUnitRow: View {
                 
                 Spacer()
                 VStack(){
-//                    tabby
-//                    Button(action: {
-//                        onClickAuction()
-//                        
-//                             }) {
-//                                 Text("Starttt Auction")
-//                                     .font(.custom(poppinsSemiBold, size: 14))
-//                                     .foregroundColor(.white)
-//                                     .padding(.horizontal, 20)
-//                                     .padding(.vertical, 10)
-//                                     .background(Color.defaultTheme)
-//                                     .cornerRadius(20)
-//                             }
+                    Button(action: {
+                        onClickAuction()
+                        
+                             }) {
+                                 Text("Starttt Auction")
+                                     .font(.custom(poppinsSemiBold, size: 11))
+                                     .foregroundColor(.white)
+                                     .padding(.horizontal, 20)
+                                     .padding(.vertical, 10)
+                                     .background(Color.defaultTheme)
+                                     .cornerRadius(20)
+                             }
                     
                 HStack(spacing: 12) {
                     
@@ -692,7 +691,7 @@ struct UnsoldUnitRow: View {
                         Image(systemName: !isUnsoldExpanded ? "pencil" : "checkmark")
                             .foregroundColor(!isUnsoldExpanded ? .black : .defaultTheme)
                             .font(.system(size: 16, weight: .semibold))
-                            .frame(width: 36, height: 36)
+                            .frame(width: 24, height: 24)
                             .background(
                                 Circle()
                                     .fill(Color.defaultThemeLight)
@@ -706,7 +705,7 @@ struct UnsoldUnitRow: View {
                         Image(systemName: "pin.fill")
                             .foregroundColor(.black)
                             .font(.system(size: 16, weight: .semibold))
-                            .frame(width: 36, height: 36)
+                            .frame(width: 24, height: 24)
                             .background(
                                 Circle()
                                     .fill(Color.defaultThemeLight)
