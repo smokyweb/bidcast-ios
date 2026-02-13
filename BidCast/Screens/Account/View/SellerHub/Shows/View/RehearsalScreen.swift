@@ -1009,19 +1009,19 @@ struct RehearsalScreen: View {
                 selectedSurpriseSetForAuction = surprise
                 currentSurpriseSetData = surprise
                 showSurpriseAuctionSheet = true
-            } ,onSurpriseSetUnitSelected : { surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+            } ,onSurpriseSetUnitSelected : {itemId,productId,surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
                 // Store the surprise set data for UI display
                 currentSurpriseSetData = surpriseData
                 
                 // Get first available item and unit
-                let firstItem = surpriseData.items?.first
-                let firstAvailableUnit = firstItem?.units?.first(where: { $0.status != "sold" }) ?? firstItem?.units?.first
+//                let firstItem = surpriseData.items?.first
+//                let firstAvailableUnit = firstItem[unitIndex]
                 
                 socketManager.startAuctionBreakSpot(
                     roomId: roomId,
                     productSetId: surpriseData.id,
-                    productSetItemId: firstItem?.id ?? 0,
-                    productSetItemUnitId: firstAvailableUnit?.id ?? 0,
+                    productSetItemId: productId,
+                    productSetItemUnitId: itemId,
                     startingBidAmount: Double(bidAmount) ?? 0,
                     requireTime: requiredTime,
                     counterBidTime: counterBidTime,
@@ -1049,7 +1049,7 @@ struct RehearsalScreen: View {
                 socketManager.createFreebie(room_id: self.roomId, productId: "\(product.id ?? 0)", time: 100)
                 showFreeBie = false
                 navigateToRandomizer = true
-            }, onSurpriseSetUnitSelected: { _, _, _, _, _ in
+            }, onSurpriseSetUnitSelected: { _, _, _, _, _,_,_   in
                             // Freebie mode - no action needed for surprise sets
             }
         )

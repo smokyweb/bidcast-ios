@@ -34,7 +34,7 @@ struct ManageProductSheet: View {
     
     @Binding var surpriseData: ProductSurpriseData
 //    let surpriseData: ProductSurpriseData
-    var onStartAuction: ((ProductSurpriseData,String,Int,Int,Bool) -> Void)?
+    var onStartAuction: ((Int,Int,ProductSurpriseData,String,Int,Int,Bool) -> Void)?
     
     var viewModel = SurpriseViewModel()
     @State private var isAutoRandomizeOn: Bool = false
@@ -44,8 +44,11 @@ struct ManageProductSheet: View {
     @State private var showAuctionSheet = false
     @State private var selectedProductForAuction: ProductItemResponse?
     var didUpdate: () -> Void
-    
-    var onClickAuction: () -> Void
+    @State var itemId: Int? = nil
+    @State var productId: Int? = nil
+    @State var productPrice: Int? = nil
+
+    var onClickAuction: (Int,Int,Int) -> Void
     // Computed properties for dynamic data
     private var productTitle: String {
         surpriseData.name ?? "Untitled"
@@ -108,9 +111,9 @@ struct ManageProductSheet: View {
     
     init(
         surpriseData: Binding<ProductSurpriseData>,
-        onStartAuction: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)? = nil,
+        onStartAuction: ((Int,Int,ProductSurpriseData, String, Int, Int, Bool) -> Void)? = nil,
         didUpdate: @escaping () -> Void = {},
-        onClickAuction: @escaping () -> Void = {}
+        onClickAuction: @escaping (Int,Int,Int) -> Void = {_,_,_   in }
     ) {
         self._surpriseData = surpriseData
         self.onStartAuction = onStartAuction
@@ -305,12 +308,18 @@ struct ManageProductSheet: View {
                             availableItems: availableProducts,
                             isAuctionType: isAuctionType,
                             didUpdate: didUpdate,
-                            onClickAuction : {
-                                if let product = availableProducts.first {
+                            onClickAuction: {index,x ,price in
+                              
+                                    let product = availableProducts.first
                                     selectedProductForAuction = product
                                     showAuctionSheet = true
-                                }
+                                
+                                itemId=index
+                                productId = x
+                                productPrice = price
+                                
                             }
+
                             
                         )
                         .padding(.horizontal, 16)
@@ -355,14 +364,14 @@ struct ManageProductSheet: View {
         
         .sheet(isPresented:$showAuctionSheet){
             AuctionSettingsSheet(
-                startingBid: "\(surpriseData.price ?? 0)",
+                startingBid: "\(productPrice ?? 0)",
                 onTapCancel: {
                     showAuctionSheet = false
                 },
                 onStartAuction: { bidAmount, requiredTime, counterBidTime, isSuddenDeath in
                     showAuctionSheet = false
                     // Pass the full surpriseData for auction start
-                    onStartAuction?(surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
+                    onStartAuction?(productId ?? 0 ,itemId ?? 0,surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
                 }
             )
             .presentationDetents([.fraction(0.70)])
@@ -433,7 +442,7 @@ struct AuctionProductSections: View {
     let availableItems: [ProductItemResponse]
     let isAuctionType: Bool
     var didUpdate : () -> () = {  }
-    var onClickAuction : () -> () = {  }
+    var onClickAuction : (Int,Int,Int) -> () = { _,_,_   in  }
     
     @State private var isUnsoldExpanded: Bool = true
     @State private var isAvailableExpanded: Bool = false
@@ -592,7 +601,7 @@ struct UnsoldUnitRow: View {
     let index: Int
     let unitId: Int
     var didUpdate: () -> Void
-    var onClickAuction: () -> Void
+    var onClickAuction: (Int,Int,Int) -> Void
 
 
 
@@ -607,7 +616,7 @@ struct UnsoldUnitRow: View {
      index: Int,
      unitId: Int,
      didUpdate: @escaping () -> Void,
-    onClickAuction: @escaping () -> Void
+    onClickAuction: @escaping (Int,Int,Int) -> Void
  ) {
      self.unit = unit
      self.productName = productName
@@ -651,14 +660,15 @@ struct UnsoldUnitRow: View {
                 Spacer()
                 VStack(){
                     Button(action: {
-                        onClickAuction()
+                        onClickAuction(unit.id ,unit.productSetItemId ?? 0,unit.price ?? 0)
+                        print("Index = \(index)")
                         
                              }) {
-                                 Text("Starttt Auction")
+                                 Text("Start Auction")
                                      .font(.custom(poppinsSemiBold, size: 11))
                                      .foregroundColor(.white)
-                                     .padding(.horizontal, 20)
-                                     .padding(.vertical, 10)
+                                     .padding(.horizontal, 4)
+                                     .padding(.vertical, 4)
                                      .background(Color.defaultTheme)
                                      .cornerRadius(20)
                              }

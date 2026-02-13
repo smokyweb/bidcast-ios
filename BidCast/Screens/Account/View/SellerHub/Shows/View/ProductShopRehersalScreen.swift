@@ -94,7 +94,7 @@ struct ProductShopRehersalScreen: View {
     var onTapCancel: (() -> Void)?
     var onProductSelected: ((ProductDataModel1) -> Void)?
     var onSurpriseSetSelected: ((ProductSurpriseData) -> Void)?
-    var onSurpriseSetUnitSelected: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)?
+    var onSurpriseSetUnitSelected: ((Int,Int ,ProductSurpriseData, String, Int, Int, Bool) -> Void)?
     @State private var socketListenersConfigured = false
     
     // NEW: State for Create Product Sheet
@@ -125,7 +125,7 @@ struct ProductShopRehersalScreen: View {
         onTapCancel: (() -> Void)? = nil,
         onProductSelected: ((ProductDataModel1) -> Void)? = nil,
         onSurpriseSetSelected: ((ProductSurpriseData) -> Void)? = nil,
-        onSurpriseSetUnitSelected: ((ProductSurpriseData, String, Int, Int, Bool) -> Void)?,
+        onSurpriseSetUnitSelected: ((Int,Int,ProductSurpriseData, String, Int, Int, Bool) -> Void)?,
         onProductCreated: (() -> Void)? = nil
     ) {
         self.mode = mode
@@ -247,7 +247,7 @@ struct ProductShopRehersalScreen: View {
                                                 onSurpriseSetSelected?(surpriseSet)
                                             } else {
                                                 // For buy_now type, start directly without auction sheet
-                                                onSurpriseSetUnitSelected?(surpriseSet, "\(surpriseSet.price ?? 0)", 0, 0, false)
+                                                onSurpriseSetUnitSelected?(0,0,surpriseSet, "\(surpriseSet.price ?? 0)", 0, 0, false)
                                             }
                                         }
                                     )
@@ -372,8 +372,8 @@ struct ProductShopRehersalScreen: View {
 
                    ManageProductSheet(
                        surpriseData: $surpriseSetData[index],   // 👈 Binding here
-                       onStartAuction: { product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
-                           onSurpriseSetUnitSelected?(product, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
+                       onStartAuction: {itemId,productId,product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+                           onSurpriseSetUnitSelected?(itemId,productId,product, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
                            showManageProductSheet = false
                        },
                        didUpdate: {
