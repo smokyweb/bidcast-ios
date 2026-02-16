@@ -23,6 +23,8 @@ struct ManageProductScreen: View {
     @State private var openShippingSheet = false
     
     @State var showError: Bool = false
+    @State var showError2: Bool = false
+
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     var isCategoryLocked: Bool = false
@@ -129,6 +131,32 @@ struct ManageProductScreen: View {
             )
             .ignoresSafeArea(.keyboard)
         )
+        
+        
+        .bottomSheet(isPresented: $showError2, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
+            content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if let _ = viewModel.errorMessage {
+                        showError2 = false
+                        viewModel.errorMessage = nil
+                    }else{
+//                        self.presentationMode.wrappedValue.dismiss()
+                        withAnimation {
+                            showError2 = false
+                            viewModel.errorMessage = nil
+                        }
+                    }
+                }, onSecondaryClick: {
+                    withAnimation {
+                        showError2 = false
+                        viewModel.errorMessage = nil
+                    }
+                })
+            .ignoresSafeArea(.keyboard)
+        })
+        
         .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
             onDismiss: {
             if let _ = viewModel.errorMessage {
@@ -238,7 +266,7 @@ struct ManageProductScreen: View {
             primaryBtnText:   "Okay",
             secondaryBtnText: ""
         )
-        showError = true
+        showError2 = true
     }
 }
 
