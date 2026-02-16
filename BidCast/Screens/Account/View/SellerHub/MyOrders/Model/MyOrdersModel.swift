@@ -28,6 +28,17 @@ struct MyOrderModel: Codable {
     var product: ProductDetails?
     var shippingTracking: [ShippingTrackingModel]?
     var user: UserShortModel?
+    
+    var productSetID: Int?
+       var productSetItemID: Int?
+       var productSetItemUnitID: Int?
+
+       // Nested Objects
+       var transaction: [TransactionModel]?
+       var productSet: ProductSetModel?
+       var productSetItem: ProductSetItemModel?
+       var productSetItemUnit: ProductSetItemUnitModel?
+
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -48,8 +59,84 @@ struct MyOrderModel: Codable {
         case product
         case shippingTracking = "shipping_tracking"
         case user
+        case productSet = "product_set"
+        case transaction
+        case productSetItem = "product_set_item"
+        case productSetItemUnit = "product_set_item_unit"
     }
 }
+struct ProductSetModel: Codable {
+    var id: Int?
+    var description: String?
+    var autoRandomizer: Int?
+    var shippingProfileID: Int?
+    var createdAt: String?
+    var userID: Int?
+    var type: String?
+    var quickSpin: Int?
+    var price: Double?
+    var isLiveBid: Int?
+    var updatedAt: String?
+    var name: String?
+    var status: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case description
+        case autoRandomizer = "auto_randomizer"
+        case shippingProfileID = "shipping_profile_id"
+        case createdAt = "created_at"
+        case userID = "user_id"
+        case type
+        case quickSpin = "quick_spin"
+        case price
+        case isLiveBid = "is_live_bid"
+        case updatedAt = "updated_at"
+        case name
+        case status
+    }
+}
+
+struct ProductSetItemModel: Codable {
+    var id: Int?
+    var status: String?
+    var quantity: Int?
+    var price: Double?
+    var soldQuantity: Int?
+    var productSetID: Int?
+    var description: String?
+    var name: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case status
+        case quantity
+        case price
+        case soldQuantity = "sold_quantity"
+        case productSetID = "product_set_id"
+        case description
+        case name
+    }
+}
+
+struct ProductSetItemUnitModel: Codable {
+    var id: Int?
+    var status: String?
+    var price: Double?
+    var productSetItemID: Int?
+    var name: String?
+    var description: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case status
+        case price
+        case productSetItemID = "product_set_item_id"
+        case name
+        case description
+    }
+}
+
 
 
 extension MyOrderModel {

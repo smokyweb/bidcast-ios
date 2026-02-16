@@ -82,6 +82,9 @@ import SwiftUI
 // MARK: - Modern Order Card View
 struct OrderCardView: View {
     let order: MyOrderModel
+    private var isProductSetOrder: Bool {
+        order.productSet != nil
+    }
     
     @State private var isPressed: Bool = false
     @State private var imageLoaded: Bool = false
@@ -91,7 +94,9 @@ struct OrderCardView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            orderImageSection
+            if !isProductSetOrder {
+                orderImageSection
+            }
             orderDetailsSection
         }
         .padding(16)
@@ -120,7 +125,7 @@ struct OrderCardView: View {
             
             // Actual Image
             CustomProfileImage(
-                url: order.product?.images?.first ?? "",
+                url: order.product?.thumbnail?.first ?? "",
                 isCircular: false,
                 size: 100
             )
@@ -158,11 +163,32 @@ struct OrderCardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
+    private var displayTitle: String {
+        if isProductSetOrder {
+            return order.productSetItemUnit?.name?.capitalizingFirstLetter()
+                ?? order.productSetItem?.name?.capitalizingFirstLetter()
+                ?? order.productSet?.name?.capitalizingFirstLetter()
+                ?? "Auction Item"
+        } else {
+            return order.product?.title?.capitalizingFirstLetter() ?? "Order Title"
+        }
+    }
+
+
+    private var displayPrice: String {
+        if isProductSetOrder {
+            return order.transaction?.first?.total?.toDouble?.compactCurrency() ?? "0.0"
+        } else {
+            return Double(order.product?.pricing ?? "0")?.compactCurrency() ?? "0.0"
+        }
+    }
+
+    
     // MARK: - Status Badges
     private var statusBadges: some View {
         HStack(spacing: 8) {
             StatusBadge(
-                title: "\(order.status ?? "Pending") Review",
+                title: "\(order.status?.capitalizingFirstLetter() ?? "Pending") Review",
                 backgroundColor: statusColor.opacity(0.15),
                 textColor: statusColor
             )
@@ -177,7 +203,7 @@ struct OrderCardView: View {
     
     // MARK: - Order Title
     private var orderTitle: some View {
-        Text(order.product?.title?.capitalizingFirstLetter() ?? "Order Title")
+        Text(displayTitle)
             .font(.custom(poppinsSemiBold, size: 15))
             .foregroundColor(.primary)
             .lineLimit(2)
@@ -200,7 +226,7 @@ struct OrderCardView: View {
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
             
-            Text(Double(order.product?.pricing ?? "0")?.compactCurrency() ?? "0.0")
+            Text(displayPrice)
                 .font(.custom(poppinsSemiBold, size: 15))
                 .foregroundColor(.primary)
         }
