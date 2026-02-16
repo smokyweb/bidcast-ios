@@ -79,6 +79,7 @@ struct ProductSetModel: Codable {
     var updatedAt: String?
     var name: String?
     var status: String?
+    var seller: UserDataModel?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -94,6 +95,7 @@ struct ProductSetModel: Codable {
         case updatedAt = "updated_at"
         case name
         case status
+        case seller
     }
 }
 

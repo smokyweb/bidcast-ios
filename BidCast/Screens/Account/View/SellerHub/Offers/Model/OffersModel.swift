@@ -140,6 +140,10 @@ struct PurchasedOrderModel: Codable {
     var createdAt: String?
     var product: ProductDataModel1?
     var user: UserDataModel?
+    var productSet: ProductSetModel?
+    var productSetItem: ProductSetItemModel?
+    var productSetItemUnit: ProductSetItemUnitModel?
+    var seller: UserDataModel?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -158,5 +162,9 @@ struct PurchasedOrderModel: Codable {
         case orderSource = "order_source"
         case createdAt = "created_at"
         case product, user
+        case productSet = "product_set"
+        case seller
+        case productSetItem = "product_set_item"
+        case productSetItemUnit = "product_set_item_unit"
     }
 }

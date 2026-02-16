@@ -16,6 +16,48 @@ struct PurchasesViewScreen: View {
     var onTapOrderTracking: ((PurchasedOrderModel?) -> Void)?
     var onTapUserProfile: ((String, String, String) -> Void)?
     
+    private var isProductSet: Bool {
+        purchaseList?.productSet != nil
+    }
+    private var displayTitle: String {
+        if let setTitle = purchaseList?.productSet?.name, !setTitle.isEmpty {
+            return setTitle.capitalizingFirstLetter()
+        }
+        return purchaseList?.product?.title?.capitalizingFirstLetter() ?? ""
+    }
+
+    private var displayPrice: String {
+        if let price = purchaseList?.productSet?.price?.compactCurrency() {
+            return price
+        }
+        if let price = purchaseList?.product?.pricing?.toDouble?.compactCurrency() {
+            return price
+        }
+        return ""
+    }
+    
+    private var displaySellerName: String {
+        if let sellerName = purchaseList?.productSet?.seller?.name {
+            return sellerName.capitalizingFirstLetter()
+        }
+        return purchaseList?.product?.user?.name?.capitalizingFirstLetter() ?? ""
+    }
+
+    private var displaySellerId: String {
+        if let id = purchaseList?.productSet?.seller?.id {
+            return "\(id)"
+        }
+        return "\(purchaseList?.product?.user?.id ?? 0)"
+    }
+
+    private var displaySellerImage: String {
+        if let image = purchaseList?.productSet?.seller?.profileImage {
+            return image
+        }
+        return purchaseList?.product?.user?.profileImage ?? ""
+    }
+    
+    
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             // MARK: - Product Image
@@ -46,7 +88,7 @@ struct PurchasesViewScreen: View {
                     .clipShape(Capsule())
                 
                 // Product Name
-                Text(purchaseList?.product?.title?.capitalizingFirstLetter() ?? "")
+                Text(displayTitle)
                     .font(.custom(poppinsBold, size: 14.0))
                     .foregroundColor(.black)
                     .lineLimit(2)
@@ -56,11 +98,11 @@ struct PurchasesViewScreen: View {
                     Text("Price:")
                         .font(.custom(poppinsBold, size: 12.0))
                         .foregroundColor(.gray)
-                    if let price = purchaseList?.product?.pricing?.toDouble?.compactCurrency() {
-                        Text(price)
+//                    if let price = purchaseList?.product?.pricing?.toDouble?.compactCurrency() {
+                        Text(displayPrice)
                             .font(.custom(poppinsBold, size: 12.0))
                             .foregroundColor(.black)
-                    }
+//                    }
                 }
                 
                 // Purchase Date
@@ -80,12 +122,15 @@ struct PurchasesViewScreen: View {
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.gray)
                     Button {
-                        userId = "\(purchaseList?.product?.user?.id ?? 0)"
-                        userImage = purchaseList?.product?.user?.profileImage ?? ""
-                        userName = purchaseList?.product?.user?.name ?? ""
+//                        userId = "\(purchaseList?.product?.user?.id ?? 0)"
+//                        userImage = purchaseList?.product?.user?.profileImage ?? ""
+//                        userName = purchaseList?.product?.user?.name ?? ""
+                        userId = displaySellerId
+                        userImage = displaySellerImage
+                        userName = displaySellerName
                         onTapUserProfile?(userId, userImage, userName)
                     } label: {
-                        Text(purchaseList?.product?.user?.name?.capitalizingFirstLetter() ?? "")
+                        Text(displaySellerName)
                             .font(.custom(poppinsMedium, size: 12.0))
                             .foregroundColor(.blue)
                     }
@@ -93,6 +138,7 @@ struct PurchasesViewScreen: View {
                    
                 }
             }
+            .padding(.horizontal,isProductSet ? 12 : 0)
     
             Spacer()
         }
