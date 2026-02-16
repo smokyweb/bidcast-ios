@@ -244,6 +244,11 @@ struct ActivityScreen: View {
                                 )
                                 .padding(.horizontal,8)
                                 .padding(.vertical, 8)
+                                .onAppear {
+                                        Task {
+                                            await handlePurchasePagination(index: i)
+                                        }
+                                    }
 //                                .background(Color.gray.opacity(0.1))
                             }
                         }
@@ -452,13 +457,37 @@ struct ActivityScreen: View {
                 filter = filterArray[selectedFilterIdex]
             }
             isLoading = false
-            fetchPurchasedOrderList(type: "purchased", status: filter)
+//            fetchPurchasedOrderList(type: "purchased", status: filter)
+            currentPage = 1
+            purchaseOrderList.removeAll()
+            fetchPurchasedOrderList(type: "purchased", status: filter, page: currentPage)
         case .savedItems:
             offerList.removeAll()
             isLoading = false
             fetchPurchasedOrderList(type: "saved", status: "")
         }
     }
+    func handlePurchasePagination(index: Int) async {
+        let isLastItem = index == purchaseOrderList.count - 1
+        let totalItems = viewModel.purchasedOrderListResponse.total ?? 0
+        let canFetchMore = totalItems > purchaseOrderList.count
+        
+        if isLastItem && canFetchMore {
+            currentPage += 1
+            
+            var filter = ""
+            if selectedFilterIdex < filterArray.count {
+                filter = filterArray[selectedFilterIdex]
+            }
+            
+            fetchPurchasedOrderList(
+                type: "purchased",
+                status: filter,
+                page: currentPage
+            )
+        }
+    }
+
     
     func fetchBlockedList() async {
         guard Reachability.isConnectedToNetwork() else {
@@ -487,11 +516,11 @@ struct ActivityScreen: View {
     }
 
     
-    func fetchPurchasedOrderList(type: String, status: String = "") {
+    func fetchPurchasedOrderList(type: String, status: String = "", page: Int = 1) {
         Task {
             await performAPICalls(
                 isConcurrent: false,
-                showLoader: true,
+                showLoader: page == 1,
                 onError: { error in
 //                    canLoadMore = false
 //                    isFetchingMore = false
@@ -506,17 +535,29 @@ struct ActivityScreen: View {
                 },
                 onSuccess: {
                     if viewModel.purchasedOrderListResponse.status == "success" {
-                        purchaseOrderList = viewModel.purchasedOrderListResponse.data ?? []
+                        
+                        let newData = viewModel.purchasedOrderListResponse.data ?? []
+                        
+                        if page == 1 {
+                            purchaseOrderList = newData
+                        } else {
+                            purchaseOrderList.append(contentsOf: newData)
+                        }
                     }
                 }
             ) {
                 isLoading = false
                 var filter = ""
-               
+                
                 if status == "All" { filter = "" }
-                else  if status == "In Progress"  { filter = "in_progress" }
-                else  if status == "Completed"  { filter = "completed" }
-                let request = PurchaseOrderRequuest(type: type, status: filter)
+                else if status == "In Progress" { filter = "in_progress" }
+                else if status == "Completed" { filter = "completed" }
+                
+                let request = PurchaseOrderRequuest(
+                    type: type,
+                    status: filter,
+                    page: page    // 👈 make sure your request supports page
+                )
                 await viewModel.getMyPurchasedOrderList(parameters: request)
             }
         }

@@ -370,7 +370,6 @@ struct ManageProductSheet: View {
                 },
                 onStartAuction: { bidAmount, requiredTime, counterBidTime, isSuddenDeath in
                     showAuctionSheet = false
-                    // Pass the full surpriseData for auction start
                     onStartAuction?(productId ?? 0 ,itemId ?? 0,surpriseData, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
                 }
             )

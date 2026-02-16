@@ -459,6 +459,7 @@ struct AddressDefaultParam : Encodable {
 struct PurchaseOrderRequuest : Encodable {
     var type : String?
     var status: String?
+    var page : Int
 }
 
 struct UpdatePreferenceRequest: Encodable{

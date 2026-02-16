@@ -1014,14 +1014,14 @@ struct RehearsalScreen: View {
                 currentSurpriseSetData = surpriseData
                 
                 // Get first available item and unit
-//                let firstItem = surpriseData.items?.first
-//                let firstAvailableUnit = firstItem[unitIndex]
+                let firstItem = surpriseData.items?.first
+                let firstAvailableUnit = firstItem?.units?.first(where: { $0.status != "sold" }) ?? firstItem?.units?.first
                 
                 socketManager.startAuctionBreakSpot(
                     roomId: roomId,
                     productSetId: surpriseData.id,
-                    productSetItemId: productId,
-                    productSetItemUnitId: itemId,
+                    productSetItemId: firstItem?.id ?? 0,
+                    productSetItemUnitId: firstAvailableUnit?.id ?? 0,
                     startingBidAmount: Double(bidAmount) ?? 0,
                     requireTime: requiredTime,
                     counterBidTime: counterBidTime,
