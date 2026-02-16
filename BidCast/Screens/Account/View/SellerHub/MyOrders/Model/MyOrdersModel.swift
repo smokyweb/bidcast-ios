@@ -120,9 +120,9 @@ extension MyOrderModel {
             subCategoryID: p.subCategoryID,
             title: p.title,
             variant: p.variant,
+            weight: p.weight.map { Double(($0)) },
             width: p.width.map { ($0) },
             length: p.length.map { ($0) },
-            weight: p.weight.map { ($0) },
             height: p.height.map { ($0) },
             mailClass: p.mailClass,
             processingCategory: p.processingCategory,
@@ -174,7 +174,8 @@ struct ProductDetails: Codable {
     var id, userID, categoryID, subCategoryID: Int?
     var title: String?
     var variant: [ProductVariant]?
-    var width, length, weight,height: Int?
+    var weight: Double?
+    var width, length,height: Int?
     var  mailClass, processingCategory: String?
     var description: String?
     var quantity, purchasedQuantity: String?
