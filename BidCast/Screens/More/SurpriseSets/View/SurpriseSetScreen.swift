@@ -15,6 +15,8 @@ struct SurpriseSetScreen: View {
     @State private var surprises: [ProductSurpriseData] = []
     @StateObject var viewModel = SurpriseViewModel()
     
+    @State private var navigateToProductDetail = false
+
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -41,14 +43,17 @@ struct SurpriseSetScreen: View {
                     if surprises.isEmpty {
                         NoDataView(message: "No Surprise setfound")
                     }
-                    else {
-                        ForEach(surprises,id:\.id) { surprise in
+                    else  {
+                        ForEach(surprises, id: \.id) { surprise in
                             SurpriseCardView(surprise: surprise)
-                                
+                                .onTapGesture {
+                                    navigateToProductDetail.toggle()
+                                }
                         }
                     }
                 }
             }
+            
             .padding(.horizontal,12)
             .background(.backGround)
             .zIndex(1000)
@@ -60,6 +65,7 @@ struct SurpriseSetScreen: View {
             .padding(.bottom,12)
             
             CusNavLink(doNavigate: $navigateToCreate, destination: CreateSurpriseScreen())
+            CusNavLink(doNavigate: $navigateToProductDetail, destination: ProductDetail())
         }
         .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
                      onDismiss: {

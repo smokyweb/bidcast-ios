@@ -522,6 +522,7 @@
 		D4DDF62A2E0BC9A3007AD383 /* NotificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DDF6222E0BC9A3007AD383 /* NotificationScreen.swift */; };
 		D4DDF62B2E0BC9A3007AD383 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DDF6242E0BC9A3007AD383 /* NotificationModel.swift */; };
 		D4DDF62D2E0BD358007AD383 /* NotificationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DDF62C2E0BD358007AD383 /* NotificationCardView.swift */; };
+		D4E200D02F443EB000CFEBC1 /* ProductDeatil.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E200CF2F443EB000CFEBC1 /* ProductDeatil.swift */; };
 		D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569CD2DD461120005A78E /* ProfileDetailCell.swift */; };
 		D4E569D12DD46A3B0005A78E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D4E569CF2DD46A3B0005A78E /* Localizable.strings */; };
 		D4E569D72DD46BA10005A78E /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D62DD46BA10005A78E /* LanguageManager.swift */; };
@@ -1123,6 +1124,7 @@
 		D4DDF6242E0BC9A3007AD383 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
 		D4DDF6262E0BC9A3007AD383 /* NotificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewModel.swift; sourceTree = "<group>"; };
 		D4DDF62C2E0BD358007AD383 /* NotificationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCardView.swift; sourceTree = "<group>"; };
+		D4E200CF2F443EB000CFEBC1 /* ProductDeatil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDeatil.swift; sourceTree = "<group>"; };
 		D4E569CD2DD461120005A78E /* ProfileDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailCell.swift; sourceTree = "<group>"; };
 		D4E569D02DD46A3B0005A78E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D4E569D22DD46A5B0005A78E /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -2616,6 +2618,7 @@
 		D4086A132F31DEE00015E2F2 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				D4E200CF2F443EB000CFEBC1 /* ProductDeatil.swift */,
 				D4086A0F2F31D17E0015E2F2 /* SurpriseSetScreen.swift */,
 				D4086A112F31D4E30015E2F2 /* CreateSurpriseScreen.swift */,
 				D4086A182F31E4140015E2F2 /* ManageProductScreen.swift */,
@@ -5122,6 +5125,7 @@
 				D613DBB62EB0F22000521D42 /* ImageCacheManager.swift in Sources */,
 				D4588AC62E20F68E0089B1A3 /* ReviewCard.swift in Sources */,
 				99C908302DC8CD6A0054620B /* NotificationCountView.swift in Sources */,
+				D4E200D02F443EB000CFEBC1 /* ProductDeatil.swift in Sources */,
 				99C908312DC8CD6A0054620B /* NotificationListingCard.swift in Sources */,
 				D4CAEC3C2DE6DC6000705CD7 /* BenefitView.swift in Sources */,
 				D694B1BD2EB08C8200411242 /* AgoraManager.swift in Sources */,
