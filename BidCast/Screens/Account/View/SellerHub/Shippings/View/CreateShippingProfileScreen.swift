@@ -16,6 +16,18 @@ struct CreateShippingProfileScreen: View {
     @State private var maxItemsEnabled: Bool = false
     @State private var additionalWeightEnabled: Bool = false
     @State private var showScaleOptions: Bool = false
+       
+    
+    
+    
+    @State private var maxItemsCount: String = ""
+    @State private var boxLength: String = ""
+    @State private var boxWidth: String = ""
+    @State private var boxHeight: String = ""
+    @State private var incrementalWeight: String = ""
+    @State private var selectedWeightScale: String = "Pound"
+    @State private var showWeightScaleSheet: Bool = false
+
     
     var nameVal, sizeVal: String?
     var weightVal: String?
@@ -163,72 +175,182 @@ struct CreateShippingProfileScreen: View {
                         .padding(.top, 20)
                         
                         // Bundling Options Section
+                        // MARK: - Bundling Options
                         VStack(alignment: .leading, spacing: 16) {
+
                             HStack {
                                 Text("Bundling Options")
                                     .font(.system(size: 22, weight: .bold))
-                                    .foregroundColor(.primary)
-                            
+
+                                Spacer()
+
+                                Button("Learn More") {
+                                    // action
+                                }
+                                .foregroundColor(.blue)
+                                .font(.system(size: 14, weight: .semibold))
                             }
-                            
-                            // Max Items Toggle
+
+                            // ✅ MAX ITEMS TOGGLE
                             VStack(alignment: .leading, spacing: 12) {
+
                                 Toggle(isOn: $maxItemsEnabled) {
                                     VStack(alignment: .leading, spacing: 6) {
                                         Text("Set the maximum number of items to put into one package")
                                             .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.primary)
-                                        
-                                        Text("Recommended for items that are unusually sized fragile , or you prefer to ship individually.")
-                                            .font(.system(size: 14, weight: .regular))
+
+                                        Text("Recommended for items that are unusually sized fragile, or you prefer to ship individually.")
+                                            .font(.system(size: 14))
                                             .foregroundColor(.secondary)
-                                            .fixedSize(horizontal: false, vertical: true)
                                     }
                                 }
                                 .toggleStyle(SwitchToggleStyle(tint: .blue))
-                                .padding(16)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color(.systemBackground))
-                                        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 3)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .stroke(maxItemsEnabled ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
-                                        .animation(.easeInOut(duration: 0.2), value: maxItemsEnabled)
-                                )
+
+                                // ✅ SHOW WHEN ENABLED
+                                if maxItemsEnabled {
+
+                                    // Max items field
+                                    AuthTextField(
+                                        floatingLabel: "",
+                                        placeholder: "Max # of items in one box",
+                                        icon: .addresses,
+                                        text: $maxItemsCount,
+                                        isIconDisplay: false,
+                                        custFontName: poppinsMedium,
+                                        custFontSize: 14
+                                    )
+
+                                    Text("For cost-effective bundling, we recommend setting the quantity based on box sizes smaller than 1 cubic foot.")
+                                        .font(.system(size: 13))
+                                        .foregroundColor(.secondary)
+
+                                    // MARK: Box Dimensions
+
+                                    Text("Box Dimensions")
+                                        .font(.system(size: 16, weight: .semibold))
+
+                                    Button {
+                                        // optional predefined sizes
+                                    } label: {
+                                        HStack {
+                                            Text("Select a Box Size (Optional)")
+                                                .foregroundColor(.secondary)
+                                            Spacer()
+                                            Image(systemName: "chevron.right")
+                                        }
+                                        .padding()
+                                        .background(Color(.systemBackground))
+                                        .cornerRadius(30)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 30)
+                                                .stroke(Color.gray.opacity(0.2))
+                                        )
+                                    }
+
+                                    // Dimensions grid
+                                    HStack(spacing: 12) {
+                                        AuthTextField(
+                                            floatingLabel: "",
+                                            placeholder: "Length",
+                                            icon: .addresses,
+                                            text: $boxLength,
+                                            isIconDisplay: false,
+                                            custFontName: poppinsMedium,
+                                            custFontSize: 14
+                                        )
+
+                                        AuthTextField(
+                                            floatingLabel: "",
+                                            placeholder: "Width",
+                                            icon: .addresses,
+                                            text: $boxWidth,
+                                            isIconDisplay: false,
+                                            custFontName: poppinsMedium,
+                                            custFontSize: 14
+                                        )
+                                    }
+
+                                    HStack(spacing: 12) {
+                                        AuthTextField(
+                                            floatingLabel: "",
+                                            placeholder: "Height",
+                                            icon: .addresses,
+                                            text: $boxHeight,
+                                            isIconDisplay: false,
+                                            custFontName: poppinsMedium,
+                                            custFontSize: 14
+                                        )
+
+                                        AuthTextField(
+                                            floatingLabel: "",
+                                            placeholder: "Scale",
+                                            icon: .addresses,
+                                            text: $boxHeight,
+                                            isIconDisplay: false,
+                                            custFontName: poppinsMedium,
+                                            custFontSize: 14
+                                        )
+                                        // Scale selector
+                                      
+                                    }
+                                }
                             }
-                            
-                            // Additional Weight Toggle
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(Color(.systemBackground))
+                            )
+
+                            // ✅ ADDITIONAL WEIGHT TOGGLE
                             VStack(alignment: .leading, spacing: 12) {
+
                                 Toggle(isOn: $additionalWeightEnabled) {
                                     VStack(alignment: .leading, spacing: 6) {
                                         Text("Set a fixed weight for additional items in the same package")
                                             .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.primary)
-                                        
+
                                         Text("Select an incremental weight for any additional items eligible for bundling")
-                                            .font(.system(size: 14, weight: .regular))
+                                            .font(.system(size: 14))
                                             .foregroundColor(.secondary)
-                                            .fixedSize(horizontal: false, vertical: true)
                                     }
                                 }
                                 .toggleStyle(SwitchToggleStyle(tint: .blue))
-                                .padding(16)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color(.systemBackground))
-                                        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 3)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .stroke(additionalWeightEnabled ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
-                                        .animation(.easeInOut(duration: 0.2), value: additionalWeightEnabled)
-                                )
+
+                                // ✅ SHOW WHEN ENABLED
+                                if additionalWeightEnabled {
+
+                                    HStack(spacing: 12) {
+
+                                        AuthTextField(
+                                            floatingLabel: "",
+                                            placeholder: "Incremental Weight",
+                                            icon: .addresses,
+                                            text: $incrementalWeight,
+                                            isIconDisplay: false,
+                                            custFontName: poppinsMedium,
+                                            custFontSize: 14
+                                        )
+
+                                        AuthTextField(
+                                            floatingLabel: "",
+                                            placeholder: "Scale",
+                                            icon: .addresses,
+                                            text: $boxHeight,
+                                            isIconDisplay: false,
+                                            custFontName: poppinsMedium,
+                                            custFontSize: 14
+                                        )
+                                    }
+                                }
                             }
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(Color(.systemBackground))
+                            )
                         }
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 100)
+
                     }
                 }
                 .background(Color(.systemGroupedBackground))
