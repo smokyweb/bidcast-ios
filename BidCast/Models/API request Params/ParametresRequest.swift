@@ -476,6 +476,8 @@ struct UpdatePreferenceRequest: Encodable{
     var suggest_my_account: Int?
     var haptic_feedback: Int?
     var free_shipping: Bool?
+    var shipping_address_id: String?
+    var instruction: String?
 }
 
 

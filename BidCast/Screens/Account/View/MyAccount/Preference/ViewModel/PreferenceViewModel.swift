@@ -12,7 +12,7 @@ final class PreferenceViewModel: ObservableObject {
     
     @Published var preferenceResponse = ResponseModel<PreferenceDataModel>()
     @Published var errorMessage: String? = nil
-
+    @Published var getAddressDict = ResponseModel<[AddressModel]>()
     // MARK: - Get Preference
     func getPreferenceContent() async {
         do {
@@ -38,6 +38,21 @@ final class PreferenceViewModel: ObservableObject {
             self.handle(error: error)
         }
     }
+    
+    
+    func getAddresses() async {
+          do {
+              if let response: ResponseModel<[AddressModel]> = try await APIManager.shared.request(
+                  type: APIEndPoint.getAddress,
+                  header: true
+              ) {
+                  self.getAddressDict = response
+              }
+          } catch {
+              handle(error: error)
+          }
+      }
+
 
     // MARK: - Error Handling
     private func handle(error: Error) {
