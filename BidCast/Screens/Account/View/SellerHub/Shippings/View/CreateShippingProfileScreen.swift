@@ -78,7 +78,7 @@ struct CreateShippingProfileScreen: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
-                .background(Color(.systemBackground))
+                .background(Color(.white))
                 
                 Divider()
                 
@@ -105,7 +105,7 @@ struct CreateShippingProfileScreen: View {
                                 })
                             }
                             
-                            HStack(spacing: 12) {
+                            HStack(spacing: 4) {
                                 // Weight Field
                                 VStack(spacing: 8) {
                                     AuthTextField(floatingLabel: "",
@@ -153,14 +153,16 @@ struct CreateShippingProfileScreen: View {
                             HStack(spacing: 12) {
                                 Image(systemName: "info.circle.fill")
                                     .font(.system(size: 20))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.defaultTheme)
+                                    
                                 
                                 Text("Please enter the weight of this item and packaging")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                                    .foregroundColor(.darkGray)
 //                                    .fixedSize(horizontal: false, vertical: true)
                             }
-                            .padding(.horizontal,16)
+                            .frame(maxWidth: .infinity)
+                            .padding(.all,4)
                             .padding(.vertical, 14)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
@@ -170,6 +172,7 @@ struct CreateShippingProfileScreen: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color.defaultThemeLight, lineWidth: 1)
                             )
+                            .padding(.horizontal,12)
                         }
 //                        .padding(.horizontal, 20)
                         .padding(.top, 20)
@@ -180,7 +183,7 @@ struct CreateShippingProfileScreen: View {
 
                             HStack {
                                 Text("Bundling Options")
-                                    .font(.system(size: 22, weight: .bold))
+                                    .font(.custom(poppinsBold, size: 20.0))
 
                                 Spacer()
 
@@ -197,14 +200,14 @@ struct CreateShippingProfileScreen: View {
                                 Toggle(isOn: $maxItemsEnabled) {
                                     VStack(alignment: .leading, spacing: 6) {
                                         Text("Set the maximum number of items to put into one package")
-                                            .font(.system(size: 16, weight: .semibold))
+                                            .font(.custom(poppinsSemiBold, size: 16.0))
 
                                         Text("Recommended for items that are unusually sized fragile, or you prefer to ship individually.")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.secondary)
+                                            .font(.custom(poppinsRegular, size: 13.0))
+                                            .foregroundColor(.darkGray)
                                     }
                                 }
-                                .toggleStyle(SwitchToggleStyle(tint: .blue))
+                                .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
 
                                 // ✅ SHOW WHEN ENABLED
                                 if maxItemsEnabled {
@@ -219,24 +222,27 @@ struct CreateShippingProfileScreen: View {
                                         custFontName: poppinsMedium,
                                         custFontSize: 14
                                     )
+                                    .padding(.horizontal,-12)
 
                                     Text("For cost-effective bundling, we recommend setting the quantity based on box sizes smaller than 1 cubic foot.")
-                                        .font(.system(size: 13))
-                                        .foregroundColor(.secondary)
+                                        .font(.custom(poppinsRegular, size: 13.0))
+                                        .foregroundColor(.darkGray)
 
                                     // MARK: Box Dimensions
 
                                     Text("Box Dimensions")
-                                        .font(.system(size: 16, weight: .semibold))
+                                        .font(.custom(poppinsSemiBold, size: 16.0))
 
                                     Button {
                                         // optional predefined sizes
                                     } label: {
                                         HStack {
                                             Text("Select a Box Size (Optional)")
-                                                .foregroundColor(.secondary)
+                                                .font(.custom(poppinsRegular, size: 13.0))
+                                                .foregroundColor(.darkGray)
                                             Spacer()
                                             Image(systemName: "chevron.right")
+                                                .foregroundColor(.black)
                                         }
                                         .padding()
                                         .background(Color(.systemBackground))
@@ -248,7 +254,7 @@ struct CreateShippingProfileScreen: View {
                                     }
 
                                     // Dimensions grid
-                                    HStack(spacing: 12) {
+                                    HStack(spacing: 4) {
                                         AuthTextField(
                                             floatingLabel: "",
                                             placeholder: "Length",
@@ -258,6 +264,7 @@ struct CreateShippingProfileScreen: View {
                                             custFontName: poppinsMedium,
                                             custFontSize: 14
                                         )
+                                        .padding(.horizontal,-12)
 
                                         AuthTextField(
                                             floatingLabel: "",
@@ -268,9 +275,10 @@ struct CreateShippingProfileScreen: View {
                                             custFontName: poppinsMedium,
                                             custFontSize: 14
                                         )
+                                        .padding(.horizontal,-12)
                                     }
 
-                                    HStack(spacing: 12) {
+                                    HStack(spacing: 4) {
                                         AuthTextField(
                                             floatingLabel: "",
                                             placeholder: "Height",
@@ -280,6 +288,7 @@ struct CreateShippingProfileScreen: View {
                                             custFontName: poppinsMedium,
                                             custFontSize: 14
                                         )
+                                        .padding(.horizontal,-12)
 
                                         AuthTextField(
                                             floatingLabel: "",
@@ -290,12 +299,13 @@ struct CreateShippingProfileScreen: View {
                                             custFontName: poppinsMedium,
                                             custFontSize: 14
                                         )
+                                        .padding(.horizontal,-12)
                                         // Scale selector
                                       
                                     }
                                 }
                             }
-                            .padding(16)
+                            .padding(8)
                             .background(
                                 RoundedRectangle(cornerRadius: 14)
                                     .fill(Color(.systemBackground))
@@ -307,19 +317,19 @@ struct CreateShippingProfileScreen: View {
                                 Toggle(isOn: $additionalWeightEnabled) {
                                     VStack(alignment: .leading, spacing: 6) {
                                         Text("Set a fixed weight for additional items in the same package")
-                                            .font(.system(size: 16, weight: .semibold))
+                                            .font(.custom(poppinsSemiBold, size: 16.0))
 
                                         Text("Select an incremental weight for any additional items eligible for bundling")
-                                            .font(.system(size: 14))
+                                            .font(.custom(poppinsRegular, size: 13.0))
                                             .foregroundColor(.secondary)
                                     }
                                 }
-                                .toggleStyle(SwitchToggleStyle(tint: .blue))
+                                .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
 
                                 // ✅ SHOW WHEN ENABLED
                                 if additionalWeightEnabled {
 
-                                    HStack(spacing: 12) {
+                                    HStack(spacing: 4) {
 
                                         AuthTextField(
                                             floatingLabel: "",
@@ -330,6 +340,7 @@ struct CreateShippingProfileScreen: View {
                                             custFontName: poppinsMedium,
                                             custFontSize: 14
                                         )
+                                        .padding(.horizontal,-12)
 
                                         AuthTextField(
                                             floatingLabel: "",
@@ -340,20 +351,21 @@ struct CreateShippingProfileScreen: View {
                                             custFontName: poppinsMedium,
                                             custFontSize: 14
                                         )
+                                        .padding(.horizontal,-12)
                                     }
                                 }
                             }
-                            .padding(16)
+                            .padding(8)
                             .background(
                                 RoundedRectangle(cornerRadius: 14)
                                     .fill(Color(.systemBackground))
                             )
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 12)
 
                     }
                 }
-                .background(Color(.systemGroupedBackground))
+                .background(Color(.backGround))
                 
                 // Bottom Button
                 VStack(spacing: 0) {

@@ -48,10 +48,15 @@ struct FreePickupScreen: View {
         VStack(spacing: 0) {
             
             // MARK: - Header
-            headerView
+            VStack{
+                PrimaryHeader(title: "Free Pickup",leadingImgArr: ["chevron.left"],
+                              onClickLeading: { _ in
+                    self.presentationMode.wrappedValue.dismiss()
+                },count: .constant(0))
+            }
             
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 28) {
+                VStack(alignment: .leading, spacing: 16) {
                     
                     // MARK: Toggle Section
                     toggleSection
@@ -141,8 +146,9 @@ extension FreePickupScreen {
                     }
                 }
             ) {
+                let freeShip = isFreePickupEnabled ? 1 : 0
                 let freePickupAddresses = UpdatePreferenceRequest(
-                    free_shipping: isFreePickupEnabled, shipping_address_id: pickupAddressId, instruction: instructions
+                    free_shipping: freeShip, shipping_address_id: pickupAddressId, instruction: instructions
                     
                 )
                 await viewModel.updatePreference(parameters: freePickupAddresses)
@@ -186,11 +192,11 @@ private extension FreePickupScreen {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Enable Free Pickup")
                     .foregroundColor(.black)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.custom(poppinsSemiBold, size: 16.0))
                 
                 Text("Allow buyers to pick up any order from an address of your choice.")
                     .foregroundColor(.gray)
-                    .font(.system(size: 13))
+                    .font(.custom(poppinsRegular, size: 13.0))
             }
         }
         .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
@@ -204,11 +210,11 @@ private extension FreePickupScreen {
             
             Text("Location")
                 .foregroundColor(.black)
-                .font(.system(size: 18, weight: .bold))
+                .font(.custom(poppinsSemiBold, size: 16.0))
             
             Text("Ensure that your pickup location is safe and easily accessible for both you and your buyers.")
                 .foregroundColor(.gray)
-                .font(.system(size: 13))
+                .font(.custom(poppinsRegular, size: 13.0))
             
             // ✅ Dropdown Field
             Button {
@@ -217,11 +223,12 @@ private extension FreePickupScreen {
                 HStack {
                     Text(selectedAddressText.isEmpty ? "Pickup Address" : selectedAddressText)
                         .foregroundColor(selectedAddressText.isEmpty ? .gray : .black)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .lineLimit(1)
                     
                     Spacer()
                     
-                    Image(systemName: "chevron.down")
+                    Image(systemName: "chevron.right")
                         .foregroundColor(.gray)
                 }
                 .padding()
@@ -240,10 +247,10 @@ private extension FreePickupScreen {
                 
                 Text("Note: this address will be visible to viewers within shows when Free Pickup is enabled.")
                     .foregroundColor(.gray)
-                    .font(.system(size: 12))
+                    .font(.custom(poppinsRegular, size: 11.0))
             }
             .padding(12)
-            .background(Color(.systemGray6))
+            .background(Color(.defaultThemeLight))
             .cornerRadius(12)
         }
         .sheet(isPresented: $showAddressSheet) {
@@ -305,11 +312,11 @@ private extension FreePickupScreen {
             
             Text("Instructions")
                 .foregroundColor(.black)
-                .font(.system(size: 18, weight: .bold))
+                .font(.custom(poppinsSemiBold, size: 16.0))
             
             Text("Let buyers know when to show up and how to reach you. Consider offering specific pickup time windows.")
                 .foregroundColor(.gray)
-                .font(.system(size: 13))
+                .font(.custom(poppinsRegular, size: 13.0))
             
             ZStack(alignment: .topLeading) {
                 
@@ -328,6 +335,7 @@ private extension FreePickupScreen {
                         .padding(.horizontal, 14)
                         .padding(.vertical, 16)
                         .allowsHitTesting(false)
+                        .font(.custom(poppinsRegular, size: 13.0))
                 }
             }
         }

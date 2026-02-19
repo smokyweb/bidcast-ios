@@ -463,21 +463,21 @@ struct PurchaseOrderRequuest : Encodable {
 }
 
 struct UpdatePreferenceRequest: Encodable{
-    var country_of_residence: String?
-    var direct_message: Int?
-    var receive_gifts: Int?
-    var enable_private_entry: Int?
-    var show_reward_status: Int?
-    var show_seller_tools: Int?
-    var enable_clips: Int?
-    var save_past_shows: Int?
-    var activity_status: Int?
-    var sync_phone_contacts: Int?
-    var suggest_my_account: Int?
-    var haptic_feedback: Int?
-    var free_shipping: Bool?
-    var shipping_address_id: String?
-    var instruction: String?
+    var country_of_residence: String? = nil
+    var direct_message: Int? = nil
+    var receive_gifts: Int? = nil
+    var enable_private_entry: Int? = nil
+    var show_reward_status: Int? = nil
+    var show_seller_tools: Int? = nil
+    var enable_clips: Int? = nil
+    var save_past_shows: Int? = nil
+    var activity_status: Int? = nil
+    var sync_phone_contacts: Int? = nil
+    var suggest_my_account: Int? = nil
+    var haptic_feedback: Int? = nil
+    var free_shipping: Int? = nil
+    var shipping_address_id: String? = nil
+    var instruction: String? = nil
 }
 
 

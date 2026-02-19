@@ -126,8 +126,8 @@
             filePath = "BidCast/Screens/Account/View/SellerHub/Shippings/View/FreeShippingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "362"
-            endingLineNumber = "362"
+            startingLineNumber = "370"
+            endingLineNumber = "370"
             landmarkName = "saveButton"
             landmarkType = "24">
          </BreakpointContent>
@@ -142,8 +142,8 @@
             filePath = "BidCast/Screens/Account/View/SellerHub/Shippings/View/FreeShippingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "361"
-            endingLineNumber = "361"
+            startingLineNumber = "369"
+            endingLineNumber = "369"
             landmarkName = "saveButton"
             landmarkType = "24">
          </BreakpointContent>
