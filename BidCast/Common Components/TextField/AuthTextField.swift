@@ -126,6 +126,7 @@ struct AuthTextField: View {
                                     .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
                                     .autocorrectionDisabled(true)
                                     .autocapitalization(.none)
+                                    .padding(.leading, isIconDisplay ? 40 : 8)
                                     .foregroundStyle(.text)
                                     .submitLabel(.next)
                                     .accentColor(.text)

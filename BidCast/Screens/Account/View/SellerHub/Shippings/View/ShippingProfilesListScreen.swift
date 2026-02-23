@@ -117,7 +117,7 @@ struct ShippingProfilesListScreen: View {
                                     )
                                     showDeleteProduct = true
                                 }
-
+                                
                             }
                         }
                     }
@@ -143,18 +143,20 @@ struct ShippingProfilesListScreen: View {
                 }
                 .hidden()
                 NavigationLink(
-                    destination: CreateShippingProfileScreen(nameVal: selectedProfile?.name,
-                                                             sizeVal: selectedProfile?.size,
-                                                             weightVal: selectedProfile?.weight,
-                                                             shippingId: shippingId,
-                                                             additionalWeight: selectedProfile?.additionalWeight,
-                                                             maxItems: selectedProfile?.maxItems,
-                                                            )
-                                    .navigationBarBackButtonHidden(true),
+                    destination: CreateShippingProfileScreen(
+                        selectedProfile:selectedProfile,
+                        nameVal: selectedProfile?.name,
+                        sizeVal: selectedProfile?.size,
+                        weightVal: selectedProfile?.weight,
+                        shippingId: shippingId,
+                        additionalWeight: selectedProfile?.additionalWeight,
+                        maxItems: selectedProfile?.maxItems,
+                    )
+                    .navigationBarBackButtonHidden(true),
                     isActive: $showEditProfile) {
-                    EmptyView()
-                }
-                .hidden()
+                        EmptyView()
+                    }
+                    .hidden()
             }
             .navigationBarHidden(true)
             .toolbar(.hidden,for: .tabBar)

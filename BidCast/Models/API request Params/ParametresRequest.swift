@@ -807,14 +807,48 @@ struct DeleteShippingProfileRequest  : Encodable {
 }
 
 
+//struct StoreShippingRequest  : Encodable {
+//    var name: String
+//    var size: String
+//    var weight: String
+//    var maxItems: Bool
+//    var additionalWeight: Bool
+//    var shipping_profile_id: Int?
+//}
+
 struct StoreShippingRequest  : Encodable {
-    var name: String
-    var size: String
-    var weight: String
-    var maxItems: Bool
-    var additionalWeight: Bool
-    var shipping_profile_id: Int?
+
+    var name: String?
+    var size: String?
+    var weight: String?
+    var maxItems: Bool?
+    var additionalWeight: Bool?
+    var length: String?
+    var height: String?
+    var width: String?
+    var incrementWeight: String?
+    var incrementWeightScale: String?
+    var scale: String?
+    var maxItemUnit: String?
+    var shippingProfileId: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case size
+        case weight
+        case maxItems
+        case additionalWeight
+        case length
+        case height
+        case width
+        case incrementWeight = "increment_weight"
+        case incrementWeightScale = "increment_weight_scale"
+        case scale
+        case maxItemUnit = "max_item_unit"
+        case shippingProfileId = "shipping_profile_id"
+    }
 }
+
 
 struct ShowOverviewRequest  : Encodable {
     var show_id: String

@@ -12,10 +12,13 @@ struct CreateShippingProfileScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var name: String = ""
     @State private var weight: String = ""
-    @State private var selectedScale: String = "Pound"
+    @State private var selectedScale: String = "12*12"
     @State private var maxItemsEnabled: Bool = false
     @State private var additionalWeightEnabled: Bool = false
     @State private var showScaleOptions: Bool = false
+    @State private var showboxScaleOptions: Bool = false
+    @State private var showincrementScaleOptions: Bool = false
+
        
     
     
@@ -24,11 +27,16 @@ struct CreateShippingProfileScreen: View {
     @State private var boxLength: String = ""
     @State private var boxWidth: String = ""
     @State private var boxHeight: String = ""
-    @State private var incrementalWeight: String = ""
-    @State private var selectedWeightScale: String = "Pound"
-    @State private var showWeightScaleSheet: Bool = false
+    
+    @State private var incrementweightscale: String = "Pound"
+    @State private var boxscale: String = "Cm"
 
     
+    @State private var incrementalWeight: String = ""
+//    @State private var selectedWeightScale: String = "Pound"
+    @State private var showWeightScaleSheet: Bool = false
+
+    var selectedProfile:StoreShippingModel?
     var nameVal, sizeVal: String?
     var weightVal: String?
     var shippingId: Int?
@@ -50,7 +58,11 @@ struct CreateShippingProfileScreen: View {
         showButtons: true
     )
     
-    let scales = ["Pound", "Kilogram", "Ounce"]
+    let scales = ["12*12", "24*24", "36*36"]
+    let incrementweightscaleotion = ["Pound", "Kilogram", "Ounce"]
+    let boxscaleoption = ["Cm", "Inch", "Meter"]
+
+    
     
     @StateObject private var shippingViewModel = ShippingViewModel()
     
@@ -289,17 +301,34 @@ struct CreateShippingProfileScreen: View {
                                             custFontSize: 14
                                         )
                                         .padding(.horizontal,-12)
+                                    
 
-                                        AuthTextField(
-                                            floatingLabel: "",
-                                            placeholder: "Scale",
-                                            icon: .addresses,
-                                            text: $boxHeight,
-                                            isIconDisplay: false,
-                                            custFontName: poppinsMedium,
-                                            custFontSize: 14
-                                        )
-                                        .padding(.horizontal,-12)
+//                                        Scale Selector
+                                        Button(action: {
+                                            showboxScaleOptions.toggle()
+                                            UIApplication.shared.dismissKeyboard()
+                                        }) {
+//                                            HStack {
+                                                Text(boxscale)
+                                                    .font(.system(size: 14))
+                                                    .foregroundColor(.primary)
+                                                
+                                                Spacer()
+                                                
+                                                Image(systemName: "chevron.right")
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            .padding()
+                                            .background(Color(.systemBackground))
+                                            .cornerRadius(32)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 32)
+                                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                            )
+                                            .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+//                                        }
+//                                        .padding(.horizontal,-12)
                                         // Scale selector
                                       
                                     }
@@ -342,17 +371,33 @@ struct CreateShippingProfileScreen: View {
                                         )
                                         .padding(.horizontal,-12)
 
-                                        AuthTextField(
-                                            floatingLabel: "",
-                                            placeholder: "Scale",
-                                            icon: .addresses,
-                                            text: $boxHeight,
-                                            isIconDisplay: false,
-                                            custFontName: poppinsMedium,
-                                            custFontSize: 14
-                                        )
+//                                        Scale Selector
+                                        Button(action: {
+                                            showincrementScaleOptions.toggle()
+                                            UIApplication.shared.dismissKeyboard()
+                                        }) {
+//                                            HStack {
+                                                Text(incrementweightscale)
+                                                    .font(.system(size: 14))
+                                                    .foregroundColor(.primary)
+                                                
+                                                Spacer()
+                                                
+                                                Image(systemName: "chevron.right")
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            .padding()
+                                            .background(Color(.systemBackground))
+                                            .cornerRadius(32)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 32)
+                                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                            )
+                                            .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+                                        }
                                         .padding(.horizontal,-12)
-                                    }
+                                    
                                 }
                             }
                             .padding(8)
@@ -414,9 +459,18 @@ struct CreateShippingProfileScreen: View {
                 isEditMode = shippingId != nil
                 name = nameVal ?? ""
                 weight = weightVal ?? ""
-                if let size = sizeVal {
-                    selectedScale = size
+
+                if let profile = selectedProfile {
+                    selectedScale = profile.size ?? selectedScale
+                    maxItemsCount = profile.maxItemUnit ?? ""
+                    boxLength = profile.length ?? ""
+                    boxWidth = profile.width ?? ""
+                    boxHeight = profile.height ?? ""
+                    incrementweightscale = profile.incrementWeightScale ?? incrementweightscale
+                    boxscale = profile.scale ?? boxscale
+                    incrementalWeight = profile.incrementWeight ?? ""
                 }
+
                 maxItemsEnabled = maxItems ?? false
                 additionalWeightEnabled = additionalWeight ?? false
             }
@@ -464,6 +518,13 @@ struct CreateShippingProfileScreen: View {
         .sheet(isPresented: $showScaleOptions) {
             ScaleSelectionSheet(selectedScale: $selectedScale, isPresented: $showScaleOptions, scales: scales)
         }
+        
+        .sheet(isPresented: $showboxScaleOptions) {
+            ScaleSelectionSheet(selectedScale: $boxscale, isPresented: $showboxScaleOptions, scales: boxscaleoption)
+        }
+        .sheet(isPresented: $showincrementScaleOptions) {
+            ScaleSelectionSheet(selectedScale: $incrementweightscale, isPresented: $showincrementScaleOptions, scales: incrementweightscaleotion)
+        }
     }
 }
 
@@ -496,11 +557,11 @@ extension CreateShippingProfileScreen {
         additionalWeight: Bool,
         shippingId: Int? = nil
     ) async throws {
-        var defaultSuccessMessage = isEditMode ? "Shipping profile Updated successfully." : "Shipping profile created successfully."
+        let defaultSuccessMessage: String = isEditMode ? "Shipping profile Updated successfully." : "Shipping profile created successfully."
         await performAPICalls(
             isConcurrent: false,
             showLoader: true,
-            onError: { error in
+            onError: { (error: Error) in
                 config = BottomSheetConfig(
                     icon: "exclamationmark.circle",
                     title: "Error",
@@ -521,18 +582,28 @@ extension CreateShippingProfileScreen {
                     backgroundDismissal: true
                 )
                 showSuccess = true
+            },
+            tasks: { () async throws -> Void in   // ⭐⭐⭐ MOST IMPORTANT FIX
+                let request = StoreShippingRequest(
+                    name: name,
+                    size: scale.lowercased(),
+                    weight: weight.formattedString(decimalPlaces: 2),
+                    maxItems: maxItems,
+                    additionalWeight: additionalWeight,
+                    length: boxLength,
+                    height: boxHeight,
+                    width: boxWidth,
+                    incrementWeight: incrementalWeight,
+                    incrementWeightScale: incrementweightscale.lowercased(),
+                    scale: boxscale.lowercased(),
+                    maxItemUnit: maxItemsCount,
+                    shippingProfileId: isEditMode ? shippingId : nil
+                )
+
+                try await shippingViewModel.storeShippingProfile(request: request)
             }
-        ) {
-            let request = StoreShippingRequest(
-                name: name,
-                size: scale,
-                weight: weight.formattedString(decimalPlaces: 2),
-                maxItems: maxItems,
-                additionalWeight: additionalWeight,
-                shipping_profile_id: isEditMode ? shippingId : nil
-            )
-            try await shippingViewModel.storeShippingProfile(request: request)
-        }
+        )
+
     }
     
 }
