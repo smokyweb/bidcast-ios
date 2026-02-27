@@ -10,9 +10,11 @@ import AlertToast
 
 // MARK: - ShippingsScreen View
 struct ShippingsScreen: View {
+    @StateObject private var shippingViewModel = ShippingViewModel()
     @State private var showError: Bool = false
     @State private var isLoading: Bool = false
     @State private var showhud: Bool = false
+    @State private var shippingDetail: ShippingSettingsDataModel?
     @State private var hudMsg: String = ""
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
@@ -68,6 +70,44 @@ struct ShippingsScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }
+        
+        .onFirstAppear(perform: {
+            Task{
+                
+                await performAPICalls(
+                    isConcurrent: true,
+                    onError: { error in
+                        var errorMessage = shippingViewModel.errorMessage ?? shippingViewModel.errorMessage
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }, onSuccess: {
+                        // On success
+                        successShippingProfiles()
+                 
+                    }
+                    
+                ) {
+                    // 👇 These run in parallel
+                
+                    async let shippingTask: () = shippingViewModel.getShippinDetails()
+                    
+                    // Wait for all
+                    _ = try await (shippingTask)
+                }
+            }
+        })
+    }
+    
+    private func successShippingProfiles() {
+        let response = shippingViewModel.ShippingSettingsDataModeldic
+        self.shippingDetail = response?.data
+        print(shippingDetail ?? {})
     }
 }
 
@@ -98,7 +138,7 @@ enum ShippingValue : String, CaseIterable, CustomStringConvertible{
 }
 
 // MARK: - Preview
-#Preview {
-    ShippingsScreen()
-}
-
+//#Preview {
+//    ShippingsScreen()
+//}
+//

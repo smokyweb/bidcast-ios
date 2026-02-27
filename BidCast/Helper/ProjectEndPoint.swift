@@ -135,6 +135,7 @@ enum APIEndPoint{
     case storeShipping(param: StoreShippingRequest)
     case deleteShippingProfile(param: DeleteShippingProfileRequest)
     case getShippinProfiles
+    case getShippinDetails
     case getShowOverview(param: ShowOverviewRequest)
     case updateProductStatus(param: UpdateProductStatusRequest)
     case getPromoteToolDetails(param:promoteToolRequest)
@@ -518,6 +519,8 @@ extension APIEndPoint: EndPointType {
             return "save-domestic-shipment-setting"
         case .SaveShippingCosts(param: let param):
             return "save-shipping-costs"
+        case .getShippinDetails:
+            return "get-shipping-details"
         }
     }
     
@@ -822,6 +825,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .SaveShippingCosts(param: let param):
             return .post
+        case .getShippinDetails:
+            return .get
         }
     }
     
@@ -1132,6 +1137,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .SaveShippingCosts(param: let param):
             return param
+        case .getShippinDetails:
+            return nil
         }
     }
     
@@ -1424,6 +1431,8 @@ extension APIEndPoint: EndPointType {
         case .storeDomesticShipment(param: let param):
             return nil
         case .SaveShippingCosts(param: let param):
+            return nil
+        case .getShippinDetails:
             return nil
         }
     }

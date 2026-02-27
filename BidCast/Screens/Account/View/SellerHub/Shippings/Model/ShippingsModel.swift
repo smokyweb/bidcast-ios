@@ -72,3 +72,43 @@ struct DeleteShippingModel: Codable {
 }
 
 struct EmptyResponse: Codable {}
+
+struct ShippingSettingsDataModel: Codable {
+    let freePickup: Bool?
+    let instruction: String?
+    let shippingAddress: String?
+    let domesticShipmentSetting: DomesticShipmentSettingModel?
+    let shippingProfilesCount: Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case freePickup = "free_pickup"
+        case instruction
+        case shippingAddress = "shipping_address"
+        case domesticShipmentSetting = "domestic_shipment_setting"
+        case shippingProfilesCount = "shipping_profiles_count"
+    }
+}
+
+struct DomesticShipmentSettingModel: Codable {
+    let id: Int?
+    let userId: Int?
+    let domesticShipmentForm1To5Lbs: String?
+    let domesticShipmentOver5Lbs: String?
+    let uspsFirstClassMailLetter: String?
+    let alsoApplyScheduleShow: String?
+    let shippingCosts: String?
+    let shippingCostAlsoApplyScheduleShow: String?
+    let price: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case domesticShipmentForm1To5Lbs = "domestic_shipment_form_1_to_5_lbs"
+        case domesticShipmentOver5Lbs = "domestic_shipment_over_5_lbs"
+        case uspsFirstClassMailLetter = "usps_first_class_mail_letter"
+        case alsoApplyScheduleShow = "also_apply_schedule_show"
+        case shippingCosts = "shipping_costs"
+        case shippingCostAlsoApplyScheduleShow = "shipping_cost_also_apply_schedule_show"
+        case price
+    }
+}

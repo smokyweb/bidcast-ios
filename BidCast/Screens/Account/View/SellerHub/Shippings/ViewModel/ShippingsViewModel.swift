@@ -17,11 +17,12 @@ final class ShippingViewModel: ObservableObject {
         case editShipping
         case deleteShippingProfile
         case getShippingProfiles
+        case getShippinDetails
         case none
     }
     
     @Published var DomesticShipmentDataResponsedict: ResponseModal<DomesticShipmentData>?
-
+    @Published var ShippingSettingsDataModeldic: ResponseModal<ShippingSettingsDataModel>?
     @Published var storeShippingResponse: ResponseModal<StoreShippingModel>?
     @Published var deleteShippingResponse: ResponseModal<DeleteShippingModel>?
     @Published var getShippingProfilesResponse: ResponseModal<[StoreShippingModel]>?
@@ -35,7 +36,7 @@ final class ShippingViewModel: ObservableObject {
             let response: ResponseModal<EmptyResponse> = try await APIManager.shared.request(
                 type: APIEndPoint.SaveShippingCosts(param: request),
                 header: true)
-//            self.DomesticShipmentDataResponsedict = response
+            //            self.DomesticShipmentDataResponsedict = response
         } catch(let error) {
             if let dataError = error as? DataError {
                 self.errorMessage = dataError.getErrorMessage()
@@ -110,6 +111,23 @@ final class ShippingViewModel: ObservableObject {
                 type: APIEndPoint.getShippinProfiles,
                 header: true)
             self.getShippingProfilesResponse = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    func getShippinDetails() async throws{
+        requestType = .getShippinDetails
+        do {
+            let response: ResponseModal<ShippingSettingsDataModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getShippinDetails,
+                header: true)
+            self.ShippingSettingsDataModeldic = response
         } catch(let error) {
             if let dataError = error as? DataError {
                 self.errorMessage = dataError.getErrorMessage()

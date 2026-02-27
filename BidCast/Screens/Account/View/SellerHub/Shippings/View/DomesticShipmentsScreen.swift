@@ -6,9 +6,16 @@
 //
 
 import SwiftUI
+import AlertToast
 
 struct DomesticShipmentsScreen: View {
     @Environment(\.presentationMode) var presentationMode
+    var shippingDetail: ShippingSettingsDataModel?
+
+       // ✅ ADD THIS
+       init(shippingDetail: ShippingSettingsDataModel?) {
+           self.shippingDetail = shippingDetail
+       }
     
     @State private var selectedUnder3oz: Bool = false
     @State private var selected1to5lbs: ShippingMethod? = nil
@@ -17,7 +24,12 @@ struct DomesticShipmentsScreen: View {
     @StateObject private var viewModel = ShippingViewModel()
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
+    @State var isSaved: Bool = false
+    @State var showhud: Bool = false
+    @State var AlertToastMsg: String = "Please fill in all the credentials"
 
+    
+   
     
     enum ShippingMethod {
         case firstClass
@@ -62,7 +74,7 @@ struct DomesticShipmentsScreen: View {
                     HStack(spacing: 12) {
                         Image(systemName: "info.circle.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(.blue)
+                            .foregroundColor(.defaultTheme)
                         
                         Text("All orders falling outside of your shipping preferences will default to USPS Ground Advantage. Eligible sellers will default to Media Mail shipping.")
                             .font(.system(size: 14, weight: .regular))
@@ -230,7 +242,13 @@ struct DomesticShipmentsScreen: View {
                     PrimaryButton(title: "Save",
                                   isOutLine: false,
                                   onButtonClick: {
-                        submit()
+                        
+                        if selected1to5lbs == nil || selectedOver5lbs == nil {
+                            showhud = true
+                        } else {
+                            submit()
+                        }
+                            
 //                        presentationMode.wrappedValue.dismiss()
                     })
                     .padding(.vertical, 12)
@@ -238,8 +256,46 @@ struct DomesticShipmentsScreen: View {
                 .background(Color(.systemBackground))
             }
         }
+        .onAppear {
+            mapShippingData()
+        }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: AlertToastMsg, style: alertStlye)
+        }
+        .bottomSheet(isPresented: $isSaved, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
+            onDismiss: {
+            if let errorMessage = viewModel.errorMessage {
+                isSaved = false
+                viewModel.errorMessage = nil
+            }else{
+                isSaved = true
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if let errorMessage = viewModel.errorMessage {
+                        isSaved = false
+                        viewModel.errorMessage = nil
+                    }else{
+                        self.presentationMode.wrappedValue.dismiss()
+                        withAnimation {
+                            isSaved = false
+                            viewModel.errorMessage = nil
+                        }
+                    }
+                }, onSecondaryClick: {
+                    withAnimation {
+                        isSaved = false
+                        viewModel.errorMessage = nil
+                        presentationMode.wrappedValue.dismiss()
+
+                    }
+                })
+            .ignoresSafeArea(.keyboard)
+        })
         .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
             onDismiss: {
             if let errorMessage = viewModel.errorMessage {
@@ -271,6 +327,34 @@ struct DomesticShipmentsScreen: View {
             .ignoresSafeArea(.keyboard)
         })
     }
+    
+    private func mapShippingData() {
+        guard let data = shippingDetail?.domesticShipmentSetting else { return }
+
+        selectedUnder3oz = data.isUSPSFirstClassEnabled
+        applyToScheduled = data.isAlsoApplyScheduleEnabled
+
+        switch data.domesticShipmentForm1To5Lbs {
+        case "USPS Priority Mail":
+            selected1to5lbs = .priorityMail
+        case "USPS Flat-Rate Boxes":
+            selected1to5lbs = .flatRate
+        default:
+            break
+        }
+
+        switch data.domesticShipmentOver5Lbs {
+        case "USPS Priority Mail":
+            selectedOver5lbs = .priorityMail
+        case "USPS Flat-Rate Boxes":
+            selectedOver5lbs = .flatRate
+        case "USPS Ground Advantage":
+            selectedOver5lbs = .groundAdvantage
+        default:
+            break
+        }
+    }
+    
     private func shippingTitle(_ method: ShippingMethod?) -> String {
         switch method {
         case .priorityMail:
@@ -303,7 +387,16 @@ struct DomesticShipmentsScreen: View {
                 },
                 onSuccess: {
                     print("✅ Saved successfully")
-                    presentationMode.wrappedValue.dismiss()
+//                    presentationMode.wrappedValue.dismiss()
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Success",
+                        message: "Data Saved Successfully",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    isSaved = true
+                    
                 }
             ) {
                 
@@ -413,8 +506,8 @@ struct ShippingMethodCard: View {
         case .toggle:
             Toggle("", isOn: .constant(isSelected))
                 .labelsHidden()
-                .toggleStyle(SwitchToggleStyle(tint: .blue))
-                .disabled(true)
+                .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
+//                .disabled(true)
                 .allowsHitTesting(false)
         }
     }
@@ -427,7 +520,7 @@ struct ShippingMethodCard: View {
                     .foregroundColor(.secondary)
                 +
                 Text(linkText)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.defaultTheme)
                     .fontWeight(.semibold)
                 +
                 Text(".")
@@ -633,7 +726,7 @@ struct InfoBanner: View {
         HStack(spacing: 12) {
             Image(systemName: "info.circle.fill")
                 .font(.system(size: 20))
-                .foregroundColor(.blue)
+                .foregroundColor(.defaultTheme)
             
             Text(message)
                 .font(.system(size: 14, weight: .regular))
@@ -729,5 +822,20 @@ struct CheckboxRowView: View {
 struct DomesticShipmentsScreen_Previews: PreviewProvider {
     static var previews: some View {
         DomesticShipmentsEnhancedScreen()
+    }
+}
+
+extension DomesticShipmentSettingModel {
+
+    var isUSPSFirstClassEnabled: Bool {
+        uspsFirstClassMailLetter == "true"
+    }
+
+    var isAlsoApplyScheduleEnabled: Bool {
+        alsoApplyScheduleShow == "true"
+    }
+
+    var isShippingCostApplyScheduleEnabled: Bool {
+        shippingCostAlsoApplyScheduleShow == "true"
     }
 }

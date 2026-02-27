@@ -6,16 +6,28 @@
 //
 
 import SwiftUI
+import AlertToast
 
 // MARK: - Shipping Costs Screen
 struct ShippingCostsScreen: View {
     @Environment(\.presentationMode) var presentationMode
+    var shippingDetail: ShippingSettingsDataModel?
+
+        // ✅ ADD THIS
+        init(shippingDetail: ShippingSettingsDataModel?) {
+            self.shippingDetail = shippingDetail
+        }
+    
     @State private var selectedOption: ShippingCostOption? = nil
     @State private var applyToScheduled: Bool = false
     @State var showError: Bool = false
     @State private var price: String = ""
+    @State var showhud: Bool = false
+    @State var isSaved: Bool = false
+    @State var AlertToastMsg: String = "Please fill in all the credentials"
     @StateObject private var viewModel = ShippingViewModel()
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+   
     
     enum ShippingCostOption {
         case sellerPays
@@ -164,8 +176,13 @@ struct ShippingCostsScreen: View {
                                   isOutLine: false,
                                   onButtonClick: {
 //                        presentationMode.wrappedValue.dismiss()
-                        submit()
-                    })
+                        if selectedOption == nil {
+                            showhud = true
+                        } else if selectedOption == .buyerPaysSet && price.isEmpty {
+                            showhud = true
+                        } else {
+                            submit()
+                        }                    })
                     .padding(.vertical, 12)
                 }
                 .background(Color(.systemBackground))
@@ -173,6 +190,41 @@ struct ShippingCostsScreen: View {
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: AlertToastMsg, style: alertStlye)
+        }
+        .bottomSheet(isPresented: $isSaved, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
+            onDismiss: {
+            if let errorMessage = viewModel.errorMessage {
+                isSaved = false
+                viewModel.errorMessage = nil
+            }else{
+                isSaved = true
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if let errorMessage = viewModel.errorMessage {
+                        isSaved = false
+                        viewModel.errorMessage = nil
+                    }else{
+                        self.presentationMode.wrappedValue.dismiss()
+                        withAnimation {
+                            isSaved = false
+                            viewModel.errorMessage = nil
+                        }
+                    }
+                }, onSecondaryClick: {
+                    withAnimation {
+                        isSaved = false
+                        viewModel.errorMessage = nil
+                        presentationMode.wrappedValue.dismiss()
+
+                    }
+                })
+            .ignoresSafeArea(.keyboard)
+        })
         .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
             onDismiss: {
             if let errorMessage = viewModel.errorMessage {
@@ -203,7 +255,35 @@ struct ShippingCostsScreen: View {
                 })
             .ignoresSafeArea(.keyboard)
         })
+        .onAppear {
+            mapShippingCostData()
+        }
     }
+    
+    
+    private func mapShippingCostData() {
+        guard let data = shippingDetail?.domesticShipmentSetting else { return }
+
+        // ✅ option mapping
+        switch data.shippingCosts {
+        case "Seller pays all shipping costs":
+            selectedOption = .sellerPays
+
+        case "Buyer pays up to a set shipping cost":
+            selectedOption = .buyerPaysSet
+
+        case "Buyers pay all shipping costs":
+            selectedOption = .buyerPaysAll
+
+        default:
+            break
+        }
+
+        // ✅ string → bool
+        applyToScheduled = data.shippingCostAlsoApplyScheduleShow == "true"
+
+        // ✅ price
+        price = data.price ?? "" }
     private func shippingCostTitle(_ option: ShippingCostOption?) -> String {
         switch option {
         case .sellerPays:
@@ -233,7 +313,16 @@ struct ShippingCostsScreen: View {
                     showError = true
                 },
                 onSuccess: {
-                    presentationMode.wrappedValue.dismiss()
+//                    presentationMode.wrappedValue.dismiss()
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Success",
+                        message: "Data Saved Successfully",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    isSaved = true
+
                 }
             ) {
                 
@@ -307,3 +396,4 @@ struct ShippingCostOptionCard: View {
         .buttonStyle(PlainButtonStyle())
     }
 }
+

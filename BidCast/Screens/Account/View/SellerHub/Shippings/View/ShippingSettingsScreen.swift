@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
-
+import AlertToast
 // MARK: - Enhanced Version with More Details
 struct ShippingSettingsScreen: View {
+    @State private var showError: Bool = false
+    @StateObject private var shippingViewModel = ShippingViewModel()
+    @State private var shippingDetail: ShippingSettingsDataModel?
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @Environment(\.presentationMode) var presentationMode
     @State private var isFreePickupEnabled: Bool = false
     @State private var selectedDomesticMethods: String = "USPS Priority Mail and 1 other"
@@ -105,11 +109,11 @@ struct ShippingSettingsScreen: View {
                     EmptyView()
                 }
                 .hidden()
-                NavigationLink(destination: DomesticShipmentsScreen(), isActive: $navigateToDomestic) {
+                NavigationLink(destination: DomesticShipmentsScreen(shippingDetail: shippingDetail), isActive: $navigateToDomestic) {
                     EmptyView()
                 }
                 .hidden()
-                NavigationLink(destination: ShippingCostsScreen(), isActive: $navigateToShippingCosts) {
+                NavigationLink(destination: ShippingCostsScreen(shippingDetail: shippingDetail), isActive: $navigateToShippingCosts) {
                     EmptyView()
                 }
                 .hidden()
@@ -122,7 +126,45 @@ struct ShippingSettingsScreen: View {
             .navigationBarHidden(true)
             .toolbar(.hidden,for: .tabBar)
         }
+        .onAppear(perform: {
+            Task{
+                
+                await performAPICalls(
+                    isConcurrent: true,
+                    onError: { error in
+                        var errorMessage = shippingViewModel.errorMessage ?? shippingViewModel.errorMessage
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }, onSuccess: {
+                        // On success
+                        successShippingProfiles()
+                 
+                    }
+                    
+                ) {
+                    // 👇 These run in parallel
+                
+                    async let shippingTask: () = shippingViewModel.getShippinDetails()
+                    
+                    // Wait for all
+                    _ = try await (shippingTask)
+                }
+            }
+        })
     }
+    
+    private func successShippingProfiles() {
+        let response = shippingViewModel.ShippingSettingsDataModeldic
+        self.shippingDetail = response?.data
+        print(shippingDetail ?? {})
+    }
+    
 }
 
 // MARK: - Shipping Option Card Component
