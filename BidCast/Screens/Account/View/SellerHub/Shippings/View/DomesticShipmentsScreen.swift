@@ -10,10 +10,14 @@ import SwiftUI
 struct DomesticShipmentsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var selectedUnder3oz: ShippingMethod? = nil
-    @State private var selected1to5lbs: ShippingMethod? = .priorityMail
-    @State private var selectedOver5lbs: ShippingMethod? = .groundAdvantage
+    @State private var selectedUnder3oz: Bool = false
+    @State private var selected1to5lbs: ShippingMethod? = nil
+    @State private var selectedOver5lbs: ShippingMethod? = nil
     @State private var applyToScheduled: Bool = false
+    @StateObject private var viewModel = ShippingViewModel()
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
+
     
     enum ShippingMethod {
         case firstClass
@@ -89,14 +93,14 @@ struct DomesticShipmentsScreen: View {
                             title: "USPS First-Class Mail Letter",
                             description: "For shipments under $20 that weigh 3 oz or less in Trading Card Games, Sports Cards, or Stickers categories. View the full criteria ",
                             linkText: "here",
-                            isSelected: selectedUnder3oz == .firstClass,
+                            isSelected: selectedUnder3oz == true,
                             selectionType: .toggle
                         ) {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                if selectedUnder3oz == .firstClass {
-                                    selectedUnder3oz = nil
+                                if selectedUnder3oz == false {
+                                    selectedUnder3oz = true
                                 } else {
-                                    selectedUnder3oz = .firstClass
+                                    selectedUnder3oz = false
                                 }
                             }
                         }
@@ -226,7 +230,8 @@ struct DomesticShipmentsScreen: View {
                     PrimaryButton(title: "Save",
                                   isOutLine: false,
                                   onButtonClick: {
-                        presentationMode.wrappedValue.dismiss()
+                        submit()
+//                        presentationMode.wrappedValue.dismiss()
                     })
                     .padding(.vertical, 12)
                 }
@@ -235,6 +240,84 @@ struct DomesticShipmentsScreen: View {
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
+        .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
+            onDismiss: {
+            if let errorMessage = viewModel.errorMessage {
+                showError = false
+                viewModel.errorMessage = nil
+            }else{
+                showError = true
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if let errorMessage = viewModel.errorMessage {
+                        showError = false
+                        viewModel.errorMessage = nil
+                    }else{
+                        self.presentationMode.wrappedValue.dismiss()
+                        withAnimation {
+                            showError = false
+                            viewModel.errorMessage = nil
+                        }
+                    }
+                }, onSecondaryClick: {
+                    withAnimation {
+                        showError = false
+                        viewModel.errorMessage = nil
+                    }
+                })
+            .ignoresSafeArea(.keyboard)
+        })
+    }
+    private func shippingTitle(_ method: ShippingMethod?) -> String {
+        switch method {
+        case .priorityMail:
+            return "USPS Priority Mail"
+        case .flatRate:
+            return "USPS Flat-Rate Boxes"
+        case .groundAdvantage:
+            return "USPS Ground Advantage"
+        case .firstClass:
+            return "USPS First-Class Mail Letter"
+        case .none:
+            return ""
+        }
+    }
+    
+    func submit() {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    let errorMessage = viewModel.errorMessage
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    print("✅ Saved successfully")
+                    presentationMode.wrappedValue.dismiss()
+                }
+            ) {
+                
+                let request = SaveDomesticShipmentRequest(
+                    domesticShipmentForm1To5Lbs: shippingTitle(selected1to5lbs),
+                    domesticShipmentOver5Lbs: shippingTitle(selectedOver5lbs),
+                    alsoApplyScheduleShow: applyToScheduled,
+                    uspsFirstClassMailLetter: selectedUnder3oz,
+                    id: 2
+                )
+                
+                try await viewModel.SaveDomesticShipmentFile(request: request)
+            }
+        }
     }
 }
 

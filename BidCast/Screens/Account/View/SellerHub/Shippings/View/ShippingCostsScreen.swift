@@ -12,6 +12,10 @@ struct ShippingCostsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedOption: ShippingCostOption? = nil
     @State private var applyToScheduled: Bool = false
+    @State var showError: Bool = false
+    @State private var price: String = ""
+    @StateObject private var viewModel = ShippingViewModel()
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     enum ShippingCostOption {
         case sellerPays
@@ -100,6 +104,19 @@ struct ShippingCostsScreen: View {
                         ) {
                             selectedOption = .buyerPaysAll
                         }
+                        
+                        VStack(spacing: 8) {
+                            AuthTextField(floatingLabel: "Price",
+                                          placeholder: "Enter Price",
+                                          icon: .addresses,
+                                          text: $price ,
+                                          isIconDisplay : false,
+                                          custFontName : poppinsMedium,
+                                          custFontSize : 14.0,
+                                          enteredText:  { val in
+                                price = val
+                            }).padding(.horizontal, -8)
+                        }
                     }
                     .padding(.horizontal, 20)
                 }
@@ -146,7 +163,8 @@ struct ShippingCostsScreen: View {
                     PrimaryButton(title: "Save",
                                   isOutLine: false,
                                   onButtonClick: {
-                        presentationMode.wrappedValue.dismiss()
+//                        presentationMode.wrappedValue.dismiss()
+                        submit()
                     })
                     .padding(.vertical, 12)
                 }
@@ -155,6 +173,79 @@ struct ShippingCostsScreen: View {
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
+        .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
+            onDismiss: {
+            if let errorMessage = viewModel.errorMessage {
+                showError = false
+                viewModel.errorMessage = nil
+            }else{
+                showError = true
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if let errorMessage = viewModel.errorMessage {
+                        showError = false
+                        viewModel.errorMessage = nil
+                    }else{
+                        self.presentationMode.wrappedValue.dismiss()
+                        withAnimation {
+                            showError = false
+                            viewModel.errorMessage = nil
+                        }
+                    }
+                }, onSecondaryClick: {
+                    withAnimation {
+                        showError = false
+                        viewModel.errorMessage = nil
+                    }
+                })
+            .ignoresSafeArea(.keyboard)
+        })
+    }
+    private func shippingCostTitle(_ option: ShippingCostOption?) -> String {
+        switch option {
+        case .sellerPays:
+            return "Seller pays all shipping costs"
+        case .buyerPaysSet:
+            return "Buyer pays up to a set shipping cost"
+        case .buyerPaysAll:
+            return "Buyers pay all shipping costs"
+        case .none:
+            return ""
+        }
+    }
+    
+    func submit() {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    let errorMessage = viewModel.errorMessage
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            ) {
+                
+                let request = SaveShippingCostsRequest(
+                    shippingCosts: shippingCostTitle(selectedOption),
+                    shippingCostAlsoApplyScheduleShow: applyToScheduled,
+                    price: price
+                )
+                
+                try await viewModel.SaveShippingCostsFile(request: request)
+            }
+        }
     }
 }
 

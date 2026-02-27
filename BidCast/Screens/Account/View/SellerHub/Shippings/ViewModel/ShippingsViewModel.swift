@@ -12,6 +12,7 @@ import SwiftUI
 final class ShippingViewModel: ObservableObject {
     
     enum RequestType {
+        case DomesticShipmentFile
         case storeShipping
         case editShipping
         case deleteShippingProfile
@@ -19,11 +20,49 @@ final class ShippingViewModel: ObservableObject {
         case none
     }
     
+    @Published var DomesticShipmentDataResponsedict: ResponseModal<DomesticShipmentData>?
+
     @Published var storeShippingResponse: ResponseModal<StoreShippingModel>?
     @Published var deleteShippingResponse: ResponseModal<DeleteShippingModel>?
     @Published var getShippingProfilesResponse: ResponseModal<[StoreShippingModel]>?
     @Published var requestType: RequestType = .none
     @Published var errorMessage: String? = nil
+    
+    
+    func SaveShippingCostsFile(request: SaveShippingCostsRequest) async throws{
+        requestType = .DomesticShipmentFile
+        do {
+            let response: ResponseModal<EmptyResponse> = try await APIManager.shared.request(
+                type: APIEndPoint.SaveShippingCosts(param: request),
+                header: true)
+//            self.DomesticShipmentDataResponsedict = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    func SaveDomesticShipmentFile(request: SaveDomesticShipmentRequest) async throws{
+        requestType = .DomesticShipmentFile
+        do {
+            let response: ResponseModal<DomesticShipmentData> = try await APIManager.shared.request(
+                type: APIEndPoint.storeDomesticShipment(param: request),
+                header: true)
+            self.DomesticShipmentDataResponsedict = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
     
     // MARK: - storeShippingProfile
     func storeShippingProfile(request: StoreShippingRequest) async throws{

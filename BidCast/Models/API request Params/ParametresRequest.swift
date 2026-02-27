@@ -816,6 +816,18 @@ struct DeleteShippingProfileRequest  : Encodable {
 //    var shipping_profile_id: Int?
 //}
 
+struct SaveShippingCostsRequest: Codable {
+    let shippingCosts: String?
+    let shippingCostAlsoApplyScheduleShow: Bool?
+    let price: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case shippingCosts = "shipping_costs"
+        case shippingCostAlsoApplyScheduleShow = "shipping_cost_also_apply_schedule_show"
+        case price
+    }
+}
+
 struct StoreShippingRequest  : Encodable {
 
     var name: String?
@@ -854,6 +866,21 @@ struct ShowOverviewRequest  : Encodable {
     var show_id: String
 }
 
+struct SaveDomesticShipmentRequest: Encodable {
+    var domesticShipmentForm1To5Lbs: String?
+    var domesticShipmentOver5Lbs: String?
+    var alsoApplyScheduleShow: Bool?
+    var uspsFirstClassMailLetter: Bool?
+    var id: Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case domesticShipmentForm1To5Lbs = "domestic_shipment_form_1_to_5_lbs"
+        case domesticShipmentOver5Lbs = "domestic_shipment_over_5_lbs"
+        case alsoApplyScheduleShow = "also_apply_schedule_show"
+        case uspsFirstClassMailLetter = "usps_first_class_mail_letter"
+        case id
+    }
+}
 
 
 struct SubCategoryRequest  : Encodable {

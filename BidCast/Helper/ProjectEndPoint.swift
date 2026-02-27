@@ -138,6 +138,7 @@ enum APIEndPoint{
     case getShowOverview(param: ShowOverviewRequest)
     case updateProductStatus(param: UpdateProductStatusRequest)
     case getPromoteToolDetails(param:promoteToolRequest)
+    case storeDomesticShipment(param:SaveDomesticShipmentRequest)
     
     //MARK: - V1
     case getProduct(param:ProductRequest)
@@ -151,6 +152,7 @@ enum APIEndPoint{
     case getSurprise
     case editProductPrice(param:EditProductUnitRequest)
     case deleteProductSuppriseSet(param:DeleteProductSetRequest)
+    case SaveShippingCosts(param:SaveShippingCostsRequest)
 
 }
 
@@ -512,6 +514,10 @@ extension APIEndPoint: EndPointType {
             return "edit-product-set-item-unit"
         case .deleteProductSuppriseSet(param: let param):
             return "delete-product-set"
+        case .storeDomesticShipment(param: let param):
+            return "save-domestic-shipment-setting"
+        case .SaveShippingCosts(param: let param):
+            return "save-shipping-costs"
         }
     }
     
@@ -521,7 +527,7 @@ extension APIEndPoint: EndPointType {
             return .post
         case .singUp:
             return .post
-            
+                
         case .logout:
             return .post
         case .sellerHubInfo:
@@ -811,6 +817,10 @@ extension APIEndPoint: EndPointType {
         case .editProductPrice(param: let param):
             return .post
         case .deleteProductSuppriseSet(param: let param):
+            return .post
+        case .storeDomesticShipment(param: let param):
+            return .post
+        case .SaveShippingCosts(param: let param):
             return .post
         }
     }
@@ -1118,6 +1128,10 @@ extension APIEndPoint: EndPointType {
             return param
         case .deleteProductSuppriseSet(param: let param):
             return param
+        case .storeDomesticShipment(param: let param):
+            return param
+        case .SaveShippingCosts(param: let param):
+            return param
         }
     }
     
@@ -1406,6 +1420,10 @@ extension APIEndPoint: EndPointType {
         case .editProductPrice(param: let param):
             return nil
         case .deleteProductSuppriseSet(param: let param):
+            return nil
+        case .storeDomesticShipment(param: let param):
+            return nil
+        case .SaveShippingCosts(param: let param):
             return nil
         }
     }

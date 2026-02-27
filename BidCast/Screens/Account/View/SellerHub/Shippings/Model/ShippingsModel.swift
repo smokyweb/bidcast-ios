@@ -42,5 +42,33 @@ struct StoreShippingModel: Codable {
     }
 }
 
+
+
+struct DomesticShipmentData: Codable {
+    let id: Int?
+    let userId: Int?
+    let domesticShipmentForm1To5Lbs: String?
+    let domesticShipmentOver5Lbs: String?
+    let uspsFirstClassMailLetter: Bool?
+    let alsoApplyScheduleShow: Bool?
+    let shippingCosts: String?
+    let shippingCostAlsoApplyScheduleShow: String?
+    let price: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case domesticShipmentForm1To5Lbs = "domestic_shipment_form_1_to_5_lbs"
+        case domesticShipmentOver5Lbs = "domestic_shipment_over_5_lbs"
+        case uspsFirstClassMailLetter = "usps_first_class_mail_letter"
+        case alsoApplyScheduleShow = "also_apply_schedule_show"
+        case shippingCosts = "shipping_costs"
+        case shippingCostAlsoApplyScheduleShow = "shipping_cost_also_apply_schedule_show"
+        case price
+    }
+}
+
 struct DeleteShippingModel: Codable {
 }
+
+struct EmptyResponse: Codable {}
