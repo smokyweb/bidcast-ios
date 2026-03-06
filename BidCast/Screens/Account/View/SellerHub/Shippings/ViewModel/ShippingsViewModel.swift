@@ -21,6 +21,9 @@ final class ShippingViewModel: ObservableObject {
         case none
     }
     
+    
+    @Published var AppSettingDataResponsedict: ResponseModal<AppSettingDataModel>?
+    
     @Published var DomesticShipmentDataResponsedict: ResponseModal<DomesticShipmentData>?
     @Published var ShippingSettingsDataModeldic: ResponseModal<ShippingSettingsDataModel>?
     @Published var storeShippingResponse: ResponseModal<StoreShippingModel>?
@@ -128,6 +131,24 @@ final class ShippingViewModel: ObservableObject {
                 type: APIEndPoint.getShippinDetails,
                 header: true)
             self.ShippingSettingsDataModeldic = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
+    func getfreepickup() async throws{
+        requestType = .getShippinDetails
+        do {
+            let response: ResponseModal<AppSettingDataModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getPreference,
+                header: true)
+            self.AppSettingDataResponsedict = response
         } catch(let error) {
             if let dataError = error as? DataError {
                 self.errorMessage = dataError.getErrorMessage()

@@ -76,7 +76,7 @@ struct EmptyResponse: Codable {}
 struct ShippingSettingsDataModel: Codable {
     let freePickup: Bool?
     let instruction: String?
-    let shippingAddress: String?
+    let shippingAddress: ShippingAddressModel?
     let domesticShipmentSetting: DomesticShipmentSettingModel?
     let shippingProfilesCount: Int?
     
@@ -112,3 +112,49 @@ struct DomesticShipmentSettingModel: Codable {
         case price
     }
 }
+
+struct AppSettingDataModel: Codable {
+    var id: Int?
+    var userId: Int?
+    var countryOfResidence: String?
+    
+    var directMessage: Bool?
+    var receiveGifts: Bool?
+    var enablePrivateEntry: Bool?
+    var showRewardStatus: Bool?
+    var showSellerTools: Bool?
+    var enableClips: Bool?
+    var savePastShows: Bool?
+    var activityStatus: Bool?
+    var syncPhoneContacts: Bool?
+    var suggestMyAccount: Bool?
+    var hapticFeedback: Bool?
+    
+    var freeShipping: Bool?
+    var shippingAddressId: Int?
+    var instruction: String?
+    
+    var shippingAddress: ShippingAddressModel?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case countryOfResidence = "country_of_residence"
+        case directMessage = "direct_message"
+        case receiveGifts = "receive_gifts"
+        case enablePrivateEntry = "enable_private_entry"
+        case showRewardStatus = "show_reward_status"
+        case showSellerTools = "show_seller_tools"
+        case enableClips = "enable_clips"
+        case savePastShows = "save_past_shows"
+        case activityStatus = "activity_status"
+        case syncPhoneContacts = "sync_phone_contacts"
+        case suggestMyAccount = "suggest_my_account"
+        case hapticFeedback = "haptic_feedback"
+        case freeShipping = "free_shipping"
+        case shippingAddressId = "shipping_address_id"
+        case instruction
+        case shippingAddress = "shipping_address"
+    }
+}
+

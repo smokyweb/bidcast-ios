@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 // MARK: - Free Pickup Screen
 struct FreePickupScreen: View {
@@ -16,16 +17,22 @@ struct FreePickupScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var isFreePickupEnabled: Bool = false
     @StateObject var viewModel = PreferenceViewModel()
+    @StateObject var shippingViewModel = ShippingViewModel()
+    @State var shippingdeatil = AppSettingDataModel()
+
     @State var sampleAddresses = [AddressModel]()
+    
     @State var freePickupAddresses = UpdatePreferenceRequest()
     @State private var showAddressSheet: Bool = false
 
     
+    @State private var isSaved: Bool = false
+
     @State private var showError: Bool = false
     @State private var pickupAddressId: String = ""
     @State private var instructions: String = ""
     @State private var selectedAddressText: String = ""
-
+    @State var AlertToastMsg: String = "Please fill in all the credentials"
     
     var changeFreeToggle: ((Bool) -> Void) = {_ in}
     
@@ -38,6 +45,9 @@ struct FreePickupScreen: View {
         showButtons: true
     )
     @State var showhud: Bool = false
+    @State var showtoast: Bool = false
+
+    
     @State var hudMsg: String = ""
     
 //    private var isSaveEnabled: Bool {
@@ -82,6 +92,9 @@ struct FreePickupScreen: View {
             
             // MARK: Save Button
             saveButton
+
+         
+                
         }
         .background(Color(.backGround).ignoresSafeArea())
         .navigationBarHidden(true)
@@ -90,7 +103,45 @@ struct FreePickupScreen: View {
                 await GetAddress()
             }
         }
+        .bottomSheet(isPresented: $isSaved, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
+            onDismiss: {
+            if let errorMessage = viewModel.errorMessage {
+                isSaved = false
+                viewModel.errorMessage = nil
+            }else{
+                isSaved = true
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if let errorMessage = viewModel.errorMessage {
+                        isSaved = false
+                        viewModel.errorMessage = nil
+                    }else{
+                        self.presentationMode.wrappedValue.dismiss()
+                        withAnimation {
+                            isSaved = false
+                            viewModel.errorMessage = nil
+                        }
+                    }
+                }, onSecondaryClick: {
+                    withAnimation {
+                        isSaved = false
+                        viewModel.errorMessage = nil
+                        presentationMode.wrappedValue.dismiss()
 
+                    }
+                })
+            .ignoresSafeArea(.keyboard)
+        })
+        .toast(isPresenting: $showtoast) {
+            AlertToast(displayMode: .hud, type: .regular, title: AlertToastMsg, style: alertStlye)
+        }
+
+        .onAppear {
+            getFreePickup()
+        }
     }
     
     @MainActor
@@ -120,6 +171,38 @@ struct FreePickupScreen: View {
 
 
 extension FreePickupScreen {
+    
+    private func getFreePickup()  {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: false,
+                onError: { error in
+                    config = BottomSheetConfig(
+                        icon: "exclamationmark.circle",
+                        title: "Error",
+                        message: errorDesc(error: error, message: shippingViewModel.errorMessage),
+                        primaryButtonTitle: AppString.ok.localized,
+                        secondaryButtonTitle: nil
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    guard let data = shippingViewModel.AppSettingDataResponsedict?.data else { return }
+                    
+                    self.shippingdeatil = data
+                    
+                    // ✅ PREFILL UI HERE (after API success)
+                    self.isFreePickupEnabled = data.freeShipping ?? false
+                    self.pickupAddressId = String(data.shippingAddressId ?? 0)
+                    self.instructions = data.instruction ?? ""
+                    self.selectedAddressText = data.shippingAddress?.streetAddress ?? ""
+                }            ) {
+                try await shippingViewModel.getfreepickup()
+            }
+        }
+    }
+    
     private func updateFreePickup() {
         Task {
             await performAPICalls(
@@ -141,8 +224,17 @@ extension FreePickupScreen {
                     showhud = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                         showhud = true
-                        presentationMode.wrappedValue.dismiss()
+//                        presentationMode.wrappedValue.dismiss()
                         changeFreeToggle(isFreePickupEnabled)
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Success",
+                            message: "Data Saved Successfully",
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        
+                        isSaved = true
                     }
                 }
             ) {
@@ -367,7 +459,22 @@ private extension FreePickupScreen {
     var saveButton: some View {
         Button {
             // call API
-            updateFreePickup()
+            if isFreePickupEnabled{
+                if  pickupAddressId != "" , instructions != ""{
+                    updateFreePickup()
+                    
+                }
+                else {
+                    showtoast = true
+                }
+                
+            }
+            else {
+                updateFreePickup()
+
+            }
+            UIApplication.shared.endEditing()
+
             print("button click")
         } label: {
             Text("Save")
@@ -385,3 +492,4 @@ private extension FreePickupScreen {
     }
 
 }
+
