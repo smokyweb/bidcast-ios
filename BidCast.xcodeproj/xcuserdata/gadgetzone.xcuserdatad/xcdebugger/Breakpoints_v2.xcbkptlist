@@ -7,16 +7,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C71F8EA8-4697-46A2-9F06-453F3D9894EB"
+            uuid = "4CE7D155-71EE-4585-89AD-823533D029FF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Shippings/View/FreeShippingView.swift"
+            filePath = "BidCast/Screens/Account/AccountScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
-            landmarkName = "getFreePickup()"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
+            landmarkName = "sellerHubSection"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F1AA8327-359B-40DD-B281-4D5B64FB962C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Account/AccountScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "919"
+            endingLineNumber = "919"
+            landmarkName = "applySellerInfoToLocalState()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

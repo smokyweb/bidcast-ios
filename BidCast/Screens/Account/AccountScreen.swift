@@ -639,6 +639,30 @@ struct SellerHubSection: View {
     var onCreateShow: () -> Void
     var onCreateProduct: () -> Void
     var onViewAllShows: () -> Void
+
+    /// Used to detect when async `getSellerHubInfo()` finishes and `sellerInfo` becomes available.
+    /// `SellerhubInfoModel` isn't `Equatable`, so we observe a stable signature `String`.
+    private var sellerInfoSignature: String {
+        guard let s = sellerInfo else { return "" }
+        let h = s.accountHealth
+        return "\(s.items ?? -1)|\(s.revenue ?? 0)|\(s.rating ?? 0)|\(s.totalOrders ?? -1)|\(s.payouts ?? -1)|\(h?.onTimeScanRate ?? "")|\(h?.defectFreeOrderRate ?? "")|\(h?.policyStanding ?? "")"
+    }
+
+    // MARK: - Apply SellerHub Stats
+    private func applySellerInfoToLocalState() {
+        guard let info = sellerInfo else { return }
+        withAnimation {
+            itemsCount = info.items ?? 0
+            revenue = "\(formatCurrencyCompact(info.revenue ?? 0.0))"
+            rating = info.rating ?? 0.0
+            onTimeRate = "\(info.accountHealth?.onTimeScanRate ?? "0")"
+            defectFreeRate = "\(info.accountHealth?.defectFreeOrderRate ?? "")"
+            policyStanding = info.accountHealth?.policyStanding ?? ""
+            payouts = "\(formatCurrencyCompact(Double(info.payouts ?? 0)))"
+            totalOrders = "\(info.totalOrders ?? 0) Items"
+            vacationToggle = UserDefaults.vacationMode
+        }
+    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -678,14 +702,17 @@ struct SellerHubSection: View {
         .padding(.horizontal, 12)
         .padding(.top, 8)
         .onAppear {
-            loadData()
+            applySellerInfoToLocalState()
+        }
+        .onChange(of: sellerInfoSignature) { _, _ in
+            applySellerInfoToLocalState()
         }
         .onChange(of: isRefreshing) { oldValue, newValue in
             if newValue {
 //                isLoadingStats = true
             } else {
                 // Reload data after refresh completes
-                loadData()
+                applySellerInfoToLocalState()
             }
         }
     }
@@ -906,26 +933,8 @@ struct SellerHubSection: View {
     
     // MARK: - Load Data
     private func loadData() {
-        // Simulate API call for stats
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation {
-//                itemsCount = 284
-//                revenue = "$5.2K"
-//                rating = 4.8
-                if let info = sellerInfo {
-                    itemsCount = info.items ?? 0
-                    revenue = "\(formatCurrencyCompact(info.revenue ?? 0.0))"
-                    rating = info.rating ?? 0.0
-                    onTimeRate = "\(info.accountHealth?.onTimeScanRate ?? "0")"
-                    defectFreeRate = "\(info.accountHealth?.defectFreeOrderRate ?? "")"
-                    policyStanding = info.accountHealth?.policyStanding ?? ""
-                    payouts = "\(formatCurrencyCompact(Double(info.payouts ?? 0)))"
-                    totalOrders = "\(info.totalOrders ?? 0) Items"
-                    vacationToggle = UserDefaults.vacationMode
-//                    isLoadingStats = false
-                }
-            }
-        }
+        // Backward-compatible: keep this method name but remove delay.
+        applySellerInfoToLocalState()
     }
     
     private func vacationData(valueData : Bool){
