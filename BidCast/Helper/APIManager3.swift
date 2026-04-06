@@ -67,8 +67,8 @@ final class APIManager {
 private lazy var optimizedSession: URLSession = {
     let config = URLSessionConfiguration.ephemeral
     config.waitsForConnectivity = false
-    config.timeoutIntervalForRequest = 8
-    config.timeoutIntervalForResource = 20
+    config.timeoutIntervalForRequest = 120
+    config.timeoutIntervalForResource = 120
     config.requestCachePolicy = .reloadIgnoringLocalCacheData
     config.httpShouldUsePipelining = true
     config.httpMaximumConnectionsPerHost = 8

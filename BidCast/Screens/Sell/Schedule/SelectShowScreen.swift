@@ -158,10 +158,16 @@ struct SelectShowScreen: View {
             
             
             CusNavLink(doNavigate: $navigateToAddProduct, destination:
-                        CreateProductScreen(requests: $request,
-                                            thumbNail: $thumbNail,
-                                            fromPrepare: .constant(false))
-                            .environmentObject(productManager)
+                        AddProductsScreen(
+                            request: $request,
+                            thumbNail: $thumbNail,
+                            fromPrepare: .constant(false),
+                            NavFromProductLibrary: .constant(false),
+                            backToCreateProduct: $navigateToAddProduct,
+                            didTapBack: { _,_,_  in },
+                            didTapEdit: { _,_ in }
+                        )
+                        .environmentObject(productManager)
             )
 //            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
            

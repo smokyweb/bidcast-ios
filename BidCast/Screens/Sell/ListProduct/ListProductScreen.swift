@@ -97,6 +97,13 @@ struct ListProductScreen: View {
        var preSelectedCategoryName: String? = nil
        var isCategoryLocked: Bool = false
     
+    var onProductCreated: ((ProductDataModel1) -> Void)? = nil
+    var onProductUpdated: ((ProductDataModel1) -> Void)? = nil
+    var editingProduct: ProductDataModel1? = nil
+    var hideDraftButton: Bool = false
+    
+    private var isEditing: Bool { (editingProduct?.id ?? 0) != 0 }
+    
     var body: some View {
         
 //        ZStack {
@@ -540,18 +547,33 @@ struct ListProductScreen: View {
                     .zIndex(1000)
                     
                     // Bottom Buttons
-                    TwoButton(
-                        titleOne: "Publish",
-                        titleTwo: "Save Draft",
-                        onFirstButtonClick: {
-                            hideKeyboardPopup()
-                            saveProductDetails(as: "active")
-                        },
-                        onSecButtonClick: {
-                            hideKeyboardPopup()
-                            saveProductDetails(as: "draft")
-                        }
-                    )
+                    if hideDraftButton {
+                        PrimaryButton(
+                            title: isEditing ? "Update" : "Continue",
+                            isOutLine: false,
+                            onButtonClick: {
+                                hideKeyboardPopup()
+                                saveProductDetails(as: "active")
+                            },
+                            cornerRadius: 32,
+                            btnTextColor: .white
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 8)
+                    } else {
+                        TwoButton(
+                            titleOne: isEditing ? "Update" : "Publish",
+                            titleTwo: "Save Draft",
+                            onFirstButtonClick: {
+                                hideKeyboardPopup()
+                                saveProductDetails(as: "active")
+                            },
+                            onSecButtonClick: {
+                                hideKeyboardPopup()
+                                saveProductDetails(as: "draft")
+                            }
+                        )
+                    }
                 }
                 .background(.backGround)
                 .zIndex(1000)
@@ -702,6 +724,7 @@ struct ListProductScreen: View {
                         mailSuccess()
                         
                         setupPreSelectedCategory()
+                        setupEditingProductIfNeeded()
                     }
                     
                 ) {
@@ -721,12 +744,17 @@ struct ListProductScreen: View {
     }
     
     private func setupPreSelectedCategory() {
-            guard let categoryId = preSelectedCategoryId,
-                  let categoryName = preSelectedCategoryName else { return }
+            guard let categoryId = preSelectedCategoryId, !categoryId.isEmpty else { return }
             
-            // Set the category
             request.category_id = categoryId
-            selectedCategory = categoryName
+            
+            if let categoryName = preSelectedCategoryName, !categoryName.isEmpty {
+                selectedCategory = categoryName
+            } else if let id = Int(categoryId),
+                      let derivedName = categoryList.first(where: { $0.id == id })?.name,
+                      !derivedName.isEmpty {
+                selectedCategory = derivedName
+            }
             
             // If category is locked, fetch subcategories automatically
             if isCategoryLocked {
@@ -735,6 +763,72 @@ struct ListProductScreen: View {
                 }
             }
         }
+
+    private func setupEditingProductIfNeeded() {
+        guard let product = editingProduct else { return }
+        
+        // Basic info
+        if let categoryId = product.category?.id, categoryId != 0 {
+            request.category_id = "\(categoryId)"
+        }
+        request.title = product.title ?? ""
+        request.description = product.description ?? ""
+        request.quantity = product.quantity ?? "1"
+        
+        // Dimensions
+        request.width = "\(product.width ?? 0.0)"
+        request.height = "\(product.height ?? 0.0)"
+        request.length = "\(product.length ?? 0.0)"
+        request.weight = "\(product.weight ?? 0.0)"
+        
+        // Mail / processing / condition
+        request.mail_class = product.mailClass ?? ""
+        request.processing_category = product.processingCategory ?? ""
+        request.product_condition = product.productCondition ?? ""
+        
+        // Pricing flags
+        request.pricing = product.pricing ?? ""
+        isTappedFlash = product.flashSale ?? false
+        isTappedAccept = product.acceptOffers ?? false
+        isTappedReserve = product.reserveForLive ?? false
+        request.flash_sale = isTappedFlash ? "1" : "0"
+        request.accept_offers = isTappedAccept ? "1" : "0"
+        request.reserve_for_live = isTappedReserve ? "1" : "0"
+        
+        // Segment guess: reserve_for_live implies auction
+        if isTappedReserve {
+            segment = .Auction
+            selectedFormat = .auction
+        } else {
+            segment = .Buyit
+            selectedFormat = .buyItNow
+        }
+        
+        // Media
+        imageUrls = product.images ?? []
+        if imageUrls.isEmpty {
+            imageUrls = product.thumbnail ?? []
+        }
+        uploadedVideoUrls = product.videos ?? []
+        
+        // Shipping profile
+        if let shippingProfileId = product.shippingProfileId, shippingProfileId != 0 {
+            request.shipping_profile_id = "\(shippingProfileId)"
+            if let name = profiles.first(where: { $0.id == shippingProfileId })?.name {
+                selectedShippingProfileName = name
+            }
+        }
+        
+        // Category UI label
+        if isCategoryLocked {
+            if let name = product.category?.name, !name.isEmpty {
+                selectedCategory = name
+            } else if let idStr = product.category?.id, idStr != 0,
+                      let derived = categoryList.first(where: { $0.id == idStr })?.name {
+                selectedCategory = derived
+            }
+        }
+    }
         
         // NEW: Fetch subcategories for pre-selected category
         private func fetchSubCategoriesForPreSelectedCategory(categoryId: String) async {
@@ -926,7 +1020,7 @@ struct ListProductScreen: View {
                     
                     // 🔹 Call product store API
                     self.viewModel.errorMessage?.removeAll()
-                    try await viewModel.storeProduct(param: productRequest)
+                    try await viewModel.storeProduct(productId: isEditing ? (editingProduct?.id ?? 0) : nil, param: productRequest)
                     storeSuccess()
                 }
             }
@@ -1054,6 +1148,13 @@ struct ListProductScreen: View {
             showError = true
         }else{
             let response = viewModel.storeProductResponse
+            if response?.status == "success", let product = response?.data {
+                if isEditing {
+                    onProductUpdated?(product)
+                } else {
+                    onProductCreated?(product)
+                }
+            }
             alertType = .sheetType(
                 icon: .success,
                 title: "Success",
@@ -1350,7 +1451,7 @@ struct LockedCategoryField: View {
             .background(Color.gray.opacity(0.1))
             .cornerRadius(32)
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 32)
                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
             )
         }

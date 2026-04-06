@@ -50,6 +50,9 @@ struct AddProductsScreen: View {
     @State var selectedProductIDs: Set<String> = []
     
     @State var navigateToInventry: Bool = false
+    @State private var navigateToListProduct: Bool = false
+    @State private var navigateToEditListProduct: Bool = false
+    @State private var editingProduct: ProductDataModel1? = nil
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -155,17 +158,7 @@ struct AddProductsScreen: View {
                             
                             HStack(spacing: 12) {
                                 addProductOption(text: "Add another product") {
-                                    if NavFromProductLibrary{
-//                                        didTapBack?(true,productManager)
-                                        didTapBack?(true, productManager, coordinator)
-                                        presentationMode.wrappedValue.dismiss()
-                                    }else{
-//                                        didTapBack?(true,productManager)
-                                        didTapBack?(true, productManager, coordinator)
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                            backToCreateProduct = false
-                                        }
-                                    }
+                                    navigateToListProduct = true
                                 }
                                 
                                 addProductOption(text: "Select from product Inventory"){
@@ -223,11 +216,8 @@ struct AddProductsScreen: View {
                                             }
                                         },
                                         onTapEdit: {
-                                            
-                                            didTapEdit?(data,coordinator)
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                                backToCreateProduct = false
-                                            }
+                                            editingProduct = data
+                                            navigateToEditListProduct = true
                                            
                                         },
                                         onTapDelete: {
@@ -385,6 +375,36 @@ struct AddProductsScreen: View {
                         request.product_ids = Array(productManager.selectedProductIDs)
                     }
                    ).environmentObject(productManager))
+        
+        CusNavLink(
+            doNavigate: $navigateToListProduct,
+            destination: ListProductScreen(
+                preSelectedCategoryId: request.category_id,
+                preSelectedCategoryName: nil,
+                isCategoryLocked: true,
+                onProductCreated: { newProduct in
+                    productManager.addProduct(newProduct)
+                    request.product_ids = Array(productManager.selectedProductIDs)
+                },
+                hideDraftButton: true
+            )
+        )
+        
+        CusNavLink(
+            doNavigate: $navigateToEditListProduct,
+            destination: ListProductScreen(
+                preSelectedCategoryId: request.category_id,
+                preSelectedCategoryName: nil,
+                isCategoryLocked: true,
+                onProductCreated: nil,
+                onProductUpdated: { updated in
+                    productManager.updateProduct(updated)
+                    request.product_ids = Array(productManager.selectedProductIDs)
+                },
+                editingProduct: editingProduct,
+                hideDraftButton: true
+            )
+        )
     }
     
     // MARK: - Add Product Tile

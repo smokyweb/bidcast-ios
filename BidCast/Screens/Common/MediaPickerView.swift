@@ -137,6 +137,12 @@ struct MediaPickerView: View {
         .onAppear {
             loadExistingMedia()
         }
+        .onChange(of: uploadedImageUrls) { _, _ in
+            loadExistingMedia()
+        }
+        .onChange(of: uploadedVideoUrls) { _, _ in
+            loadExistingMedia()
+        }
         .background(.clear)
         .confirmationDialog("Select Media Source", isPresented: $showPickerOptions) {
             if imageCount < maxImageCount {
@@ -188,6 +194,22 @@ struct MediaPickerView: View {
         
         // Load images
         for urlString in uploadedImageUrls {
+            if let url = URL(string: urlString), url.isFileURL {
+                if let image = UIImage(contentsOfFile: url.path) {
+                    selectedMedia.append(
+                        MediaItem(
+                            type: .image,
+                            image: image,
+                            videoURL: nil,
+                            thumbnailImage: nil,
+                            urlString: urlString,
+                            isLoading: false
+                        )
+                    )
+                }
+                continue
+            }
+            
             // Add placeholder with loading state
             var loadingItem = MediaItem(
                 type: .image,

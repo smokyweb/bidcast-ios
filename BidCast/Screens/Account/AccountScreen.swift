@@ -618,6 +618,8 @@ struct SellerHubSection: View {
     @State var navigateToReherseal = false
     @State var navigateToshowTitle = false
     @State var navigateToShowDetails = false
+    @State var navigateToOrder = false
+    @State var navigateToWallet = false
     @State private var isLoading: Bool = false
     @State private var scheduleRequest = StoreScheduleShowRequest(
         title: "",
@@ -698,6 +700,10 @@ struct SellerHubSection: View {
                                       fromPrepare:.constant(false),
 //                                      backToPrepare: $navigateToshowTitle,
                                       showId:$SHowId) )
+            
+            CusNavLink(doNavigate: $navigateToOrder, destination: MyOrdersScreen())
+            CusNavLink(doNavigate: $navigateToWallet, destination: WalletPayoutView())
+
         }
         .padding(.horizontal, 12)
         .padding(.top, 8)
@@ -879,20 +885,30 @@ struct SellerHubSection: View {
             if isLoadingStats {
                 PayoutShimmerCard()
             } else {
-                PayoutCard(
-                    title: "Payouts",
-                    value: payouts
-                )
+                Button {
+                    navigateToWallet = true
+                } label: {
+                    PayoutCard(
+                        title: "Payouts",
+                        value: payouts
+                    )
+                }
+                .buttonStyle(.plain)
             }
             
             // Total Orders Card
             if isLoadingStats {
                 PayoutShimmerCard()
             } else {
-                PayoutCard(
-                    title: "Total Orders",
-                    value: totalOrders
-                )
+                Button {
+                    navigateToOrder = true
+                } label: {
+                    PayoutCard(
+                        title: "Total Orders",
+                        value: totalOrders
+                    )
+                }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -1441,3 +1457,4 @@ struct CouponListScreen: View {
         }
     }
 }
+

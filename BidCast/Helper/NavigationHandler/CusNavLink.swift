@@ -10,7 +10,7 @@ import SwiftUI
 struct CusNavLink<Content: View>: View {
     
     @Binding var doNavigate: Bool
-    @State var destination: Content
+    let destination: Content
     @State var navTitle: String = ""
     
     var body: some View {
