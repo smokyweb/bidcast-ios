@@ -231,7 +231,7 @@ struct LetsPrepare: View {
                 }
             }
         }
-        .onChange(of: coordinator.shouldNavigateBackToPrepare) { shouldNavigate in
+        .onChange(of: coordinator.shouldNavigateBackToPrepare) { oldValue,shouldNavigate in
                    if shouldNavigate {
                        // ✅ Dismiss all presented sheets and navigate back
                        navigateToSelectShow = false

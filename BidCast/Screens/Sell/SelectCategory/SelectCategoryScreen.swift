@@ -324,6 +324,10 @@ struct SelectCategoryScreen: View {
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.backGround)
+        .onChange(of: coordinator.shouldNavigateBackToPrepare) { shouldNavigate in
+            guard shouldNavigate, fromPrepare else { return }
+            navigateToThumbnail = false
+        }
         
         .onFirstAppear {
 //            request.show_discoverability = "public"

@@ -476,6 +476,9 @@ extension AddProductsScreen {
 
                 coordinator.markCurrentStepCompleted()
                 coordinator.shouldNavigateBackToPrepare = true
+                
+                // Pop this screen (it was pushed via `CusNavLink`).
+                backToCreateProduct = false
                 productManager.selectedProductIDs.removeAll()
                 productManager.products.removeAll()
                 

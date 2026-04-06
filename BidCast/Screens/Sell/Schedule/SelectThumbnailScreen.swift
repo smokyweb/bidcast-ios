@@ -146,11 +146,27 @@ struct SelectThumbnailScreen: View {
             
 //            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
             
-            CusNavLink(doNavigate: $navigateToProuct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,fromPrepare: $fromPrepare))
+            CusNavLink(
+                doNavigate: $navigateToProuct,
+                destination: AddProductsScreen(
+                    request: $request,
+                    thumbNail: $thumbNail,
+                    fromPrepare: $fromPrepare,
+                    NavFromProductLibrary: .constant(false),
+                    backToCreateProduct: $navigateToProuct,
+                    didTapBack: { _,_,_ in },
+                    didTapEdit: { _,_ in }
+                )
+            )
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.backGround)
         .toolbar(.hidden,for: .tabBar)
+        .onChange(of: coordinator.shouldNavigateBackToPrepare) { shouldNavigate in
+            guard shouldNavigate, fromPrepare else { return }
+            navigateToProuct = false
+            navigateToSelectTime = false
+        }
         .confirmationDialog("Select Media Source", isPresented: $showPickerOptions) {
             Button("Camera") {
                 showCameraPicker = true

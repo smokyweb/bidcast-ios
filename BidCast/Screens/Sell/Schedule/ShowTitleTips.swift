@@ -171,6 +171,10 @@ struct ShowTitleTips: View {
             getTilteTips()
             
         }
+        .onChange(of: coordinator.shouldNavigateBackToPrepare) { shouldNavigate in
+            guard shouldNavigate, fromPrepare else { return }
+            navigateToSelectCategory = false
+        }
         
     }
     

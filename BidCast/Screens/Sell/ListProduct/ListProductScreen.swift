@@ -103,6 +103,7 @@ struct ListProductScreen: View {
     var hideDraftButton: Bool = false
     
     private var isEditing: Bool { (editingProduct?.id ?? 0) != 0 }
+    @EnvironmentObject var coordinator: LetsPrepareCoordinator
     
     var body: some View {
         
