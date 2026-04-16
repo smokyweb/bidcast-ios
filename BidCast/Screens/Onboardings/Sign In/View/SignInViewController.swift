@@ -322,12 +322,11 @@ extension SignInViewController {
     func getUserDetails() {
         // Retrieve stored "Remember Me" preference
         rememberMeSwitch = UserDefaults.rememberMe
-        // Retrieve and populate stored credentials
+        // Retrieve stored credentials; password comes from Keychain.
         self.SignInEmail = UserDefaults.username
-        self.SignInpassword = UserDefaults.password //TODO: Password should not be save in userdefaults
+        self.SignInpassword = KeychainHelper.load(forKey: KeychainHelper.rememberMePasswordKey) ?? ""
 
         debugLog("email--", UserDefaults.username)
-        debugLog("password--", UserDefaults.password)
     }
     
 
@@ -335,11 +334,14 @@ extension SignInViewController {
         if rememberMeSwitch ?? false {
             UserDefaults.rememberMe = true
             UserDefaults.username = self.SignInEmail
-            UserDefaults.password = self.SignInpassword
+            // Store password in Keychain, not UserDefaults.
+            KeychainHelper.save(self.SignInpassword, forKey: KeychainHelper.rememberMePasswordKey)
         } else {
             UserDefaults.rememberMe = false
             UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userName)
+            // Clear any legacy plain-text password that may have been stored in UserDefaults.
             UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.password)
+            KeychainHelper.delete(forKey: KeychainHelper.rememberMePasswordKey)
         }
     }
 }

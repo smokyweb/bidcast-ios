@@ -295,10 +295,10 @@ extension UserDefaults{
     
     static var timeInterval:Int {
         set(input){
-            self.standard.setValue(input, forKey: "deviceId")
+            self.standard.setValue(input, forKey: "timeInterval")
         }
         get{
-            return self.standard.value(forKey: "deviceId") as? Int ?? 0
+            return self.standard.value(forKey: "timeInterval") as? Int ?? 0
         }
     }
    

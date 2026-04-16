@@ -82,17 +82,19 @@ class OtpViewController: UIViewController {
     //MARK: submit.
     private func submit(){
         self.view.endEditing(true)
-        if self.enteredOTP == "" {
-            Utilities.sharedInstance.showToast(source: self, message: "")
-        }else if Reachability.isConnectedToNetwork(){
+        if self.enteredOTP.isEmpty {
+            Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.emptyOtp)
+        } else if !Reachability.isConnectedToNetwork() {
+            Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
+        } else if let otpCode = Int(self.enteredOTP) {
             DispatchQueue.main.async {
                 debugLog(self.enteredOTP)
                 SVProgressHUD.show()
-                let otpRequest = VerifyOtpRequest(email: self.email, code: Int(self.enteredOTP)!)
+                let otpRequest = VerifyOtpRequest(email: self.email, code: otpCode)
                 self.verifyOTPViewModel.verifyOTP(parameters: otpRequest)
             }
-        }else{
-            Utilities.sharedInstance.showToast(source: self, message: "")
+        } else {
+            Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.emptyOtp)
         }
     }
 }
