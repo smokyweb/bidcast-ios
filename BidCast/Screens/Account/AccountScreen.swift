@@ -574,7 +574,10 @@ extension AccountScreen {
             UserDefaults.sellerVerafied.removeAll()
             UserDefaults.sellerAddress = false
             UserDefaults.hasCardAdded = false
-            UserDefaults.userEmail.removeAll()
+            // Keep email when remember-me is enabled so login can preload credentials from Keychain.
+            if !rememberMe {
+                UserDefaults.userEmail.removeAll()
+            }
             UserDefaults.default_card =  DefaultCardModel()
             UserDefaults.default_shipping_address =  AddressModel()
             UserDefaults.couponCount.removeAll()
