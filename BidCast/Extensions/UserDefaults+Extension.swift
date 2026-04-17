@@ -307,8 +307,7 @@ extension UserDefaults{
             self.standard.setValue(input, forKey: "userData")
         }
         get{
-            
-            return self.standard.value(forKey: "userData") as! Data
+            return self.standard.value(forKey: "userData") as? Data ?? Data()
         }
     }
     
@@ -317,8 +316,7 @@ extension UserDefaults{
             self.standard.setValue(input, forKey: "settingData")
         }
         get{
-            
-            return self.standard.value(forKey: "settingData") as! Data
+            return self.standard.value(forKey: "settingData") as? Data ?? Data()
         }
     }
     static var isSubscribe:Bool {
