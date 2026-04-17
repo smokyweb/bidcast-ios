@@ -1,0 +1,59 @@
+workflows:
+  ios-release:
+    name: BidCast iOS Release
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - app_store_cred
+      vars:
+        BUNDLE_ID: com.bidcast.app
+        TEAM_ID: YQGQU3RV34
+      xcode: "16.2"
+    scripts:
+      - name: Install CocoaPods dependencies
+        script: pod install --repo-update
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          python3 setup_signing.py
+          export CERTIFICATE_PRIVATE_KEY=$(cat /tmp/dist_signing.key)
+          app-store-connect fetch-signing-files $BUNDLE_ID \
+            --type IOS_APP_STORE \
+            --create -v
+          keychain add-certificates
+          xcode-project use-profiles --project BidCast.xcodeproj
+      - name: Build iOS
+        script: |
+          PROFILE_PATH=$(find ~ -name "*.mobileprovision" 2>/dev/null | head -1)
+          PROFILE_UUID=$(security cms -D -i "$PROFILE_PATH" | python3 -c \
+            "import sys,plistlib; d=plistlib.loads(sys.stdin.buffer.read()); print(d['UUID'])")
+          xcodebuild \
+            -workspace BidCast.xcworkspace \
+            -scheme BidCast \
+            -configuration Release \
+            -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
+            -destination "generic/platform=iOS" \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE="Manual" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE="$PROFILE_UUID" \
+            archive
+      - name: Export IPA
+        script: |
+          /usr/libexec/PlistBuddy -c "Set :method app-store-connect" /Users/builder/export_options.plist
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
+            -exportOptionsPlist /Users/builder/export_options.plist \
+            -exportPath $CM_BUILD_DIR/ipa \
+            -allowProvisioningUpdates
+    artifacts:
+      - $CM_BUILD_DIR/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        submit_to_app_store: false
