@@ -107,7 +107,6 @@ class SignInViewController: UIViewController {
             else {
                 Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
             }
-            rememberUserCredentials()
             self.view.endEditing(true)
             
         }
@@ -272,6 +271,7 @@ extension SignInViewController {
                     case .success:
                         //success API Response
                         SVProgressHUD.dismiss()
+                        self.rememberUserCredentials()
                         IAPManager.shared.removeAllUnfinishedTransactions()
                         self.saveUserDetails(data: self.signInviewModel.signInDict?.data)
                         self.signInviewModel.requestType = .none

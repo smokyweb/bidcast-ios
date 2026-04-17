@@ -46,7 +46,8 @@ extension String{
     
     func localized() -> String
     {
-        return self.localized(lang: UserDefaults.standard.object(forKey: "language") != nil ? UserDefaults.standard.object(forKey: "language") as! String : "en")
+        let language = UserDefaults.standard.string(forKey: "language") ?? "en"
+        return self.localized(lang: language)
     }
     
     var trim: String {

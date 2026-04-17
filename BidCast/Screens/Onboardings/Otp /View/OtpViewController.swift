@@ -237,9 +237,15 @@ extension OtpViewController: UserServices {
                         }
                     }
                 case .failure:
-                    Utilities.sharedInstance.showToast(source: self, message: dict.message ?? "")
+                    DispatchQueue.main.async {
+                        SVProgressHUD.dismiss()
+                        Utilities.sharedInstance.showToast(source: self, message: dict.message ?? "")
+                    }
                 default:
-                    Utilities.sharedInstance.showToast(source: self, message: "Some Error Occcured")
+                    DispatchQueue.main.async {
+                        SVProgressHUD.dismiss()
+                        Utilities.sharedInstance.showToast(source: self, message: "Some Error Occcured")
+                    }
                 }
             }
         }
