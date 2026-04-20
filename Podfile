@@ -37,6 +37,12 @@ post_install do |installer|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
         config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
+        # Disable code signing on all Pods targets (fixes archive failing with
+        # "No iOS Distribution signing certificate matching team ID" errors).
+        config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+        config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
+        config.build_settings['CODE_SIGN_IDENTITY'] = ''
+        config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ''
       end
     end
   end
