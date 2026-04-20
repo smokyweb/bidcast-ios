@@ -304,7 +304,42 @@ extension SignUpViewController: UserServices {
     func showError(error: String) {
         DispatchQueue.main.async {
             SVProgressHUD.dismiss()
-            Utilities.sharedInstance.showToast(source: self, message: error)
+
+            // QA-FIX (deleted-account signup): branch on error_type / message
+            // so known failure modes get friendly, actionable copy instead of
+            // raw backend strings in a toast.
+            let apiError = self.viewModel.lastSignUpApiError
+            let errType = apiError?.error_type.uppercased() ?? ""
+            let rawMsg = (apiError?.message ?? error).trimmingCharacters(in: .whitespacesAndNewlines)
+            let lowerMsg = rawMsg.lowercased()
+
+            if errType == "ACCOUNT_DELETED"
+                || lowerMsg.contains("account was deleted")
+                || lowerMsg.contains("account has been deleted") {
+                Utilities.sharedInstance.showAlertController(
+                    title: "Account Deleted",
+                    message: "This account was previously deleted and cannot be reused. Please contact support to restore it, or sign up with a different email.",
+                    sourceViewController: self)
+                return
+            }
+
+            if errType == "EMAIL_TAKEN"
+                || lowerMsg.contains("has already been taken")
+                || lowerMsg.contains("already been registered")
+                || lowerMsg.contains("email already") {
+                Utilities.sharedInstance.showAlertController(
+                    title: "Email Already Registered",
+                    message: "An account with this email already exists. Try logging in or use \"Forgot Password\" to reset it.",
+                    sourceViewController: self)
+                return
+            }
+
+            // Fallback: show whatever the backend sent, or a friendly signup
+            // fallback instead of the original silent toast with an empty message.
+            let finalMessage = rawMsg.isEmpty
+                ? "Signup failed. Please try again or contact support if the problem continues."
+                : rawMsg
+            Utilities.sharedInstance.showToast(source: self, message: finalMessage)
         }
     }
 }

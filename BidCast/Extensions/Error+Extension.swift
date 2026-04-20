@@ -31,4 +31,22 @@ extension DataError {
         }
         return "Error found"
     }
+
+    // QA-FIX (deleted-account signup): callers that need to branch on the
+    // backend's `error_type` (e.g. signup to detect ACCOUNT_DELETED vs
+    // EMAIL_TAKEN) can use this to recover the decoded ApiError. Returns nil
+    // when this DataError case does not carry a decodable ApiError payload.
+    func getApiError() -> ApiError? {
+        switch self {
+        case .invalidResponse(let data):
+            if let data = data {
+                if let apiError = try? JSONDecoder().decode(ApiError.self, from: data) {
+                    return apiError
+                }
+            }
+            return nil
+        default:
+            return nil
+        }
+    }
 }
