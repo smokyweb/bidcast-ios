@@ -7,7 +7,7 @@ workflows:
       groups:
         - app_store_cred
       vars:
-        BUNDLE_ID: com.bidcast.app
+        BUNDLE_ID: io.bidcast
         TEAM_ID: YQGQU3RV34
       xcode: "16.2"
     scripts:
@@ -25,19 +25,15 @@ workflows:
           xcode-project use-profiles --project BidCast.xcodeproj
       - name: Build iOS
         script: |
-          PROFILE_PATH=$(find ~ -name "*.mobileprovision" 2>/dev/null | head -1)
-          PROFILE_UUID=$(security cms -D -i "$PROFILE_PATH" | python3 -c \
-            "import sys,plistlib; d=plistlib.loads(sys.stdin.buffer.read()); print(d['UUID'])")
+          # xcode-project use-profiles (run in signing step) already wrote per-target
+          # provisioning profile settings. Don't override with manual PROVISIONING_PROFILE
+          # or the Pods targets will fail with "does not support provisioning profiles".
           xcodebuild \
             -workspace BidCast.xcworkspace \
             -scheme BidCast \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
             -destination "generic/platform=iOS" \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE="Manual" \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE="$PROFILE_UUID" \
             archive
       - name: Export IPA
         script: |
