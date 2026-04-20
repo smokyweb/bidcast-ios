@@ -381,6 +381,7 @@
 		D4EA480D2DCC9144008CB96F /* SellerStatusModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA48042DCC9144008CB96F /* SellerStatusModel.swift */; };
 		D4EA48102DCCA22B008CB96F /* MyOrderCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4EA480F2DCCA22B008CB96F /* MyOrderCollectionCell.xib */; };
 		D4EA48112DCCA22B008CB96F /* MyOrderCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA480E2DCCA22B008CB96F /* MyOrderCollectionCell.swift */; };
+		DDC54D38B68566C22023B36D /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17374BB1A900A7365B7278E0 /* KeychainHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -402,6 +403,7 @@
 
 /* Begin PBXFileReference section */
 		14371208B2B8B28094D4C90E /* Pods-BidCast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.debug.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.debug.xcconfig"; sourceTree = "<group>"; };
+		17374BB1A900A7365B7278E0 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainHelper.swift; path = BidCast/Helper/KeychainHelper.swift; sourceTree = SOURCE_ROOT; };
 		35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectionCell.swift; sourceTree = "<group>"; };
 		35062E042DCB3D0C006C0BCE /* LabelCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelCollectionCell.xib; sourceTree = "<group>"; };
 		35062E072DCB3DDA006C0BCE /* CategoryCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionCell.swift; sourceTree = "<group>"; };
@@ -921,6 +923,7 @@
 				99BC2FC12DC9DCCC00E1BEA6 /* Products */,
 				2F1A85E846199B0981245572 /* Pods */,
 				5295C27E0F1059CCCE08A1EA /* Frameworks */,
+				17374BB1A900A7365B7278E0 /* KeychainHelper.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2994,6 +2997,7 @@
 				99BC30062DC9DCED00E1BEA6 /* ViewController.swift in Sources */,
 				D4EA47D12DCC8F6C008CB96F /* MyOrderViewController.swift in Sources */,
 				D441F3882DCCDED900266D6E /* TipsCell.swift in Sources */,
+				DDC54D38B68566C22023B36D /* KeychainHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
