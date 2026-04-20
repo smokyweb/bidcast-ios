@@ -25,7 +25,12 @@ def api(method, path, body=None):
 
 # Delete existing iOS Distribution certs to avoid private key conflicts
 try:
-    certs = api("GET", "certificates?filter[certificateType]=IOS_DISTRIBUTION")
+    # Delete ALL Distribution type certs (both IOS_DISTRIBUTION and DISTRIBUTION) to avoid 409s
+    dist_certs = []
+    for t in ("IOS_DISTRIBUTION", "DISTRIBUTION"):
+        resp = api("GET", f"certificates?filter[certificateType]={t}&limit=200")
+        dist_certs.extend(resp.get("data", []))
+    certs = {"data": dist_certs}
     for c in certs.get("data", []):
         cid = c["id"]
         print(f"Deleting cert {cid}")
