@@ -7,7 +7,7 @@ workflows:
       groups:
         - app_store_cred
       vars:
-        BUNDLE_ID: com.bidcast.app
+        BUNDLE_ID: io.bidcast
         TEAM_ID: YQGQU3RV34
       xcode: "16.2"
     scripts:
