@@ -28,6 +28,7 @@ struct MultiSelectionCategoryScreen: View {
     
     let gridColumns = [
         GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
     ]
     
@@ -35,7 +36,7 @@ struct MultiSelectionCategoryScreen: View {
         VStack(spacing: 0) {
             VStack{
                 HeaderWithTitle(
-                    title: "Select Your Favorite Category".localized,
+                    title: "Select Favorite Category".localized,
                     leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
@@ -138,42 +139,46 @@ struct CategoryCard: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            AsyncImage(url: URL(string: category.image ?? "")) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(width: 64, height: 64)
-                case .success(let image):
-                    image.resizable()
-                        .scaledToFit()
-                        .frame(width: 64, height: 64)
-                        .cornerRadius(12)
-                case .failure:
-                    Image(systemName: "photo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 64, height: 64)
-                        .foregroundColor(.gray)
-                @unknown default:
-                    EmptyView()
-                }
-            }
-            
+//            AsyncImage(url: URL(string: category.image ?? "")) { phase in
+//                switch phase {
+//                case .empty:
+//                    ProgressView()
+//                        .frame(width: 64, height: 64)
+//                case .success(let image):
+//                    image.resizable()
+//                        .scaledToFit()
+//                        .frame(width: 64, height: 64)
+//                        .cornerRadius(12)
+//                case .failure:
+//                    Image(systemName: "photo")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 64, height: 64)
+//                        .foregroundColor(.gray)
+//                @unknown default:
+//                    EmptyView()
+//                }
+//            }
+            CustomProfileImage(url: category.image ?? "",isCircular: false,cornerRadius: 12,size: 64,defaultImage: "photo")
+                .disabled(true)
             Text(category.name ?? "Category")
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
+                .frame(maxWidth: .infinity, minHeight: 34, alignment: .center)
                 .frame(maxWidth: .infinity)
         }
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
+        .frame(height: 150, alignment: .top)
         .background(isSelected ? Color.defaultTheme.opacity(0.2) : Color.gray.opacity(0.1))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: 2)
         )
+        .contentShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 

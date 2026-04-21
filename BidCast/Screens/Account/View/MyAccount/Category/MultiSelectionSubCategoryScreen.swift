@@ -39,7 +39,7 @@ struct MultiSelectionSubCategoryScreen: View {
         VStack(spacing: 0) {
             VStack{
                 HeaderWithTitle(
-                    title: "Select Your Favorite Sub Category".localized,
+                    title: "Select Favorite Sub Category".localized,
                     leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
@@ -60,6 +60,7 @@ struct MultiSelectionSubCategoryScreen: View {
             ScrollView {
                 VStack(spacing: 16) {
                     ForEach(subCategoryList, id: \.id) { category in
+                        let hasSubs = !(category.subcategories?.isEmpty ?? true)
                         VStack(spacing: 0) {
                             // Category Header
                             HStack {
@@ -68,37 +69,38 @@ struct MultiSelectionSubCategoryScreen: View {
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                                     .foregroundColor(.black)
                                 Spacer()
-                                Image(systemName: expandedCategoryIDs.contains(category.id ?? -1) ? "chevron.up" : "chevron.down")
-                                    .foregroundColor(.gray)
+                                if hasSubs {
+                                    Image(systemName: expandedCategoryIDs.contains(category.id ?? -1) ? "chevron.up" : "chevron.down")
+                                        .foregroundColor(.gray)
+                                }
                             }
                             .padding()
                             .contentShape(Rectangle())
+                            .allowsHitTesting(hasSubs)
                             .onTapGesture {
                                 toggleExpand(category.id ?? -1)
                             }
                             
                             // Subcategories grid
-                            if expandedCategoryIDs.contains(category.id ?? -1) {
+                            if hasSubs, expandedCategoryIDs.contains(category.id ?? -1) {
                                 LazyVGrid(columns: columns, spacing: 12) {
-                                    if let subs = category.subcategories {
-                                        ForEach(subs, id: \.id) { sub in
-                                            SubCategoryCard(
-                                                subCategory: SubCategoryDataModel(
-                                                    id: sub.id,
-                                                    name: sub.name,
-                                                    image: sub.image,
-                                                    thumbnail: sub.thumbnail,
-                                                    extraFields: sub.extraFields,
-                                                    color: sub.color,
-                                                    subcategories: nil,
-                                                    categoryID: sub.categoryID,
-                                                    isSelected: sub.isSelected
-                                                ),
-                                                isSelected: selectedSubCategoryIDs.contains(sub.id ?? -1)
-                                            )
-                                            .onTapGesture {
-                                                toggleSelection(sub.id ?? -1)
-                                            }
+                                    ForEach(category.subcategories ?? [], id: \.id) { sub in
+                                        SubCategoryCard(
+                                            subCategory: SubCategoryDataModel(
+                                                id: sub.id,
+                                                name: sub.name,
+                                                image: sub.image,
+                                                thumbnail: sub.thumbnail,
+                                                extraFields: sub.extraFields,
+                                                color: sub.color,
+                                                subcategories: nil,
+                                                categoryID: sub.categoryID,
+                                                isSelected: sub.isSelected
+                                            ),
+                                            isSelected: selectedSubCategoryIDs.contains(sub.id ?? -1)
+                                        )
+                                        .onTapGesture {
+                                            toggleSelection(sub.id ?? -1)
                                         }
                                     }
                                 }
@@ -107,8 +109,18 @@ struct MultiSelectionSubCategoryScreen: View {
                             }
                         }
                         
+                        .background(.white)
                         .cornerRadius(12)
-                        .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(
+                                    (hasSubs && expandedCategoryIDs.contains(category.id ?? -1))
+                                    ? Color.defaultTheme
+                                    : Color.gray.opacity(0.25),
+                                    lineWidth: (hasSubs && expandedCategoryIDs.contains(category.id ?? -1)) ? 2 : 1
+                                )
+                        )
+                        .shadow(color: .squirrelGrey.opacity(0.2), radius: 1, x: 0, y: 0)
                     }
                 }
                 .padding(16)
@@ -173,6 +185,11 @@ struct MultiSelectionSubCategoryScreen: View {
     
     // MARK: - Expand/Collapse Logic
     private func toggleExpand(_ id: Int) {
+        guard let category = subCategoryList.first(where: { $0.id == id }),
+              let subs = category.subcategories,
+              !subs.isEmpty else {
+            return
+        }
         if expandedCategoryIDs.contains(id) {
             expandedCategoryIDs.remove(id)
         } else {
@@ -277,7 +294,7 @@ struct SubCategoryCard: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.35), lineWidth: 1.5)
             )
             
             .shadow(color: isSelected ? Color.clear : Color.gray.opacity(0.4), radius: 4, x: 0, y: 2)
