@@ -16,6 +16,8 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
+          python3 setup_signing.py
+          export CERTIFICATE_PRIVATE_KEY=$(cat /tmp/dist_signing.key)
           app-store-connect fetch-signing-files $BUNDLE_ID \
             --type IOS_APP_STORE \
             --create -v
@@ -23,14 +25,15 @@ workflows:
           xcode-project use-profiles --project BidCast.xcodeproj
       - name: Build iOS
         script: |
+          # xcode-project use-profiles (run in signing step) already wrote per-target
+          # provisioning profile settings. Don't override with manual PROVISIONING_PROFILE
+          # or the Pods targets will fail with "does not support provisioning profiles".
           xcodebuild \
             -workspace BidCast.xcworkspace \
             -scheme BidCast \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
             -destination "generic/platform=iOS" \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            -allowProvisioningUpdates \
             archive
       - name: Export IPA
         script: |
