@@ -230,7 +230,7 @@ struct PromoteToolsView: View {
                                 
                                 MetricCardLarge(
                                     title: "Direct Sales from Promotion",
-                                    value: promoteToolDetail.direct_sales_form_promotion ?? "",
+                                    value: promoteToolDetail.direct_sales_form_promotion ?? "0",
                                     description: "Run a few more promotions to start seeing results for this metric!"
                                 )
                                 
