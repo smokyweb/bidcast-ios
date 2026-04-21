@@ -26,141 +26,146 @@ struct SignUpScreen: View {
     @State var navigateToEmployer: Bool = false
     @State var navigatetoUser: Bool = false
     @State var navigateToLinkedIn: Bool = false
+    @State var navigateToCategories: Bool = false
     @State var role: String = ""
     
     var viewModel = SignupViewModel()
     
     var body: some View {
-        VStack(spacing: 0) {
-            VStack{
-                PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: ["chevron.left"], onClickLeading:  { _ in
-                    
-                    self.presentationMode.wrappedValue.dismiss()
-                }, count: .constant(0))
-            }
-            
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
-                    Image(.logo1)
-                        .frame(width: screenWidth, height: screenHeight/3.8)
-                        .edgesIgnoringSafeArea(.top)
+        ZStack {
+            VStack(spacing: 0) {
+                VStack{
+                    PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: ["chevron.left"], onClickLeading:  { _ in
+                        
+                        self.presentationMode.wrappedValue.dismiss()
+                    }, count: .constant(0))
                 }
-                VStack(alignment: .leading, spacing: 15) {
-                    TitleWithLine(title: AppString.createYourAccount, lineLength: sepratorLine)
-                    AuthTextField(floatingLabel: AppString.firstName.localized, placeholder: AppString.enterFirstName.localized, icon: .menuProfile, text: $request.firstName, enteredText: {
-                        value in
-                        request.firstName = value
-                    })
-                    .textContentType(.givenName)
-                    .keyboardType(.alphabet)
-                    AuthTextField(floatingLabel: AppString.lastName.localized, placeholder: AppString.enterLastName.localized, icon: .menuProfile, text: $request.lastName, enteredText: {
-                        value in
-                        request.lastName = value
-                    })
-                    .keyboardType(.alphabet)
-                    
-                    AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .icMail, text: $request.email, enteredText: {
-                        value in
-                        request.email = value
-                    }).textContentType(.username)
-                        .keyboardType(.emailAddress)
-                    
-                    AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
-                        value in
-                        request.password = value
-                    }).textContentType(.password)
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
+                        Image(.logo1)
+                            .frame(width: screenWidth, height: screenHeight/3.8)
+                            .edgesIgnoringSafeArea(.top)
+                    }
+                    VStack(alignment: .leading, spacing: 15) {
+                        TitleWithLine(title: AppString.createYourAccount, lineLength: sepratorLine)
+                        AuthTextField(floatingLabel: AppString.firstName.localized, placeholder: AppString.enterFirstName.localized, icon: .menuProfile, text: $request.firstName, enteredText: {
+                            value in
+                            request.firstName = value
+                        })
+                        .textContentType(.givenName)
                         .keyboardType(.alphabet)
-                    
-                    AuthTextField(floatingLabel: AppString.confirmPassword.localized, placeholder: AppString.confirmPassword.localized, icon: .passwordLock, text: $request.passwordConf, isPassword: true, enteredText: {
-                        value in
-                        request.passwordConf = value
-                    }).textContentType(.newPassword)
+                        AuthTextField(floatingLabel: AppString.lastName.localized, placeholder: AppString.enterLastName.localized, icon: .menuProfile, text: $request.lastName, enteredText: {
+                            value in
+                            request.lastName = value
+                        })
                         .keyboardType(.alphabet)
-                    
-                    AuthTextField(floatingLabel: AppString.referalCode.localized, placeholder: AppString.enterReferalCode.localized, icon: .referral, text: $request.referralCode, enteredText: {
-                        value in
-                        request.referralCode = value
-                    })
-                    .keyboardType(.alphabet)
-                    
-                }
-                VStack {
-                    PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
                         
-                        UIApplication.shared.endEditing()
-                        guard !request.firstName.isEmpty else {
-                            hudMsg = AppString.pleaseEnterFirstName.localized
-                            showhud = true
-                            return
-                        }
-                        guard !request.lastName.isEmpty else {
-                            hudMsg = AppString.pleaseEnterLastName.localized
-                            showhud = true
-                            return
-                        }
-                        guard !request.email.isEmpty else {
-                            hudMsg = AppString.pleaseEnterEmail.localized
-                            showhud = true
-                            return
-                        }
-                        guard request.email.isValidEmail() else{
-                            hudMsg = AppString.pleaseEnterValidEmailAddress.localized
-                            showhud = true
-                            return
-                        }
-                        guard !request.password.isEmpty else {
-                            hudMsg = AppString.pleaseEnterPassword.localized
-                            showhud = true
-                            return
-                        }
+                        AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .icMail, text: $request.email, enteredText: {
+                            value in
+                            request.email = value
+                        }).textContentType(.username)
+                            .keyboardType(.emailAddress)
                         
-                        guard request.password.count >= 8 else {
-                            hudMsg = AppString.passwordNotLessThan.localized
-                            showhud = true
-                            return
-                        }
+                        AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
+                            value in
+                            request.password = value
+                        }).textContentType(.password)
+                            .keyboardType(.alphabet)
                         
-                        guard !request.passwordConf.isEmpty else {
-                            hudMsg = AppString.pleaseConfirmPassword.localized
-                            showhud = true
-                            return
-                        }
+                        AuthTextField(floatingLabel: AppString.confirmPassword.localized, placeholder: AppString.confirmPassword.localized, icon: .passwordLock, text: $request.passwordConf, isPassword: true, enteredText: {
+                            value in
+                            request.passwordConf = value
+                        }).textContentType(.newPassword)
+                            .keyboardType(.alphabet)
                         
-                        guard request.password == request.passwordConf else {
-                            hudMsg = AppString.passwordNotMatched.localized
-                            showhud = true
-                            return
-                        }
-                        print("Parameters for register user :- \(request)")
-                        Task{
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
+                        AuthTextField(floatingLabel: AppString.referalCode.localized, placeholder: AppString.enterReferalCode.localized, icon: .referral, text: $request.referralCode, enteredText: {
+                            value in
+                            request.referralCode = value
+                        })
+                        .keyboardType(.alphabet)
+                        
+                    }
+                    VStack {
+                        PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
+                            
+                            UIApplication.shared.endEditing()
+                            guard !request.firstName.isEmpty else {
+                                hudMsg = AppString.pleaseEnterFirstName.localized
                                 showhud = true
                                 return
                             }
-                            SVProgressHUD.show()
-                            viewModel.errorMessage?.removeAll()
-                            await self.viewModel.registerUser(parameters: request)
-                            await SVProgressHUD.dismiss()
-                            if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                                handleSuccess()
-                            }else{
-                                alertType = .sheetType(icon: .alert, title: "Failed", message:viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
-                                showError = true
+                            guard !request.lastName.isEmpty else {
+                                hudMsg = AppString.pleaseEnterLastName.localized
+                                showhud = true
+                                return
                             }
-                        }
-                    },btnTextColor: .white)
+                            guard !request.email.isEmpty else {
+                                hudMsg = AppString.pleaseEnterEmail.localized
+                                showhud = true
+                                return
+                            }
+                            guard request.email.isValidEmail() else{
+                                hudMsg = AppString.pleaseEnterValidEmailAddress.localized
+                                showhud = true
+                                return
+                            }
+                            guard !request.password.isEmpty else {
+                                hudMsg = AppString.pleaseEnterPassword.localized
+                                showhud = true
+                                return
+                            }
+                            
+                            guard request.password.count >= 8 else {
+                                hudMsg = AppString.passwordNotLessThan.localized
+                                showhud = true
+                                return
+                            }
+                            
+                            guard !request.passwordConf.isEmpty else {
+                                hudMsg = AppString.pleaseConfirmPassword.localized
+                                showhud = true
+                                return
+                            }
+                            
+                            guard request.password == request.passwordConf else {
+                                hudMsg = AppString.passwordNotMatched.localized
+                                showhud = true
+                                return
+                            }
+                            print("Parameters for register user :- \(request)")
+                            Task{
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
+                                SVProgressHUD.show()
+                                viewModel.errorMessage?.removeAll()
+                                await self.viewModel.registerUser(parameters: request)
+                                await SVProgressHUD.dismiss()
+                                if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                                    handleSuccess()
+                                }else{
+                                    alertType = .sheetType(icon: .alert, title: "Failed", message:viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
+                                    showError = true
+                                }
+                            }
+                        },btnTextColor: .white)
+                    }
+                    .padding([.top, .bottom], 16)
+                    .zIndex(1300.0)
+                    
                 }
-                .padding([.top, .bottom], 16)
-                .zIndex(1300.0)
+                .onTapGesture(perform: {
+                    UIApplication.shared.endEditing()
+                })
+                
+                Spacer()
                 
             }
-            .onTapGesture(perform: {
-                UIApplication.shared.endEditing()
-            })
             
-            Spacer()
-            
+           
         }
         
         
@@ -187,12 +192,13 @@ struct SignUpScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                    if alertType.primaryBtnText == AppString.proceedToLogin.localized {
-                        self.presentationMode.wrappedValue.dismiss()
-                    }
                     let response = viewModel.signUpResponse
                     if response.status == "success" {
-                        self.presentationMode.wrappedValue.dismiss()
+                        DispatchQueue.main.async {
+                            withAnimation {
+                                navigateToCategories = true
+                            }
+                        }
                     }else{
                         withAnimation { showError = false }
                     }
@@ -201,6 +207,7 @@ struct SignUpScreen: View {
                     withAnimation { showError = false }
                 })
         })
+        CusNavLink(doNavigate: $navigateToCategories, destination: MultiSelectionCategoryScreen(goToAccount: .constant(false)))
     }
     
     func saveLoginDetail(mail: String, password: String) {
@@ -219,11 +226,16 @@ struct SignUpScreen: View {
         if response.status == "success" {
             UserDefaults.isFirstLogin = 1
             let userData = response.data
+            UserDefaults.accessToken = userData?.token ?? ""
+            UserDefaults.userId = userData?.id ?? 0
             UserDefaults.userEmail = userData?.email ?? ""
             UserDefaults.firstName = userData?.first_name ?? ""
             UserDefaults.lastName = userData?.last_name ?? ""
             UserDefaults.userRole = "\(userData?.role_id ?? 0)"
-            alertType = .sheetType(icon: .success, title: response.status?.capitalized ?? "", message: response.message?.capitalized ?? "", primaryBtnText: AppString.backToLogin.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+            UserDefaults.fullName = userData?.name ?? ""
+            UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
+            UserDefaultsManager.shared.setValue(userData?.token, forKey: .token)
+            alertType = .sheetType(icon: .success, title: response.status?.capitalized ?? "", message: response.message?.capitalized ?? "", primaryBtnText: "Continue", secondaryBtnText: "", sheetThemeColor: .secondary)
             showError = true
             
             
