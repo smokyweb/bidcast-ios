@@ -88,6 +88,7 @@ struct ProductShopRehersalScreen: View {
     @State private var surpriseSetData: [ProductSurpriseData] = []
     
     var categoryId: String = "-1"
+    var categoryName: String = ""
     @State var currentPage: Int = 1
     @State var segment: RehearsalProductSegment = .buynow
     
@@ -122,6 +123,7 @@ struct ProductShopRehersalScreen: View {
         auctionTypeId: Binding<Int>,
         productDataFromEvent: Binding<[ProductDataModel1]>,
         categoryId: String = "-1",
+        categoryName: String = "",
         onTapCancel: (() -> Void)? = nil,
         onProductSelected: ((ProductDataModel1) -> Void)? = nil,
         onSurpriseSetSelected: ((ProductSurpriseData) -> Void)? = nil,
@@ -133,6 +135,7 @@ struct ProductShopRehersalScreen: View {
         self._auctionTypeId = auctionTypeId
         self._productDataFromEvent = productDataFromEvent
         self.categoryId = categoryId
+        self.categoryName = categoryName
         self.onTapCancel = onTapCancel
         self.onProductSelected = onProductSelected
         self.onSurpriseSetSelected = onSurpriseSetSelected
@@ -336,12 +339,20 @@ struct ProductShopRehersalScreen: View {
             fetchProduct()
         }
         .sheet(isPresented: $showCreateProductSheet) {
+            let lockedCategoryId = (displayedProducts.first?.category?.id ?? 0) != 0
+            ? "\(displayedProducts.first?.category?.id ?? 0)"
+            : categoryId
+            
+            let lockedCategoryName = !(displayedProducts.first?.category?.name ?? "").isEmpty
+            ? (displayedProducts.first?.category?.name ?? "")
+            : categoryName
+            
             ListProductScreen(forSheet:true,
                               onCancel:{
                 showCreateProductSheet = false
             },
-                              preSelectedCategoryId: "\(displayedProducts.first?.category?.id ?? 0)",
-                              preSelectedCategoryName: displayedProducts.first?.category?.name ?? "",
+                              preSelectedCategoryId: lockedCategoryId,
+                              preSelectedCategoryName: lockedCategoryName,
                               isCategoryLocked: true)
             .onDisappear {
                 // Refresh product list after creating

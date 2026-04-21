@@ -984,6 +984,7 @@ struct RehearsalScreen: View {
             auctionTypeId: $auctionTypeId,
             productDataFromEvent: $productListData,
             categoryId: "\(showsData.category_id ?? 0)",
+            categoryName: categoryName,
             onTapCancel: {
                 showShopSheet = false
             },
@@ -1040,6 +1041,7 @@ struct RehearsalScreen: View {
             auctionTypeId: $auctionTypeId,
             productDataFromEvent: $productListData,
             categoryId: "\(showsData.category_id ?? 0)",
+            categoryName: categoryName,
             onTapCancel: {
                 showFreeBie = false
             },
