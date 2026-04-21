@@ -178,7 +178,7 @@ struct HomeViewScreen: View {
                             userId = "\(item.user?.id ?? 0)"
                             userImage = item.user?.profile_image ?? ""
                             userName = item.user?.username ?? ""
-                            self.selectedButton = selectedButton == "For You" ? "for_you" : selectedButton
+                            self.selectedButton = selectedButton == "For You" ? "" : selectedButton
                             
                             if selectedTab == "upcoming" {
                                 selectedShowUserName = item.user?.name ?? ""
@@ -398,7 +398,7 @@ struct HomeViewScreen: View {
                 subCategory = showSubCategory
             }
         } else {
-            apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+            apiCategory = (selectedButton == "For You") ? "" : selectedButton
         }
         
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
@@ -487,7 +487,7 @@ struct HomeViewScreen: View {
                 subCategory = showSubCategory
             }
         } else {
-            apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+            apiCategory = (selectedButton == "For You") ? "" : selectedButton
         }
         
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
