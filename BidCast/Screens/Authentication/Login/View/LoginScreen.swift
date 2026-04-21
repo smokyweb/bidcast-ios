@@ -22,7 +22,7 @@ struct LoginScreen: View {
     @ObservedObject var languageManager = LanguageManager.shared
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
-    @State var isRemeber: Bool = false
+    @State var isRemeber: Bool = true
     @State var showError: Bool = false
     @State var navigateToForgot: Bool = false
     @State var navigateToLanguage: Bool = false

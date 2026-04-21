@@ -21,8 +21,8 @@ struct DeleteAccountSheet: View {
                     .resizable()
                     .frame(width: 35, height: 35)
                     .padding(.all, 10)
-                    .background(.pinkBtn)
-                    .foregroundStyle(.white)
+                    .background(.defaultThemeLight)
+                    .foregroundStyle(.defaultTheme)
                     .clipShape(Circle())
                 
                 Text("Delete Account")
@@ -33,11 +33,11 @@ struct DeleteAccountSheet: View {
                 
                 PrimaryButton(title: "Delete", isOutLine: false, onButtonClick: {
                     self.onDeleteClick?()
-                }, width: screenWidth/1.5, height: 45, btnColor: .pinkBtn)
+                }, width: screenWidth/1.5, height: 45, btnColor: .defaultTheme)
                 
-                PrimaryButton(title: "Cancel", isOutLine: true, onButtonClick: {
+                PrimaryButton(title: "Cancel", isOutLine: false, onButtonClick: {
                     self.onCancelClick?()
-                }, width: screenWidth/1.5, height: 45, btnColor: .pinkBtn)
+                }, width: screenWidth/1.5, height: 45, btnColor: .defaultTheme)
             }
         }
     }

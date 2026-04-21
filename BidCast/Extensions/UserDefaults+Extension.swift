@@ -596,7 +596,7 @@ extension UserDefaults{
             self.standard.setValue(input, forKey: "rememberMe")
         }
         get{
-            return self.standard.value(forKey: "rememberMe") as? Bool ?? false
+            return self.standard.value(forKey: "rememberMe") as? Bool ?? true
         }
     }
     

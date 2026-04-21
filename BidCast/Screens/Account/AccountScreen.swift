@@ -24,6 +24,7 @@ struct AccountScreen: View {
     @State private var segment: AccountSegment = .sellerHub
     @State private var showSideMenu = false
     @State private var userLogOut = false
+    @State private var navigateToDeleteAccount = false
     @State private var showError = false
     @State private var showhud = false
     @State private var showPaymentShipping = false
@@ -375,6 +376,7 @@ struct AccountScreen: View {
             // Profile & Verification
             CusNavLink(doNavigate: $navigationState.navigateToProfile, destination: CompleteProfileScreen())
             CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
+            CusNavLink(doNavigate: $navigateToDeleteAccount, destination: DeleteAccountScreen())
             
             // My Account Navigation
             myAccountNavigationLinks
@@ -464,6 +466,11 @@ extension AccountScreen {
         case 5: openURL("https://backend.bidcast.betaplanets.com/faq")
         case 6: navigationState.navigateToBlockedList = true
         case 7:
+            print("Delete Account tapped")
+            DispatchQueue.main.async {
+                navigateToDeleteAccount = true
+            }
+        case 8:
             print("Logout tapped - setting userLogOut to true")
             DispatchQueue.main.async {
                 userLogOut = true
@@ -1307,6 +1314,7 @@ enum AccountMenuSection: String, CaseIterable, CustomStringConvertible {
     case privacy = "Privacy & Policy"
     case faq = "F.A.Q"
     case blockList = "Blocked Users"
+    case deleteAccount = "Delete Account"
     case logout = "Logout"
     
     var description: String {
@@ -1328,6 +1336,8 @@ enum AccountMenuSection: String, CaseIterable, CustomStringConvertible {
             return .faq
         case .blockList:
             return .affilateProgram
+        case .deleteAccount:
+            return .trash
         case .logout:
             return .logout
         }
