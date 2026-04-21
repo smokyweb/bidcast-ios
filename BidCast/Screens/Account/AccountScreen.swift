@@ -32,6 +32,9 @@ struct AccountScreen: View {
     @State var showSellerSheet = false
     @State var navigateToSeller = false
     @State private var hudMsg = ""
+//    @State private var navigateToInventory = false
+
+    
     @State private var isLoading: Bool = false
     @State private var sellerInfo: SellerhubInfoModel?
     @State private var selectedCredit: AccountCredit?
@@ -374,6 +377,7 @@ struct AccountScreen: View {
     private var navigationLinks: some View {
         Group {
             // Profile & Verification
+            
             CusNavLink(doNavigate: $navigationState.navigateToProfile, destination: CompleteProfileScreen())
             CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigateToDeleteAccount, destination: DeleteAccountScreen())
@@ -623,6 +627,14 @@ struct SellerHubSection: View {
     @State private var payouts = "$199.00"
     @State private var totalOrders = "22 Items"
     @State private var vacationToggle = false
+    @State private var navigateToInventory = false
+    @State private var navigateToPayouts = false
+    @State private var navigateToUserProfile = false
+
+    
+
+
+    
     @State var showID = ""
     @State var SHowId = 0
     @State var isLive = false
@@ -716,6 +728,21 @@ struct SellerHubSection: View {
             
             CusNavLink(doNavigate: $navigateToOrder, destination: MyOrdersScreen())
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletPayoutView())
+            CusNavLink(doNavigate: $navigateToInventory, destination: InventoryScreen())
+            CusNavLink(doNavigate: $navigateToPayouts, destination: WalletPayoutView())
+            CusNavLink(
+                doNavigate: $navigateToUserProfile,
+                destination: ProfileScreen(
+                    id: .constant(String(UserDefaults.userId)),
+                    isComeFrom: .constant("AccountScreen"),
+                    userName: .constant(UserDefaults.fullName.capitalizingFirstLetter()),
+                    userImage: .constant(
+                        UserDefaults.profileURL.isEmpty
+                        ? "user_dummy"
+                        : UserDefaults.profileURL
+                    )
+                )
+            )
 
         }
         .padding(.horizontal, 12)
@@ -741,21 +768,30 @@ struct SellerHubSection: View {
         HStack(spacing: 12) {
             StatCardView(
                 value: isLoadingStats ? "" : "\(itemsCount)",
-                label: "Items",
+                label: "Itemss",
                 isLoading: isLoadingStats
             )
+            .onTapGesture {
+                self.navigateToInventory = true
+                  }
             
             StatCardView(
                 value: isLoadingStats ? "" : revenue,
                 label: "Revenue",
                 isLoading: isLoadingStats
             )
+            .onTapGesture {
+                navigateToPayouts = true
+                  }
             
             StatCardView(
                 value: isLoadingStats ? "" : String(format: "%.1f", rating),
                 label: "Rating",
                 isLoading: isLoadingStats
             )
+            .onTapGesture {
+                navigateToUserProfile = true
+                  }
         }
     }
     

@@ -139,8 +139,8 @@ struct CreateAddress: View {
                         ).zIndex(1201.0)
                         
                         AuthTextField(
-                            floatingLabel: "Pin code",
-                            placeholder: "Enter pin code",
+                            floatingLabel: "Zip code",
+                            placeholder: "Enter zip code",
                             icon: .icMail,
                             text: $request.pincode,
                             isIconDisplay : false,
@@ -200,7 +200,7 @@ struct CreateAddress: View {
                             return
                         }
                         guard !request.pincode.isEmpty else {
-                            hudMsg = "Please enter pin code"
+                            hudMsg = "Please enter Zip code"
                             showhud = true
                             return
                         }

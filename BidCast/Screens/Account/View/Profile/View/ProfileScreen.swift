@@ -181,25 +181,26 @@ struct ProfileScreen: View {
                                         scheduleShowSuccess()
                                     }
                                 case "Reviews":
-                                    guard Reachability.isConnectedToNetwork() else {
-                                        hudMsg = "No Internet Connection"
-                                        showhud = true
-                                        return
-                                    }
-                                    SVProgressHUD.show()
-                                    totalRatingArr.removeAll()
-                                    await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: Int(id) ?? 0))
-                                    await SVProgressHUD.dismiss()
-                                    if viewModel.errorMessage != "" && viewModel.errorMessage != nil{
-                                        alertType = .sheetType(icon: .alert,
-                                                               title: "Error",
-                                                               message: viewModel.errorMessage ?? "",
-                                                               primaryBtnText: "",
-                                                               secondaryBtnText: AppString.ok.localized)
-                                        withAnimation(.snappy) { showError = true }
-                                    }else{
-                                        ratingSuccess()
-                                    }
+//                                    guard Reachability.isConnectedToNetwork() else {
+//                                        hudMsg = "No Internet Connection"
+//                                        showhud = true
+//                                        return
+//                                    }
+//                                    SVProgressHUD.show()
+//                                    totalRatingArr.removeAll()
+//                                    await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: Int(id) ?? 0))
+//                                    await SVProgressHUD.dismiss()
+//                                    if viewModel.errorMessage != "" && viewModel.errorMessage != nil{
+//                                        alertType = .sheetType(icon: .alert,
+//                                                               title: "Error",
+//                                                               message: viewModel.errorMessage ?? "",
+//                                                               primaryBtnText: "",
+//                                                               secondaryBtnText: AppString.ok.localized)
+//                                        withAnimation(.snappy) { showError = true }
+//                                    }else{
+//                                        ratingSuccess()
+//                                    }
+                                    await getReview()
                                 case "Clips":
                                     resetClipsData()
                                     guard Reachability.isConnectedToNetwork() else {
@@ -531,7 +532,15 @@ struct ProfileScreen: View {
                     }else{
                         scheduleShowSuccess()
                     }
-                }else{
+                }else if isComeFrom == "AccountScreen"{
+                    selectedTab = "Reviews"
+//                    resetShopData()
+//                    fetchProduct()
+                    await getReview()
+
+                }
+                
+                else{
                     selectedTab = "Shop"
                     resetShopData()
                     fetchProduct()
@@ -548,6 +557,27 @@ struct ProfileScreen: View {
         isFetchingMoreClips = false
     }
 
+    func getReview() async{
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        SVProgressHUD.show()
+        totalRatingArr.removeAll()
+        await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: Int(id) ?? 0))
+        await SVProgressHUD.dismiss()
+        if viewModel.errorMessage != "" && viewModel.errorMessage != nil{
+            alertType = .sheetType(icon: .alert,
+                                   title: "Error",
+                                   message: viewModel.errorMessage ?? "",
+                                   primaryBtnText: "",
+                                   secondaryBtnText: AppString.ok.localized)
+            withAnimation(.snappy) { showError = true }
+        }else{
+            ratingSuccess()
+        }
+    }
     func computeRoomId(senderId: String, receiverId: String) -> String {
         let sortedIds = [senderId, receiverId].sorted()
         return "\(sortedIds[0])_chats_\(sortedIds[1])"
@@ -703,6 +733,8 @@ struct ProfileScreen: View {
             
         case .reviews:
             // Add this once your review API is paginated
+            await getReview()
+
             break
             
         case .clips:

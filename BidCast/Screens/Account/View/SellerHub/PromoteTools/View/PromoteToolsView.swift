@@ -157,7 +157,7 @@ struct PromoteToolsView: View {
                                 
                                 MetricCardLarge(
                                     title: "Promoted impressions per hour",
-                                    value: "\(promoteToolDetail.impression_per_hours ?? 0)",
+                                    value: "\(promoteToolDetail.impressions_per_hour ?? 0)",
                                     description: "Run a few more promotions to start seeing results for this metric!"
                                 )
                                 // Pro Tips
@@ -169,25 +169,25 @@ struct PromoteToolsView: View {
                                 
                                 MetricCardLarge(
                                     title: "Total Taps and Clicks",
-                                    value: "214",
+                                    value: "\(promoteToolDetail.total_taps_and_clicks ?? 0)",
                                     description: "Number of users that tapped into your livestream to view your show as a result of your promotions"
                                 )
                                 
                                 MetricCardLarge(
                                     title: "CTR (Click Through Rate)",
-                                    value: "12.9%",
+                                    value: "\(promoteToolDetail.ctr ?? "0%")",
                                     description: "Percentage of time your promotions in feeds resulted in a buyer entering your show (taps and clicks)"
                                 )
                                 
                                 MetricCardLarge(
                                     title: "Sustained Watches",
-                                    value: "34",
+                                    value: "\(promoteToolDetail.sustained_watches ?? 0)",
                                     description: "Number of users that clicked into your stream and stayed to watch your show for longer than 30 seconds"
                                 )
                                 
                                 MetricCardLarge(
                                     title: "Sustained Watch Rate",
-                                    value: "11.49%",
+                                    value: "\(promoteToolDetail.sustained_watches ?? 0)",
                                     description: "The percentage of visitors from promotions that converted into sustained viewers"
                                 )
                                 
@@ -224,7 +224,7 @@ struct PromoteToolsView: View {
                                 
                                 MetricCardLarge(
                                     title: "First Time Buyers from Promotion",
-                                    value: "N/A",
+                                    value: "\(promoteToolDetail.first_time_buyers_from_promotion ?? 0)",
                                     description: "Run a few more promotions to start seeing results for this metric!"
                                 )
                                 
@@ -236,25 +236,25 @@ struct PromoteToolsView: View {
                                 
                                 MetricCardLarge(
                                     title: "Spend",
-                                    value: "N/A",
+                                    value: "\(promoteToolDetail.spend ?? 0)",
                                     description: "Run a few more promotions to start seeing results for this metric!"
                                 )
                                 
                                 MetricCardLarge(
                                     title: "Immediate Return on Spend",
-                                    value: "N/A",
+                                    value: "\(promoteToolDetail.immediate_return_on_spend ?? 0)",
                                     description: "Run a few more promotions to start seeing results for this metric!"
                                 )
                                 
                                 MetricCardLarge(
                                     title: "7-Day Return on Spend",
-                                    value: "N/A",
+                                    value: "\(promoteToolDetail.seven_day_return_on_spend ?? 0)",
                                     description: "Run a few more promotions to start seeing results for this metric!"
                                 )
                                 
                                 MetricCardLarge(
                                     title: "Bids from Promotion",
-                                    value: "3",
+                                    value: "\(promoteToolDetail.bids_from_promotion ?? 0)",
                                     description: "The number of bids from buyers who found your show via promotion"
                                 )
                                 

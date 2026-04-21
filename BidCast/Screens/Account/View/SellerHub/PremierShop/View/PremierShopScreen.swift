@@ -80,6 +80,44 @@ struct PremierShopScreen: View {
                 await loadData()
             }
         }
+        
+        .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            if viewModel.errorMessage == nil || viewModel.errorMessage == ""{
+                let response = viewModel.applyPremierShopResponse
+                if response?.status == "success" {
+                    withAnimation { showError = true }
+                }else{
+                    withAnimation { showError = false }
+                }
+            }else{
+                withAnimation { showError = false }
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                    if alertType.primaryBtnText == AppString.proceedToLogin.localized {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                    let response = viewModel.applyPremierShopResponse
+                    if response?.status == "success" {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }else{
+                        withAnimation { showError = false }
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                })
+        })
+        
+        
+        .toast(isPresenting: $showhud) {
+              AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+          }
+         
+      
     }
     
     private func showShimmerEffect() {
@@ -647,6 +685,7 @@ extension PremierShopScreen {
     
     // MARK: Apply Premier Shop
     func applyPremierShopAPI() async  {
+        
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
             showhud = true
@@ -658,12 +697,12 @@ extension PremierShopScreen {
         
         guard let status = viewModel.applyPremierShopResponse?.status, status != "success" else {
             alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: viewModel.premierShopResponse.message ?? "Something went wrong.",
+                icon: .success,
+                title: "Success",
+                message: "Already Applied",
                 primaryBtnText: "",
                 secondaryBtnText: "OK",
-                sheetThemeColor: .pinkBtn
+                sheetThemeColor: .defaultTheme
             )
             withAnimation(.snappy) { showError = true }
             return
