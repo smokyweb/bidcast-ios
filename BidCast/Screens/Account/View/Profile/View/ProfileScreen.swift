@@ -19,6 +19,7 @@ enum ProfileTabType {
 
 struct ProfileScreen: View {
     
+    @Environment(\.dismiss) private var dismiss
     @State var viewModel = ProfileViewModel()
     @State var productViewModel = ProductViewModel()
     
@@ -112,6 +113,9 @@ struct ProfileScreen: View {
                                           followers: "\(profileData.follower_count ?? 0)",
                                           following: "\(profileData.following_count ?? 0)" ,
                                           bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
+                                          onTapBack: {
+                            dismiss()
+                        },
                                           onTapNotify: {
                             showNotify = true
                         },
@@ -757,7 +761,6 @@ struct ProfileScreen: View {
 
 //MARK: ProfileHeaderView
 struct ProfileHeaderView: View {
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appRootManager: AppRootManager
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
@@ -773,6 +776,7 @@ struct ProfileHeaderView: View {
     var following : String
     var bio : String
     
+    var onTapBack: () -> () = {}
     var onTapNotify: () -> () = {}
     var onTapMore: () -> () = {}
     
@@ -793,22 +797,26 @@ struct ProfileHeaderView: View {
                     .clipped()
                 Spacer()
             }
+            .allowsHitTesting(false)
             
             // Back Button
             Button(action: {
-                presentationMode.wrappedValue.dismiss()
+                onTapBack()
             }) {
                 Image(systemName: "chevron.left")
                     .font(.custom(poppinsBold, size: 16))
                     .foregroundColor(.white)
-                    .padding(10)
+                    .frame(width: 20, height: 20)
+                    .padding(12)
                     .background(Color.black.opacity(0.6))
                     .clipShape(Circle())
                     .shadow(radius: 4)
             }
+            .buttonStyle(.plain)
+            .contentShape(Circle())
             .padding(.top, 30)
             .padding(.leading, 16)
-            .zIndex(2)
+            .zIndex(10)
             
             // Profile Image
             VStack(alignment: .leading, spacing: 4) {
@@ -838,6 +846,7 @@ struct ProfileHeaderView: View {
                     Spacer()
                 }
             }
+            .allowsHitTesting(false)
             
         }
 //        .frame(height: 220)
@@ -949,8 +958,7 @@ struct ProfileHeaderView: View {
             hudMsg = response?.message ?? ""
             showhud = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                //                navigateToHome = true
-                self.presentationMode.wrappedValue.dismiss()
+                onTapBack()
             }
         } else {
             alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)

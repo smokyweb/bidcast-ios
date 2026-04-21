@@ -64,8 +64,9 @@ struct PremierShopScreen: View {
                     
 //                    // Sales Performance
 //                    salesPerformanceSection
-                    ApplyPremiumButton
-                    
+                    if premierShopData.isPremierApplied != 1{
+                        ApplyPremiumButton
+                        }
                     
                 }
                 .padding(.horizontal, 16)
