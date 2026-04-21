@@ -16,8 +16,6 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          python3 setup_signing.py
-          export CERTIFICATE_PRIVATE_KEY=$(cat /tmp/dist_signing.key)
           app-store-connect fetch-signing-files $BUNDLE_ID \
             --type IOS_APP_STORE \
             --create -v
@@ -32,8 +30,7 @@ workflows:
             -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
             -destination "generic/platform=iOS" \
             DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE="Manual" \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
+            -allowProvisioningUpdates \
             archive
       - name: Export IPA
         script: |
