@@ -32,6 +32,7 @@ struct ListProductScreen: View {
     @State var shippingAddressName: [String] = []
     @State var shippingId = ""
     @State var mailClassList = [String]()
+    @State private var mailClasses: [MailClass] = []
 //    @State var isImageSizeExceeding: Bool = false
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
     
@@ -104,6 +105,16 @@ struct ListProductScreen: View {
     
     private var isEditing: Bool { (editingProduct?.id ?? 0) != 0 }
     @EnvironmentObject var coordinator: LetsPrepareCoordinator
+    
+    private var isUsingShippingProfile: Bool {
+        !(request.shipping_profile_id.trimmingCharacters(in: .whitespacesAndNewlines)).isEmpty
+    }
+    
+    private var selectedMailClass: MailClass? {
+        let selected = request.mail_class.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !selected.isEmpty else { return nil }
+        return mailClasses.first(where: { $0.label == selected })
+    }
     
     var body: some View {
         
@@ -266,30 +277,74 @@ struct ListProductScreen: View {
                         .padding([.top,.bottom],4)
 //
                         
-                        // Dimensions Section
-                        DimensionsSection(request: $request)
-                        
+                        // Shipping Profile (optional). If selected, Mail Class + Dimensions become optional.
                         DropDownSelection(
-                            options: $mailClassList, floatingLabel:"Mail Class",
+                            options: $shippingProfileNames,
+                            floatingLabel: "Shipping Profile",
                             hint: "Select",
-                            selected: $request.mail_class,
-                            anchor: .bottom,
+                            selected: $selectedShippingProfileName,
+                            anchor: .top,
                             custFontName: robotoMedium,
                             custFontSize:  14.0,
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-//                                selectedCategory = value
-//                                if let id = categoryList.first(where: { $0.name == value })?.id {
-//                                    request.mail_class = "\(id)"
-//                                } else {
-                                    request.mail_class = value
-//                                }
-                               
+                                selectedShippingProfileName = value
+                                if let profile = profiles.first(where: { $0.name == value }) {
+                                    request.shipping_profile_id = profile.id != nil ? "\(profile.id!)" : ""
+                                } else {
+                                    request.shipping_profile_id = ""
+                                }
+                                
+                                if isUsingShippingProfile {
+                                    // When using shipping profile, Mail Class + Dimensions are not required.
+                                    request.mail_class = ""
+                                }
                             }
                         )
-                        
                         .padding([.leading,.trailing],16)
+                        .zIndex(1202.0)
+                        
+                        if isUsingShippingProfile {
+                            Button(action: {
+                                selectedShippingProfileName = ""
+                                request.shipping_profile_id = ""
+                            }) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.primary)
+                                    Text("Clear Shipping Profile")
+                                        .font(.custom(robotoMedium, size: 13))
+                                        .foregroundColor(.gray)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 4)
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 2)
+                        }
+                        
+                        if !isUsingShippingProfile {
+                            DropDownSelection(
+                                options: $mailClassList, floatingLabel:"Mail Class",
+                                hint: "Select",
+                                selected: $request.mail_class,
+                                anchor: .bottom,
+                                custFontName: robotoMedium,
+                                custFontSize:  14.0,
+                                custCategory : robotoRegular,
+                                custCategorySize : 13.0,
+                                onOptionSelected: { value in
+                                    request.mail_class = value
+                                }
+                            )
+                            .padding([.leading,.trailing],16)
+                            
+                            // Dimensions Section (required when no shipping profile selected)
+                            DimensionsSection(request: $request, limits: selectedMailClass)
+                        }
+                        
                         DropDownSelection(
                             options: $processingListArr, floatingLabel:"Processing Category",
                             hint: "Select",
@@ -300,7 +355,7 @@ struct ListProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-                                    request.processing_category = value
+                                request.processing_category = value
                             }
                         )
                         .padding([.leading,.trailing],16)
@@ -492,25 +547,6 @@ struct ListProductScreen: View {
                     VStack(alignment:.leading,spacing: 8){
 
                         // Sales Options - Enhanced Toggle Cards
-                        DropDownSelection(
-                            options: $shippingProfileNames, floatingLabel:"Shipping Profile",
-                            hint: "Select",
-                            selected: $selectedShippingProfileName,
-                            anchor: .top,
-                            custFontName: robotoMedium,
-                            custFontSize:  14.0,
-                            custCategory : robotoRegular,
-                            custCategorySize : 13.0,
-                            onOptionSelected: { value in
-                                //string value not id -> get Id from name
-                                if let profile = profiles.first(where: { $0.name == value }) {
-                                    request.shipping_profile_id = profile.id != nil ? "\(profile.id!)" : ""
-                                }
-                                
-                            }
-                        )
-                        .padding([.leading,.trailing],16)
-                        
                         VStack(alignment: .leading, spacing: 16) {
 
                             Toggle(isOn: $isHazardousMaterial) {
@@ -855,20 +891,8 @@ struct ListProductScreen: View {
     private func successShippingProfiles() {
         let response = shippingViewModel.getShippingProfilesResponse
         self.profiles = response?.data ?? []
-        if profiles.count != 0{
-            openShippingSheet = false
-            self.shippingProfileNames = profiles.map { $0.name ?? "" }
-        }else{
-            config = BottomSheetConfig(
-                icon: "exclamationmark.circle",
-                title: "Missing",
-                message: "Please add Shipping profile first for the successful product creation.",
-                primaryButtonTitle: "Add Shipping Profile",
-                secondaryButtonTitle: nil,
-                bottomPadding: -50
-            )
-            openShippingSheet = true
-        }
+        openShippingSheet = false
+        self.shippingProfileNames = profiles.map { $0.name ?? "" }
     }
     
     func mailSuccess() {
@@ -876,6 +900,7 @@ struct ListProductScreen: View {
         if viewModel.errorMessage == nil {
             let data = response?.data.mail_classes ?? [MailClass]()
             self.mailClassList = data.map {$0.label }
+            self.mailClasses = data
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -1087,11 +1112,25 @@ struct ListProductScreen: View {
             hudMsg = "Please enter quantity greater than 1"
             return false
         }
-        if request.width.isEmpty { hudMsg = "Please enter width"; return false }
-        if request.height.isEmpty { hudMsg = "Please enter height"; return false }
-        if request.length.isEmpty { hudMsg = "Please enter length"; return false }
-        if request.weight.isEmpty { hudMsg = "Please enter weight"; return false }
-        if request.mail_class.isEmpty { hudMsg = "Please select mail class"; return false }
+        
+        if request.shipping_profile_id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            // No shipping profile: Mail Class + Dimensions are required.
+            if request.mail_class.isEmpty { hudMsg = "Please select mail class"; return false }
+            if request.width.isEmpty { hudMsg = "Please enter width"; return false }
+            if request.height.isEmpty { hudMsg = "Please enter height"; return false }
+            if request.length.isEmpty { hudMsg = "Please enter length"; return false }
+            if request.weight.isEmpty { hudMsg = "Please enter weight"; return false }
+            
+            let mailLabel = request.mail_class.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let limits = mailClasses.first(where: { $0.label == mailLabel }) {
+                if let msg = validateDimensionsAgainstMailClass(request: request, mailClass: limits) {
+                    hudMsg = msg
+                    return false
+                }
+            }
+            
+        }
+        
         if request.processing_category.isEmpty { hudMsg = "Please select processing category"; return false }
         if request.product_condition.isEmpty { hudMsg = "Please select product condition"; return false }
         if request.pricing.isEmpty { hudMsg = "Please enter pricing"; return false }
@@ -1099,11 +1138,36 @@ struct ListProductScreen: View {
             hudMsg = "Price should not be less than $1.00"
             return false
         }
-        if request.shipping_profile_id.isEmpty {
-            hudMsg = "Please select shipping address"
-            return false
-        }
         return true
+    }
+    
+    private func validateDimensionsAgainstMailClass(request: StoreProductParam, mailClass: MailClass) -> String? {
+        let weight = Double(request.weight) ?? 0
+        let width = Double(request.width) ?? 0
+        let height = Double(request.height) ?? 0
+        let length = Double(request.length) ?? 0
+        
+        if let maxWeight = mailClass.max_weight_lbs, maxWeight > 0, weight > maxWeight {
+            return "Weight must be ≤ \(maxWeight) lbs for \(mailClass.label)"
+        }
+        if let maxLength = mailClass.max_length_in, maxLength > 0, length > maxLength {
+            return "Length must be ≤ \(maxLength) in for \(mailClass.label)"
+        }
+        if let maxWidth = mailClass.max_width_in, maxWidth > 0, width > maxWidth {
+            return "Width must be ≤ \(maxWidth) in for \(mailClass.label)"
+        }
+        if let maxHeight = mailClass.max_height_in, maxHeight > 0, height > maxHeight {
+            return "Height must be ≤ \(maxHeight) in for \(mailClass.label)"
+        }
+        
+        if let maxLPG = mailClass.max_length_plus_girth_in, maxLPG > 0 {
+            let lengthPlusGirth = length + 2 * (width + height)
+            if lengthPlusGirth > maxLPG {
+                return "Length + girth must be ≤ \(maxLPG) in for \(mailClass.label)"
+            }
+        }
+        
+        return nil
     }
 
     // MARK: - Variant Builder
@@ -1188,6 +1252,61 @@ struct ListProductScreen: View {
    
 }
 
+extension MailClass {
+    var hasAnyLimitsOrNotes: Bool {
+        (max_weight_lbs ?? 0) > 0 ||
+        (max_length_in ?? 0) > 0 ||
+        (max_width_in ?? 0) > 0 ||
+        (max_height_in ?? 0) > 0 ||
+        (max_length_plus_girth_in ?? 0) > 0 ||
+        !(notes?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+    }
+}
+
+struct MailClassLimitsView: View {
+    let mailClass: MailClass
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let notes = mailClass.notes, !notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Text(notes)
+                    .font(.custom(robotoRegular, size: 12))
+                    .foregroundColor(.gray)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            
+            let items: [(String, String?)] = [
+                ("Max weight", mailClass.max_weight_lbs.map { "\($0) lbs" }),
+                ("Max length", mailClass.max_length_in.map { "\($0) in" }),
+                ("Max width", mailClass.max_width_in.map { "\($0) in" }),
+                ("Max height", mailClass.max_height_in.map { "\($0) in" }),
+                ("Max length + girth", mailClass.max_length_plus_girth_in.map { "\($0) in" })
+            ]
+            
+            let filteredItems: [(String, String)] = items.compactMap { pair in
+                let (title, value) = pair
+                guard let value, !value.isEmpty else { return nil }
+                return (title, value)
+            }
+            
+            ForEach(filteredItems, id: \.0) { item in
+                HStack(spacing: 6) {
+                    Text(item.0 + ":")
+                        .font(.custom(robotoMedium, size: 12))
+                        .foregroundColor(.gray)
+                    Text(item.1)
+                        .font(.custom(robotoRegular, size: 12))
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+            }
+        }
+        .padding(12)
+        .background(Color.gray.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
 struct HazardousLabel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -1229,6 +1348,12 @@ struct SectionHeader: View {
 // MARK: - Dimensions Section Component
 struct DimensionsSection: View {
     @Binding var request: StoreProductParam
+    var limits: MailClass? = nil
+    
+    private func maxLabel(_ value: Double?, unit: String) -> String? {
+        guard let value, value > 0 else { return nil }
+        return "max \(value) \(unit)"
+    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -1252,7 +1377,8 @@ struct DimensionsSection: View {
                     // Width Field
                     DimensionField(
                         label: "Width",
-                        unit: "cm",
+                        maxText: maxLabel(limits?.max_width_in, unit: "in"),
+                        unit: "in",
                         value: $request.width,
                         icon: "arrow.left.and.right"
                     )
@@ -1260,7 +1386,8 @@ struct DimensionsSection: View {
                     // Height Field
                     DimensionField(
                         label: "Height",
-                        unit: "cm",
+                        maxText: maxLabel(limits?.max_height_in, unit: "in"),
+                        unit: "in",
                         value: $request.height,
                         icon: "arrow.up.and.down"
                     )
@@ -1270,7 +1397,8 @@ struct DimensionsSection: View {
                     // Length Field
                     DimensionField(
                         label: "Length",
-                        unit: "cm",
+                        maxText: maxLabel(limits?.max_length_in, unit: "in"),
+                        unit: "in",
                         value: $request.length,
                         icon: "arrow.forward"
                     )
@@ -1278,6 +1406,7 @@ struct DimensionsSection: View {
                     // Weight Field
                     DimensionField(
                         label: "Weight",
+                        maxText: maxLabel(limits?.max_weight_lbs, unit: "lbs"),
                         unit: "lbs",
                         value: $request.weight,
                         icon: "scalemass.fill"
@@ -1302,6 +1431,7 @@ struct DimensionsSection: View {
 // MARK: - Dimension Field Component
 struct DimensionField: View {
     let label: String
+    var maxText: String? = nil
     let unit: String
     @Binding var value: String
     let icon: String
@@ -1316,7 +1446,7 @@ struct DimensionField: View {
                     .font(.custom(poppinsSemiBold,size: 13.0))
                     .foregroundColor(.defaultTheme)
                 
-                Text(label)
+                Text(maxText == nil ? label : "\(label) (\(maxText!))")
                     .font(.custom(poppinsSemiBold,size: 13.0))
                     .foregroundColor(.darkGray)
             }

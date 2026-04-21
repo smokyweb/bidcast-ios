@@ -38,7 +38,7 @@ struct SellerPhoneNumberModel: Codable {
 
     enum CodingKeys: String, CodingKey {
         case otp
-        case phoneNumer = "phone_numer"
+        case phoneNumer = "number"
     }
 }
 
