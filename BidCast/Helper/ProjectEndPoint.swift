@@ -111,6 +111,7 @@ enum APIEndPoint{
     case blockUser(param : BlockUserRequest)
     case blockedUserList
     case getMailClass
+    case getUspsShippingPrice
     case getPromoteShow
     case getLiveSeller
 
@@ -368,6 +369,8 @@ extension APIEndPoint: EndPointType {
             return  "blocked-users"
         case .getMailClass:
             return "usps/mail-classes"
+        case .getUspsShippingPrice:
+            return "get-usps-shipping-price"
         case .getPayOutHistory:
             return "stripe/payout-history"
         case .getKycDetails:
@@ -702,6 +705,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .getMailClass:
             return .get
+        case .getUspsShippingPrice:
+            return .get
         case .getPromoteShow:
             return .get
             
@@ -1015,6 +1020,8 @@ extension APIEndPoint: EndPointType {
         case .blockedUserList:
             return nil
         case .getMailClass:
+            return nil
+        case .getUspsShippingPrice:
             return nil
         case .getPromoteShow:
             return nil
@@ -1433,6 +1440,8 @@ extension APIEndPoint: EndPointType {
         case .SaveShippingCosts(param: let param):
             return nil
         case .getShippinDetails:
+            return nil
+        case .getUspsShippingPrice:
             return nil
         }
     }

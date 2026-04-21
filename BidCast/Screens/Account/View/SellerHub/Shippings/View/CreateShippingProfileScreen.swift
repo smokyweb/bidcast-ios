@@ -12,7 +12,7 @@ struct CreateShippingProfileScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var name: String = ""
     @State private var weight: String = ""
-    @State private var selectedScale: String = "12*12"
+    @State private var selectedScale: String = "select scale"
     @State private var maxItemsEnabled: Bool = false
     @State private var additionalWeightEnabled: Bool = false
     @State private var showScaleOptions: Bool = false
@@ -24,12 +24,12 @@ struct CreateShippingProfileScreen: View {
     
     
     @State private var maxItemsCount: String = ""
-    @State private var boxLength: String = ""
-    @State private var boxWidth: String = ""
-    @State private var boxHeight: String = ""
+    @State private var boxLength: String = "12"
+    @State private var boxWidth: String = "12"
+    @State private var boxHeight: String = "12"
     
     @State private var incrementweightscale: String = "Pound"
-    @State private var boxscale: String = "Cm"
+    @State private var boxscale: String = "Inch"
 
     
     @State private var incrementalWeight: String = ""
@@ -58,39 +58,34 @@ struct CreateShippingProfileScreen: View {
         showButtons: true
     )
     
-    let scales = ["12*12", "24*24", "36*36"]
-    let incrementweightscaleotion = ["Pound", "Kilogram", "Ounce"]
-    let boxscaleoption = ["Cm", "Inch", "Meter"]
+    let scales = ["Pound","Ounce", "Gram","Kilogram" ]
+    let incrementweightscaleotion = ["Pound","Ounce", "Gram","Kilogram" ]
+    let boxscaleoption = ["Cm","Feet","Inch","Meter"]
 
     
     
     @StateObject private var shippingViewModel = ShippingViewModel()
+    @State private var uspsPriceLoaded = false
+    @State private var showUspsBoxSheet = false
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.custom(poppinsBold, size: 16))
-                            .foregroundColor(.primary)
-                    }
+                VStack{
                     
-                    Spacer()
-                    
-                    Text(isEditMode ? "Edit Shipping Profile" : "Create Shipping Profile")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
+                    PrimaryHeader(
+                        title: isEditMode ? "Edit Shipping Profile" : "Create Shipping Profile".localized,
+                        isForLogo : false, leadingImgArr: ["chevron.left"],
+                        trailingImgArr: [],
+                        onClickLeading: { _ in
+                            self.presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
                     
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .background(Color(.white))
+                .frame(height: 50)
+                .background(Color.white)
                 
                 Divider()
                 
@@ -234,6 +229,7 @@ struct CreateShippingProfileScreen: View {
                                         custFontName: poppinsMedium,
                                         custFontSize: 14
                                     )
+                                    .keyboardType(.numberPad)
                                     .padding(.horizontal,-12)
 
                                     Text("For cost-effective bundling, we recommend setting the quantity based on box sizes smaller than 1 cubic foot.")
@@ -246,7 +242,7 @@ struct CreateShippingProfileScreen: View {
                                         .font(.custom(poppinsSemiBold, size: 16.0))
 
                                     Button {
-                                        // optional predefined sizes
+                                        showUspsBoxSheet = true
                                     } label: {
                                         HStack {
                                             Text("Select a Box Size (Optional)")
@@ -473,6 +469,19 @@ struct CreateShippingProfileScreen: View {
 
                 maxItemsEnabled = maxItems ?? false
                 additionalWeightEnabled = additionalWeight ?? false
+
+                // Fetch USPS shipping prices once (endpoint requires auth).
+                if !uspsPriceLoaded {
+                    uspsPriceLoaded = true
+                    Task {
+                        do {
+                            try await shippingViewModel.getUspsShippingPrice()
+                        } catch {
+                            // Don't block profile creation; endpoint may be unavailable.
+                            print("USPS price fetch failed:", error.localizedDescription)
+                        }
+                    }
+                }
             }
         }
         .toolbar(.hidden,for: .tabBar)
@@ -524,6 +533,18 @@ struct CreateShippingProfileScreen: View {
         }
         .sheet(isPresented: $showincrementScaleOptions) {
             ScaleSelectionSheet(selectedScale: $incrementweightscale, isPresented: $showincrementScaleOptions, scales: incrementweightscaleotion)
+        }
+        .sheet(isPresented: $showUspsBoxSheet) {
+            UspsBoxSelectionSheet(
+                isPresented: $showUspsBoxSheet,
+                items: shippingViewModel.uspsShippingPriceResponse?.data ?? [],
+                onSelect: { item in
+                    boxLength = item.length ?? ""
+                    boxWidth = item.width ?? ""
+                    boxHeight = item.height ?? ""
+                    boxscale = (item.unit ?? "").capitalizingFirstLetter()
+                }
+            )
         }
     }
 }
@@ -699,4 +720,107 @@ extension Double {
         return String(format: "%.2f", self)
     }
 
+}
+
+private struct UspsBoxSelectionSheet: View {
+    @Binding var isPresented: Bool
+    let items: [UspsShippingPriceModel]
+    let onSelect: (UspsShippingPriceModel) -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 40, height: 5)
+                .padding(.top, 12)
+                .padding(.bottom, 12)
+
+            HStack {
+                Text("Select USPS Package")
+                    .font(.custom(poppinsSemiBold, size: 18))
+                    .foregroundColor(.black)
+                Spacer()
+                Button {
+                    isPresented = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.black)
+                        .frame(width: 32, height: 32)
+                        .background(Color.gray.opacity(0.12))
+                        .clipShape(Circle())
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 8)
+
+            if items.isEmpty {
+                VStack(spacing: 10) {
+                    Text("No USPS packages found.")
+                        .font(.custom(poppinsRegular, size: 14))
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(24)
+            } else {
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(items, id: \.id) { item in
+                            Button {
+                                onSelect(item)
+                                isPresented = false
+                            } label: {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack(alignment: .top) {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(item.name ?? "USPS Package")
+                                                .font(.custom(poppinsSemiBold, size: 14))
+                                                .foregroundColor(.black)
+                                                .lineLimit(2)
+                                            Text(item.type ?? "")
+                                                .font(.custom(poppinsRegular, size: 12))
+                                                .foregroundColor(.darkGray)
+                                        }
+                                        Spacer()
+                                        if let price = item.shippingPrice, !price.isEmpty {
+                                            Text("$\(price)")
+                                                .font(.custom(poppinsSemiBold, size: 14))
+                                                .foregroundColor(.defaultTheme)
+                                        }
+                                    }
+
+                                    let unit = item.unit ?? ""
+                                    let dims = "\(item.length ?? "") × \(item.width ?? "") × \(item.height ?? "") \(unit)"
+                                    Text(dims.trimmingCharacters(in: .whitespaces))
+                                        .font(.custom(poppinsRegular, size: 12))
+                                        .foregroundColor(.gray)
+
+                                    if let gf = item.greatFor, !gf.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        Text(gf.replacingOccurrences(of: "\r\n", with: ", "))
+                                            .font(.custom(poppinsRegular, size: 12))
+                                            .foregroundColor(.gray)
+                                            .lineLimit(2)
+                                    }
+                                }
+                                .padding(12)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color(.systemBackground))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                                )
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 20)
+                }
+            }
+        }
+        .presentationDetents([.fraction(0.65)])
+        .presentationDragIndicator(.visible)
+        .background(Color(.systemGroupedBackground))
+    }
 }

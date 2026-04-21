@@ -406,6 +406,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToClips, destination: ClipsScreen())
 //            CusNavLink(doNavigate: $navigationState.navigateToClips, destination:  CreateAddress())
             CusNavLink(doNavigate: $navigateToSeller, destination:  SellerVerificationScreen())
+            CusNavLink(doNavigate: $navigationState.navigationToNotification, destination: NotificationScreen())
 
             
            
@@ -432,6 +433,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToCreateProduct, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), /*backToPrepare: $navigationState.navigateToTitle, */showId: .constant(0)))
             CusNavLink(doNavigate: $navigationState.navigateToGetStarted, destination:  GetStartedScreen(backToTabBar: $navigationState.navigateToGetStarted))
+           
         }
     }
 }
@@ -445,6 +447,7 @@ extension AccountScreen {
             case 0: navigationState.navigateToPayment = true
             case 1: navigationState.navigateToAddress = true
             case 2: navigationState.navigateTrustedBuyer = true
+            case 3: navigationState.navigationToNotification = true
             case 4: navigationState.navigateToPreference = true
             case 5: navigationState.navigateToCategory = true
             case 6: navigationState.navigateToClips = true
@@ -1249,6 +1252,7 @@ struct NavigationState {
     var navigateToCreateProduct = false
     var navigateToTitle = false
     var navigateToGetStarted = false
+    var navigationToNotification = false
 }
 
 // MARK: - Account Segment Enum

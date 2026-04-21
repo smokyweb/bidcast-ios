@@ -29,6 +29,7 @@ final class ShippingViewModel: ObservableObject {
     @Published var storeShippingResponse: ResponseModal<StoreShippingModel>?
     @Published var deleteShippingResponse: ResponseModal<DeleteShippingModel>?
     @Published var getShippingProfilesResponse: ResponseModal<[StoreShippingModel]>?
+    @Published var uspsShippingPriceResponse: ResponseModal<[UspsShippingPriceModel]>?
     @Published var requestType: RequestType = .none
     @Published var errorMessage: String? = nil
     
@@ -154,6 +155,24 @@ final class ShippingViewModel: ObservableObject {
                 self.errorMessage = dataError.getErrorMessage()
             }
             else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+
+    func getUspsShippingPrice() async throws {
+        requestType = .getShippinDetails
+        do {
+            let response: ResponseModal<[UspsShippingPriceModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getUspsShippingPrice,
+                header: true
+            )
+            self.uspsShippingPriceResponse = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            } else {
                 self.errorMessage = error.localizedDescription
             }
             throw error

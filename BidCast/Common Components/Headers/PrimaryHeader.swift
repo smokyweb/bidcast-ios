@@ -223,38 +223,30 @@ struct PrimaryHeader: View {
         ZStack {
             Color.white
                 .edgesIgnoringSafeArea(.top)
-            
+
+            // Left + right controls
             HStack {
-                // Leading icons
                 HStack(spacing: 8) {
-                    if isForBoth{
+                    if isForBoth {
                         ForEach(leadingImgArr.indices, id: \.self) { ind in
-                            Button(action: {
-                                withAnimation { onClickLeading?(ind) }
-                            }) {
+                            Button(action: { withAnimation { onClickLeading?(ind) } }) {
                                 Image(systemName: leadingImgArr[ind])
                                     .font(.custom(poppinsBold, size: 16))
                                     .foregroundColor(.primary)
                                     .frame(width: 36, height: 36)
-                                   
                             }
                         }
-                    }else if isForLogo {
+                    } else if isForLogo {
                         Image(.appName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 100, height: 40)
                             .clipped()
-                            .onTapGesture {
-                                onClickLeading?(0) 
-                            }
-//                            .cornerRadius(8)
+                            .onTapGesture { onClickLeading?(0) }
                     } else {
                         ForEach(leadingImgArr.indices, id: \.self) { ind in
-                            Button(action: {
-                                withAnimation { onClickLeading?(ind) }
-                            }) {
-                                Image(systemName:leadingImgArr[ind])
+                            Button(action: { withAnimation { onClickLeading?(ind) } }) {
+                                Image(systemName: leadingImgArr[ind])
                                     .font(.custom(poppinsBold, size: 16))
                                     .foregroundColor(.primary)
                                     .frame(width: 36, height: 36)
@@ -263,28 +255,18 @@ struct PrimaryHeader: View {
                     }
                 }
                 .frame(width: 80, alignment: .leading)
+
                 Spacer()
-                HStack(alignment: .center) {
-                    Text(title)
-                        .frame(maxWidth: .infinity)
-                        .font(.custom(poppinsSemiBold, fixedSize: 18))
-                        .foregroundColor(.black)
-                    //                    .background(.red)
-                        .lineLimit(2)
-                }
-                Spacer()
-                
+
                 HStack(spacing: 8) {
                     ForEach(trailingImgArr.indices, id: \.self) { ind in
-                        Button(action: {
-                            withAnimation { onClickTrailing?(ind) }
-                        }) {
+                        Button(action: { withAnimation { onClickTrailing?(ind) } }) {
                             ZStack(alignment: .topTrailing) {
                                 Image(trailingImgArr[ind])
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 24, height: 24)
-                                
+
                                 if ind == 0 && count > 0 {
                                     Circle()
                                         .fill(Color.defaultTheme)
@@ -299,6 +281,15 @@ struct PrimaryHeader: View {
             }
             .padding(.horizontal, 12)
             .frame(height: 50)
+
+            // Centered title (always centered, wraps to 2 lines)
+            Text(title)
+                .font(.custom(poppinsSemiBold, fixedSize: 18))
+                .foregroundColor(.black)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 96) // keep clear of leading/trailing
         }
         .frame(height: 50)
 //        .background(Color.white)
@@ -326,26 +317,28 @@ struct HeaderWithTitle: View {
     @Binding var count: Int
     
     var body: some View {
-        HStack(spacing: 5) {
-            ForEach(leadingImgArr.indices, id: \.self) { ind in
-                Button(action: {
-                    withAnimation { onClickLeading?(ind) }
-                }) {
-                    Image(systemName:leadingImgArr[ind])
-                        .font(.custom(poppinsBold, size: 16))
-                        .foregroundColor(.primary)
-                        .frame(width: 36, height: 36)
+        ZStack {
+            HStack(spacing: 5) {
+                ForEach(leadingImgArr.indices, id: \.self) { ind in
+                    Button(action: { withAnimation { onClickLeading?(ind) } }) {
+                        Image(systemName:leadingImgArr[ind])
+                            .font(.custom(poppinsBold, size: 16))
+                            .foregroundColor(.primary)
+                            .frame(width: 36, height: 36)
+                    }
                 }
+                .padding([.leading,.trailing], 16)
+                
+                Spacer()
             }
-            .padding([.leading,.trailing], 16)
             
-            // Title
             Text(title)
                 .font(.custom(robotoSemiBold, fixedSize: 18))
                 .foregroundColor(.black)
-                .lineLimit(1)
-            
-            Spacer()
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 96)
         }
         .frame(height: 50)
         .background(Color.white)

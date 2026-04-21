@@ -255,6 +255,7 @@
 		99DF9E7E2DC4F36D008C15B2 /* BidCastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */; };
 		99DF9E822DC4F370008C15B2 /* BidCastUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */; };
 		99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */; };
+		CEADEBC22F976BD900817A5A /* UspsShippingPriceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEADEBC12F976BD900817A5A /* UspsShippingPriceModel.swift */; };
 		D408478F2ECD85BE001CC925 /* RehearsalScreenV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = D408478E2ECD85BE001CC925 /* RehearsalScreenV1.swift */; };
 		D4086A102F31D17E0015E2F2 /* SurpriseSetScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4086A0F2F31D17E0015E2F2 /* SurpriseSetScreen.swift */; };
 		D4086A122F31D4E30015E2F2 /* CreateSurpriseScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4086A112F31D4E30015E2F2 /* CreateSurpriseScreen.swift */; };
@@ -862,6 +863,7 @@
 		99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastTests.swift; sourceTree = "<group>"; };
 		99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITests.swift; sourceTree = "<group>"; };
 		99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CEADEBC12F976BD900817A5A /* UspsShippingPriceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UspsShippingPriceModel.swift; sourceTree = "<group>"; };
 		D408478E2ECD85BE001CC925 /* RehearsalScreenV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalScreenV1.swift; sourceTree = "<group>"; };
 		D4086A0F2F31D17E0015E2F2 /* SurpriseSetScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurpriseSetScreen.swift; sourceTree = "<group>"; };
 		D4086A112F31D4E30015E2F2 /* CreateSurpriseScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSurpriseScreen.swift; sourceTree = "<group>"; };
@@ -3494,6 +3496,7 @@
 			isa = PBXGroup;
 			children = (
 				D4BB99EE2DE590D100C1BCBC /* ShippingsModel.swift */,
+				CEADEBC12F976BD900817A5A /* UspsShippingPriceModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -5148,6 +5151,7 @@
 				D4BB9A0D2DE5A99700C1BCBC /* MyOrdersViewModel.swift in Sources */,
 				D44B0BBC2EF133ED0084F58A /* priceCardView.swift in Sources */,
 				99C9083A2DC8CD6A0054620B /* SubmitVideoResumeSheet.swift in Sources */,
+				CEADEBC22F976BD900817A5A /* UspsShippingPriceModel.swift in Sources */,
 				99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */,
 				D4B615D02DE8280200924A3D /* NotifyMeViewModel.swift in Sources */,
 				D486117A2F32001900CA2565 /* AddProductRowScreen.swift in Sources */,

@@ -83,6 +83,13 @@ struct InventoryScreen: View {
     
     var navigatedFrom: InventoryNavigation = .account
     @State private var navigateToCreateNewProduct = false
+
+    // Match Tabbar "create product" gating
+    @State private var showSellerSheet = false
+    @State private var navigateToSeller = false
+    @State private var showPaymentShipping = false
+    @State private var navigateToShipping = false
+    @State private var titleText = ""
     
     @State private var selectedIndex: Int = -1
     @State private var showFilterSheet: Bool = false
@@ -274,7 +281,18 @@ struct InventoryScreen: View {
                     switch navigatedFrom {
                     case .account:
                         print("create new Prooduct")
-                        navigateToCreateProduct = true
+                        if UserDefaults.sellerVerafied == "verified" {
+                            if UserDefaults.sellerAddress {
+                                navigateToCreateProduct = true
+                            } else {
+                                titleText = "Add Address"
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    showPaymentShipping = true
+                                }
+                            }
+                        } else {
+                            handleSellerVerification()
+                        }
                     case .addProduct:
                         print("Select Existing Product")
                         onProductsSelected?(selectedProducts)
@@ -308,6 +326,8 @@ struct InventoryScreen: View {
             CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen())
+            CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
+            CusNavLink(doNavigate: $navigateToShipping, destination: CreateAddress())
             CusNavLink(doNavigate: $navigateToCreateNewProduct,
                        destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: [], is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")),
                                                         thumbNail: .constant(""),
@@ -407,6 +427,40 @@ struct InventoryScreen: View {
                 }
             )
         }
+        .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.2) {
+            PaymentAndShippingInfoSheet(
+                isPresented: $showPaymentShipping,
+                onAddInfo: {
+                    if UserDefaults.sellerAddress != true {
+                        showPaymentShipping = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            navigateToShipping = true
+                        }
+                    }
+                },
+                buttonText: $titleText
+            )
+        }
+        .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+            showSellerSheet = false
+        }) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        showSellerSheet = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            navigateToSeller = true
+                        }
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        showSellerSheet = false
+                    }
+                }
+            )
+        }
         
         
         .overlay(
@@ -445,6 +499,22 @@ struct InventoryScreen: View {
         )
         
         
+    }
+
+    private func handleSellerVerification() {
+        alertType = .sheetType(
+            icon: .info,
+            title: "Become a Verified Seller!",
+            message: "Before you interact with live shows.you need to become a verified seller.",
+            primaryBtnText: "OK",
+            secondaryBtnText: "",
+            buttonWidth: screenWidth - 60
+        )
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.snappy) {
+                showSellerSheet = true
+            }
+        }
     }
     func toggleProductSelection(_ product: ProductDataModel1) {
         guard let productId = product.id else { return }

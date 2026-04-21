@@ -39,6 +39,8 @@ struct SellerVerificationScreen: View {
     @State private var manualVerificationComplete = false
     @State private var kycVerificationComplete = false
     @State private var kycStatus: String = "" // "active", "inactive", "pending"
+    @State private var hasStartedKycFlow: Bool = false
+    @State private var kycLink: String = ""
     
     @State var navigateToProfile: Bool = false
     @State var getCard: Bool = false
@@ -142,14 +144,18 @@ struct SellerVerificationScreen: View {
 
             if case .kycResult = destination {
                 // ✅ App returned from KYC
-                checkKYCStatus()
+                if hasStartedKycFlow {
+                    checkKYCStatus()
+                }
                 deepLinkManager.clearDestination()
             }
         }
         .onReceive(NotificationCenter.default.publisher(
             for: UIApplication.willEnterForegroundNotification
         )) { _ in
-            checkKYCStatus()
+            if hasStartedKycFlow {
+                checkKYCStatus()
+            }
         }
 
         .toast(isPresenting: $showhud) {
@@ -233,7 +239,13 @@ struct SellerVerificationScreen: View {
                             statusColor: kycStatusColor,
                             isActionEnabled: phoneVerificationComplete && !kycVerificationComplete,
                             onVerifyTap: {
-                                openKYCInBrowser(url: viewModel.checkKycDict.data?.link ?? "")
+                                hasStartedKycFlow = true
+                                Task {
+                                    if kycLink.isEmpty {
+                                        await fetchKycLinkSilently()
+                                    }
+                                    openKYCInBrowser(url: kycLink)
+                                }
                             }
                         )
                         .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected") || !phoneVerificationComplete)
@@ -364,7 +376,9 @@ struct SellerVerificationScreen: View {
             CusNavLink(doNavigate: $navigateToOTP, destination: OTPVerificationScreen(viewModel: viewModel, onSuccess: {
                 phoneVerificationComplete = true
                
-                checkKYCStatus()
+                // Fetch KYC link silently so "Verify" button can open browser,
+                // but do not evaluate/show KYC status until user taps Verify.
+                Task { await fetchKycLinkSilently() }
                 navigateToOTP = false
             }))
             
@@ -411,6 +425,11 @@ struct SellerVerificationScreen: View {
                await viewModel.checkKycDetail()
                await SVProgressHUD.dismiss()
                if viewModel.errorMessage == "" || viewModel.errorMessage == nil{
+                   // Always keep latest KYC link cached for Verify button.
+                   let link = viewModel.checkKycDict.data?.link ?? ""
+                   if !link.isEmpty {
+                       kycLink = link
+                   }
                   
                    successKyC(forVerified: forVerified)
                }else{
@@ -419,6 +438,18 @@ struct SellerVerificationScreen: View {
                
            }
        }
+
+    @MainActor
+    private func fetchKycLinkSilently() async {
+        await viewModel.checkKycDetail()
+        if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+            let link = viewModel.checkKycDict.data?.link ?? ""
+            if !link.isEmpty {
+                kycLink = link
+            }
+        }
+        // Do NOT update kycStatus / kycVerificationComplete here.
+    }
     func successKyC(forVerified: Bool = false) {
         let response = viewModel.checkKycDict
 
@@ -588,7 +619,8 @@ struct SellerVerificationScreen: View {
                         self.cardArr.append(cardDetail)
                     }
                 }
-                checkKYCStatus(forVerified: true)
+                // Keep KYC link ready, but don't evaluate/show KYC status until user taps Verify.
+                Task { await fetchKycLinkSilently() }
             } else {
                 idVerificationComplete = false
                 phoneVerificationComplete = false
