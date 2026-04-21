@@ -5,14 +5,19 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 struct DeleteAccountScreen: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var appRootManager: AppRootManager
 
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
     @State private var reason: String = ""
     @State private var showDeleteSheet: Bool = false
+    @State private var isDeleting: Bool = false
+
+    @StateObject private var viewModel = DeleteAccountViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -95,8 +100,9 @@ struct DeleteAccountScreen: View {
             content: {
                 DeleteAccountSheet(
                     onDeleteClick: {
-                        // API pending — UI only
-                        showDeleteSheet = false
+                        Task {
+                            await deleteAccount()
+                        }
                     },
                     onCancelClick: {
                         showDeleteSheet = false
@@ -106,6 +112,51 @@ struct DeleteAccountScreen: View {
         )
         .onTapGesture {
             UIApplication.shared.endEditing()
+        }
+    }
+
+    private func deleteAccount() async {
+        UIApplication.shared.endEditing()
+        let trimmed = reason.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            hudMsg = "Please provide a reason."
+            showhud = true
+            return
+        }
+
+        isDeleting = true
+        showDeleteSheet = false
+        defer { isDeleting = false }
+        SVProgressHUD.show()
+        await viewModel.postDeleteRequest(param: DeleteParam(reason: trimmed))
+        await SVProgressHUD.dismiss()
+        if let resp = viewModel.deleteResponseDict, resp.status == "success" {
+            performLocalLogoutAndRouteToLogin()
+            return
+        }
+
+        hudMsg = viewModel.errorMessage ?? (viewModel.deleteResponseDict?.message ?? "Delete account failed.")
+        showhud = true
+    }
+
+    private func performLocalLogoutAndRouteToLogin() {
+        // Clear local auth/session, then go back to Authentication root.
+        let rememberMe = UserDefaults.rememberMe
+        if !rememberMe {
+            _ = KeychainManager.shared.delete(email: UserDefaults.userEmail)
+        }
+
+        UserDefaultsManager.shared.setValue(false, forKey: .isLoggedIn)
+        UserDefaults.accessToken = ""
+        UserDefaults.fullName = ""
+        UserDefaults.userName = ""
+        UserDefaults.profileURL = ""
+        UserDefaults.userId = -1
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation {
+                appRootManager.currentRoot = .authentication
+            }
         }
     }
 }

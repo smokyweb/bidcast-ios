@@ -15,8 +15,15 @@ final class DeleteAccountViewModel: ObservableObject {
     
     func postDeleteRequest(param: DeleteParam) async {
         do {
-            let response: ResponseModal<[String]> = try await APIManager.shared.request(
+            // Backend expects multipart/form-data (reason="...") like curl example.
+            let parameters: [String: Any] = ["reason": param.reason ?? ""]
+            let response: ResponseModal<[String]> = try await APIManager.shared.uploadImage1(
                 type: APIEndPoint.deleteAccount(param: param),
+                urlArray: nil,
+                mimeType: "text/plain",
+                keyName: "reason",
+                parameters: parameters,
+                modalType: ResponseModal<[String]>.self,
                 header: true
             )
             self.deleteResponseDict = response

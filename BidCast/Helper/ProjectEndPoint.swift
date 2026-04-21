@@ -412,7 +412,7 @@ extension APIEndPoint: EndPointType {
             return "get-notification?page=\(param)"
         
         case .deleteAccount:
-            return "delete-account"
+            return "delete-profile"
        
        
         case .sendChatNotification:

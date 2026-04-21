@@ -13,7 +13,9 @@ import SVProgressHUD
 struct MultiSelectionCategoryScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var appRootManager: AppRootManager
     @State var showError = false
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showhud = false
     @State var hudMsg = ""
     @State var navigateToSubCategory = false
@@ -80,7 +82,9 @@ struct MultiSelectionCategoryScreen: View {
                     title: "Next",
                     isOutLine: false,
                     onButtonClick: {
-                        navigateToSubCategory = true
+                Task {
+                    await proceedNext()
+                }
                     },
                     cornerRadius: 32.0,
                     btnTextColor: .white
@@ -99,6 +103,29 @@ struct MultiSelectionCategoryScreen: View {
         
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
+        }
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.5,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: { showError = false }
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                    if isNavFrom == "Account" {
+                        goToAccount = false
+                    } else {
+                        UserDefaults.isFirstTimeLogin = true
+                        appRootManager.currentRoot = .tabBar
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
         }
     }
     
@@ -128,6 +155,70 @@ struct MultiSelectionCategoryScreen: View {
             selectedCategoryIDs.remove(at: index)
         } else {
             selectedCategoryIDs.append(id)
+        }
+    }
+    
+    private func proceedNext() async {
+        guard !selectedCategoryIDs.isEmpty else { return }
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        
+        SVProgressHUD.show()
+        await viewModel.getSubCategoryList1(param: ["category_ids": selectedCategoryIDs])
+        await SVProgressHUD.dismiss()
+        
+        if let msg = viewModel.errorMessage, !msg.isEmpty {
+            hudMsg = msg
+            showhud = true
+            return
+        }
+        
+        let response = viewModel.subCategoryResponse
+        guard response?.status == "success" else {
+            hudMsg = response?.message ?? "Failed to load subcategories"
+            showhud = true
+            return
+        }
+        
+        let categories = response?.data ?? []
+        let hasAnySubcategories = categories.contains { !($0.subcategories?.isEmpty ?? true) }
+        
+        if hasAnySubcategories {
+            navigateToSubCategory = true
+            return
+        }
+        
+        // No subcategories at all → directly save selected categories as favorites
+        SVProgressHUD.show()
+        await viewModel.storeFavCategoryList(param: [
+            "category_ids": selectedCategoryIDs,
+            "sub_category_ids": []
+        ])
+        await SVProgressHUD.dismiss()
+        
+        if let msg = viewModel.errorMessage, !msg.isEmpty {
+            hudMsg = msg
+            showhud = true
+            return
+        }
+        
+        let saveResp = viewModel.storeFavCategoryResponse
+        if saveResp?.status == "success" {
+            alertType = .sheetType(
+                icon: .success,
+                title: saveResp?.status?.capitalized ?? "Success",
+                message: saveResp?.message?.capitalized ?? "Saved",
+                primaryBtnText: isNavFrom == "Account" ? AppString.ok.localized : AppString.Home.localized,
+                secondaryBtnText: "",
+                sheetThemeColor: .secondary
+            )
+            showError = true
+        } else {
+            hudMsg = saveResp?.message ?? "Failed to save favorites"
+            showhud = true
         }
     }
 }

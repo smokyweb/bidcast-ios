@@ -134,8 +134,13 @@ private lazy var optimizedSession: URLSession = {
         
         // Handle status codes
         if httpResponse.statusCode == 401 {
+            let dataObj = try jsonDecoder.decode(ApiError.self, from: data)
             await handleUnauthorized(data: data)
-            throw DataError.invalidCode("Unauthorized")
+            if UserDefaults.accessToken.isEmpty{
+                throw DataError.invalidCode(dataObj.message)
+            }else{
+                throw DataError.invalidCode("Unauthorized")
+            }
         }
         
         guard (200...201).contains(httpResponse.statusCode) else {

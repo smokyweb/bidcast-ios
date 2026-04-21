@@ -138,9 +138,16 @@ struct LoginScreen: View {
                                 return
                             }
                             SVProgressHUD.show()
+                            viewModel.errorMessage?.removeAll()
                             await self.viewModel.logIn(parameters: self.request)
-//                            await SVProgressHUD.dismiss()
-                            await success()
+                            await SVProgressHUD.dismiss()
+                            if viewModel.errorMessage == "" || viewModel.errorMessage == nil  {
+                                await success()
+                            }else{
+                                alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+                                withAnimation(.snappy) { showError = true }
+                            }
+                           
                         }
                     }, btnTextColor: .white)
                     
@@ -209,7 +216,7 @@ struct LoginScreen: View {
                         withAnimation { showError = false }
                     }
                 )
-                .presentationDetents([.fraction(0.3)])
+                .presentationDetents([.fraction(0.4)])
                 .presentationDragIndicator(.visible)
                 
             }
