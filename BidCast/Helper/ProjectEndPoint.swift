@@ -50,6 +50,10 @@ enum APIEndPoint {
     case companyInfo(param : CompanyInfoRequest)
     case addAllMusic
     case deleteMusicFromCategoryRequest(param : DeleteSongFromCategoryRequest)
+
+    //MARK: - Explore / Products (matches Android backend contract)
+    case getCategory                 // GET api/get-category
+    case getProducts                 // POST api/v1/get-product (multipart form)
 }
 
 extension APIEndPoint: EndPointType {
@@ -150,6 +154,10 @@ extension APIEndPoint: EndPointType {
             return "v2/add-music"
         case .deleteMusicFromCategoryRequest:
             return "remove-song-from-category"
+        case .getCategory:
+            return "get-category"
+        case .getProducts:
+            return "v1/get-product"
         }
     }
     
@@ -239,6 +247,10 @@ extension APIEndPoint: EndPointType {
             return .post
         case .deleteMusicFromCategoryRequest:
             return .post
+        case .getCategory:
+            return .get
+        case .getProducts:
+            return .post
         }
     }
     
@@ -326,6 +338,10 @@ extension APIEndPoint: EndPointType {
             return param
         case .getCurrentWeather(let param):
             return param
+        case .getCategory:
+            return nil
+        case .getProducts:
+            return nil // sent as multipart form fields via APIManager.postMultipartForm
         }
     }
     

@@ -102,6 +102,80 @@ final class APIManager {
     }
     
     
+    /// Send a `multipart/form-data` POST with ONLY text fields (no file parts).
+    /// This mirrors Android's Retrofit `@Multipart @POST` + `@Part("name") RequestBody`
+    /// contract used by endpoints like `api/v1/get-product`.
+    ///
+    /// Fields are included verbatim. Callers are responsible for omitting keys
+    /// whose value should be "not set" — the BidCast Laravel backend treats
+    /// absent multipart parts as null, so we never send `min_price=0` to mean
+    /// "empty" (see `ProductFilter.formFields()`).
+    func postMultipartForm<T: Decodable>(
+        type: EndPointType,
+        fields: [String: String],
+        header: Bool
+    ) async throws -> T {
+        guard let url = type.url else { throw DataError.invalidURL }
+        debugLog("URL: ====>\(url)")
+        debugLog("METHOD: =====> \(type.method) [multipart]")
+        debugLog("FIELDS: =====> \(fields)")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = type.method.rawValue
+
+        let boundary = generateBoundary()
+        var headers: [String: String] = [
+            "Accept": "application/json",
+            "Content-Type": "multipart/form-data; boundary=\(boundary)"
+        ]
+        if header {
+            headers["Authorization"] = "Bearer \(UserDefaults.accessToken)"
+            headers["time_zone"] = getDeviceTimeZone()
+        }
+        request.allHTTPHeaderFields = headers
+
+        // Build body: for each key, emit one multipart text part.
+        let lineBreak = "\r\n"
+        var body = Data()
+        for (key, value) in fields {
+            body.append("--\(boundary + lineBreak)")
+            body.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak + lineBreak)")
+            body.append("\(value)\(lineBreak)")
+        }
+        body.append("--\(boundary)--\(lineBreak)")
+        request.httpBody = body
+
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        config.timeoutIntervalForResource = 240
+
+        let (data, response) = try await URLSession(configuration: config).data(for: request)
+        debugLog("API Response >>> \n")
+        debugLog(data.prettyPrintedJSONString ?? "")
+
+        guard let response = response as? HTTPURLResponse,
+              200 ... 299 ~= response.statusCode else {
+            let dataObj = try? JSONDecoder().decode(ApiError.self, from: data)
+            throw DataError.invalidCode(dataObj?.message ?? "Request failed")
+        }
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch let error as DecodingError {
+            let ctx: DecodingError.Context
+            switch error {
+            case .typeMismatch(_, let c),
+                 .valueNotFound(_, let c),
+                 .keyNotFound(_, let c),
+                 .dataCorrupted(let c):
+                ctx = c
+            @unknown default:
+                throw DataError.invalidCode("Unknown decoding error")
+            }
+            let path = ctx.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            throw DataError.invalidCode("Decoding Error: \(ctx.debugDescription), Path: \(path)")
+        }
+    }
+
     func uploadMedia<T: Decodable>(
         type: EndPointType,
         urlArray: String,
