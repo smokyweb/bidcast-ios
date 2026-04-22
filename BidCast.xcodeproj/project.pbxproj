@@ -10,6 +10,7 @@
 		0409B15DCA17089AD1E807E4 /* Pods_BidCast_BidCastUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2DF41002CD8D163CFB8F0 /* Pods_BidCast_BidCastUITests.framework */; };
 		046546A8946BA2F51B2A7FB9 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D444074ABC55F3F88244296 /* ExploreViewModel.swift */; };
 		05DA4E9DBDF6A517B5B4CC7E /* ExploreProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */; };
+		0CD640029C175F2CCF16442A /* PaymentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D684DC4B59B844DA0DF63B2 /* PaymentModels.swift */; };
 		130D45EB9815AD92B10F8081 /* APIManager+AuditNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */; };
 		201130344F8E2F62583D8D33 /* Pods_BidCast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */; };
 		2F171C614638B60B62FA5711 /* Pods_BidCastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */; };
@@ -58,8 +59,16 @@
 		35CE10272DCC853A0020D19A /* ColelctionWithLabelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35CE10252DCC853A0020D19A /* ColelctionWithLabelCell.xib */; };
 		35CE102A2DCC89AC0020D19A /* ShareCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35CE10292DCC89AC0020D19A /* ShareCell.xib */; };
 		35CE102B2DCC89AC0020D19A /* ShareCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CE10282DCC89AC0020D19A /* ShareCell.swift */; };
+		35F948AEAD230DBC32E8115D /* SellerHubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3D4F18B819095F488D9969 /* SellerHubModels.swift */; };
+		373642A9BD0BBD478476629C /* APIEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A034562ACE667390C6BDD32 /* APIEnvelope.swift */; };
+		3A384A6281113FDA57DE43F5 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21244668DEEF7671D981566 /* AnyCodable.swift */; };
 		45CE471FBE9EEEE394B8E1B7 /* ProductModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B509479C9B43335AC7A04899 /* ProductModels.swift */; };
+		54694E118961EF52C28BF874 /* ShopModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5347999F62D30593095CB9 /* ShopModels.swift */; };
+		5F904C3A82E70A39D603B4EB /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C7449A9F19C4B4AD66306B /* ChatModels.swift */; };
 		682B446D84274612C64B3574 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D3444379BBFEAFC243CD33C2 /* GoogleService-Info.plist */; };
+		73384A3DB969B7C74C2E4E12 /* AuthModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13964D5D936229853B559B40 /* AuthModels.swift */; };
+		773E4011A7C894E13E18CE2E /* SharedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A85499583460213220ADD14 /* SharedTypes.swift */; };
+		998E4B1B994236F1F373956A /* OrderModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A624AA29C26911A26CB6496 /* OrderModels.swift */; };
 		99BC30032DC9DCED00E1BEA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC2FF72DC9DCED00E1BEA6 /* AppDelegate.swift */; };
 		99BC30042DC9DCED00E1BEA6 /* BidCast.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 99BC2FF92DC9DCED00E1BEA6 /* BidCast.xcdatamodeld */; };
 		99BC30052DC9DCED00E1BEA6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC2FFF2DC9DCED00E1BEA6 /* SceneDelegate.swift */; };
@@ -321,6 +330,8 @@
 		99BC330B2DC9DD0400E1BEA6 /* NewPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC30262DC9DD0400E1BEA6 /* NewPasswordViewController.swift */; };
 		99BC330C2DC9DD0400E1BEA6 /* SignUpTodayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31102DC9DD0400E1BEA6 /* SignUpTodayCell.swift */; };
 		A1E547D296B891C5BD7CE504 /* ExploreCategoryChipCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */; };
+		C5674C9D9CB68F0B2E619705 /* NotificationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E829422D92721FFA55E382B7 /* NotificationModels.swift */; };
+		CA3547DC9D36D321C4D877A5 /* ProductResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A743B5B26F1614C6AE7CAE /* ProductResponses.swift */; };
 		D441F3882DCCDED900266D6E /* TipsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D441F3862DCCDED900266D6E /* TipsCell.swift */; };
 		D441F3892DCCDED900266D6E /* TipsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D441F3872DCCDED900266D6E /* TipsCell.xib */; };
 		D48D75252DCA1B4B0096B223 /* Account.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D75242DCA1B4A0096B223 /* Account.storyboard */; };
@@ -375,8 +386,11 @@
 		D4EA480D2DCC9144008CB96F /* SellerStatusModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA48042DCC9144008CB96F /* SellerStatusModel.swift */; };
 		D4EA48102DCCA22B008CB96F /* MyOrderCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4EA480F2DCCA22B008CB96F /* MyOrderCollectionCell.xib */; };
 		D4EA48112DCCA22B008CB96F /* MyOrderCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA480E2DCCA22B008CB96F /* MyOrderCollectionCell.swift */; };
+		E04B44E1B255BB26CAE5CACB /* SocialModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39540DFB5C1CD59F4148F5B /* SocialModels.swift */; };
 		E5724C37B29BA29E3C59D7AB /* ProductFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26204AEEBBD60E3A4ADC36BE /* ProductFilter.swift */; };
+		E58F4517AEBC42FFF50A0E56 /* LiveConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AC4A04B29696F9B6C72CCA /* LiveConstants.swift */; };
 		E84E4DF781DD0373962631C2 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1E4D6A9298135841D1A601 /* FilterViewController.swift */; };
+		E9CB470484E599E8E1F3CE7D /* ShowModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2743C8AA23BBFFA30F2E7A /* ShowModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -398,6 +412,8 @@
 
 /* Begin PBXFileReference section */
 		08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "APIManager+AuditNotes.swift"; path = "BidCast/Helper/APIManager+AuditNotes.swift"; sourceTree = SOURCE_ROOT; };
+		09A743B5B26F1614C6AE7CAE /* ProductResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductResponses.swift; path = BidCast/Models/Product/ProductResponses.swift; sourceTree = SOURCE_ROOT; };
+		13964D5D936229853B559B40 /* AuthModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthModels.swift; path = BidCast/Models/Auth/AuthModels.swift; sourceTree = SOURCE_ROOT; };
 		14371208B2B8B28094D4C90E /* Pods-BidCast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.debug.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.debug.xcconfig"; sourceTree = "<group>"; };
 		26204AEEBBD60E3A4ADC36BE /* ProductFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductFilter.swift; path = BidCast/Screens/Main/Explore/Model/ProductFilter.swift; sourceTree = SOURCE_ROOT; };
 		35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectionCell.swift; sourceTree = "<group>"; };
@@ -445,11 +461,17 @@
 		35CE10252DCC853A0020D19A /* ColelctionWithLabelCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColelctionWithLabelCell.xib; sourceTree = "<group>"; };
 		35CE10282DCC89AC0020D19A /* ShareCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCell.swift; sourceTree = "<group>"; };
 		35CE10292DCC89AC0020D19A /* ShareCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShareCell.xib; sourceTree = "<group>"; };
+		3D3D4F18B819095F488D9969 /* SellerHubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubModels.swift; path = BidCast/Models/SellerHub/SellerHubModels.swift; sourceTree = SOURCE_ROOT; };
 		3D444074ABC55F3F88244296 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreViewModel.swift; path = BidCast/Screens/Main/Explore/ViewModel/ExploreViewModel.swift; sourceTree = SOURCE_ROOT; };
+		3D684DC4B59B844DA0DF63B2 /* PaymentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentModels.swift; path = BidCast/Models/Payments/PaymentModels.swift; sourceTree = SOURCE_ROOT; };
+		4D2743C8AA23BBFFA30F2E7A /* ShowModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowModels.swift; path = BidCast/Models/LiveStream/ShowModels.swift; sourceTree = SOURCE_ROOT; };
 		52557220D9CDF3E039B0DCC0 /* Pods-BidCastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCastTests.debug.xcconfig"; path = "Target Support Files/Pods-BidCastTests/Pods-BidCastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5ABF4CD48836189A44DC348D /* BidCast.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BidCast.entitlements; path = BidCast/BidCast.entitlements; sourceTree = SOURCE_ROOT; };
 		5F1E4D6A9298135841D1A601 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterViewController.swift; path = BidCast/Screens/Main/Explore/View/FilterViewController.swift; sourceTree = SOURCE_ROOT; };
 		725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreProductCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreProductCell.swift; sourceTree = SOURCE_ROOT; };
+		7A85499583460213220ADD14 /* SharedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SharedTypes.swift; path = BidCast/Models/Common/SharedTypes.swift; sourceTree = SOURCE_ROOT; };
+		8A034562ACE667390C6BDD32 /* APIEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = APIEnvelope.swift; path = BidCast/Models/Common/APIEnvelope.swift; sourceTree = SOURCE_ROOT; };
+		8A624AA29C26911A26CB6496 /* OrderModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OrderModels.swift; path = BidCast/Models/Order/OrderModels.swift; sourceTree = SOURCE_ROOT; };
 		8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BidCast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BidCastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99BC2FC02DC9DCCC00E1BEA6 /* BidCast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BidCast.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -717,9 +739,14 @@
 		99BC31CA2DC9DD0400E1BEA6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		99BC31CB2DC9DD0400E1BEA6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9C01742AE13B328D7B6441D7 /* Pods-BidCast-BidCastUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast-BidCastUITests.debug.xcconfig"; path = "Target Support Files/Pods-BidCast-BidCastUITests/Pods-BidCast-BidCastUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		A9C7449A9F19C4B4AD66306B /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatModels.swift; path = BidCast/Models/Chat/ChatModels.swift; sourceTree = SOURCE_ROOT; };
+		B21244668DEEF7671D981566 /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnyCodable.swift; path = BidCast/Models/Common/AnyCodable.swift; sourceTree = SOURCE_ROOT; };
 		B509479C9B43335AC7A04899 /* ProductModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductModels.swift; path = BidCast/Screens/Main/Explore/Model/ProductModels.swift; sourceTree = SOURCE_ROOT; };
 		B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreCategoryChipCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreCategoryChipCell.swift; sourceTree = SOURCE_ROOT; };
+		CE5347999F62D30593095CB9 /* ShopModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShopModels.swift; path = BidCast/Models/Shop/ShopModels.swift; sourceTree = SOURCE_ROOT; };
 		D3444379BBFEAFC243CD33C2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "BidCast/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D39540DFB5C1CD59F4148F5B /* SocialModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SocialModels.swift; path = BidCast/Models/Social/SocialModels.swift; sourceTree = SOURCE_ROOT; };
+		D3AC4A04B29696F9B6C72CCA /* LiveConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveConstants.swift; path = BidCast/Live/Common/LiveConstants.swift; sourceTree = SOURCE_ROOT; };
 		D441F3862DCCDED900266D6E /* TipsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipsCell.swift; sourceTree = "<group>"; };
 		D441F3872DCCDED900266D6E /* TipsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TipsCell.xib; sourceTree = "<group>"; };
 		D48D75242DCA1B4A0096B223 /* Account.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Account.storyboard; sourceTree = "<group>"; };
@@ -778,6 +805,7 @@
 		DE378E847C398975C6A1E294 /* Pods-BidCastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCastTests.release.xcconfig"; path = "Target Support Files/Pods-BidCastTests/Pods-BidCastTests.release.xcconfig"; sourceTree = "<group>"; };
 		DEA831EEA9BCA5141D495061 /* Pods-BidCast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.release.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.release.xcconfig"; sourceTree = "<group>"; };
 		E579EECEA2975FF8E6E38335 /* Pods-BidCast-BidCastUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast-BidCastUITests.release.xcconfig"; path = "Target Support Files/Pods-BidCast-BidCastUITests/Pods-BidCast-BidCastUITests.release.xcconfig"; sourceTree = "<group>"; };
+		E829422D92721FFA55E382B7 /* NotificationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationModels.swift; path = BidCast/Models/Notifications/NotificationModels.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -923,6 +951,20 @@
 				D3444379BBFEAFC243CD33C2 /* GoogleService-Info.plist */,
 				5ABF4CD48836189A44DC348D /* BidCast.entitlements */,
 				08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */,
+				8A624AA29C26911A26CB6496 /* OrderModels.swift */,
+				3D684DC4B59B844DA0DF63B2 /* PaymentModels.swift */,
+				3D3D4F18B819095F488D9969 /* SellerHubModels.swift */,
+				A9C7449A9F19C4B4AD66306B /* ChatModels.swift */,
+				13964D5D936229853B559B40 /* AuthModels.swift */,
+				CE5347999F62D30593095CB9 /* ShopModels.swift */,
+				09A743B5B26F1614C6AE7CAE /* ProductResponses.swift */,
+				4D2743C8AA23BBFFA30F2E7A /* ShowModels.swift */,
+				D39540DFB5C1CD59F4148F5B /* SocialModels.swift */,
+				8A034562ACE667390C6BDD32 /* APIEnvelope.swift */,
+				B21244668DEEF7671D981566 /* AnyCodable.swift */,
+				7A85499583460213220ADD14 /* SharedTypes.swift */,
+				E829422D92721FFA55E382B7 /* NotificationModels.swift */,
+				D3AC4A04B29696F9B6C72CCA /* LiveConstants.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2916,6 +2958,20 @@
 				05DA4E9DBDF6A517B5B4CC7E /* ExploreProductCell.swift in Sources */,
 				A1E547D296B891C5BD7CE504 /* ExploreCategoryChipCell.swift in Sources */,
 				130D45EB9815AD92B10F8081 /* APIManager+AuditNotes.swift in Sources */,
+				998E4B1B994236F1F373956A /* OrderModels.swift in Sources */,
+				0CD640029C175F2CCF16442A /* PaymentModels.swift in Sources */,
+				35F948AEAD230DBC32E8115D /* SellerHubModels.swift in Sources */,
+				5F904C3A82E70A39D603B4EB /* ChatModels.swift in Sources */,
+				73384A3DB969B7C74C2E4E12 /* AuthModels.swift in Sources */,
+				54694E118961EF52C28BF874 /* ShopModels.swift in Sources */,
+				CA3547DC9D36D321C4D877A5 /* ProductResponses.swift in Sources */,
+				E9CB470484E599E8E1F3CE7D /* ShowModels.swift in Sources */,
+				E04B44E1B255BB26CAE5CACB /* SocialModels.swift in Sources */,
+				373642A9BD0BBD478476629C /* APIEnvelope.swift in Sources */,
+				3A384A6281113FDA57DE43F5 /* AnyCodable.swift in Sources */,
+				773E4011A7C894E13E18CE2E /* SharedTypes.swift in Sources */,
+				C5674C9D9CB68F0B2E619705 /* NotificationModels.swift in Sources */,
+				E58F4517AEBC42FFF50A0E56 /* LiveConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
