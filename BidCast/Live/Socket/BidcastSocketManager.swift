@@ -16,7 +16,9 @@
 //
 
 import Foundation
+#if canImport(SocketIO)
 import SocketIO
+#endif
 
 /// iOS mirror of Android `SocketManager`. Single-connection model: one
 /// `SocketManager` backing a single `SocketIOClient` at a time, created from
@@ -24,14 +26,23 @@ import SocketIO
 ///
 /// Reference: Android `SocketManager.kt` singleton-style usage from
 /// `App.kt` `socketManager?.initialize(Const.SOCKET_URL, mapOf("uid" to userId))`.
+///
+/// Build note: every `SocketIO`-typed reference is wrapped in
+/// `#if canImport(SocketIO)` so the file compiles even before CocoaPods
+/// installs the pod (fresh clones, local Xcode previews, Codemagic
+/// pre-`pod install` checks, etc.). When the pod is absent, every emit/
+/// listener becomes a no-op that logs in DEBUG — production builds always
+/// carry the pod so this path never ships.
 public final class BidcastSocketManager {
 
     public static let shared = BidcastSocketManager()
 
     // MARK: Private state
 
+    #if canImport(SocketIO)
     private var manager: SocketManager?
     private var socket: SocketIOClient?
+    #endif
     private var currentUserId: String = ""
     private let queue = DispatchQueue(label: "com.bidcast.socket", qos: .userInitiated)
 
@@ -46,6 +57,7 @@ public final class BidcastSocketManager {
     /// Equivalent to Android `socketManager?.initialize(Const.SOCKET_URL, ...)`
     /// in `App.kt`. Safe to call multiple times with the same userId.
     public func connect(userId: String) {
+        #if canImport(SocketIO)
         queue.async { [weak self] in
             guard let self = self else { return }
             if self.socket?.status == .connected && self.currentUserId == userId {
@@ -87,6 +99,12 @@ public final class BidcastSocketManager {
 
             socket.connect()
         }
+        #else
+        self.currentUserId = userId
+        #if DEBUG
+        print("[BidcastSocket] SocketIO pod missing; connect is a no-op.")
+        #endif
+        #endif
     }
 
     public func disconnect() {
@@ -96,13 +114,19 @@ public final class BidcastSocketManager {
     }
 
     private func disconnectInternal() {
+        #if canImport(SocketIO)
         socket?.disconnect()
         socket = nil
         manager = nil
+        #endif
     }
 
     public var isConnected: Bool {
-        socket?.status == .connected
+        #if canImport(SocketIO)
+        return socket?.status == .connected
+        #else
+        return false
+        #endif
     }
 
     public func onConnectionChange(_ handler: @escaping (Bool) -> Void) {
@@ -123,6 +147,7 @@ public final class BidcastSocketManager {
 
     @discardableResult
     private func emit(_ event: String, _ payload: [String: Any]) -> Bool {
+        #if canImport(SocketIO)
         guard let socket = socket, socket.status == .connected else {
             #if DEBUG
             print("[BidcastSocket] dropped emit \(event) (not connected)")
@@ -131,18 +156,26 @@ public final class BidcastSocketManager {
         }
         socket.emit(event, payload)
         return true
+        #else
+        #if DEBUG
+        print("[BidcastSocket] emit(\(event)) skipped — SocketIO pod missing")
+        #endif
+        return false
+        #endif
     }
 
     private func listen(
         _ event: String,
         handler: @escaping ([String: Any]) -> Void
     ) {
+        #if canImport(SocketIO)
         guard let socket = socket else { return }
         socket.off(event)
         socket.on(event) { data, _ in
             guard let first = data.first as? [String: Any] else { return }
             DispatchQueue.main.async { handler(first) }
         }
+        #endif
     }
 
     // MARK: - Emits (Android parity, see SocketManager.kt line refs)
