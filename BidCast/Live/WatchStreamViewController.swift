@@ -163,6 +163,7 @@ public final class WatchStreamViewController: UIViewController {
     /// Bounded chat buffer (200-msg cap + dedup by message id).
     /// See BidCast/Live/Chat/LiveChatMessage.swift.
     private let chatBuffer = LiveChatBuffer(capacity: 200)
+    private let statusBanner = LiveBanner()
     private var currentProductId: String?
     private var currentHighestBidAmount: Double = 0
     private var startingBidAmount: Double = 0
@@ -199,6 +200,7 @@ public final class WatchStreamViewController: UIViewController {
 
     private func setupViews() {
         view.addSubview(remoteVideoView)
+        view.addSubview(statusBanner)
         view.addSubview(closeButton)
         view.addSubview(viewerCountLabel)
         view.addSubview(bidTimerLabel)
@@ -220,6 +222,11 @@ public final class WatchStreamViewController: UIViewController {
             closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             closeButton.widthAnchor.constraint(equalToConstant: 36),
             closeButton.heightAnchor.constraint(equalToConstant: 36),
+
+            statusBanner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            statusBanner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            statusBanner.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            statusBanner.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
 
             viewerCountLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
             viewerCountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -522,6 +529,17 @@ public final class WatchStreamViewController: UIViewController {
         let socket = BidcastSocketManager.shared
         socket.connect(userId: currentUserId.isEmpty ? "0" : currentUserId)
         socket.emitJoinRoom(roomId: context.roomId, userId: currentUserId)
+        // Show a persistent "Reconnecting..." banner while the socket is
+        // disconnected, and clear it once we reconnect. Matches Android's
+        // WatchStreamFragment connection banner.
+        socket.onConnectionChange { [weak self] connected in
+            guard let self = self else { return }
+            if connected {
+                self.statusBanner.hide()
+            } else {
+                self.statusBanner.show("Reconnecting...", style: .warning, duration: 0)
+            }
+        }
 
         let agora = BidcastAgoraEngine.shared
         agora.delegate = self
@@ -751,6 +769,22 @@ extension WatchStreamViewController: BidcastAgoraEngineDelegate {
 
     public func agoraError(_ error: String) {
         appendSystemChat("stream error: \(error)")
+        statusBanner.show("Video error: \(error)", style: .error, duration: 3.0)
+    }
+
+    public func agoraConnectionStateChanged(state: Int, reason: Int) {
+        // Agora connection states (iOS SDK): 1=disconnected, 2=connecting,
+        // 3=connected, 4=reconnecting, 5=failed
+        switch state {
+        case 4:
+            statusBanner.show("Reconnecting video...", style: .warning, duration: 0)
+        case 3:
+            statusBanner.hide()
+        case 5:
+            statusBanner.show("Video connection failed", style: .error, duration: 4.0)
+        default:
+            break
+        }
     }
 }
 

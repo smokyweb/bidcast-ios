@@ -134,6 +134,7 @@ public final class HostPublisherViewController: UIViewController {
     /// Bounded chat buffer (200-msg cap + dedup by message id) shared with
     /// the viewer path (LiveChatBuffer, see Live/Chat/LiveChatMessage.swift).
     private let chatBuffer = LiveChatBuffer(capacity: 200)
+    private let statusBanner = LiveBanner()
     private var currentPinnedProductId: String?
     private var currentPinnedProductTitle: String?
     private var lastBidTimerSeconds: Int = -1
@@ -159,6 +160,7 @@ public final class HostPublisherViewController: UIViewController {
 
     private func setupViews() {
         view.addSubview(localVideoView)
+        view.addSubview(statusBanner)
         view.addSubview(viewerCountLabel)
         view.addSubview(timerLabel)
         view.addSubview(highestBidLabel)
@@ -173,6 +175,11 @@ public final class HostPublisherViewController: UIViewController {
             localVideoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             localVideoView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             localVideoView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.38),
+
+            statusBanner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            statusBanner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            statusBanner.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            statusBanner.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
 
             viewerCountLabel.topAnchor.constraint(equalTo: localVideoView.bottomAnchor, constant: 12),
             viewerCountLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -332,6 +339,15 @@ public final class HostPublisherViewController: UIViewController {
 
         let socket = BidcastSocketManager.shared
         socket.connect(userId: currentUserId.isEmpty ? context.sellerId : currentUserId)
+        // Reconnect banner while socket bounces.
+        socket.onConnectionChange { [weak self] connected in
+            guard let self = self else { return }
+            if connected {
+                self.statusBanner.hide()
+            } else {
+                self.statusBanner.show("Reconnecting...", style: .warning, duration: 0)
+            }
+        }
         socket.emitRoomCreate(payload: [
             "room_id": context.roomId,
             "show_id": context.showId,
@@ -526,7 +542,22 @@ extension HostPublisherViewController: BidcastAgoraEngineDelegate {
     public func agoraLeft(channel: String) { appendSystem("Agora left channel \(channel).") }
     public func agoraRemoteJoined(uid: UInt) {}
     public func agoraRemoteLeft(uid: UInt) {}
-    public func agoraError(_ error: String) { appendSystem(error) }
+    public func agoraError(_ error: String) {
+        appendSystem(error)
+        statusBanner.show("Video error: \(error)", style: .error, duration: 3.0)
+    }
+    public func agoraConnectionStateChanged(state: Int, reason: Int) {
+        switch state {
+        case 4:
+            statusBanner.show("Reconnecting video...", style: .warning, duration: 0)
+        case 3:
+            statusBanner.hide()
+        case 5:
+            statusBanner.show("Video connection failed", style: .error, duration: 4.0)
+        default:
+            break
+        }
+    }
 }
 
 private extension Array {
