@@ -38,9 +38,16 @@ final class PromotedShowsViewController: P3ListViewController {
                 )
                 // Best-effort: if backend returns `data: [ {...}, {...} ]`,
                 // pull the dicts so we can render a light-weight list.
-                if let raw = resp.data?.value as? [[String: Any]] {
-                    self.items = raw.map { dict in
-                        Dictionary(uniqueKeysWithValues: dict.map { ($0.key, AnyCodable($0.value)) })
+                if let arr = resp.data?.value as? [Any?] {
+                    self.items = arr.compactMap { raw -> [String: AnyCodable]? in
+                        // AnyCodable stores dicts as [String: Any?]
+                        if let d = raw as? [String: Any?] {
+                            return Dictionary(uniqueKeysWithValues: d.map { ($0.key, AnyCodable($0.value as Any)) })
+                        }
+                        if let d = raw as? [String: Any] {
+                            return Dictionary(uniqueKeysWithValues: d.map { ($0.key, AnyCodable($0.value)) })
+                        }
+                        return nil
                     }
                 }
                 self.tableView.reloadData()
