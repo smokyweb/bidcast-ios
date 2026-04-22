@@ -33,12 +33,12 @@ struct StoreIDCardModel: Codable {
 
 // MARK: - SellerPhoneNumberModel
 struct SellerPhoneNumberModel: Codable {
-    var otp: Int?
+    var otp: String?
     var phoneNumer: String?
 
     enum CodingKeys: String, CodingKey {
         case otp
-        case phoneNumer = "number"
+        case phoneNumer = "phone_number"
     }
 }
 
