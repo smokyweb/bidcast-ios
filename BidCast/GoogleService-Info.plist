@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  ============================================================================
+  PLACEHOLDER GoogleService-Info.plist
+  ============================================================================
+  This file was committed in iOS parity phase 1c (2026-04-22) so that the
+  Firebase pods can link without blowing up `FirebaseApp.configure()` at
+  launch. The REAL values must be downloaded from the Firebase console and
+  committed as a follow-up before the first production build.
+
+  REPLACE WITH REAL VALUES FROM THE FIREBASE CONSOLE:
+    1. Firebase console  ->  Project settings  ->  Your apps
+    2. Pick the BidCast iOS app (Bundle ID: io.bidcast)
+    3. Download GoogleService-Info.plist
+    4. Overwrite THIS file with the downloaded one (keep the same path &
+       filename so the pbxproj reference stays valid)
+    5. Verify CLIENT_ID, BUNDLE_ID=io.bidcast, GCM_SENDER_ID, GOOGLE_APP_ID,
+       PROJECT_ID all match the real Firebase project
+    6. Enable "Push Notifications" + "Background Modes (Remote notifications)"
+       capabilities on the Xcode target (if not already on)
+    7. Upload the APNs auth key (.p8) to Firebase console > Cloud Messaging
+
+  Until real values land, FirebaseApp.configure() will succeed but all FCM /
+  Analytics calls will be no-ops (see AppDelegate guard comment).
+  ============================================================================
+-->
+<plist version="1.0">
+<dict>
+    <key>CLIENT_ID</key>
+    <string>REPLACE_WITH_REAL_CLIENT_ID.apps.googleusercontent.com</string>
+    <key>REVERSED_CLIENT_ID</key>
+    <string>com.googleusercontent.apps.REPLACE_WITH_REAL_CLIENT_ID</string>
+    <key>API_KEY</key>
+    <string>REPLACE_WITH_REAL_API_KEY</string>
+    <key>GCM_SENDER_ID</key>
+    <string>000000000000</string>
+    <key>PLIST_VERSION</key>
+    <string>1</string>
+    <key>BUNDLE_ID</key>
+    <string>io.bidcast</string>
+    <key>PROJECT_ID</key>
+    <string>replace-with-real-project-id</string>
+    <key>STORAGE_BUCKET</key>
+    <string>replace-with-real-project-id.appspot.com</string>
+    <key>IS_ADS_ENABLED</key>
+    <false/>
+    <key>IS_ANALYTICS_ENABLED</key>
+    <false/>
+    <key>IS_APPINVITE_ENABLED</key>
+    <true/>
+    <key>IS_GCM_ENABLED</key>
+    <true/>
+    <key>IS_SIGNIN_ENABLED</key>
+    <true/>
+    <key>GOOGLE_APP_ID</key>
+    <string>1:000000000000:ios:0000000000000000000000</string>
+</dict>
+</plist>

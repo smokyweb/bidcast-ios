@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      iOS parity phase 1c (2026-04-22): entitlements for APNs + FCM.
+      After adding Firebase/Messaging, the app must be entitled to receive
+      remote push. Xcode's "Push Notifications" capability toggle sets
+      aps-environment in this file; we pre-wire it here so Codemagic can
+      build without needing a manual click inside Xcode.
+
+      TODO(phase 2+):
+        - com.apple.developer.associated-domains  for universal links /
+          deep linking into live shows
+        - com.apple.developer.in-app-payments     if Apple Pay is routed
+          through StripePaymentSheet
+    -->
+    <key>aps-environment</key>
+    <string>development</string>
+</dict>
+</plist>
