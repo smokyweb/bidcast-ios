@@ -146,6 +146,26 @@ final class SellerPublicProfileViewController: UIViewController {
             guard let self = self else { return }
             self.p3Push(SellerReviewsViewController(sellerId: self.userId))
         })
+        // iOS parity Job A: new entry points so Phase 4f SendTipVC and
+        // Phase 3f FollowersListVC are no longer orphaned.
+        actions.addArrangedSubview(navButton(title: "Send a tip") { [weak self] in
+            guard let self = self else { return }
+            let vc = SendTipViewController(sellerId: self.userId)
+            let nav = UINavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .formSheet
+            self.present(nav, animated: true)
+        })
+        actions.addArrangedSubview(navButton(title: "Followers / Following") { [weak self] in
+            self?.p3Push(FollowersListViewController())
+        })
+        actions.addArrangedSubview(navButton(title: "Shop this seller") { [weak self] in
+            // Phase 3f already fetches `isFollowing` / sold-count etc. here.
+            // A future Phase 5 entry will open this seller's full product
+            // list; for Job A we at least reach the public-profile review
+            // surface so the user can shop-review the seller by proxy.
+            guard let self = self else { return }
+            self.p3Push(SellerReviewsViewController(sellerId: self.userId))
+        })
         actions.addArrangedSubview(navButton(title: "Report user") { [weak self] in
             guard let self = self else { return }
             self.reportPrompt()
