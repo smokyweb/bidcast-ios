@@ -125,7 +125,12 @@ final class SellerPublicProfileViewController: UIViewController {
         stats.distribution = .fillEqually
         stats.addArrangedSubview(statTile(title: "Sold", value: "\(Int(d?.soldCount ?? 0))"))
         stats.addArrangedSubview(statTile(title: "Rating", value: String(format: "%.1f", d?.ratingAvg ?? 0)))
-        stats.addArrangedSubview(statTile(title: "Avg ship", value: "\(d?.avgShip?.value ?? "—")"))
+        let avgShipText: String = {
+            if let s = d?.avgShip?.value as? String { return s }
+            if let n = d?.avgShip?.value as? NSNumber { return n.stringValue }
+            return "—"
+        }()
+        stats.addArrangedSubview(statTile(title: "Avg ship", value: avgShipText))
         stack.addArrangedSubview(stats)
 
         // Follow button reflecting state
