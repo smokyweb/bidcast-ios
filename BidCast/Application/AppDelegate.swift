@@ -44,6 +44,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // iOS parity phase 3i: install the Sell-tab swizzle so the empty
         // 29-line SellViewController stub embeds our real Phase 3 hub.
         P3SellSwizzle.installIfNeeded()
+        // iOS parity Job A: route Home / Activity / Account tabs into Phase 3/4 VCs.
+        JobAHomeSwizzle.installIfNeeded()
+        JobAActivitySwizzle.installIfNeeded()
+        JobAAccountSwizzle.installIfNeeded()
         return true
     }
 
