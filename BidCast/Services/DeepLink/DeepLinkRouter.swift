@@ -249,9 +249,18 @@ final class DeepLinkRouter {
                 vc.modalPresentationStyle = .fullScreen
                 DeepLinkRouter.presentOnTopmost(vc)
             } catch {
+                let msg = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                if LiveAuthGuard.handleIfAuthFailure(error: error, source: "DeepLink.openLiveStream") {
+                    // Auth listener handles the kick; just show a gentle heads-up.
+                    DeepLinkRouter.presentAlert(
+                        title: "Session expired",
+                        message: "Please log in again to watch live shows."
+                    )
+                    return
+                }
                 DeepLinkRouter.presentAlert(
                     title: "Live show unavailable",
-                    message: (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                    message: msg
                 )
             }
         }

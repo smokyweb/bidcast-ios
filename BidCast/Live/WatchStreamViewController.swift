@@ -135,6 +135,8 @@ public final class WatchStreamViewController: UIViewController {
         return t
     }()
 
+    private let pinnedCard = PinnedProductCard()
+
     private let chatInput: UITextField = {
         let t = UITextField()
         t.translatesAutoresizingMaskIntoConstraints = false
@@ -205,6 +207,7 @@ public final class WatchStreamViewController: UIViewController {
         view.addSubview(viewerCountLabel)
         view.addSubview(bidTimerLabel)
         view.addSubview(highestBidLabel)
+        view.addSubview(pinnedCard)
         view.addSubview(chatTableView)
         view.addSubview(chatInput)
         view.addSubview(bidButton)
@@ -241,10 +244,15 @@ public final class WatchStreamViewController: UIViewController {
             highestBidLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             highestBidLabel.heightAnchor.constraint(equalToConstant: 24),
 
+            pinnedCard.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            pinnedCard.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            pinnedCard.bottomAnchor.constraint(equalTo: chatTableView.topAnchor, constant: -8),
+            pinnedCard.heightAnchor.constraint(equalToConstant: 78),
+
             chatTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             chatTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             chatTableView.bottomAnchor.constraint(equalTo: chatInput.topAnchor, constant: -8),
-            chatTableView.heightAnchor.constraint(equalToConstant: 220),
+            chatTableView.heightAnchor.constraint(equalToConstant: 180),
 
             chatInput.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             chatInput.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -283,6 +291,7 @@ public final class WatchStreamViewController: UIViewController {
         maxBidButton.addTarget(self, action: #selector(tappedMaxBid), for: .touchUpInside)
         tipButton.addTarget(self, action: #selector(tappedTip), for: .touchUpInside)
         raidButton.addTarget(self, action: #selector(tappedRaid), for: .touchUpInside)
+        pinnedCard.onTap = { [weak self] in self?.tappedBid() }
     }
 
     private func bindSocketListeners() {
@@ -307,6 +316,7 @@ public final class WatchStreamViewController: UIViewController {
                 self.bidTimerLabel.text = "Ends in \(remainingStr)"
                 self.bidTimerLabel.isHidden = false
                 self.lastBidTimerSeconds = Int(Double(remainingStr) ?? -1)
+                self.pinnedCard.updateTimer(seconds: self.lastBidTimerSeconds)
                 // When an auction is live (timer > 0) show bid controls
                 if (self.lastBidTimerSeconds) > 0 {
                     self.auctionClosed = false
@@ -325,6 +335,7 @@ public final class WatchStreamViewController: UIViewController {
                 self.highestBidLabel.isHidden = false
                 self.currentHighestBidAmount = Double(amountStr) ?? 0
                 self.updateBidButtonAmount()
+                self.pinnedCard.updateHighestBid(self.currentHighestBidAmount)
             }
             if let pid = payload["product_id"] as? String {
                 self.currentProductId = pid
@@ -336,6 +347,7 @@ public final class WatchStreamViewController: UIViewController {
             self.bidTimerLabel.isHidden = true
             self.auctionClosed = true
             self.refreshBidControlsVisibility()
+            self.pinnedCard.updateTimer(seconds: 0)
             if let winner = payload["user_name"] as? String,
                let amount = self.stringValue(from: payload["bid_amount"]) {
                 self.appendSystemChat("\(winner) won at $\(amount)")
@@ -500,6 +512,7 @@ public final class WatchStreamViewController: UIViewController {
             if let title = (payload["product"] as? [String: Any])?["title"] as? String {
                 self.currentProductTitle = title
                 self.appendSystemChat("Now selling: \(title)")
+                self.pinnedCard.updateTitle(title)
             }
             if let pid = (payload["product"] as? [String: Any])?["id"] as? String
                 ?? payload["product_id"] as? String {
@@ -507,13 +520,26 @@ public final class WatchStreamViewController: UIViewController {
             }
             self.currentHighestBidAmount = 0
             self.updateBidButtonAmount()
+            self.pinnedCard.updateHighestBid(0)
         }
 
         socket.onProductPinned { [weak self] payload in
             guard let self = self else { return }
             if let title = (payload["product"] as? [String: Any])?["title"] as? String {
                 self.currentProductTitle = title
+                self.pinnedCard.updateTitle(title)
             }
+            if let pid = (payload["product"] as? [String: Any])?["id"] as? String
+                ?? payload["product_id"] as? String {
+                self.currentProductId = pid
+            }
+        }
+
+        socket.onProductUnpinned { [weak self] _ in
+            self?.currentProductTitle = ""
+            self?.pinnedCard.updateTitle(nil)
+            self?.pinnedCard.updateHighestBid(0)
+            self?.pinnedCard.updateTimer(seconds: -1)
         }
 
         socket.onRoomEnded { [weak self] payload in

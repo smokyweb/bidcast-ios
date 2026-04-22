@@ -138,6 +138,12 @@ public final class BrowseLiveShowsViewController: UIViewController, UITableViewD
                 vc.modalPresentationStyle = .fullScreen
                 self.present(vc, animated: true)
             } catch {
+                if LiveAuthGuard.handleIfAuthFailure(error: error, source: "BrowseLiveShows.didSelect") {
+                    let alert = UIAlertController(title: "Session expired", message: "Please log in again.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                    return
+                }
                 let msg = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 let alert = UIAlertController(title: "Can't open show", message: msg, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
