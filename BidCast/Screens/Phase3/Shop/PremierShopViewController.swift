@@ -129,8 +129,8 @@ final class PremierShopViewController: UIViewController {
         Task { @MainActor in
             defer { SVProgressHUD.dismiss() }
             do {
-                let _: APIEmptyResponse = try await APIManager.shared.request(
-                    type: .applyPremierShop, header: true
+                let _: APIEmptyResponse = try await APIManager.shared.postMultipartForm(
+                    type: .applyPremierShop, fields: [:], header: true
                 )
                 self.p3Alert(title: "Submitted",
                              message: "Your Premier Shop application is under review.")

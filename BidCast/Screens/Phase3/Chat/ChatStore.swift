@@ -100,12 +100,18 @@ final class InMemoryChatStore: ChatStore {
                 let parts = conversationId.split(separator: "_").compactMap { Int($0) }
                 let recipient = parts.first(where: { $0 != senderId }) ?? 0
                 if recipient > 0 {
-                    let body = SendChatNotificationRequest(
+                    let req = SendChatNotificationRequest(
                         userId: recipient, message: body, type: "chat",
                         conversationId: conversationId
                     )
-                    let _: APIEmptyResponse = try await APIManager.shared.request(
-                        type: .sendChatNotification(param: body),
+                    let _: APIEmptyResponse = try await APIManager.shared.postMultipartForm(
+                        type: .sendChatNotification(param: req),
+                        fields: [
+                            "user_id": "\(recipient)",
+                            "message": body,
+                            "type": "chat",
+                            "conversation_id": conversationId
+                        ],
                         header: true
                     )
                 }
@@ -140,8 +146,10 @@ final class InMemoryChatStore: ChatStore {
         Task {
             do {
                 let req = BlockUnblockRequest(userId: userId, action: "block")
-                let _: BlockedUnblockedResponse = try await APIManager.shared.request(
-                    type: .blockUnblockUser(param: req), header: true
+                let _: BlockedUnblockedResponse = try await APIManager.shared.postMultipartForm(
+                    type: .blockUnblockUser(param: req),
+                    fields: ["user_id": "\(userId)", "action": "block"],
+                    header: true
                 )
                 await MainActor.run { completion(.success(())) }
             } catch {
@@ -155,8 +163,10 @@ final class InMemoryChatStore: ChatStore {
         Task {
             do {
                 let req = BlockUnblockRequest(userId: userId, action: "unblock")
-                let _: BlockedUnblockedResponse = try await APIManager.shared.request(
-                    type: .blockUnblockUser(param: req), header: true
+                let _: BlockedUnblockedResponse = try await APIManager.shared.postMultipartForm(
+                    type: .blockUnblockUser(param: req),
+                    fields: ["user_id": "\(userId)", "action": "unblock"],
+                    header: true
                 )
                 await MainActor.run { completion(.success(())) }
             } catch {
@@ -174,8 +184,10 @@ final class InMemoryChatStore: ChatStore {
                     categoryId: 0,     // "Other" fallback; UI should replace
                     description: reason
                 )
-                let _: APIEmptyResponse = try await APIManager.shared.request(
-                    type: .reportSeller(param: req), header: true
+                let _: APIEmptyResponse = try await APIManager.shared.postMultipartForm(
+                    type: .reportSeller(param: req),
+                    fields: ["seller_id": "\(userId)", "category_id": "0", "description": reason],
+                    header: true
                 )
                 await MainActor.run { completion(.success(())) }
             } catch {

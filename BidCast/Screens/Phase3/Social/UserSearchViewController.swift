@@ -55,8 +55,10 @@ final class UserSearchViewController: UIViewController, UITableViewDataSource, U
         task = Task { @MainActor in
             do {
                 let req = SearchRequest(search: trimmed, page: 1)
-                let resp: UserSearchingResponse = try await APIManager.shared.request(
-                    type: .userSearching(param: req), header: true
+                let resp: UserSearchingResponse = try await APIManager.shared.postMultipartForm(
+                    type: .userSearching(param: req),
+                    fields: ["search": trimmed, "page": "1"],
+                    header: true
                 )
                 self.results = resp.data ?? []
                 self.tableView.reloadData()
