@@ -385,6 +385,7 @@
 		B29B454CB9EE3799CA7D5AE9 /* ConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8B42CE98AE667B27B558E2 /* ConversationListViewController.swift */; };
 		B2E746F08EA7F60AFA95891A /* OrderListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D484CA4B228EDF7A4826965 /* OrderListViewController.swift */; };
 		B79C4717992385B832C122DF /* CreatePollSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8F49698526C1BF44053E04 /* CreatePollSheet.swift */; };
+		B8EF4230A2CB52677AD78117 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B74C3EBFDFCBF0D38E6EA3 /* KeychainHelper.swift */; };
 		BA964053ACE92B91FC5628DC /* SellerReviewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF747379397AD318120AB24 /* SellerReviewsViewController.swift */; };
 		BC114CBD817A6AD994C25741 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DA7440BCA5163DAC71F4A501 /* Localizable.strings */; };
 		BE424CF4A6E3DEF1D3D4E5C4 /* OnboardingCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DC4B06968BA2C871E7FDAE /* OnboardingCarouselViewController.swift */; };
@@ -864,6 +865,7 @@
 		B66E43F882FADFEA61A68454 /* HostRandomizerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostRandomizerSheet.swift; path = BidCast/Live/Host/HostRandomizerSheet.swift; sourceTree = SOURCE_ROOT; };
 		B68742898C64B4EDB066B94C /* ActivityViewController+JobA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ActivityViewController+JobA.swift"; path = "BidCast/Screens/Phase3/Common/ActivityViewController+JobA.swift"; sourceTree = SOURCE_ROOT; };
 		B6AB4CA99C7E8B488B9ACCF6 /* HomeViewController+JobA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HomeViewController+JobA.swift"; path = "BidCast/Screens/Phase3/Common/HomeViewController+JobA.swift"; sourceTree = SOURCE_ROOT; };
+		B6B74C3EBFDFCBF0D38E6EA3 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainHelper.swift; path = BidCast/Helper/KeychainHelper.swift; sourceTree = SOURCE_ROOT; };
 		B74F4817944166571BB38060 /* LiveShowResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveShowResolver.swift; path = BidCast/Live/Services/LiveShowResolver.swift; sourceTree = SOURCE_ROOT; };
 		B9E54E2CB6039A222B007BAC /* CheckoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CheckoutViewController.swift; path = BidCast/Screens/Phase4/Checkout/CheckoutViewController.swift; sourceTree = SOURCE_ROOT; };
 		B9F043188CB960D04E344F42 /* P3SellHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = P3SellHomeViewController.swift; path = BidCast/Screens/Phase3/Common/P3SellHomeViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1187,6 +1189,7 @@
 				DA7440BCA5163DAC71F4A501 /* Localizable.strings */,
 				18DC4B06968BA2C871E7FDAE /* OnboardingCarouselViewController.swift */,
 				E8F949A18166AFFB3A195A95 /* DebugLogger.swift */,
+				B6B74C3EBFDFCBF0D38E6EA3 /* KeychainHelper.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3280,6 +3283,7 @@
 				92AB411CA35DC4863FE8E415 /* L10n.swift in Sources */,
 				BE424CF4A6E3DEF1D3D4E5C4 /* OnboardingCarouselViewController.swift in Sources */,
 				602D4152A4E4844C3EB0B50A /* DebugLogger.swift in Sources */,
+				B8EF4230A2CB52677AD78117 /* KeychainHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
