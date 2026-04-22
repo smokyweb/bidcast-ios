@@ -268,6 +268,14 @@ public final class WatchStreamViewController: UIViewController {
         if let c = context {
             AnalyticsService.shared.logViewLiveShow(showId: c.roomId)
         }
+        // Phase 7f accessibility
+        bidButton.accessibilityLabel = L10n("place_bid")
+        bidButton.accessibilityHint = "Places a bid at the current next-bid amount."
+        maxBidButton.accessibilityLabel = L10n("max_bid")
+        maxBidButton.accessibilityHint = "Set a maximum bid ceiling; auto-bids for you when outbid."
+        tipButton.accessibilityLabel = L10n("send_tip")
+        tipButton.accessibilityHint = "Send a tip to the host."
+        closeButton.accessibilityLabel = "Close"
     }
 
     public override func viewWillDisappear(_ animated: Bool) {
@@ -746,6 +754,18 @@ public final class WatchStreamViewController: UIViewController {
         let socket = BidcastSocketManager.shared
         socket.emitLeaveRoom(roomId: context.roomId, userId: currentUserId)
         BidcastAgoraEngine.shared.leaveChannel()
+    }
+
+    // Phase 7e (2026-04-22): belt-and-suspenders cleanup. viewWillDisappear
+    // already calls leaveEverything, but if the VC is torn down via a raid
+    // swap / deep-link replace we want to guarantee no stray Agora channel
+    // / socket handler lingers.
+    deinit {
+        if let context = context {
+            BidcastSocketManager.shared.emitLeaveRoom(roomId: context.roomId, userId: currentUserId)
+        }
+        BidcastAgoraEngine.shared.leaveChannel()
+        DebugLogger.log("WatchStreamViewController deinit")
     }
 
     // MARK: Actions

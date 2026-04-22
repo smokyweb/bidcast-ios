@@ -499,6 +499,18 @@ public final class HostPublisherViewController: UIViewController {
         BidcastAgoraEngine.shared.leaveChannel()
     }
 
+    // Phase 7e (2026-04-22): belt-and-suspenders cleanup on dealloc.
+    deinit {
+        if let context = context {
+            BidcastSocketManager.shared.emitLeaveRoom(
+                roomId: context.roomId,
+                userId: currentUserId.isEmpty ? context.sellerId : currentUserId
+            )
+        }
+        BidcastAgoraEngine.shared.leaveChannel()
+        DebugLogger.log("HostPublisherViewController deinit")
+    }
+
     // MARK: Actions
 
     @objc private func pinFirstProduct() {
