@@ -193,6 +193,8 @@ final class AddCardViewController: UIViewController {
                     header: true
                 )
                 await MainActor.run {
+                    // Phase 7a analytics
+                    AnalyticsService.shared.logAddPaymentInfo()
                     self.onAdded?()
                     self.dismiss(animated: true)
                 }

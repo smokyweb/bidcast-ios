@@ -483,6 +483,8 @@ public final class HostPublisherViewController: UIViewController {
         ])
         socket.emitJoinRoom(roomId: context.roomId, userId: currentUserId.isEmpty ? context.sellerId : currentUserId)
         socket.emitJoinShow(roomId: context.roomId, userId: currentUserId.isEmpty ? context.sellerId : currentUserId)
+        // Phase 7a analytics
+        AnalyticsService.shared.logStartShow(showId: context.roomId)
 
         let agora = BidcastAgoraEngine.shared
         agora.delegate = self
@@ -546,7 +548,12 @@ public final class HostPublisherViewController: UIViewController {
         }
         let sheet = CreatePollSheet(roomId: context.roomId)
         sheet.onSubmitted = { [weak self] q, _, _ in
-            self?.appendSystem("Poll created: \(q)")
+            guard let self = self else { return }
+            self.appendSystem("Poll created: \(q)")
+            // Phase 7a analytics
+            if let c = self.context {
+                AnalyticsService.shared.logCreatePoll(showId: c.roomId)
+            }
         }
         let nav = UINavigationController(rootViewController: sheet)
         present(nav, animated: true)
@@ -596,6 +603,8 @@ public final class HostPublisherViewController: UIViewController {
         let nav = UINavigationController(rootViewController: sheet)
         present(nav, animated: true)
         randomizerActive = true
+        // Phase 7a analytics
+        AnalyticsService.shared.logRunRandomizer(showId: context.roomId)
     }
 
     // iOS Parity Phase 6e (2026-04-22): Raid uses the new HostRaidSheet
@@ -609,6 +618,9 @@ public final class HostPublisherViewController: UIViewController {
         sheet.onRaidSent = { [weak self] targetRoom, _ in
             guard let self = self, let context = self.context else { return }
             self.appendSystem("Raid sent to \(targetRoom). Ending your show…")
+            // Phase 7a analytics
+            AnalyticsService.shared.logStartRaid(showId: context.roomId, targetShowId: targetRoom)
+            AnalyticsService.shared.logEndShow(showId: context.roomId)
             // Mirror Android behavior: after raid, end own room + dismiss.
             BidcastSocketManager.shared.emitEndRoom(roomId: context.roomId)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
@@ -631,6 +643,11 @@ public final class HostPublisherViewController: UIViewController {
     }
 
     @objc private func closeTapped() {
+        // Phase 7a analytics: end_show event before dismissal.
+        if let context = context {
+            AnalyticsService.shared.logEndShow(showId: context.roomId)
+            BidcastSocketManager.shared.emitEndRoom(roomId: context.roomId)
+        }
         dismiss(animated: true)
     }
 

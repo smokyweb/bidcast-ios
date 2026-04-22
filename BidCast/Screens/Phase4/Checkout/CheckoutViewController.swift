@@ -50,6 +50,8 @@ final class CheckoutViewController: UIViewController {
         title = "Checkout"
         view.backgroundColor = .systemGroupedBackground
         setupLayout()
+        // Phase 7a analytics
+        AnalyticsService.shared.logBeginCheckout(valueCents: nil)
         Task {
             await loadDefaults()
             await recalc()
@@ -395,6 +397,15 @@ final class CheckoutViewController: UIViewController {
     }
 
     private func finishSuccess(orderId: Int?) {
+        // Phase 7a analytics
+        let totalCents: Int? = {
+            guard let t = detail?.total, let d = Double(t) else { return nil }
+            return Int((d * 100).rounded())
+        }()
+        AnalyticsService.shared.logPurchase(
+            transactionId: orderId.map { String($0) },
+            valueCents: totalCents
+        )
         let a = UIAlertController(
             title: "Order placed",
             message: orderId.map { "Order #\($0) is on its way!" } ?? "Your order is on its way!",

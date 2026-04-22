@@ -191,6 +191,9 @@ final class SendTipViewController: UIViewController {
                 )
                 await MainActor.run {
                     self.onSent?(amount)
+                    // Phase 7a analytics
+                    let cents = Int((Double(amount) ?? 0) * 100)
+                    AnalyticsService.shared.logSendTip(showId: "\(self.sellerId)", amountCents: cents)
                     // TODO-PHASE5: Emit `tip_sent` socket event here so the
                     // host UI sees the tip animation in real time. Match the
                     // Android payload shape:

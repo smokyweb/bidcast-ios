@@ -41,6 +41,8 @@ final class SignUpViewModel {
                 self.requestType = .signUp
                 self.lastSignUpApiError = nil
                 self.signUpDict = userResponseArray
+                // Phase 7a analytics
+                AnalyticsService.shared.logSignUp(method: "password")
             }catch(let error) {
                 if let dataError = error as? DataError {
                     // QA-FIX: capture the decoded ApiError so the VC can branch on error_type.

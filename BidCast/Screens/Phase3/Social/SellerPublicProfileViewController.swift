@@ -216,7 +216,12 @@ final class SellerPublicProfileViewController: UIViewController {
                 // Reload to get fresh isFollowing flag
                 self.load()
                 _ = newSeller // silence unused warning
-                _ = isFollowing
+                // Phase 7a analytics
+                if isFollowing {
+                    AnalyticsService.shared.logUnfollowUser(targetUserId: "\(self.userId)")
+                } else {
+                    AnalyticsService.shared.logFollowUser(targetUserId: "\(self.userId)")
+                }
             } catch {
                 self.p3Alert(message: (error as? DataError)?.getErrorMessage() ?? error.localizedDescription)
             }

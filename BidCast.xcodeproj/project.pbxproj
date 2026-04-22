@@ -51,6 +51,7 @@
 		357D64242DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357D64222DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.xib */; };
 		357D64272DCA2B2400E73D91 /* SellerRevenueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357D64252DCA2B2400E73D91 /* SellerRevenueCell.swift */; };
 		357D64282DCA2B2400E73D91 /* SellerRevenueCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357D64262DCA2B2400E73D91 /* SellerRevenueCell.xib */; };
+		35AC46608F43067F88E5DA9F /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA442CBE70B435C24989AD /* AnalyticsService.swift */; };
 		35B1CE412DCDF32C00DE9987 /* CategoryTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B1CE3F2DCDF32C00DE9987 /* CategoryTableCell.swift */; };
 		35B1CE422DCDF32C00DE9987 /* CategoryTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35B1CE402DCDF32C00DE9987 /* CategoryTableCell.xib */; };
 		35B1CE452DCE02DA00DE9987 /* PaymentAndShippingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B1CE442DCE02DA00DE9987 /* PaymentAndShippingViewController.swift */; };
@@ -566,6 +567,7 @@
 		725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreProductCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreProductCell.swift; sourceTree = SOURCE_ROOT; };
 		759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubContainerViewController.swift; path = BidCast/Screens/Phase3/SellerHub/SellerHubContainerViewController.swift; sourceTree = SOURCE_ROOT; };
 		777D4BE6998F55C5600FD8CB /* ReturnRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReturnRequestViewController.swift; path = BidCast/Screens/Phase3/Orders/ReturnRequestViewController.swift; sourceTree = SOURCE_ROOT; };
+		78AA442CBE70B435C24989AD /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnalyticsService.swift; path = BidCast/Services/Analytics/AnalyticsService.swift; sourceTree = SOURCE_ROOT; };
 		7A85499583460213220ADD14 /* SharedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SharedTypes.swift; path = BidCast/Models/Common/SharedTypes.swift; sourceTree = SOURCE_ROOT; };
 		7D484CA4B228EDF7A4826965 /* OrderListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OrderListViewController.swift; path = BidCast/Screens/Phase3/Orders/OrderListViewController.swift; sourceTree = SOURCE_ROOT; };
 		80FE421DA7F24F1B95A2AAC0 /* OrderTrackingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OrderTrackingViewController.swift; path = BidCast/Screens/Phase3/Orders/OrderTrackingViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1172,6 +1174,7 @@
 				B66E43F882FADFEA61A68454 /* HostRandomizerSheet.swift */,
 				0F484C63A17F745275EECB93 /* HostRaidSheet.swift */,
 				23D740FAB2DEF128711D5B04 /* RandomizerWinnerBanner.swift */,
+				78AA442CBE70B435C24989AD /* AnalyticsService.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3248,6 +3251,7 @@
 				F6044E0A8A30C0DB7A86F708 /* HostRandomizerSheet.swift in Sources */,
 				81AD48298700681CBAFFCF02 /* HostRaidSheet.swift in Sources */,
 				713244BDA80DDB3B4B980341 /* RandomizerWinnerBanner.swift in Sources */,
+				35AC46608F43067F88E5DA9F /* AnalyticsService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

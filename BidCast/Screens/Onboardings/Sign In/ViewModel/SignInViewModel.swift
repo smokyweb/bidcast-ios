@@ -64,6 +64,8 @@ final class SignInViewModel {
                     header: true)
                 self.requestType = .signIn
                 self.signInDict = userResponseArray
+                // Phase 7a analytics
+                AnalyticsService.shared.logSignIn(method: "password")
             }catch(let error) {
                 if let dataError = error as? DataError {
                     let errorMessage = dataError.getErrorMessage()

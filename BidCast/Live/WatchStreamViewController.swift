@@ -264,6 +264,10 @@ public final class WatchStreamViewController: UIViewController {
         setupActions()
         bindSocketListeners()
         joinEverything()
+        // Phase 7a analytics
+        if let c = context {
+            AnalyticsService.shared.logViewLiveShow(showId: c.roomId)
+        }
     }
 
     public override func viewWillDisappear(_ animated: Bool) {
@@ -804,6 +808,11 @@ public final class WatchStreamViewController: UIViewController {
             bidAmount: String(format: "%.0f", next),
             auctionTypeId: context.auctionTypeId
         )
+        // Phase 7a analytics
+        AnalyticsService.shared.logPlaceBid(
+            showId: context.roomId,
+            amountCents: Int((next * 100).rounded())
+        )
     }
 
     @objc private func tappedMaxBid() {
@@ -856,6 +865,10 @@ public final class WatchStreamViewController: UIViewController {
                     productId: self.currentProductId,
                     maxBid: raw
                 )
+                AnalyticsService.shared.logSetMaxBid(
+                    showId: context.roomId,
+                    amountCents: Int((priceVal * 100).rounded())
+                )
                 self.updateMyMaxBidIndicator()
                 self.appendSystemChat("Max bid set. Your bid will auto-increase only if someone else bids.")
             } else {
@@ -868,6 +881,10 @@ public final class WatchStreamViewController: UIViewController {
                     productId: self.currentProductId,
                     bidAmount: raw,
                     auctionTypeId: context.auctionTypeId
+                )
+                AnalyticsService.shared.logPlaceBid(
+                    showId: context.roomId,
+                    amountCents: Int((priceVal * 100).rounded())
                 )
                 self.appendSystemChat("Bid placed at $\(raw).")
             }
