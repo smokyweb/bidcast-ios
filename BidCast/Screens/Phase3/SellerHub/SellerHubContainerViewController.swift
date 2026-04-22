@@ -165,19 +165,19 @@ final class SellerHubContainerViewController: UIViewController {
     }
 
     private func financeTiles() -> [Tile] {
+        // iOS parity phase 4: all four Finance tiles now route to real VCs.
+        // Wallet aggregates transactions + payouts; Payouts re-uses Wallet
+        // but with the Payouts segment pre-selected. Tips routes to host-
+        // side TipSettings. KYC opens the Stripe Identity onboarding flow.
         [
-            Tile(title: "Wallet", icon: "wallet.pass", phase4: true,
-                 build: { PhaseLockedViewController(title: "Wallet",
-                     message: "Wallet & payouts arrive in Phase 4 (Payments).") }),
-            Tile(title: "Payouts", icon: "creditcard", phase4: true,
-                 build: { PhaseLockedViewController(title: "Payouts",
-                     message: "Stripe payouts land in Phase 4.") }),
-            Tile(title: "Tips", icon: "dollarsign.circle", phase4: true,
-                 build: { PhaseLockedViewController(title: "Tips",
-                     message: "In-stream tipping is Phase 4 + live-stream.") }),
-            Tile(title: "KYC", icon: "person.badge.shield.checkmark", phase4: true,
-                 build: { PhaseLockedViewController(title: "KYC / Seller verification",
-                     message: "Stripe Identity onboarding lands in Phase 4.") })
+            Tile(title: "Wallet", icon: "wallet.pass", phase4: false,
+                 build: { WalletViewController() }),
+            Tile(title: "Payment methods", icon: "creditcard", phase4: false,
+                 build: { PaymentMethodsListViewController() }),
+            Tile(title: "Tips", icon: "dollarsign.circle", phase4: false,
+                 build: { TipSettingsViewController() }),
+            Tile(title: "KYC", icon: "person.badge.shield.checkmark", phase4: false,
+                 build: { KYCViewController() })
         ]
     }
 
