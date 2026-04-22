@@ -3,12 +3,24 @@
 <plist version="1.0">
 <dict>
 	<!-- iOS parity Phase 4a (2026-04-22): Stripe publishable key. -->
-	<!-- TODO-TREY: replace with real Stripe publishable key from Stripe Dashboard (Developers → API keys → Publishable key). -->
-	<!-- Leave as pk_test_* for sandbox testing; flip to pk_live_* at go-live. -->
+	<!-- Ported from Android Const.kt 2026-04-22 (same Stripe test account/backend). -->
+	<!-- TODO-TREY: flip pk_test_* → pk_live_* at App Store go-live. NEVER ship the Stripe SECRET key in the iOS client — secret keys belong on the Laravel backend only. -->
 	<key>STRIPE_PUBLISHABLE_KEY</key>
-	<string>pk_test_TODO_TREY_REPLACE</string>
+	<string>pk_test_51SjiEtQzmy9jx34KXrnMJIwqLx5IfCN69oZsNCptlyBfChq7NrJVc8OjS5q16nvnuobjjp3Run8icoXQHn0D9eVG00nJyhk9zM</string>
+	<!-- Ported from Android Const.kt 2026-04-22 (APP_ID_AGORA, same Agora project). -->
 	<key>AGORA_APP_ID</key>
-	<string>TODO_TREY_REPLACE_AGORA_APP_ID</string>
+	<string>6a0ab77ee15943df94524201d6c93877</string>
+	<!-- iOS parity Phase 4x (2026-04-22): Zego Cloud credentials, ported from Android Const.kt. -->
+	<!-- iOS references Zego in BidCast/Models/LiveStream/ShowModels.swift + ProjectEndPoint.swift -->
+	<key>ZEGO_APP_ID</key>
+	<string>1005763407</string>
+	<key>ZEGO_APP_SIGN</key>
+	<string>73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423</string>
+	<!-- iOS parity Phase 4x (2026-04-22): Backend + socket URLs (match Android Const.kt). -->
+	<key>BIDCAST_BASE_URL</key>
+	<string>https://backend.bidcast.betaplanets.com</string>
+	<key>BIDCAST_SOCKET_URL</key>
+	<string>https://node.bidcast.betaplanets.com/</string>
 	<!-- iOS parity Phase 4m (2026-04-22): Deep linking URL scheme. -->
 	<key>CFBundleURLTypes</key>
 	<array>
