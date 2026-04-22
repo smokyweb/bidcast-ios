@@ -137,6 +137,39 @@ public final class WatchStreamViewController: UIViewController {
 
     private let pinnedCard = PinnedProductCard()
 
+    // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof polish: "Winning: {name}" / "You're
+    // winning!" chip under the pinned card. Driven from onHighestBid +
+    // resetPerItemBidState.
+    private let leaderChip: UILabel = {
+        let l = UILabel()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.font = .boldSystemFont(ofSize: 11)
+        l.textColor = .white
+        l.text = ""
+        l.textAlignment = .center
+        l.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        l.layer.cornerRadius = 8
+        l.layer.masksToBounds = true
+        l.isHidden = true
+        return l
+    }()
+
+    // Private "Your max: $X" indicator — only visible to the local user.
+    // Updated whenever the local user sets a proxy max bid.
+    private let myMaxBidLabel: UILabel = {
+        let l = UILabel()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.font = .systemFont(ofSize: 10, weight: .medium)
+        l.textColor = UIColor.white.withAlphaComponent(0.85)
+        l.backgroundColor = UIColor.systemOrange.withAlphaComponent(0.65)
+        l.textAlignment = .center
+        l.layer.cornerRadius = 6
+        l.layer.masksToBounds = true
+        l.text = ""
+        l.isHidden = true
+        return l
+    }()
+
     private let chatInput: UITextField = {
         let t = UITextField()
         t.translatesAutoresizingMaskIntoConstraints = false
@@ -177,6 +210,40 @@ public final class WatchStreamViewController: UIViewController {
     /// Once an auction ends (timer 0 or bid_finalized) we lock bid controls
     /// until the next auction_started / auction_next_product payload.
     private var auctionClosed: Bool = true
+
+    // QA-FIX-cmo93i77500oe3u1h32urq42p (iOS parity with Android bfc09c4):
+    // Track whether the current item has received at least one live bid
+    // since it started. If the bid timer expires with zero bids we must
+    // locally end the item and stop letting users bid (server does not
+    // emit bid_finalized for no-bid items, so without this flag the bid
+    // button stays live forever).
+    private var hasActiveBid: Bool = false
+
+    // QA-FIX-cmo93i77500oe3u1h32urq42p: once the timer has expired locally
+    // (no-bid case) OR server-finalized, block further bid emits until a
+    // new auction starts.
+    private var isBiddingClosed: Bool = false
+
+    // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof (iOS parity with Android bfc09c4):
+    // user id of the current leader on the live auction. Used to detect
+    // "I am the current winner" so that the max-bid input sheet acts as
+    // a proxy ceiling instead of immediately bumping the public bid.
+    private var currentLeaderUserId: String = ""
+
+    // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: the logged-in user's pending proxy
+    // ceiling (max bid) for the current auction. When another user places
+    // a bid below this ceiling, the backend should auto-bump the leader's
+    // public bid by one increment (proxy-bid behavior).
+    private var myProxyMaxBid: Double = 0
+
+    // Cached display name of the current leader — used by the
+    // "Winning: {name}" chip. Captured from onHighestBid payload.
+    private var currentLeaderName: String = ""
+
+    // Tracks the last integer second we fired a haptic on, so we don't
+    // repeat-fire haptics when bid_timer_update arrives multiple times
+    // in the same second.
+    private var lastHapticTickSecond: Int = -1
     private weak var pollSheet: LivePollSheet?
     private weak var freebieSheet: LiveFreebieSheet?
     private var latestTipMessage: String = ""
@@ -208,6 +275,8 @@ public final class WatchStreamViewController: UIViewController {
         view.addSubview(bidTimerLabel)
         view.addSubview(highestBidLabel)
         view.addSubview(pinnedCard)
+        view.addSubview(leaderChip)
+        view.addSubview(myMaxBidLabel)
         view.addSubview(chatTableView)
         view.addSubview(chatInput)
         view.addSubview(bidButton)
@@ -248,6 +317,16 @@ public final class WatchStreamViewController: UIViewController {
             pinnedCard.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
             pinnedCard.bottomAnchor.constraint(equalTo: chatTableView.topAnchor, constant: -8),
             pinnedCard.heightAnchor.constraint(equalToConstant: 78),
+
+            leaderChip.topAnchor.constraint(equalTo: pinnedCard.bottomAnchor, constant: 4),
+            leaderChip.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            leaderChip.heightAnchor.constraint(equalToConstant: 18),
+            leaderChip.widthAnchor.constraint(greaterThanOrEqualToConstant: 110),
+
+            myMaxBidLabel.centerYAnchor.constraint(equalTo: leaderChip.centerYAnchor),
+            myMaxBidLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            myMaxBidLabel.heightAnchor.constraint(equalToConstant: 18),
+            myMaxBidLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 90),
 
             chatTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             chatTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
@@ -315,7 +394,10 @@ public final class WatchStreamViewController: UIViewController {
             if let remainingStr = remainingStr {
                 self.bidTimerLabel.text = "Ends in \(remainingStr)"
                 self.bidTimerLabel.isHidden = false
-                self.lastBidTimerSeconds = Int(Double(remainingStr) ?? -1)
+                // Parse defensively — if the server ever sends non-numeric,
+                // treat as Int.max (still running) so we don't prematurely
+                // close the item on a bad payload. Mirrors Android bfc09c4.
+                self.lastBidTimerSeconds = Int(Double(remainingStr) ?? Double(Int.max))
                 self.pinnedCard.updateTimer(seconds: self.lastBidTimerSeconds)
                 // When an auction is live (timer > 0) show bid controls
                 if (self.lastBidTimerSeconds) > 0 {
@@ -324,6 +406,20 @@ public final class WatchStreamViewController: UIViewController {
                     self.auctionClosed = true
                 }
                 self.refreshBidControlsVisibility()
+                self.applyCountdownPolish(seconds: self.lastBidTimerSeconds)
+
+                // QA-FIX-cmo93i77500oe3u1h32urq42p: timer hit zero AND nobody
+                // ever bid on this item → the server is not going to emit
+                // bid_finalized, so we must end the item locally: hide the
+                // bid controls and flip isBiddingClosed so any further tap
+                // is refused. Mirrors Android WatchStreamFragment bfc09c4.
+                if self.lastBidTimerSeconds <= 0 && !self.hasActiveBid && !self.isBiddingClosed {
+                    self.isBiddingClosed = true
+                    self.bidTimerLabel.isHidden = true
+                    self.bidButton.isHidden = true
+                    self.maxBidButton.isHidden = true
+                    self.appendSystemChat("No bids — item ended.")
+                }
             }
         }
 
@@ -340,12 +436,36 @@ public final class WatchStreamViewController: UIViewController {
             if let pid = payload["product_id"] as? String {
                 self.currentProductId = pid
             }
+
+            // QA-FIX-cmo93i77500oe3u1h32urq42p: a real bid arrived, so the
+            // item is no longer "no-bid". The timer-expiry safety net
+            // should not fire for this item.
+            self.hasActiveBid = true
+            self.isBiddingClosed = false
+
+            // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof: remember who the current
+            // leader is so the max-bid input sheet can switch between
+            // "proxy ceiling" (leader) and "normal public bid" (challenger).
+            let bidderUserId = self.stringValue(from: payload["user_id"]) ?? ""
+            self.currentLeaderUserId = bidderUserId
+            self.currentLeaderName = (payload["user_name"] as? String) ?? ""
+            // If someone else took the lead, clear our stale proxy ceiling
+            // so we don't silently skip real bids later.
+            if bidderUserId != self.currentUserId {
+                self.myProxyMaxBid = 0
+                self.updateMyMaxBidIndicator()
+            }
+            self.updateLeaderDisplay()
         }
 
         socket.onBidFinalized { [weak self] payload in
             guard let self = self, self.roomMatches(payload) else { return }
             self.bidTimerLabel.isHidden = true
             self.auctionClosed = true
+            // QA-FIX-cmo93i77500oe3u1h32urq42p: server-side finalize should
+            // also lock out further client bid attempts until the next
+            // auction starts.
+            self.isBiddingClosed = true
             self.refreshBidControlsVisibility()
             self.pinnedCard.updateTimer(seconds: 0)
             if let winner = payload["user_name"] as? String,
@@ -356,6 +476,10 @@ public final class WatchStreamViewController: UIViewController {
 
         socket.onAuctionStarted { [weak self] payload in
             guard let self = self else { return }
+            // QA-FIX-cmo93i77500oe3u1h32urq42p / cmo93i6xk00oc3u1hmlx3xtof:
+            // reset per-item flags on every new auction so a previously
+            // ended item doesn't leave bid layout hidden / stale leader.
+            self.resetPerItemBidState()
             if let starting = self.stringValue(from: payload["starting_bid_amount"]),
                let dv = Double(starting) {
                 self.startingBidAmount = dv
@@ -509,18 +633,23 @@ public final class WatchStreamViewController: UIViewController {
 
         socket.onAuctionNextProduct { [weak self] payload in
             guard let self = self else { return }
-            if let title = (payload["product"] as? [String: Any])?["title"] as? String {
-                self.currentProductTitle = title
-                self.appendSystemChat("Now selling: \(title)")
-                self.pinnedCard.updateTitle(title)
+            // QA-FIX-cmo93i77500oe3u1h32urq42p / cmo93i6xk00oc3u1hmlx3xtof:
+            // reset per-item flags + fade the pinned card in on rotation.
+            self.animatePinnedCardRotation {
+                if let title = (payload["product"] as? [String: Any])?["title"] as? String {
+                    self.currentProductTitle = title
+                    self.appendSystemChat("Now selling: \(title)")
+                    self.pinnedCard.updateTitle(title)
+                }
+                if let pid = (payload["product"] as? [String: Any])?["id"] as? String
+                    ?? payload["product_id"] as? String {
+                    self.currentProductId = pid
+                }
+                self.currentHighestBidAmount = 0
+                self.updateBidButtonAmount()
+                self.pinnedCard.updateHighestBid(0)
+                self.resetPerItemBidState()
             }
-            if let pid = (payload["product"] as? [String: Any])?["id"] as? String
-                ?? payload["product_id"] as? String {
-                self.currentProductId = pid
-            }
-            self.currentHighestBidAmount = 0
-            self.updateBidButtonAmount()
-            self.pinnedCard.updateHighestBid(0)
         }
 
         socket.onProductPinned { [weak self] payload in
@@ -540,6 +669,7 @@ public final class WatchStreamViewController: UIViewController {
             self?.pinnedCard.updateTitle(nil)
             self?.pinnedCard.updateHighestBid(0)
             self?.pinnedCard.updateTimer(seconds: -1)
+            self?.resetPerItemBidState()
         }
 
         socket.onRoomEnded { [weak self] payload in
@@ -617,6 +747,13 @@ public final class WatchStreamViewController: UIViewController {
 
     @objc private func tappedBid() {
         guard let context = context else { return }
+        // QA-FIX-cmo93i77500oe3u1h32urq42p: refuse bids once the item has
+        // ended locally (no-bid timer expiry) or server-side. Mirrors
+        // Android WatchStreamFragment.attemptBid() in bfc09c4.
+        guard !isBiddingClosed else {
+            appendSystemChat("This item has ended.")
+            return
+        }
         // Server-side also enforces these, but we fail fast client-side too
         // so the host and viewer stay visually consistent.
         guard !auctionClosed else {
@@ -644,23 +781,70 @@ public final class WatchStreamViewController: UIViewController {
     }
 
     @objc private func tappedMaxBid() {
-        let alert = UIAlertController(title: "Max bid", message: "Set the most you're willing to pay. The system will bid for you up to this amount.", preferredStyle: .alert)
+        // QA-FIX-cmo93i77500oe3u1h32urq42p: block max-bid on ended items.
+        guard !isBiddingClosed else {
+            appendSystemChat("This item has ended.")
+            return
+        }
+
+        // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof (iOS parity with Android bfc09c4):
+        // Proxy-bid behavior. If the current user is already the winning
+        // bidder, the typed amount is a *max bid ceiling*, not a new public
+        // bid. We must NOT emit place_bid — that would publicly bump the
+        // displayed bid right away. Instead we store it locally and tell
+        // the server about the new ceiling via set_max_bid. The public bid
+        // should only auto-increase when someone else bids under this
+        // ceiling (backend proxy logic).
+        let amImLeader = !currentLeaderUserId.isEmpty &&
+                         currentLeaderUserId == currentUserId
+
+        let title = amImLeader ? "Raise your max bid" : "Place bid"
+        let message = amImLeader
+            ? "You're already winning — this will raise your max bid without bumping the visible bid."
+            : "Enter an amount greater than the current highest bid."
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addTextField { tf in
             tf.keyboardType = .numberPad
-            tf.placeholder = "Max amount"
+            tf.placeholder = amImLeader ? "Your max ceiling" : "Bid amount"
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Set", style: .default) { [weak self] _ in
+        alert.addAction(UIAlertAction(title: amImLeader ? "Set max" : "Place bid",
+                                      style: .default) { [weak self] _ in
             guard let self = self, let context = self.context else { return }
-            let raw = alert.textFields?.first?.text ?? ""
-            guard !raw.isEmpty else { return }
-            BidcastSocketManager.shared.emitSetMaxBid(
-                roomId: context.roomId,
-                userId: self.currentUserId,
-                productId: self.currentProductId,
-                maxBid: raw
-            )
-            self.appendSystemChat("Max bid set to $\(raw).")
+            let raw = (alert.textFields?.first?.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !raw.isEmpty, let priceVal = Double(raw) else { return }
+
+            // Guard against downward bids — mirrors Android price validation.
+            if priceVal <= self.currentHighestBidAmount && !amImLeader {
+                self.appendSystemChat("Bid amount must be greater than the current highest bid.")
+                return
+            }
+
+            if amImLeader {
+                // Leader → proxy ceiling only. Do NOT emit place_bid.
+                self.myProxyMaxBid = priceVal
+                BidcastSocketManager.shared.emitSetMaxBid(
+                    roomId: context.roomId,
+                    userId: self.currentUserId,
+                    productId: self.currentProductId,
+                    maxBid: raw
+                )
+                self.updateMyMaxBidIndicator()
+                self.appendSystemChat("Max bid set. Your bid will auto-increase only if someone else bids.")
+            } else {
+                // Non-leader → standard place_bid. Takes the lead at this amount.
+                BidcastSocketManager.shared.emitPlaceBid(
+                    roomId: context.roomId,
+                    userId: self.currentUserId,
+                    userName: self.currentUserName,
+                    userImage: self.currentUserImage,
+                    productId: self.currentProductId,
+                    bidAmount: raw,
+                    auctionTypeId: context.auctionTypeId
+                )
+                self.appendSystemChat("Bid placed at $\(raw).")
+            }
         })
         present(alert, animated: true)
     }
@@ -753,6 +937,104 @@ public final class WatchStreamViewController: UIViewController {
 
     private func appendSystemChat(_ message: String) {
         appendChatMessage(.system(message))
+    }
+
+    // MARK: - QA-FIX bid state helpers (Android bfc09c4 parity)
+
+    /// Reset per-item bid state on a new item event. Mirrors Android
+    /// WatchStreamFragment blocks in auction_started / break_spot /
+    /// room-state / auction_next_product handlers (bfc09c4).
+    private func resetPerItemBidState() {
+        hasActiveBid = false
+        isBiddingClosed = false
+        currentLeaderUserId = ""
+        myProxyMaxBid = 0
+        lastHapticTickSecond = -1
+        stopTimerPulse()
+        updateLeaderDisplay()
+        updateMyMaxBidIndicator()
+    }
+
+    /// Show "Winning: {leader_name}" chip under the pinned card, or
+    /// "You're winning!" if the current user is the leader.
+    private func updateLeaderDisplay() {
+        guard !currentLeaderUserId.isEmpty else {
+            leaderChip.isHidden = true
+            return
+        }
+        if currentLeaderUserId == currentUserId {
+            leaderChip.text = "  👑 You're winning!  "
+            leaderChip.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.85)
+        } else {
+            // We don't always have the leader's name in scope here; the
+            // last onHighestBid set currentLeaderName if available.
+            let name = currentLeaderName.isEmpty ? "Another bidder" : currentLeaderName
+            leaderChip.text = "  Winning: \(name)  "
+            leaderChip.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        }
+        leaderChip.isHidden = false
+    }
+
+    /// Show/hide the private "Your max: $X" indicator for the current user.
+    private func updateMyMaxBidIndicator() {
+        if myProxyMaxBid > 0 {
+            myMaxBidLabel.text = String(format: "  Your max: $%.0f  ", myProxyMaxBid)
+            myMaxBidLabel.isHidden = false
+        } else {
+            myMaxBidLabel.isHidden = true
+        }
+    }
+
+    /// Animate the pinned card: fade out, call mutate() to swap data,
+    /// then fade back in. Used on auction_next_product (timer-driven
+    /// rotation from `run_next_product`).
+    private func animatePinnedCardRotation(mutate: @escaping () -> Void) {
+        UIView.animate(withDuration: 0.18, animations: { [weak self] in
+            self?.pinnedCard.alpha = 0.0
+        }, completion: { [weak self] _ in
+            mutate()
+            UIView.animate(withDuration: 0.25) { [weak self] in
+                self?.pinnedCard.alpha = 1.0
+            }
+        })
+    }
+
+    // MARK: Countdown polish (red + pulse under 10s, haptic under 5s)
+
+    private func applyCountdownPolish(seconds: Int) {
+        if seconds <= 0 {
+            stopTimerPulse()
+            bidTimerLabel.textColor = .white
+            return
+        }
+        if seconds <= 10 {
+            bidTimerLabel.textColor = .systemRed
+            startTimerPulse()
+        } else {
+            bidTimerLabel.textColor = .white
+            stopTimerPulse()
+        }
+        if seconds <= 5 && seconds != lastHapticTickSecond {
+            lastHapticTickSecond = seconds
+            let gen = UIImpactFeedbackGenerator(style: seconds == 1 ? .heavy : .light)
+            gen.impactOccurred()
+        }
+    }
+
+    private func startTimerPulse() {
+        guard bidTimerLabel.layer.animation(forKey: "pulse") == nil else { return }
+        let anim = CABasicAnimation(keyPath: "opacity")
+        anim.fromValue = 1.0
+        anim.toValue = 0.45
+        anim.duration = 0.5
+        anim.autoreverses = true
+        anim.repeatCount = .infinity
+        bidTimerLabel.layer.add(anim, forKey: "pulse")
+    }
+
+    private func stopTimerPulse() {
+        bidTimerLabel.layer.removeAnimation(forKey: "pulse")
+        bidTimerLabel.layer.opacity = 1.0
     }
 }
 
