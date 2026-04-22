@@ -83,7 +83,24 @@ final class ScheduledShowsViewController: P3ListViewController {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        p3Push(ScheduleShowEditorViewController(mode: .edit(shows[indexPath.row])))
+        let show = shows[indexPath.row]
+        let sheet = UIAlertController(title: show.title ?? "Show", message: nil, preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: "Go Live", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            LiveShowLauncher.launchHost(from: self, show: show)
+        })
+        sheet.addAction(UIAlertAction(title: "Edit Show", style: .default) { [weak self] _ in
+            self?.p3Push(ScheduleShowEditorViewController(mode: .edit(show)))
+        })
+        sheet.addAction(UIAlertAction(title: "Share", style: .default) { [weak self] _ in
+            self?.shareShow(show)
+        })
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        if let pop = sheet.popoverPresentationController, let cell = tableView.cellForRow(at: indexPath) {
+            pop.sourceView = cell
+            pop.sourceRect = cell.bounds
+        }
+        present(sheet, animated: true)
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row >= shows.count - 3 { load(reset: false) }

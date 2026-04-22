@@ -10,7 +10,7 @@ final class ChatThreadViewController: UIViewController,
                                       UITextFieldDelegate {
 
     private let conversation: Conversation
-    private let store: ChatStore = InMemoryChatStore.shared
+    private let store: ChatStore = ChatStoreRegistry.active
     private var messages: [ChatMessage] = []
 
     private let tableView = UITableView(frame: .zero, style: .plain)

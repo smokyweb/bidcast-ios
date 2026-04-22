@@ -13,6 +13,7 @@
 		05DA4E9DBDF6A517B5B4CC7E /* ExploreProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */; };
 		07314BFEA1543196212E604B /* UserSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9D4CDA8BDD3AC963D9AE13 /* UserSearchViewController.swift */; };
 		0CD640029C175F2CCF16442A /* PaymentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D684DC4B59B844DA0DF63B2 /* PaymentModels.swift */; };
+		111B4005830202C162146ECC /* CheckoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E54E2CB6039A222B007BAC /* CheckoutViewController.swift */; };
 		130D45EB9815AD92B10F8081 /* APIManager+AuditNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */; };
 		137F400E93FF9EC03DCB1304 /* OrderListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00D4DE9B3EF8A9A4194A7F3 /* OrderListViewModel.swift */; };
 		13A6438FA946E1E6F6B511F8 /* SellViewController+Phase3.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F8476682CF36D49865EB19 /* SellViewController+Phase3.swift */; };
@@ -434,6 +435,7 @@
 		E5724080B462CF539B146BC0 /* SubscriptionPlansViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC04063BB71F679C6C53627 /* SubscriptionPlansViewController.swift */; };
 		E5724C37B29BA29E3C59D7AB /* ProductFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26204AEEBBD60E3A4ADC36BE /* ProductFilter.swift */; };
 		E58F4517AEBC42FFF50A0E56 /* LiveConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AC4A04B29696F9B6C72CCA /* LiveConstants.swift */; };
+		E6F544F586F81F51E3B84188 /* FirebaseChatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3140A1AFCB837D8C39800F /* FirebaseChatStore.swift */; };
 		E84E4DF781DD0373962631C2 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1E4D6A9298135841D1A601 /* FilterViewController.swift */; };
 		E9CB470484E599E8E1F3CE7D /* ShowModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2743C8AA23BBFFA30F2E7A /* ShowModels.swift */; };
 /* End PBXBuildFile section */
@@ -460,6 +462,7 @@
 		081146E1A428AFA7FFD3CBF9 /* PaymentMethodsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentMethodsListViewController.swift; path = BidCast/Screens/Phase4/Payments/PaymentMethodsListViewController.swift; sourceTree = SOURCE_ROOT; };
 		08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "APIManager+AuditNotes.swift"; path = "BidCast/Helper/APIManager+AuditNotes.swift"; sourceTree = SOURCE_ROOT; };
 		09A743B5B26F1614C6AE7CAE /* ProductResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductResponses.swift; path = BidCast/Models/Product/ProductResponses.swift; sourceTree = SOURCE_ROOT; };
+		0E3140A1AFCB837D8C39800F /* FirebaseChatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FirebaseChatStore.swift; path = BidCast/Screens/Phase4/Chat/FirebaseChatStore.swift; sourceTree = SOURCE_ROOT; };
 		0ED04FC3989273E1A6F2FE11 /* Phase3Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Phase3Common.swift; path = BidCast/Screens/Phase3/Common/Phase3Common.swift; sourceTree = SOURCE_ROOT; };
 		12844365BAA19B1DA07DDC0E /* KYCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KYCViewController.swift; path = BidCast/Screens/Phase4/KYC/KYCViewController.swift; sourceTree = SOURCE_ROOT; };
 		13964D5D936229853B559B40 /* AuthModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthModels.swift; path = BidCast/Models/Auth/AuthModels.swift; sourceTree = SOURCE_ROOT; };
@@ -816,6 +819,7 @@
 		B21244668DEEF7671D981566 /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnyCodable.swift; path = BidCast/Models/Common/AnyCodable.swift; sourceTree = SOURCE_ROOT; };
 		B509479C9B43335AC7A04899 /* ProductModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductModels.swift; path = BidCast/Screens/Main/Explore/Model/ProductModels.swift; sourceTree = SOURCE_ROOT; };
 		B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreCategoryChipCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreCategoryChipCell.swift; sourceTree = SOURCE_ROOT; };
+		B9E54E2CB6039A222B007BAC /* CheckoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CheckoutViewController.swift; path = BidCast/Screens/Phase4/Checkout/CheckoutViewController.swift; sourceTree = SOURCE_ROOT; };
 		B9F043188CB960D04E344F42 /* P3SellHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = P3SellHomeViewController.swift; path = BidCast/Screens/Phase3/Common/P3SellHomeViewController.swift; sourceTree = SOURCE_ROOT; };
 		BEF74A4C9E5773DA7334D4E3 /* AffiliateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AffiliateViewController.swift; path = BidCast/Screens/Phase3/Social/AffiliateViewController.swift; sourceTree = SOURCE_ROOT; };
 		C00D4DE9B3EF8A9A4194A7F3 /* OrderListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OrderListViewModel.swift; path = BidCast/Screens/Phase3/Orders/OrderListViewModel.swift; sourceTree = SOURCE_ROOT; };
@@ -1100,6 +1104,8 @@
 				12844365BAA19B1DA07DDC0E /* KYCViewController.swift */,
 				C4104A6588E37BA084D84886 /* TipSettingsViewController.swift */,
 				D0D5410091C94EB5A6FD2051 /* SendTipViewController.swift */,
+				B9E54E2CB6039A222B007BAC /* CheckoutViewController.swift */,
+				0E3140A1AFCB837D8C39800F /* FirebaseChatStore.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3152,6 +3158,8 @@
 				B0FC4E609DAF005BE80E02DE /* KYCViewController.swift in Sources */,
 				68BB4F85877F72948D1933B6 /* TipSettingsViewController.swift in Sources */,
 				99334C939377C0A5DE1C2C27 /* SendTipViewController.swift in Sources */,
+				111B4005830202C162146ECC /* CheckoutViewController.swift in Sources */,
+				E6F544F586F81F51E3B84188 /* FirebaseChatStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

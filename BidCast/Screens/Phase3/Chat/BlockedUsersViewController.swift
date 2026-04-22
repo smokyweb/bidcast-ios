@@ -61,7 +61,7 @@ final class BlockedUsersViewController: P3ListViewController {
             guard let self = self else { done(false); return }
             let u = self.users[row]
             guard let uid = u.id else { done(false); return }
-            InMemoryChatStore.shared.unblockUser(userId: uid) { res in
+            ChatStoreRegistry.active.unblockUser(userId: uid) { res in
                 DispatchQueue.main.async {
                     switch res {
                     case .success:

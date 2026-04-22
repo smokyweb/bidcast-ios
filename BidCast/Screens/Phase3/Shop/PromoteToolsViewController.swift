@@ -83,15 +83,76 @@ final class PromoteToolsViewController: UIViewController {
             ))
         }
 
+        // iOS parity phase 4h (2026-04-22): real Buy flow.
+        // Android's `schedule-show/store-promote-show` takes two multipart
+        // fields: `schedule_show_id` + `promote_show_id`. Payment happens
+        // server-side using the user's default saved card. We surface an
+        // "Apply to a show" picker rather than a pure "Buy" CTA since
+        // Android never charges until the show is actually linked.
         let buy = UIButton(type: .system)
         var cfg = UIButton.Configuration.filled()
-        cfg.title = "Buy promotion (Phase 4)"
+        cfg.title = "Apply to a show"
+        cfg.baseBackgroundColor = .systemBlue
         buy.configuration = cfg
-        buy.isEnabled = false
+        buy.addAction(UIAction { [weak self] _ in self?.presentApplyFlow() }, for: .touchUpInside)
         stack.addArrangedSubview(buy)
 
         stack.addArrangedSubview(para(
-            "Purchasing promotions requires Stripe integration — Phase 4."))
+            "Your default saved card is charged when the promotion is applied to a scheduled show."))
+    }
+
+    // MARK: - Apply flow (phase 4h)
+
+    private func presentApplyFlow() {
+        let a = UIAlertController(
+            title: "Apply promotion",
+            message: "Enter the Schedule Show ID and Promotion Tool ID. (A dedicated show-picker UI lives in Phase 4a follow-up.)",
+            preferredStyle: .alert
+        )
+        a.addTextField { $0.placeholder = "schedule_show_id"; $0.keyboardType = .numberPad }
+        a.addTextField { $0.placeholder = "promote_show_id";  $0.keyboardType = .numberPad }
+        a.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        a.addAction(UIAlertAction(title: "Apply", style: .default) { [weak self, weak a] _ in
+            guard let self = self,
+                  let showId = a?.textFields?.first?.text, !showId.isEmpty,
+                  let promoId = a?.textFields?.last?.text, !promoId.isEmpty else { return }
+            Task { await self.buyPromotion(showId: showId, promoId: promoId) }
+        })
+        present(a, animated: true)
+    }
+
+    private func buyPromotion(showId: String, promoId: String) async {
+        // QA-NOTE: the `PromoteShowRequest` Codable uses `show_id` /
+        // `promote_plan_id` — Android's Retrofit actually expects
+        // `schedule_show_id` / `promote_show_id`. We route through
+        // postMultipartForm's `fields` dict which is authoritative; the
+        // Codable is only used for typed callers.
+        let req = PromoteShowRequest(
+            showId: Int(showId) ?? 0,
+            promotePlanId: Int(promoId)
+        )
+        let fields: [String: String] = [
+            "schedule_show_id": showId,
+            "promote_show_id": promoId
+        ]
+        do {
+            let resp: APIEmptyResponse = try await APIManager.shared.postMultipartForm(
+                type: .promoteShow(param: req),
+                fields: fields,
+                header: true
+            )
+            await MainActor.run {
+                let a = UIAlertController(
+                    title: "Promotion applied",
+                    message: resp.message ?? "Your show is now being promoted.",
+                    preferredStyle: .alert
+                )
+                a.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(a, animated: true)
+            }
+        } catch {
+            await MainActor.run { self.p3Alert(message: error.localizedDescription) }
+        }
     }
 
     private func headline(_ s: String) -> UILabel {

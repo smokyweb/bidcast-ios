@@ -72,6 +72,53 @@ final class PromotedShowsViewController: P3ListViewController {
         }
         cfg.image = UIImage(systemName: "megaphone")
         cell.contentConfiguration = cfg
+        // Hint when the row is tappable-to-watch
+        if watchableShow(from: item) != nil {
+            cfg.image = UIImage(systemName: "dot.radiowaves.left.and.right")
+            cell.accessoryType = .disclosureIndicator
+        } else {
+            cell.accessoryType = .none
+        }
+        cell.contentConfiguration = cfg
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        guard indexPath.row < items.count else { return }
+        guard let show = watchableShow(from: items[indexPath.row]) else { return }
+        LiveShowLauncher.launchViewer(from: self, show: show)
+    }
+
+    /// Build a minimal Show just well enough for LiveShowLauncher to open
+    /// the viewer screen. Returns nil if the promoted item is not currently
+    /// live / missing connection info.
+    private func watchableShow(from item: [String: AnyCodable]) -> Show? {
+        let roomId = (item["room_id"]?.value as? String).flatMap { $0.isEmpty ? nil : $0 }
+        let rtc = (item["rtc_token"]?.value as? String).flatMap { $0.isEmpty ? nil : $0 }
+        guard let roomId = roomId, let rtc = rtc else { return nil }
+        return Show(
+            id: item["id"]?.value as? Int,
+            userId: item["user_id"]?.value as? Int,
+            title: (item["title"]?.value as? String) ?? (item["show_title"]?.value as? String),
+            date: item["date"]?.value as? String,
+            time: item["time"]?.value as? String,
+            categoryId: item["category_id"]?.value as? Int,
+            subCategoryId: item["sub_category_id"]?.value as? Int,
+            auctionTypeId: item["auction_type_id"]?.value as? Int,
+            isLive: item["is_live"]?.value as? Bool,
+            isExplicit: nil, isRepeat: nil, isPromote: nil,
+            language: nil, repeatValue: nil,
+            rtcToken: rtc,
+            roomId: roomId,
+            showDiscoverability: nil,
+            startedAt: nil, promoteShowId: nil, promotedAt: nil,
+            recordingResourceId: nil, recordingSid: nil,
+            shareCount: nil, viewerCount: nil, latestViewerCount: nil,
+            totalOrders: nil, totalSalesAmount: nil,
+            productIds: nil, products: nil,
+            thumbnail: nil, imgThumbnail: nil,
+            category: nil, subCategory: nil, user: nil, auction: nil
+        )
     }
 }

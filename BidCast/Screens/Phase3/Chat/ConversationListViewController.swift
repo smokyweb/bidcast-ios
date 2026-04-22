@@ -12,7 +12,7 @@ import UIKit
 final class ConversationListViewController: P3ListViewController {
 
     private var conversations: [Conversation] = []
-    private let store: ChatStore = InMemoryChatStore.shared
+    private let store: ChatStore = ChatStoreRegistry.active
 
     override func viewDidLoad() {
         super.viewDidLoad()

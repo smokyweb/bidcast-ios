@@ -79,6 +79,30 @@ public final class WatchStreamViewController: UIViewController {
         return l
     }()
 
+    private let bidButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.setTitle("Bid", for: .normal)
+        b.setTitleColor(.white, for: .normal)
+        b.titleLabel?.font = .boldSystemFont(ofSize: 16)
+        b.backgroundColor = UIColor.systemRed.withAlphaComponent(0.9)
+        b.layer.cornerRadius = 22
+        b.isHidden = true
+        return b
+    }()
+
+    private let maxBidButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.setTitle("Max", for: .normal)
+        b.setTitleColor(.white, for: .normal)
+        b.titleLabel?.font = .boldSystemFont(ofSize: 13)
+        b.backgroundColor = UIColor.systemOrange.withAlphaComponent(0.9)
+        b.layer.cornerRadius = 16
+        b.isHidden = true
+        return b
+    }()
+
     private let chatTableView: UITableView = {
         let t = UITableView()
         t.translatesAutoresizingMaskIntoConstraints = false
@@ -115,6 +139,10 @@ public final class WatchStreamViewController: UIViewController {
 
     // MARK: State
     private var chatMessages: [(name: String, message: String)] = []
+    private var currentProductId: String?
+    private var currentHighestBidAmount: Double = 0
+    private var startingBidAmount: Double = 0
+    private var lastBidTimerSeconds: Int = -1
 
     // MARK: Lifecycle
 
@@ -142,6 +170,8 @@ public final class WatchStreamViewController: UIViewController {
         view.addSubview(highestBidLabel)
         view.addSubview(chatTableView)
         view.addSubview(chatInput)
+        view.addSubview(bidButton)
+        view.addSubview(maxBidButton)
 
         NSLayoutConstraint.activate([
             remoteVideoView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -176,6 +206,16 @@ public final class WatchStreamViewController: UIViewController {
             chatInput.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             chatInput.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
             chatInput.heightAnchor.constraint(equalToConstant: 36),
+
+            bidButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            bidButton.bottomAnchor.constraint(equalTo: chatInput.topAnchor, constant: -12),
+            bidButton.widthAnchor.constraint(equalToConstant: 110),
+            bidButton.heightAnchor.constraint(equalToConstant: 44),
+
+            maxBidButton.trailingAnchor.constraint(equalTo: bidButton.leadingAnchor, constant: -10),
+            maxBidButton.centerYAnchor.constraint(equalTo: bidButton.centerYAnchor),
+            maxBidButton.widthAnchor.constraint(equalToConstant: 60),
+            maxBidButton.heightAnchor.constraint(equalToConstant: 32),
         ])
 
         chatTableView.dataSource = self
@@ -185,6 +225,8 @@ public final class WatchStreamViewController: UIViewController {
     private func setupActions() {
         closeButton.addTarget(self, action: #selector(tappedClose), for: .touchUpInside)
         chatInput.addTarget(self, action: #selector(submitChat), for: .editingDidEndOnExit)
+        bidButton.addTarget(self, action: #selector(tappedBid), for: .touchUpInside)
+        maxBidButton.addTarget(self, action: #selector(tappedMaxBid), for: .touchUpInside)
     }
 
     private func bindSocketListeners() {
@@ -202,31 +244,63 @@ public final class WatchStreamViewController: UIViewController {
 
         socket.onBidTimerUpdate { [weak self] payload in
             guard let self = self, self.roomMatches(payload) else { return }
-            let remaining = self.stringValue(from: payload["remaining"]) ??
-                            self.stringValue(from: payload["time"]) ??
-                            self.stringValue(from: payload["duration"])
-            if let remaining = remaining {
-                self.bidTimerLabel.text = "Ends in \(remaining)"
+            let remainingStr = self.stringValue(from: payload["remaining"]) ??
+                               self.stringValue(from: payload["time"]) ??
+                               self.stringValue(from: payload["duration"])
+            if let remainingStr = remainingStr {
+                self.bidTimerLabel.text = "Ends in \(remainingStr)"
                 self.bidTimerLabel.isHidden = false
+                self.lastBidTimerSeconds = Int(Double(remainingStr) ?? -1)
+                // When an auction is live (timer > 0) show bid controls
+                if (self.lastBidTimerSeconds) > 0 {
+                    self.bidButton.isHidden = false
+                    self.maxBidButton.isHidden = false
+                    self.updateBidButtonAmount()
+                } else {
+                    self.bidButton.isHidden = true
+                    self.maxBidButton.isHidden = true
+                }
             }
         }
 
         socket.onHighestBid { [weak self] payload in
             guard let self = self, self.roomMatches(payload) else { return }
-            if let amount = self.stringValue(from: payload["bid_amount"]) ??
-                            self.stringValue(from: payload["amount"]) {
-                self.highestBidLabel.text = "Highest bid $\(amount)"
+            if let amountStr = self.stringValue(from: payload["bid_amount"]) ??
+                               self.stringValue(from: payload["amount"]) {
+                self.highestBidLabel.text = "Highest bid $\(amountStr)"
                 self.highestBidLabel.isHidden = false
+                self.currentHighestBidAmount = Double(amountStr) ?? 0
+                self.updateBidButtonAmount()
+            }
+            if let pid = payload["product_id"] as? String {
+                self.currentProductId = pid
             }
         }
 
         socket.onBidFinalized { [weak self] payload in
             guard let self = self, self.roomMatches(payload) else { return }
             self.bidTimerLabel.isHidden = true
+            self.bidButton.isHidden = true
+            self.maxBidButton.isHidden = true
             if let winner = payload["user_name"] as? String,
                let amount = self.stringValue(from: payload["bid_amount"]) {
                 self.appendSystemChat("\(winner) won at $\(amount)")
             }
+        }
+
+        socket.onAuctionStarted { [weak self] payload in
+            guard let self = self else { return }
+            if let starting = self.stringValue(from: payload["starting_bid_amount"]),
+               let dv = Double(starting) {
+                self.startingBidAmount = dv
+                self.currentHighestBidAmount = 0
+                self.updateBidButtonAmount()
+            }
+            if let pid = (payload["product"] as? [String: Any])?["id"] as? String
+                ?? payload["product_id"] as? String {
+                self.currentProductId = pid
+            }
+            self.appendSystemChat("Auction started.")
         }
 
         socket.onChat { [weak self] payload in
@@ -266,9 +340,16 @@ public final class WatchStreamViewController: UIViewController {
         }
 
         socket.onAuctionNextProduct { [weak self] payload in
+            guard let self = self else { return }
             if let title = (payload["product"] as? [String: Any])?["title"] as? String {
-                self?.appendSystemChat("Now selling: \(title)")
+                self.appendSystemChat("Now selling: \(title)")
             }
+            if let pid = (payload["product"] as? [String: Any])?["id"] as? String
+                ?? payload["product_id"] as? String {
+                self.currentProductId = pid
+            }
+            self.currentHighestBidAmount = 0
+            self.updateBidButtonAmount()
         }
 
         socket.onRoomEnded { [weak self] payload in
@@ -310,6 +391,56 @@ public final class WatchStreamViewController: UIViewController {
 
     @objc private func tappedClose() {
         dismiss(animated: true)
+    }
+
+    // MARK: Bid actions
+
+    private func nextBidAmount() -> Double {
+        // Mirror Android WatchStreamFragment increment logic: next bid =
+        // max(highest + $1, starting). If neither is known, bail to 1.
+        let base = max(currentHighestBidAmount, startingBidAmount)
+        return base > 0 ? base + 1 : 1
+    }
+
+    private func updateBidButtonAmount() {
+        let next = nextBidAmount()
+        bidButton.setTitle(String(format: "Bid $%.0f", next), for: .normal)
+    }
+
+    @objc private func tappedBid() {
+        guard let context = context else { return }
+        let next = nextBidAmount()
+        BidcastSocketManager.shared.emitPlaceBid(
+            roomId: context.roomId,
+            userId: currentUserId,
+            userName: currentUserName,
+            userImage: currentUserImage,
+            productId: currentProductId,
+            bidAmount: String(format: "%.0f", next),
+            auctionTypeId: context.auctionTypeId
+        )
+    }
+
+    @objc private func tappedMaxBid() {
+        let alert = UIAlertController(title: "Max bid", message: "Set the most you're willing to pay. The system will bid for you up to this amount.", preferredStyle: .alert)
+        alert.addTextField { tf in
+            tf.keyboardType = .numberPad
+            tf.placeholder = "Max amount"
+        }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Set", style: .default) { [weak self] _ in
+            guard let self = self, let context = self.context else { return }
+            let raw = alert.textFields?.first?.text ?? ""
+            guard !raw.isEmpty else { return }
+            BidcastSocketManager.shared.emitSetMaxBid(
+                roomId: context.roomId,
+                userId: self.currentUserId,
+                productId: self.currentProductId,
+                maxBid: raw
+            )
+            self.appendSystemChat("Max bid set to $\(raw).")
+        })
+        present(alert, animated: true)
     }
 
     @objc private func submitChat() {
