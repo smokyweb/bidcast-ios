@@ -37,6 +37,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.setupSVProgressHUD()
         self.configureFirebase()
         self.registerForRemoteNotifications(application: application)
+        // iOS parity phase 3i: install the Sell-tab swizzle so the empty
+        // 29-line SellViewController stub embeds our real Phase 3 hub.
+        P3SellSwizzle.installIfNeeded()
         return true
     }
 
