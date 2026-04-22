@@ -20,9 +20,9 @@
 
 import UIKit
 
-public enum LiveShowLauncher {
+enum LiveShowLauncher {
 
-    public static func launchHost(from presenter: UIViewController, show: Show) {
+    static func launchHost(from presenter: UIViewController, show: Show) {
         guard let ctx = makeContext(from: show, isHost: true) else {
             presentMissingInfo(on: presenter, role: "host")
             return
@@ -34,7 +34,7 @@ public enum LiveShowLauncher {
         presenter.present(vc, animated: true)
     }
 
-    public static func launchViewer(from presenter: UIViewController, show: Show) {
+    static func launchViewer(from presenter: UIViewController, show: Show) {
         guard let ctx = makeContext(from: show, isHost: false) else {
             presentMissingInfo(on: presenter, role: "viewer")
             return

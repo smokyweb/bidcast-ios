@@ -32,7 +32,7 @@ final class APIManager {
     static let shared = APIManager()
 
     
-    func request<T: Decodable>(type: EndPointType, header: Bool) async throws ->  T {
+    func request<T: Decodable>(type: APIEndPoint, header: Bool) async throws ->  T {
         
         guard let url = type.url else {
             throw DataError.invalidURL
@@ -111,7 +111,7 @@ final class APIManager {
     /// absent multipart parts as null, so we never send `min_price=0` to mean
     /// "empty" (see `ProductFilter.formFields()`).
     func postMultipartForm<T: Decodable>(
-        type: EndPointType,
+        type: APIEndPoint,
         fields: [String: String],
         header: Bool
     ) async throws -> T {
@@ -177,7 +177,7 @@ final class APIManager {
     }
 
     func uploadMedia<T: Decodable>(
-        type: EndPointType,
+        type: APIEndPoint,
         urlArray: String,
         mimeType: String,
         parameters: [String: Any],
@@ -261,7 +261,7 @@ final class APIManager {
     }
     
     func uploadFile<T: Decodable>(
-        type: EndPointType,
+        type: APIEndPoint,
         urlArray: String? = nil,
         mimeType: String,
         keyName: String,
@@ -356,7 +356,7 @@ final class APIManager {
     }
 
     func uploadImageforDifferentKey<T: Decodable>(
-        type: EndPointType,
+        type: APIEndPoint,
         urlArray: [ImageModel]? = nil,
         parameters: [String: Any],
         modelType: T.Type,
@@ -453,7 +453,7 @@ final class APIManager {
     
     
     func uploadImage<T: Decodable>(
-        type: EndPointType,
+        type: APIEndPoint,
         urlArray: [String]? = nil,
         mimeType: String,
         keyName: String,
@@ -552,7 +552,7 @@ final class APIManager {
     
     
     func uploadImageWithMultipleKeys<T: Decodable>(
-        type: EndPointType,
+        type: APIEndPoint,
         urlArray: [[String]]? = nil,
         mimeType: [String],
         keyName: [String],
@@ -647,7 +647,7 @@ final class APIManager {
 
     
     func uploadImageWithMultipleKeys<T: Decodable>(
-        type: EndPointType,
+        type: APIEndPoint,
         urlArray: [[String]]? = nil,
         mimeType: [String],
         keyName: [String],

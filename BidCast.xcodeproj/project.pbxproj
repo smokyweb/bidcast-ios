@@ -96,6 +96,7 @@
 		682B446D84274612C64B3574 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D3444379BBFEAFC243CD33C2 /* GoogleService-Info.plist */; };
 		68BB4F85877F72948D1933B6 /* TipSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4104A6588E37BA084D84886 /* TipSettingsViewController.swift */; };
 		6A1343D3B1CAE939F9EA0E53 /* OrderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACE4FFEBC859E2625559803 /* OrderCell.swift */; };
+		6BDB486CA4042A8A189696F2 /* HostPublisherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E39416BB0C806871E24145F /* HostPublisherViewController.swift */; };
 		6E8A41549AE612F6ABEF1AD7 /* ActivityViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68742898C64B4EDB066B94C /* ActivityViewController+JobA.swift */; };
 		6F454C8D98704442989CDB50 /* P3InventoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F404CE78A9D9641E21CA958 /* P3InventoryViewController.swift */; };
 		713244BDA80DDB3B4B980341 /* RandomizerWinnerBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D740FAB2DEF128711D5B04 /* RandomizerWinnerBanner.swift */; };
@@ -464,6 +465,7 @@
 		D8BB4455A93116E6EFA6AC47 /* TutorialsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9B41C38C8EF3CD46A3BB8D /* TutorialsListViewController.swift */; };
 		DBDB44C2B06B005A37B55482 /* P3AnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61F47668E697F9F062CE82F /* P3AnalyticsViewController.swift */; };
 		E04B44E1B255BB26CAE5CACB /* SocialModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39540DFB5C1CD59F4148F5B /* SocialModels.swift */; };
+		E4694F49A6EDF19408B0CB15 /* BidcastAgoraEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC094AEF9EE06EE5D8B2E0D6 /* BidcastAgoraEngine.swift */; };
 		E5724080B462CF539B146BC0 /* SubscriptionPlansViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC04063BB71F679C6C53627 /* SubscriptionPlansViewController.swift */; };
 		E5724C37B29BA29E3C59D7AB /* ProductFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26204AEEBBD60E3A4ADC36BE /* ProductFilter.swift */; };
 		E58F4517AEBC42FFF50A0E56 /* LiveConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AC4A04B29696F9B6C72CCA /* LiveConstants.swift */; };
@@ -510,6 +512,7 @@
 		23D740FAB2DEF128711D5B04 /* RandomizerWinnerBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RandomizerWinnerBanner.swift; path = BidCast/Live/RandomizerWinnerBanner.swift; sourceTree = SOURCE_ROOT; };
 		23D74FDC9423E11596567E40 /* NotificationListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationListViewModel.swift; path = BidCast/Screens/Phase3/Notifications/NotificationListViewModel.swift; sourceTree = SOURCE_ROOT; };
 		26204AEEBBD60E3A4ADC36BE /* ProductFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductFilter.swift; path = BidCast/Screens/Main/Explore/Model/ProductFilter.swift; sourceTree = SOURCE_ROOT; };
+		2E39416BB0C806871E24145F /* HostPublisherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostPublisherViewController.swift; path = BidCast/Live/HostPublisherViewController.swift; sourceTree = SOURCE_ROOT; };
 		2FC241F88EF009FEE4C22BE2 /* LivePollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LivePollSheet.swift; path = BidCast/Live/LivePollSheet.swift; sourceTree = SOURCE_ROOT; };
 		30F14D7E9182099A07181FEB /* HostTipSettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostTipSettingsSheet.swift; path = BidCast/Live/Host/HostTipSettingsSheet.swift; sourceTree = SOURCE_ROOT; };
 		35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectionCell.swift; sourceTree = "<group>"; };
@@ -966,6 +969,7 @@
 		EC7D4CCF8E67AA4E0BBD612E /* PushRegistrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PushRegistrationService.swift; path = BidCast/Services/Push/PushRegistrationService.swift; sourceTree = SOURCE_ROOT; };
 		F1F54B929412273E39092D83 /* ScheduledShowsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScheduledShowsViewController.swift; path = BidCast/Screens/Phase3/ShowScheduling/ScheduledShowsViewController.swift; sourceTree = SOURCE_ROOT; };
 		F6A644D99DEB282F72D6EC1D /* WatchStreamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchStreamViewController.swift; path = BidCast/Live/WatchStreamViewController.swift; sourceTree = SOURCE_ROOT; };
+		FC094AEF9EE06EE5D8B2E0D6 /* BidcastAgoraEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BidcastAgoraEngine.swift; path = BidCast/Live/Agora/BidcastAgoraEngine.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1205,6 +1209,8 @@
 				DC8C4DCD8B9F8A4687437E06 /* LiveShowContext.swift */,
 				556E40BE93A16B6D6416A876 /* LiveShowLauncher.swift */,
 				F6A644D99DEB282F72D6EC1D /* WatchStreamViewController.swift */,
+				2E39416BB0C806871E24145F /* HostPublisherViewController.swift */,
+				FC094AEF9EE06EE5D8B2E0D6 /* BidcastAgoraEngine.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3304,6 +3310,8 @@
 				4CE24CC286573C397415FF07 /* LiveShowContext.swift in Sources */,
 				794D4C1F8982B5C26310C433 /* LiveShowLauncher.swift in Sources */,
 				1C3A479CA2F46BC6C5D76D46 /* WatchStreamViewController.swift in Sources */,
+				6BDB486CA4042A8A189696F2 /* HostPublisherViewController.swift in Sources */,
+				E4694F49A6EDF19408B0CB15 /* BidcastAgoraEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
