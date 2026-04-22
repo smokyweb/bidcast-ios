@@ -112,6 +112,15 @@ final class P3SellHomeViewController: UIViewController {
             self?.p3Push(PremierShopViewController())
         })
 
+        // iOS parity Job A: Coupons entry from Sell tab (previously orphan).
+        stack.addArrangedSubview(tile(
+            icon: "ticket",
+            title: "Coupons",
+            subtitle: "Browse available discount codes"
+        ) { [weak self] in
+            self?.p3Push(CouponsViewController())
+        })
+
         stack.addArrangedSubview(UIView())
     }
 
