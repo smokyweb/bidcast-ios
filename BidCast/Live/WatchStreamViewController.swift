@@ -1,0 +1,419 @@
+//
+//  WatchStreamViewController.swift
+//  BidCast
+//
+//  QA-FIX (cmo93i7ga) iOS Live parity phase 2, milestone 3:
+//  iOS viewer for a live show. Thin parity with Android
+//  `WatchStreamFragment.kt`. Uses BidcastSocketManager + BidcastAgoraEngine
+//  foundations from milestones 1 and 2.
+//
+//  Scope for this milestone:
+//    - join room via socket (`join_room`)
+//    - join Agora channel as audience, render remote video
+//    - listen for bid_timer_update / get_highest_bid / bid_finalized / chat_get
+//      / viewerCount / receiveRaid / poll_created / poll_vote_update / poll_ended
+//      / get-freebie / tip_setting_updated / auction_next_product
+//    - send chat
+//
+//  Bidding UI, polls UI, tips UI, raid UI, freebie UI follow in later
+//  milestones. What's below is the functional spine so those can be added
+//  without rewriting the controller.
+//
+
+import UIKit
+
+public final class WatchStreamViewController: UIViewController {
+
+    // MARK: Inputs
+    public var context: LiveShowContext!
+    public var currentUserId: String = ""
+    public var currentUserName: String = ""
+    public var currentUserImage: String = ""
+
+    // MARK: UI (programmatic, minimal)
+    private let remoteVideoView: UIView = {
+        let v = UIView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.backgroundColor = .black
+        return v
+    }()
+
+    private let viewerCountLabel: UILabel = {
+        let l = UILabel()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.textColor = .white
+        l.font = .boldSystemFont(ofSize: 12)
+        l.text = "LIVE 0"
+        l.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        l.textAlignment = .center
+        l.layer.cornerRadius = 6
+        l.layer.masksToBounds = true
+        return l
+    }()
+
+    private let bidTimerLabel: UILabel = {
+        let l = UILabel()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.textColor = .white
+        l.font = .boldSystemFont(ofSize: 13)
+        l.text = ""
+        l.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        l.textAlignment = .center
+        l.layer.cornerRadius = 6
+        l.layer.masksToBounds = true
+        l.isHidden = true
+        return l
+    }()
+
+    private let highestBidLabel: UILabel = {
+        let l = UILabel()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.textColor = .white
+        l.font = .boldSystemFont(ofSize: 14)
+        l.text = ""
+        l.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        l.textAlignment = .center
+        l.layer.cornerRadius = 6
+        l.layer.masksToBounds = true
+        l.isHidden = true
+        return l
+    }()
+
+    private let chatTableView: UITableView = {
+        let t = UITableView()
+        t.translatesAutoresizingMaskIntoConstraints = false
+        t.backgroundColor = UIColor.black.withAlphaComponent(0.25)
+        t.separatorStyle = .none
+        t.rowHeight = UITableView.automaticDimension
+        t.estimatedRowHeight = 48
+        return t
+    }()
+
+    private let chatInput: UITextField = {
+        let t = UITextField()
+        t.translatesAutoresizingMaskIntoConstraints = false
+        t.backgroundColor = UIColor.white.withAlphaComponent(0.15)
+        t.textColor = .white
+        t.placeholder = "Say something..."
+        t.attributedPlaceholder = NSAttributedString(
+            string: "Say something...",
+            attributes: [.foregroundColor: UIColor.white.withAlphaComponent(0.7)]
+        )
+        t.layer.cornerRadius = 18
+        t.setLeftPadding(12)
+        return t
+    }()
+
+    private let closeButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.setTitle("✕", for: .normal)
+        b.setTitleColor(.white, for: .normal)
+        b.titleLabel?.font = .boldSystemFont(ofSize: 22)
+        return b
+    }()
+
+    // MARK: State
+    private var chatMessages: [(name: String, message: String)] = []
+
+    // MARK: Lifecycle
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .black
+        setupViews()
+        setupActions()
+        bindSocketListeners()
+        joinEverything()
+    }
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        leaveEverything()
+    }
+
+    // MARK: Setup
+
+    private func setupViews() {
+        view.addSubview(remoteVideoView)
+        view.addSubview(closeButton)
+        view.addSubview(viewerCountLabel)
+        view.addSubview(bidTimerLabel)
+        view.addSubview(highestBidLabel)
+        view.addSubview(chatTableView)
+        view.addSubview(chatInput)
+
+        NSLayoutConstraint.activate([
+            remoteVideoView.topAnchor.constraint(equalTo: view.topAnchor),
+            remoteVideoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            remoteVideoView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            remoteVideoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            closeButton.widthAnchor.constraint(equalToConstant: 36),
+            closeButton.heightAnchor.constraint(equalToConstant: 36),
+
+            viewerCountLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
+            viewerCountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            viewerCountLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 72),
+            viewerCountLabel.heightAnchor.constraint(equalToConstant: 24),
+
+            bidTimerLabel.topAnchor.constraint(equalTo: viewerCountLabel.bottomAnchor, constant: 8),
+            bidTimerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            bidTimerLabel.heightAnchor.constraint(equalToConstant: 24),
+
+            highestBidLabel.topAnchor.constraint(equalTo: bidTimerLabel.bottomAnchor, constant: 8),
+            highestBidLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            highestBidLabel.heightAnchor.constraint(equalToConstant: 24),
+
+            chatTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            chatTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            chatTableView.bottomAnchor.constraint(equalTo: chatInput.topAnchor, constant: -8),
+            chatTableView.heightAnchor.constraint(equalToConstant: 220),
+
+            chatInput.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            chatInput.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            chatInput.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+            chatInput.heightAnchor.constraint(equalToConstant: 36),
+        ])
+
+        chatTableView.dataSource = self
+        chatTableView.register(UITableViewCell.self, forCellReuseIdentifier: "chatCell")
+    }
+
+    private func setupActions() {
+        closeButton.addTarget(self, action: #selector(tappedClose), for: .touchUpInside)
+        chatInput.addTarget(self, action: #selector(submitChat), for: .editingDidEndOnExit)
+    }
+
+    private func bindSocketListeners() {
+        let socket = BidcastSocketManager.shared
+
+        socket.onViewerCount { [weak self] payload in
+            guard let self = self else { return }
+            guard self.roomMatches(payload) else { return }
+            if let n = payload["viewer_count"] as? Int {
+                self.viewerCountLabel.text = "LIVE \(n)"
+            } else if let n = payload["count"] as? Int {
+                self.viewerCountLabel.text = "LIVE \(n)"
+            }
+        }
+
+        socket.onBidTimerUpdate { [weak self] payload in
+            guard let self = self, self.roomMatches(payload) else { return }
+            let remaining = self.stringValue(from: payload["remaining"]) ??
+                            self.stringValue(from: payload["time"]) ??
+                            self.stringValue(from: payload["duration"])
+            if let remaining = remaining {
+                self.bidTimerLabel.text = "Ends in \(remaining)"
+                self.bidTimerLabel.isHidden = false
+            }
+        }
+
+        socket.onHighestBid { [weak self] payload in
+            guard let self = self, self.roomMatches(payload) else { return }
+            if let amount = self.stringValue(from: payload["bid_amount"]) ??
+                            self.stringValue(from: payload["amount"]) {
+                self.highestBidLabel.text = "Highest bid $\(amount)"
+                self.highestBidLabel.isHidden = false
+            }
+        }
+
+        socket.onBidFinalized { [weak self] payload in
+            guard let self = self, self.roomMatches(payload) else { return }
+            self.bidTimerLabel.isHidden = true
+            if let winner = payload["user_name"] as? String,
+               let amount = self.stringValue(from: payload["bid_amount"]) {
+                self.appendSystemChat("\(winner) won at $\(amount)")
+            }
+        }
+
+        socket.onChat { [weak self] payload in
+            guard let self = self, self.roomMatches(payload) else { return }
+            let name = payload["user_name"] as? String ?? "User"
+            let message = payload["message"] as? String ?? ""
+            self.appendChat(name: name, message: message)
+        }
+
+        socket.onRaidReceived { [weak self] payload in
+            guard let self = self else { return }
+            self.appendSystemChat("Incoming raid from another show.")
+            if let targetRoom = payload["target_room_id"] as? String {
+                #if DEBUG
+                print("[WatchStream] raid target room: \(targetRoom)")
+                #endif
+            }
+        }
+
+        socket.onPollCreated { [weak self] payload in
+            self?.appendSystemChat("Poll started: \(payload["question"] as? String ?? "")")
+        }
+        socket.onPollUpdate { _ in /* TODO: vote count UI in M6 */ }
+        socket.onPollEnded { [weak self] _ in self?.appendSystemChat("Poll ended.") }
+
+        socket.onFreebie { [weak self] _ in self?.appendSystemChat("Freebie / randomizer running!") }
+        socket.onFreebieWinner { [weak self] payload in
+            if let name = payload["user_name"] as? String {
+                self?.appendSystemChat("\(name) won the freebie.")
+            }
+        }
+
+        socket.onTipSettingUpdated { [weak self] payload in
+            if let msg = payload["tip_message"] as? String, !msg.isEmpty {
+                self?.appendSystemChat("Tip note: \(msg)")
+            }
+        }
+
+        socket.onAuctionNextProduct { [weak self] payload in
+            if let title = (payload["product"] as? [String: Any])?["title"] as? String {
+                self?.appendSystemChat("Now selling: \(title)")
+            }
+        }
+
+        socket.onRoomEnded { [weak self] payload in
+            guard let self = self, self.roomMatches(payload) else { return }
+            self.appendSystemChat("Show ended.")
+        }
+    }
+
+    // MARK: Join/leave
+
+    private func joinEverything() {
+        guard let context = context else { return }
+        let socket = BidcastSocketManager.shared
+        socket.connect(userId: currentUserId.isEmpty ? "0" : currentUserId)
+        socket.emitJoinRoom(roomId: context.roomId, userId: currentUserId)
+
+        let agora = BidcastAgoraEngine.shared
+        agora.delegate = self
+        agora.configure(appId: context.agoraAppId)
+
+        let uid = UInt(currentUserId) ?? 0
+        agora.joinChannel(
+            token: context.rtcToken,
+            channel: context.roomId,
+            uid: uid,
+            role: .audience,
+            localVideoView: nil
+        )
+    }
+
+    private func leaveEverything() {
+        guard let context = context else { return }
+        let socket = BidcastSocketManager.shared
+        socket.emitLeaveRoom(roomId: context.roomId, userId: currentUserId)
+        BidcastAgoraEngine.shared.leaveChannel()
+    }
+
+    // MARK: Actions
+
+    @objc private func tappedClose() {
+        dismiss(animated: true)
+    }
+
+    @objc private func submitChat() {
+        guard let context = context else { return }
+        let text = (chatInput.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        BidcastSocketManager.shared.emitChat(
+            roomId: context.roomId,
+            userId: currentUserId,
+            userName: currentUserName,
+            userImage: currentUserImage,
+            message: text
+        )
+        chatInput.text = ""
+    }
+
+    // MARK: Helpers
+
+    private func roomMatches(_ payload: [String: Any]) -> Bool {
+        guard let context = context else { return false }
+        if let rid = payload["room_id"] as? String {
+            return rid == context.roomId
+        }
+        return true
+    }
+
+    private func stringValue(from any: Any?) -> String? {
+        if let s = any as? String { return s }
+        if let i = any as? Int { return String(i) }
+        if let d = any as? Double { return String(d) }
+        return nil
+    }
+
+    private func appendChat(name: String, message: String) {
+        chatMessages.append((name: name, message: message))
+        chatTableView.reloadData()
+        let last = chatMessages.count - 1
+        if last >= 0 {
+            chatTableView.scrollToRow(at: IndexPath(row: last, section: 0), at: .bottom, animated: true)
+        }
+    }
+
+    private func appendSystemChat(_ message: String) {
+        appendChat(name: "system", message: message)
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension WatchStreamViewController: UITableViewDataSource {
+
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        chatMessages.count
+    }
+
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "chatCell", for: indexPath)
+        let entry = chatMessages[indexPath.row]
+        cell.backgroundColor = .clear
+        cell.textLabel?.textColor = .white
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.attributedText = NSAttributedString(
+            string: "\(entry.name): \(entry.message)",
+            attributes: [
+                .foregroundColor: UIColor.white,
+                .font: UIFont.systemFont(ofSize: 13)
+            ]
+        )
+        return cell
+    }
+}
+
+// MARK: - BidcastAgoraEngineDelegate
+
+extension WatchStreamViewController: BidcastAgoraEngineDelegate {
+
+    public func agoraJoined(channel: String, uid: UInt) {
+        #if DEBUG
+        print("[WatchStream] agoraJoined channel=\(channel) uid=\(uid)")
+        #endif
+    }
+
+    public func agoraLeft(channel: String) {}
+
+    public func agoraRemoteJoined(uid: UInt) {
+        BidcastAgoraEngine.shared.bindRemoteView(uid: uid, into: remoteVideoView)
+    }
+
+    public func agoraRemoteLeft(uid: UInt) {
+        #if DEBUG
+        print("[WatchStream] remote left uid=\(uid)")
+        #endif
+    }
+
+    public func agoraError(_ error: String) {
+        appendSystemChat("stream error: \(error)")
+    }
+}
+
+// MARK: - UITextField helper
+
+private extension UITextField {
+    func setLeftPadding(_ amount: CGFloat) {
+        leftView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: frame.height))
+        leftViewMode = .always
+    }
+}

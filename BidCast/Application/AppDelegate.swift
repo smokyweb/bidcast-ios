@@ -36,6 +36,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         self.setupSVProgressHUD()
         self.configureFirebase()
+        // iOS parity Phase 4a (2026-04-22): Stripe SDK bootstrap. Reads the
+        // publishable key from Info.plist; no-op if the key still contains
+        // the TODO-TREY placeholder.
+        StripeService.shared.configure()
         self.registerForRemoteNotifications(application: application)
         // iOS parity phase 3i: install the Sell-tab swizzle so the empty
         // 29-line SellViewController stub embeds our real Phase 3 hub.

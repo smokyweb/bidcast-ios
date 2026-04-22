@@ -2,6 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- iOS parity Phase 4a (2026-04-22): Stripe publishable key. -->
+	<!-- TODO-TREY: replace with real Stripe publishable key from Stripe Dashboard (Developers → API keys → Publishable key). -->
+	<!-- Leave as pk_test_* for sandbox testing; flip to pk_live_* at go-live. -->
+	<key>STRIPE_PUBLISHABLE_KEY</key>
+	<string>pk_test_TODO_TREY_REPLACE</string>
+	<!-- iOS parity Phase 4m (2026-04-22): Deep linking URL scheme. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>io.bidcast</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>bidcast</string>
+			</array>
+		</dict>
+	</array>
+	<!-- iOS parity Phase 4m (2026-04-22): Universal Links associated domain. -->
+	<!-- TODO-TREY: Universal Links require an `apple-app-site-association` file at -->
+	<!-- https://bidcast.betaplanets.com/.well-known/apple-app-site-association with -->
+	<!-- appID `YQGQU3RV34.io.bidcast` and paths for /stream/*, /order/*, /chat/*, /profile/*. -->
+	<!-- The entitlements file has a `com.apple.developer.associated-domains` entry; enabling -->
+	<!-- Associated Domains capability in the Apple Developer portal is a one-click step. -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>
