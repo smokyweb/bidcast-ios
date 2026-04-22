@@ -1,0 +1,108 @@
+/*
+  Localizable.strings (Hindi — TODO-TREY: translate)
+  BidCast
+
+  iOS Parity Phase 7b: scaffold only. English keys + values copied from
+  en.lproj/Localizable.strings; translator should replace right-hand
+  strings with the Hindi equivalents. Keys match Android
+  app/src/main/res/values-hi/strings.xml where one exists.
+*/
+
+// // MARK: - App
+"app_name" = "BidCast";
+"ok" = "OK";
+"cancel" = "Cancel";
+"done" = "Done";
+"continue" = "Continue";
+"back" = "Back";
+"finish" = "Finish";
+"skip" = "Skip";
+"retry" = "Retry";
+// // MARK: - Tabs
+"tab_home" = "Home";
+"tab_explore" = "Explore";
+"tab_sell" = "Sell";
+"tab_activity" = "Activity";
+"tab_account" = "Account";
+// // MARK: - Auth
+"sign_in" = "Sign in";
+"sign_up" = "Sign up";
+"email" = "Email";
+"password" = "Password";
+"login" = "Login";
+"forgot_password" = "Forgot Password?";
+"create_account" = "Create Account";
+"new_user" = "New User?";
+// // MARK: - Live
+"live_now" = "Live Now";
+"watch_live_shows" = "Watch live shows";
+"go_live" = "Go Live";
+"bid" = "Bid";
+"place_bid" = "Place bid";
+"max_bid" = "Max bid";
+"set_max" = "Set max";
+"send_tip" = "Send tip";
+"tip_sent" = "Tip sent";
+"create_poll" = "Create Poll";
+"end_active_poll" = "End Active Poll";
+"tip_settings" = "Tip Settings";
+"randomizer" = "Randomizer";
+"raid_another_host" = "Raid Another Host";
+"skip_to_next_item" = "Skip to Next Item";
+"no_more_items_in_queue" = "No more items in the queue";
+"auction_closed_waiting" = "Auction is closed — waiting on next item.";
+"timer_ended_no_more_bids" = "Timer ended — no more bids accepted.";
+"bidding_disabled" = "Bidding is currently disabled.";
+"item_ended" = "This item has ended.";
+"bid_must_be_greater" = "Bid amount must be greater than the current highest bid.";
+"max_bid_set" = "Max bid set. Your bid will auto-increase only if someone else bids.";
+"reconnecting" = "Reconnecting...";
+"session_expired" = "Session expired";
+"session_expired_message" = "Please sign in again to continue.";
+// // MARK: - Activity / Orders
+"orders" = "Orders";
+"messages" = "Messages";
+"notifications" = "Notifications";
+"no_orders_yet" = "No orders yet";
+"no_messages_yet" = "No messages yet";
+"no_notifications_yet" = "No notifications yet";
+// // MARK: - Social
+"followers" = "Followers";
+"following" = "Following";
+"follow" = "Follow";
+"unfollow" = "Unfollow";
+"no_followers_yet" = "No followers yet";
+"no_following_yet" = "Not following anyone yet";
+// // MARK: - Shop
+"coupons" = "Coupons";
+"premier_shop" = "Premier Shop";
+"promoted_shows" = "Promoted Shows";
+"subscription_plans" = "Subscription Plans";
+// // MARK: - Checkout
+"checkout" = "Checkout";
+"subtotal" = "Subtotal";
+"total" = "Total";
+"shipping" = "Shipping";
+"tax" = "Tax";
+"place_order" = "Place Order";
+"order_placed" = "Order placed";
+"order_failed" = "Order failed";
+// // MARK: - Payments
+"wallet" = "Wallet";
+"payment_methods" = "Payment Methods";
+"add_card" = "Add Card";
+"kyc" = "Identity Verification";
+// // MARK: - Onboarding
+"onboarding_welcome_title" = "Welcome to BidCast";
+"onboarding_welcome_body" = "Join the live auction marketplace where creators sell, fans bid, and everyone has a blast.";
+"onboarding_bid_title" = "Bid + Tip in real time";
+"onboarding_bid_body" = "Place bids on live items and tip your favorite hosts — all while the show is running.";
+"onboarding_sell_title" = "Sell your own items";
+"onboarding_sell_body" = "Start your own live show, pin items, and watch offers roll in.";
+"onboarding_notify_title" = "Never miss a show";
+"onboarding_notify_body" = "Enable notifications so you know the moment your favorite hosts go live.";
+"onboarding_get_started" = "Get Started";
+// // MARK: - Errors
+"error_generic" = "Something went wrong. Please try again.";
+"error_network" = "Network error. Check your connection.";
+"error_auth" = "Please sign in to continue.";

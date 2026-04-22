@@ -781,21 +781,21 @@ public final class WatchStreamViewController: UIViewController {
         // ended locally (no-bid timer expiry) or server-side. Mirrors
         // Android WatchStreamFragment.attemptBid() in bfc09c4.
         guard !isBiddingClosed else {
-            appendSystemChat("This item has ended.")
+            appendSystemChat(L10n("item_ended"))
             return
         }
         // Server-side also enforces these, but we fail fast client-side too
         // so the host and viewer stay visually consistent.
         guard !auctionClosed else {
-            appendSystemChat("Auction is closed — waiting on next item.")
+            appendSystemChat(L10n("auction_closed_waiting"))
             return
         }
         guard allowBidForAll else {
-            appendSystemChat("Bidding is currently disabled.")
+            appendSystemChat(L10n("bidding_disabled"))
             return
         }
         guard lastBidTimerSeconds > 0 else {
-            appendSystemChat("Timer ended — no more bids accepted.")
+            appendSystemChat(L10n("timer_ended_no_more_bids"))
             return
         }
         let next = nextBidAmount()
