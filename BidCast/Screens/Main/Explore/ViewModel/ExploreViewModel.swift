@@ -19,6 +19,7 @@ protocol ExploreViewModelDelegate: AnyObject {
     func exploreDidStopLoading()
 }
 
+@MainActor
 final class ExploreViewModel {
 
     weak var delegate: ExploreViewModelDelegate?
@@ -75,11 +76,10 @@ final class ExploreViewModel {
 
     // MARK: - Categories
 
-    @MainActor
     private func fetchCategories() {
         Task {
             do {
-                let resp: GetCategoryResponse = try await APIManager.shared.request(
+                let resp: ExploreGetCategoryResponse = try await APIManager.shared.request(
                     type: APIEndPoint.getCategory,
                     header: true
                 )
@@ -96,7 +96,6 @@ final class ExploreViewModel {
 
     // MARK: - Products
 
-    @MainActor
     private func fetchProducts(reset: Bool) {
         guard !isFetchingProducts else { return }
         isFetchingProducts = true
@@ -113,7 +112,7 @@ final class ExploreViewModel {
                 self.delegate?.exploreDidStopLoading()
             }
             do {
-                let resp: GetProductsResponse = try await APIManager.shared.postMultipartForm(
+                let resp: ExploreGetProductsResponse = try await APIManager.shared.postMultipartForm(
                     type: APIEndPoint.getProducts,
                     fields: filter.formFields(),
                     header: true

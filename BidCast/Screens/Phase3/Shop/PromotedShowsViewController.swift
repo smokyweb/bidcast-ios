@@ -83,7 +83,7 @@ final class PromotedShowsViewController: P3ListViewController {
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.row < items.count else { return }
         guard let show = watchableShow(from: items[indexPath.row]) else { return }

@@ -6,32 +6,26 @@
 //
 //  Usage:
 //      L10n("place_bid")                     // "Place bid"
-//      L10n.string("no_more_items_in_queue") // same as above
-//      "place_bid".localized                 // String extension sugar
 //
 //  Keys live in BidCast/Resources/Localization/<locale>.lproj/Localizable.strings.
 //  Only en.lproj is fully populated for v1; the other 12 locales exist as
 //  scaffolds marked `TODO-TREY: translate`.
+//
+//  NOTE 2026-04-22: An earlier draft of this file defined BOTH an `enum L10n`
+//  wrapper AND a free `func L10n(_:comment:)`. Swift treats type and function
+//  names as the same identifier, so the two collided ("invalid redeclaration
+//  of 'L10n(_:comment:)'"). The draft also declared a `var localized` on
+//  String that collided with `String+Extension.swift`'s `func localized()`.
+//  Both collisions are resolved by keeping only the free L10n(…) function
+//  below and removing the enum / String extension wrappers — the only external
+//  callers use `L10n("key")` form.
+//
 
 import Foundation
 
-enum L10n {
-    /// Fetch a localized string by key from Localizable.strings.
-    /// Returns the key itself if no translation exists — making missing-key
-    /// bugs visible during QA.
-    static func string(_ key: String, comment: String = "") -> String {
-        NSLocalizedString(key, comment: comment)
-    }
-}
-
-/// Shortcut: `L10n("place_bid")` → `Place bid`
+/// Fetch a localized string by key from Localizable.strings.
+/// Returns the key itself if no translation exists — making missing-key
+/// bugs visible during QA.
 func L10n(_ key: String, comment: String = "") -> String {
-    L10n.string(key, comment: comment)
-}
-
-extension String {
-    /// Convenience for string-literal-first usage.
-    var localized: String {
-        L10n.string(self)
-    }
+    NSLocalizedString(key, comment: comment)
 }

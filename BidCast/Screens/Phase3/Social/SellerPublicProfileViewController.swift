@@ -156,7 +156,8 @@ final class SellerPublicProfileViewController: UIViewController {
             self.present(nav, animated: true)
         })
         actions.addArrangedSubview(navButton(title: "Followers / Following") { [weak self] in
-            self?.p3Push(FollowersListViewController())
+            guard let self = self else { return }
+            self.p3Push(FollowersListViewController(userId: self.userId, kind: .followers))
         })
         actions.addArrangedSubview(navButton(title: "Shop this seller") { [weak self] in
             // Phase 3f already fetches `isFollowing` / sold-count etc. here.

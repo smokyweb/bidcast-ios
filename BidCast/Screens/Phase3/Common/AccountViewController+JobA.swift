@@ -59,7 +59,7 @@ final class JobAAccountMenuViewController: UIViewController, UITableViewDataSour
         ]),
         Section(title: "Community", rows: [
             Row(title: "Followers / Following", icon: "person.2",
-                make: { FollowersListViewController() }),
+                make: { FollowersListViewController(userId: UserDefaults.loggedInUserId, kind: .followers) }),
             Row(title: "Affiliate Program", icon: "gift",
                 make: { AffiliateViewController() }),
             Row(title: "Find people", icon: "magnifyingglass",

@@ -10,12 +10,21 @@
 //  `api/get-category`). Keeping the field set tolerant (all optional) so the
 //  UI does not crash when the backend omits a field.
 //
+//  NOTE 2026-04-22: the parity work (Phase 2c/2g) introduced canonical
+//  `GetProductsResponse` / `GetCategoryResponse` names in
+//  `BidCast/Models/Product/ProductResponses.swift` and
+//  `BidCast/Models/Shop/ShopModels.swift`. To avoid symbol collisions while
+//  keeping the Explore feature compiling against its existing `ProductModel` /
+//  `CategoryModel` shapes, the Explore-specific response types are renamed
+//  with an `Explore` prefix here. Call sites in ExploreViewModel updated to
+//  match.
+//
 
 import Foundation
 
 // MARK: - Product list response
 
-struct GetProductsResponse: Codable {
+struct ExploreGetProductsResponse: Codable {
     let status: String?
     let message: String?
     let errorType: String?
@@ -86,7 +95,7 @@ struct ProductUserRef: Codable {
 
 // MARK: - Category list response
 
-struct GetCategoryResponse: Codable {
+struct ExploreGetCategoryResponse: Codable {
     let status: String?
     let message: String?
     let errorType: String?

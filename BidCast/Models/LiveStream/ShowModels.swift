@@ -319,12 +319,12 @@ struct TipEntry: Codable, Identifiable, Hashable {
 
 // MARK: - Live chat (Firebase-backed ZIM/ChatModel)
 
-struct LiveChatMessage: Codable, Hashable {
-    let userId: String?
-    let userName: String?
-    let userImage: String?
-    let message: String?
-}
+// NOTE 2026-04-22: the former lightweight `LiveChatMessage` stub here collided
+// with the Phase 5 parity version in `BidCast/Live/Chat/LiveChatMessage.swift`
+// (richer model with Kind enum + `fromChatPayload` + `LiveChatBuffer`).
+// The Phase 5 version is what the view controllers / cells actually use, so
+// the stub has been removed. If a Firebase-backed lightweight wire model is
+// needed later, add it under a distinct name (e.g. `LiveChatWire`).
 
 // MARK: - Poll / Randomizer / Raid (local UI state models)
 
