@@ -10,6 +10,7 @@
 		0409B15DCA17089AD1E807E4 /* Pods_BidCast_BidCastUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2DF41002CD8D163CFB8F0 /* Pods_BidCast_BidCastUITests.framework */; };
 		046546A8946BA2F51B2A7FB9 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D444074ABC55F3F88244296 /* ExploreViewModel.swift */; };
 		05DA4E9DBDF6A517B5B4CC7E /* ExploreProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */; };
+		130D45EB9815AD92B10F8081 /* APIManager+AuditNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */; };
 		201130344F8E2F62583D8D33 /* Pods_BidCast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */; };
 		2F171C614638B60B62FA5711 /* Pods_BidCastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */; };
 		35062E052DCB3D0C006C0BCE /* LabelCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35062E042DCB3D0C006C0BCE /* LabelCollectionCell.xib */; };
@@ -396,6 +397,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "APIManager+AuditNotes.swift"; path = "BidCast/Helper/APIManager+AuditNotes.swift"; sourceTree = SOURCE_ROOT; };
 		14371208B2B8B28094D4C90E /* Pods-BidCast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.debug.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.debug.xcconfig"; sourceTree = "<group>"; };
 		26204AEEBBD60E3A4ADC36BE /* ProductFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductFilter.swift; path = BidCast/Screens/Main/Explore/Model/ProductFilter.swift; sourceTree = SOURCE_ROOT; };
 		35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectionCell.swift; sourceTree = "<group>"; };
@@ -920,6 +922,7 @@
 				B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */,
 				D3444379BBFEAFC243CD33C2 /* GoogleService-Info.plist */,
 				5ABF4CD48836189A44DC348D /* BidCast.entitlements */,
+				08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2912,6 +2915,7 @@
 				E84E4DF781DD0373962631C2 /* FilterViewController.swift in Sources */,
 				05DA4E9DBDF6A517B5B4CC7E /* ExploreProductCell.swift in Sources */,
 				A1E547D296B891C5BD7CE504 /* ExploreCategoryChipCell.swift in Sources */,
+				130D45EB9815AD92B10F8081 /* APIManager+AuditNotes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
