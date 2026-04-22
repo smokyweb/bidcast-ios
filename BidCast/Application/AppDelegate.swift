@@ -48,7 +48,73 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         JobAHomeSwizzle.installIfNeeded()
         JobAActivitySwizzle.installIfNeeded()
         JobAAccountSwizzle.installIfNeeded()
+        // Phase 7i (2026-04-22): wire the .bidcastLiveAuthExpired notification
+        // so any 401/403 from the live-stream socket or HTTP layer kicks the
+        // user back to sign-in. Phase 5 published the notification from
+        // LiveAuthGuard; this is the app-wide listener.
+        self.observeLiveAuthExpired()
         return true
+    }
+
+    // MARK: - Phase 7i: live auth-expired observer
+
+    private var liveAuthExpiredObserver: NSObjectProtocol?
+
+    private func observeLiveAuthExpired() {
+        liveAuthExpiredObserver = NotificationCenter.default.addObserver(
+            forName: .bidcastLiveAuthExpired,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.presentSessionExpiredAlert()
+        }
+    }
+
+    private func presentSessionExpiredAlert() {
+        guard let topVC = Self.topMostViewController() else { return }
+        // Avoid stacking duplicate alerts if multiple 401s fire at once.
+        if topVC is UIAlertController { return }
+        let alert = UIAlertController(
+            title: L10n("session_expired"),
+            message: L10n("session_expired_message"),
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n("ok"), style: .default) { [weak self] _ in
+            self?.navigateToSignIn()
+        })
+        topVC.present(alert, animated: true)
+    }
+
+    private static func topMostViewController(base: UIViewController? = nil) -> UIViewController? {
+        let root = base ?? UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+            .first?.rootViewController
+        if let nav = root as? UINavigationController {
+            return topMostViewController(base: nav.visibleViewController)
+        }
+        if let tab = root as? UITabBarController {
+            return topMostViewController(base: tab.selectedViewController)
+        }
+        if let presented = root?.presentedViewController {
+            return topMostViewController(base: presented)
+        }
+        return root
+    }
+
+    private func navigateToSignIn() {
+        // Clear any cached session; storyboard-based SceneDelegate owns the
+        // actual root-swap on SignIn. For now, dismiss any presented modals
+        // and instantiate the Onboardings storyboard as root.
+        _ = KeychainHelper.delete(forKey: "authToken")
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+            .first ?? self.window
+        guard let window = window else { return }
+        window.rootViewController?.dismiss(animated: false)
+        let storyboard = UIStoryboard(name: "Onboardings", bundle: nil)
+        if let signIn = storyboard.instantiateInitialViewController() {
+            window.rootViewController = signIn
+        }
     }
 
     func setupSVProgressHUD(){

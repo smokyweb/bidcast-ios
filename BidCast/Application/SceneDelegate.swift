@@ -18,6 +18,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         self.navigateToLandingScreen()
+        // Phase 7c (2026-04-22): present onboarding carousel on first launch.
+        // No-op if already completed (tracked via UserDefaults).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            guard let root = self?.window?.rootViewController else { return }
+            OnboardingCarouselViewController.presentIfNeeded(from: root)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

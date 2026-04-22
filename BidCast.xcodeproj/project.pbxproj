@@ -386,6 +386,7 @@
 		B79C4717992385B832C122DF /* CreatePollSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8F49698526C1BF44053E04 /* CreatePollSheet.swift */; };
 		BA964053ACE92B91FC5628DC /* SellerReviewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF747379397AD318120AB24 /* SellerReviewsViewController.swift */; };
 		BC114CBD817A6AD994C25741 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DA7440BCA5163DAC71F4A501 /* Localizable.strings */; };
+		BE424CF4A6E3DEF1D3D4E5C4 /* OnboardingCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DC4B06968BA2C871E7FDAE /* OnboardingCarouselViewController.swift */; };
 		BFA647F1A9D2E24127E536B4 /* LiveChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C645D1B25E8492D6844357 /* LiveChatMessage.swift */; };
 		C10642D29CA2980B5D4522CB /* AccountViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70043368BF81CF5C3FFB83E /* AccountViewController+JobA.swift */; };
 		C2DE4414A6B995B7A6136BE5 /* HomeViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AB4CA99C7E8B488B9ACCF6 /* HomeViewController+JobA.swift */; };
@@ -495,6 +496,7 @@
 		13964D5D936229853B559B40 /* AuthModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthModels.swift; path = BidCast/Models/Auth/AuthModels.swift; sourceTree = SOURCE_ROOT; };
 		14371208B2B8B28094D4C90E /* Pods-BidCast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.debug.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.debug.xcconfig"; sourceTree = "<group>"; };
 		18BE4AC0BF4EE35CA0926F0F /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeepLinkRouter.swift; path = BidCast/Services/DeepLink/DeepLinkRouter.swift; sourceTree = SOURCE_ROOT; };
+		18DC4B06968BA2C871E7FDAE /* OnboardingCarouselViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingCarouselViewController.swift; path = BidCast/Screens/Onboarding/OnboardingCarouselViewController.swift; sourceTree = SOURCE_ROOT; };
 		1C8B42CE98AE667B27B558E2 /* ConversationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConversationListViewController.swift; path = BidCast/Screens/Phase3/Chat/ConversationListViewController.swift; sourceTree = SOURCE_ROOT; };
 		1CD549688A494109280A7C84 /* AgoraTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AgoraTokenService.swift; path = BidCast/Live/Services/AgoraTokenService.swift; sourceTree = SOURCE_ROOT; };
 		1F9B41C38C8EF3CD46A3BB8D /* TutorialsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TutorialsListViewController.swift; path = BidCast/Screens/Phase3/HelpSettings/TutorialsListViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1181,6 +1183,7 @@
 				78AA442CBE70B435C24989AD /* AnalyticsService.swift */,
 				3A524D6197BF88B3E1DE9A8A /* L10n.swift */,
 				DA7440BCA5163DAC71F4A501 /* Localizable.strings */,
+				18DC4B06968BA2C871E7FDAE /* OnboardingCarouselViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3272,6 +3275,7 @@
 				713244BDA80DDB3B4B980341 /* RandomizerWinnerBanner.swift in Sources */,
 				35AC46608F43067F88E5DA9F /* AnalyticsService.swift in Sources */,
 				92AB411CA35DC4863FE8E415 /* L10n.swift in Sources */,
+				BE424CF4A6E3DEF1D3D4E5C4 /* OnboardingCarouselViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
