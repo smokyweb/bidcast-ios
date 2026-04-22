@@ -131,7 +131,9 @@ public final class HostPublisherViewController: UIViewController {
 
     // MARK: State
     private var isMuted = false
-    private var chatMessages: [(String, String)] = []
+    /// Bounded chat buffer (200-msg cap + dedup by message id) shared with
+    /// the viewer path (LiveChatBuffer, see Live/Chat/LiveChatMessage.swift).
+    private let chatBuffer = LiveChatBuffer(capacity: 200)
     private var currentPinnedProductId: String?
     private var currentPinnedProductTitle: String?
     private var lastBidTimerSeconds: Int = -1
@@ -202,7 +204,7 @@ public final class HostPublisherViewController: UIViewController {
         ])
 
         chatTableView.dataSource = self
-        chatTableView.register(UITableViewCell.self, forCellReuseIdentifier: "hostChatCell")
+        chatTableView.register(LiveChatMessageCell.self, forCellReuseIdentifier: LiveChatMessageCell.reuseId)
     }
 
     private func setupActions() {
@@ -278,10 +280,11 @@ public final class HostPublisherViewController: UIViewController {
 
         socket.onChat { [weak self] payload in
             guard let self = self, self.roomMatches(payload) else { return }
-            let name = payload["user_name"] as? String ?? "User"
-            let message = payload["message"] as? String ?? ""
-            self.chatMessages.append((name, message))
-            self.chatTableView.reloadData()
+            let msg = LiveChatMessage.fromChatPayload(payload)
+            if self.chatBuffer.append(msg) {
+                self.chatTableView.reloadData()
+                self.scrollChatToBottom()
+            }
         }
 
         socket.onAuctionStarted { [weak self] _ in
@@ -494,25 +497,26 @@ public final class HostPublisherViewController: UIViewController {
     }
 
     private func appendSystem(_ message: String) {
-        chatMessages.append(("system", message))
-        chatTableView.reloadData()
-        let last = chatMessages.count - 1
-        if last >= 0 {
-            chatTableView.scrollToRow(at: IndexPath(row: last, section: 0), at: .bottom, animated: true)
+        if chatBuffer.append(.system(message)) {
+            chatTableView.reloadData()
+            scrollChatToBottom()
         }
+    }
+
+    private func scrollChatToBottom() {
+        let last = chatBuffer.messages.count - 1
+        guard last >= 0 else { return }
+        chatTableView.scrollToRow(at: IndexPath(row: last, section: 0), at: .bottom, animated: false)
     }
 }
 
 extension HostPublisherViewController: UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { chatMessages.count }
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        chatBuffer.messages.count
+    }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "hostChatCell", for: indexPath)
-        let item = chatMessages[indexPath.row]
-        cell.backgroundColor = .clear
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.textColor = .white
-        cell.textLabel?.font = .systemFont(ofSize: 13)
-        cell.textLabel?.text = "\(item.0): \(item.1)"
+        let cell = tableView.dequeueReusableCell(withIdentifier: LiveChatMessageCell.reuseId, for: indexPath) as! LiveChatMessageCell
+        cell.configure(with: chatBuffer.messages[indexPath.row])
         return cell
     }
 }

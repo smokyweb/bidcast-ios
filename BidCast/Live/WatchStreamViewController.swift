@@ -160,7 +160,9 @@ public final class WatchStreamViewController: UIViewController {
     }()
 
     // MARK: State
-    private var chatMessages: [(name: String, message: String)] = []
+    /// Bounded chat buffer (200-msg cap + dedup by message id).
+    /// See BidCast/Live/Chat/LiveChatMessage.swift.
+    private let chatBuffer = LiveChatBuffer(capacity: 200)
     private var currentProductId: String?
     private var currentHighestBidAmount: Double = 0
     private var startingBidAmount: Double = 0
@@ -264,7 +266,7 @@ public final class WatchStreamViewController: UIViewController {
         ])
 
         chatTableView.dataSource = self
-        chatTableView.register(UITableViewCell.self, forCellReuseIdentifier: "chatCell")
+        chatTableView.register(LiveChatMessageCell.self, forCellReuseIdentifier: LiveChatMessageCell.reuseId)
     }
 
     private func setupActions() {
@@ -361,9 +363,8 @@ public final class WatchStreamViewController: UIViewController {
 
         socket.onChat { [weak self] payload in
             guard let self = self, self.roomMatches(payload) else { return }
-            let name = payload["user_name"] as? String ?? "User"
-            let message = payload["message"] as? String ?? ""
-            self.appendChat(name: name, message: message)
+            let msg = LiveChatMessage.fromChatPayload(payload)
+            self.appendChatMessage(msg)
         }
 
         socket.onRaidReceived { [weak self] payload in
@@ -688,16 +689,26 @@ public final class WatchStreamViewController: UIViewController {
     }
 
     private func appendChat(name: String, message: String) {
-        chatMessages.append((name: name, message: message))
+        let m = LiveChatMessage(
+            senderName: name,
+            senderImage: nil,
+            body: message
+        )
+        appendChatMessage(m)
+    }
+
+    private func appendChatMessage(_ message: LiveChatMessage) {
+        let added = chatBuffer.append(message)
+        if !added { return }
         chatTableView.reloadData()
-        let last = chatMessages.count - 1
+        let last = chatBuffer.messages.count - 1
         if last >= 0 {
-            chatTableView.scrollToRow(at: IndexPath(row: last, section: 0), at: .bottom, animated: true)
+            chatTableView.scrollToRow(at: IndexPath(row: last, section: 0), at: .bottom, animated: false)
         }
     }
 
     private func appendSystemChat(_ message: String) {
-        appendChat(name: "system", message: message)
+        appendChatMessage(.system(message))
     }
 }
 
@@ -706,22 +717,12 @@ public final class WatchStreamViewController: UIViewController {
 extension WatchStreamViewController: UITableViewDataSource {
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        chatMessages.count
+        chatBuffer.messages.count
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "chatCell", for: indexPath)
-        let entry = chatMessages[indexPath.row]
-        cell.backgroundColor = .clear
-        cell.textLabel?.textColor = .white
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.attributedText = NSAttributedString(
-            string: "\(entry.name): \(entry.message)",
-            attributes: [
-                .foregroundColor: UIColor.white,
-                .font: UIFont.systemFont(ofSize: 13)
-            ]
-        )
+        let cell = tableView.dequeueReusableCell(withIdentifier: LiveChatMessageCell.reuseId, for: indexPath) as! LiveChatMessageCell
+        cell.configure(with: chatBuffer.messages[indexPath.row])
         return cell
     }
 }
