@@ -48,6 +48,32 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<!-- QA-FIX-cmoafjxce002xzl1hgb5uj1l8 (2026-04-22): TestFlight build was crashing on launch -->
+	<!-- with EXC_CRASH because the binary links AVFoundation/Photos APIs (Agora SDK, Kingfisher, -->
+	<!-- CropViewController, ProfileViewController) without declaring the required NS*UsageDescription -->
+	<!-- keys. App Store validation lets the build through, but iOS TCC kills the app immediately -->
+	<!-- when it detects the privacy-relevant symbols. Add the full set now so the app launches -->
+	<!-- regardless of which screen is entered first. -->
+	<key>NSCameraUsageDescription</key>
+	<string>BidCast uses the camera so you can go live, stream auctions, capture product photos, update your profile picture, and scan payment cards.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>BidCast uses the microphone so you can go live and talk to viewers during auctions.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>BidCast uses your photo library so you can upload product images and set your profile picture.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>BidCast saves images you capture or download inside the app to your photo library.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>BidCast optionally uses your contacts to help you invite friends to live shows.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>BidCast uses your location to tailor shipping estimates and nearby live shows.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>BidCast uses Face ID to keep your account secure and speed up sign-in.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>BidCast uses tracking data to improve live show recommendations and relevant promotions.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>BidCast uses Bluetooth so audio can play on connected headphones or speakers during live shows.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>BidCast uses Bluetooth so audio can play on connected headphones or speakers during live shows.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Outfit-Bold.ttf</string>
