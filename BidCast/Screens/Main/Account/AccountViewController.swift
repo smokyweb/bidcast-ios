@@ -361,8 +361,7 @@ extension AccountViewController{
         let domain = Bundle.main.bundleIdentifier!
         UserDefaults.standard.removePersistentDomain(forName: domain)
         UserDefaults.standard.synchronize()
-        IAPManager.shared.removeAllUnfinishedTransactions()
-        ReceiptManager.shared.clearReceipt()
+        // iOS parity phase 1: removed IAPManager + ReceiptManager calls (StoreKit IAP template cruft)
     }
 }
 

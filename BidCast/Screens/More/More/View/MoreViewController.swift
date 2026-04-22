@@ -118,7 +118,7 @@ class MoreViewController: UIViewController {
     //MARK: - didTap.
     func didTap(index:Int){
         if index == 0{
-            self.pushVC(with: OurSubscriptionViewController.self, storyboardName: .main)
+            // iOS parity phase 1: subscription flow removed (template cruft — Bidcast has no subscription model)
         }else if index == 1{
             sceneDel.navigateToLandingScreen()
         }else if index == 2{
@@ -332,8 +332,7 @@ extension MoreViewController{
         let domain = Bundle.main.bundleIdentifier!
         UserDefaults.standard.removePersistentDomain(forName: domain)
         UserDefaults.standard.synchronize()
-        IAPManager.shared.removeAllUnfinishedTransactions()
-        ReceiptManager.shared.clearReceipt()
+        // iOS parity phase 1: removed IAPManager + ReceiptManager calls (StoreKit IAP template cruft)
     }
 }
 

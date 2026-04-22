@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func setupSVProgressHUD(){
-        IAPManager.shared.removeAllUnfinishedTransactions()
+        // iOS parity phase 1: removed IAPManager call (StoreKit IAP was WellGenius template cruft, not a Bidcast feature)
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)
         SVProgressHUD.setDefaultAnimationType(.flat)

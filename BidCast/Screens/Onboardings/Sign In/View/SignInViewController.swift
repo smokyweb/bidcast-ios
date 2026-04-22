@@ -272,7 +272,7 @@ extension SignInViewController {
                         //success API Response
                         SVProgressHUD.dismiss()
                         self.rememberUserCredentials()
-                        IAPManager.shared.removeAllUnfinishedTransactions()
+                        // iOS parity phase 1: removed IAPManager call (StoreKit IAP template cruft)
                         self.saveUserDetails(data: self.signInviewModel.signInDict?.data)
                         self.signInviewModel.requestType = .none
                     case .failure:

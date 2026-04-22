@@ -226,9 +226,9 @@ extension TermAndConditionViewController: UITableViewDelegate, UITableViewDataSo
             cell.didTapSum = { [weak self] sender in
                 guard let self = self else { return }
                 if UserDefaults.isAgreeTermAndCondition{
-                    self.pushVCWithValue(with: OurSubscriptionViewController.self, storyboardName: .main) { value in
-                         value.isNavFrom = AppString.navigateFrom.signUp
-                     }
+                    // iOS parity phase 1: removed OurSubscription navigation (template cruft).
+                    // TODO(phase 2): route to real post-signup landing (TabBar or interests/onboarding).
+                    sceneDel.navigateToLandingScreen()
                  }else{
                      Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.agreeTermAndCondition)
                  }
@@ -307,9 +307,9 @@ extension TermAndConditionViewController: UserServices {
                     SVProgressHUD.dismiss()
                     self.saveUserDetails()
                     self.signUpviewModel.requestType = .none
-                    self.pushVCWithValue(with: OurSubscriptionViewController.self, storyboardName: .main) { value in
-                        value.isNavFrom = AppString.navigateFrom.signUp
-                    }
+                    // iOS parity phase 1: removed OurSubscription navigation (template cruft).
+                    // TODO(phase 2): route to interests onboarding before landing screen.
+                    sceneDel.navigateToLandingScreen()
                 }
             case .failure:
                 SVProgressHUD.dismiss()
@@ -371,10 +371,9 @@ extension TermAndConditionViewController{
         options.pullBarHeight = Height_30
         vc.firstBtnClosure = {
             self.dismiss(animated: true)
-            //go to welcome page
-            self.pushVCWithValue(with: OurSubscriptionViewController.self, storyboardName: .main) { value in
-                value.isNavFrom = AppString.navigateFrom.signUp
-            }
+            // iOS parity phase 1: removed OurSubscription navigation (template cruft).
+            // TODO(phase 2): route to real post-signup landing screen.
+            sceneDel.navigateToLandingScreen()
         }
         let sheet = SheetViewController(controller: vc, sizes: [UIDevice.current.hasNotch ? .percent(0.40) : .percent(0.50)], options: options)
         sheet.cornerRadius = Corner_32
