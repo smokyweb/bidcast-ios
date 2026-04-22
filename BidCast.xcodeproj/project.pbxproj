@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00F845A787A1EEC1FAE430F3 /* PaymentMethodsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081146E1A428AFA7FFD3CBF9 /* PaymentMethodsListViewController.swift */; };
 		0409B15DCA17089AD1E807E4 /* Pods_BidCast_BidCastUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2DF41002CD8D163CFB8F0 /* Pods_BidCast_BidCastUITests.framework */; };
 		046546A8946BA2F51B2A7FB9 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D444074ABC55F3F88244296 /* ExploreViewModel.swift */; };
 		05DA4E9DBDF6A517B5B4CC7E /* ExploreProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */; };
@@ -356,6 +357,7 @@
 		9DA74D569746ACB06735FBCF /* ScheduledShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F54B929412273E39092D83 /* ScheduledShowsViewController.swift */; };
 		A1E547D296B891C5BD7CE504 /* ExploreCategoryChipCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */; };
 		A2504983A1F7108A8A8DCCD7 /* SellerHubContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */; };
+		A29645D3B33AB3D8E006B8AE /* AddCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C284B8599DCFDF93DB9DAC5 /* AddCardViewController.swift */; };
 		AAE04D7B8120C24CC2FE2628 /* PromotedShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A84D77880AB9168013066D /* PromotedShowsViewController.swift */; };
 		AC454D4EAF8AFC1FFCE7ECC0 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92854237A9CA66B04D7E19B4 /* NotificationCell.swift */; };
 		B29B454CB9EE3799CA7D5AE9 /* ConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8B42CE98AE667B27B558E2 /* ConversationListViewController.swift */; };
@@ -452,6 +454,7 @@
 
 /* Begin PBXFileReference section */
 		01844DDBA35802C1E02493C6 /* OrderDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OrderDetailViewController.swift; path = BidCast/Screens/Phase3/Orders/OrderDetailViewController.swift; sourceTree = SOURCE_ROOT; };
+		081146E1A428AFA7FFD3CBF9 /* PaymentMethodsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentMethodsListViewController.swift; path = BidCast/Screens/Phase4/Payments/PaymentMethodsListViewController.swift; sourceTree = SOURCE_ROOT; };
 		08A34CE6A715705FA77369A8 /* APIManager+AuditNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "APIManager+AuditNotes.swift"; path = "BidCast/Helper/APIManager+AuditNotes.swift"; sourceTree = SOURCE_ROOT; };
 		09A743B5B26F1614C6AE7CAE /* ProductResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductResponses.swift; path = BidCast/Models/Product/ProductResponses.swift; sourceTree = SOURCE_ROOT; };
 		0ED04FC3989273E1A6F2FE11 /* Phase3Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Phase3Common.swift; path = BidCast/Screens/Phase3/Common/Phase3Common.swift; sourceTree = SOURCE_ROOT; };
@@ -531,6 +534,7 @@
 		83884B90A073FBD3258B7EEE /* PayoutRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayoutRequestViewController.swift; path = BidCast/Screens/Phase4/Wallet/PayoutRequestViewController.swift; sourceTree = SOURCE_ROOT; };
 		8A034562ACE667390C6BDD32 /* APIEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = APIEnvelope.swift; path = BidCast/Models/Common/APIEnvelope.swift; sourceTree = SOURCE_ROOT; };
 		8A624AA29C26911A26CB6496 /* OrderModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OrderModels.swift; path = BidCast/Models/Order/OrderModels.swift; sourceTree = SOURCE_ROOT; };
+		8C284B8599DCFDF93DB9DAC5 /* AddCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AddCardViewController.swift; path = BidCast/Screens/Phase4/Payments/AddCardViewController.swift; sourceTree = SOURCE_ROOT; };
 		8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BidCast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		916B49EB83DA44790C103CB7 /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationSettingsViewController.swift; path = BidCast/Screens/Phase3/Notifications/NotificationSettingsViewController.swift; sourceTree = SOURCE_ROOT; };
 		92854237A9CA66B04D7E19B4 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationCell.swift; path = BidCast/Screens/Phase3/Notifications/NotificationCell.swift; sourceTree = SOURCE_ROOT; };
@@ -1085,6 +1089,8 @@
 				6B9D4CDA8BDD3AC963D9AE13 /* UserSearchViewController.swift */,
 				4B404496A60F2953D0A82C18 /* StripeService.swift */,
 				83884B90A073FBD3258B7EEE /* PayoutRequestViewController.swift */,
+				8C284B8599DCFDF93DB9DAC5 /* AddCardViewController.swift */,
+				081146E1A428AFA7FFD3CBF9 /* PaymentMethodsListViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3132,6 +3138,8 @@
 				07314BFEA1543196212E604B /* UserSearchViewController.swift in Sources */,
 				D3424FC1B4B4BD1F424C66AC /* StripeService.swift in Sources */,
 				22924A679ED75626AA8EF14A /* PayoutRequestViewController.swift in Sources */,
+				A29645D3B33AB3D8E006B8AE /* AddCardViewController.swift in Sources */,
+				00F845A787A1EEC1FAE430F3 /* PaymentMethodsListViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
