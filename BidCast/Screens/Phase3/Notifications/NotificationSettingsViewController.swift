@@ -120,7 +120,9 @@ extension SettingStoreRequest {
             activityStatus: nil, directMessage: nil, enableClips: nil,
             enablePrivateEntry: nil, hapticFeedback: nil, receiveGifts: nil,
             savePastShows: nil, showRewardStatus: nil, showSellerTools: nil,
-            suggestMyAccount: nil
+            suggestMyAccount: nil, syncPhoneContacts: nil,
+            countryOfResidence: nil, instruction: nil, freeShipping: nil,
+            shippingAddressId: nil
         )
     }
 }
