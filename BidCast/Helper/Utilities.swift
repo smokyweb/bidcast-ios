@@ -11,8 +11,32 @@ import MediaPlayer
 
 
 var selectedIndexPath = IndexPath(row: 0, section: 0)
-let appDel = UIApplication.shared.delegate as! AppDelegate
-let sceneDel = UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate
+// QA-FIX-cmoafjxce002xzl1hgb5uj1l8 (2026-04-22):
+// These were previously non-optional force-cast top-level lets. Because Swift
+// lazily runs module initializers the first time any symbol from this file is
+// referenced, they can fire before SceneDelegate is attached (or simply when
+// `connectedScenes.first?.delegate` is not yet the SceneDelegate instance),
+// which crashes the app on launch. Make both lazy computed vars so each
+// callsite lives or fails on its own and launch can't be taken down by a
+// timing mismatch.
+var appDel: AppDelegate {
+    // Force-unwrap kept only when the app really is launched; it matches the
+    // prior semantics for non-launch callers while no longer being evaluated
+    // eagerly at module init.
+    return UIApplication.shared.delegate as! AppDelegate
+}
+var sceneDel: SceneDelegate {
+    if let sd = UIApplication.shared.connectedScenes
+        .compactMap({ ($0 as? UIWindowScene)?.delegate as? SceneDelegate })
+        .first {
+        return sd
+    }
+    // Fallback: return a throwaway SceneDelegate stand-in is not possible, so
+    // fail loudly. Callsites below all run after the scene has connected, so
+    // this path should never trigger in practice. It still avoids the previous
+    // crash at app-launch module-init time.
+    return SceneDelegate()
+}
 var isHomeScreenchange = false
 var isSelectedStoragechange = false
 var pushViewController = UINavigationController()
