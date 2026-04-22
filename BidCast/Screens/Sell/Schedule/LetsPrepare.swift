@@ -420,7 +420,7 @@ struct LetsPrepare: View {
         if response?.status == "success"{
             productIds = response?.data.product_ids ?? []
             showId = "\(response?.data.id ?? 0)"
-            print("showID \(self.showId)")
+            print("showID \(self.showId)/n \(response?.data ?? HomeModel())")
             showsData = response?.data ?? HomeModel()
             alertType = .sheetType(
                 icon: .success,

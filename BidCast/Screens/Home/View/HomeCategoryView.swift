@@ -65,9 +65,9 @@ struct HomeCategoryCardView: View {
                     .font(.custom(poppinsSemiBold, size: 12))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
-                    .lineLimit(2)
+                    .lineLimit(3)
                     .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
                     .padding(.horizontal, 8)
                 
             } else {
@@ -78,7 +78,9 @@ struct HomeCategoryCardView: View {
                             .font(.custom(poppinsSemiBold, size: 12))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
-                            .lineLimit(2)
+                            .lineLimit(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
                             .padding(.top, 10)
                         
                         Spacer()
@@ -96,7 +98,9 @@ struct HomeCategoryCardView: View {
                         .font(.custom(poppinsSemiBold, size: 12))
                         .foregroundColor(.black)
                         .multilineTextAlignment(.center)
-                        .lineLimit(2)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
                         .padding(.top, 8)
                     
                     Spacer(minLength: 0)
@@ -125,7 +129,7 @@ struct HomeCategoryCardView: View {
             }
             
         }
-        .frame(width: 90, height: 120, alignment: .top)
+        .frame(width: 90, height: 140, alignment: .top)
 //        .background(backgroundView)
         .background(
             LinearGradient(

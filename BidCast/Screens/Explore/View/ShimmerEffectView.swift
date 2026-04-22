@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CategoryCardFullShimmerView: View {
     var width: CGFloat = 110
-    var height: CGFloat = 150
+    var height: CGFloat = 170
     var backgroundColor: Color = Color.gray.opacity(0.1)
     var cornerRadius: CGFloat = 14
     var body: some View {

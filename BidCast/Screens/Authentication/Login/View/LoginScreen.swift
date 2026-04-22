@@ -181,9 +181,10 @@ struct LoginScreen: View {
                             print("Tapped:", selected)
                             selectedTab = ""
                             if selected == item[0]{
-                                navigateToPrivacy = true
+                                openURL("https://backend.bidcast.betaplanets.com/privacy-policy")
                             }else{
-                                navigateToTerms = true
+                           openURL("https://backend.bidcast.betaplanets.com/terms-condition")
+                           
                             }
                         }
                         Spacer()
@@ -244,6 +245,12 @@ struct LoginScreen: View {
                     }
                 }
             }
+    }
+    
+    private func openURL(_ urlString: String) {
+        if let url = URL(string: urlString) {
+            UIApplication.shared.open(url)
+        }
     }
     
     func success() async {

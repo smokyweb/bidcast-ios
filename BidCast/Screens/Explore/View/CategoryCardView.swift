@@ -27,10 +27,10 @@ struct CategoryCardView: View {
             Text(title)
                 .font(.custom(poppinsSemiBold, size: 12))
                 .foregroundColor(.black)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
                 .padding(.horizontal, 8)
                 .padding(.top, 8)
 
@@ -60,7 +60,7 @@ struct CategoryCardView: View {
             .padding(.horizontal, 8)
             .padding(.bottom, 8)
         }
-        .frame(width: 110, height: 160, alignment: .top)
+        .frame(width: 110, height: 170, alignment: .top)
 //        .background(Color.white)
 //        .cornerRadius(14)
 //        .shadow(color: Color.black.opacity(0.32),

@@ -1420,7 +1420,7 @@ struct RehearsalScreen: View {
                         .cornerRadius(32)
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 20)
+                .padding(.bottom, 30)
             }
             
         }
@@ -1775,7 +1775,7 @@ struct RehearsalScreen: View {
             self.joinAgoraChannelIfNeeded()
             self.categoryid = "\(data.category?.id ?? 0)"
             // STEP 4: Prepare seller data (light, can stay background)
-            self.auctionTypeId = data.auction?.id ?? 0
+            self.auctionTypeId = (data.auction?.id ?? data.auction_type_id) ?? 0
             let seller = SellerModel(
                 isFollowed: data.user?.is_followed ?? false,
                 id: "\(data.user?.id ?? 0)",
@@ -1794,7 +1794,7 @@ struct RehearsalScreen: View {
                 time: data.time ?? "",
                 date: data.date ?? "",
                 allowBidForAll: true,
-                showTimer: "",auctionTypeId: data.auction?.id ?? 0
+                showTimer: "",auctionTypeId: (data.auction?.id ?? data.auction_type_id) ?? 0
             )
             sellerId = "\(UserDefaults.userId)"
             // STEP 6: Socket setup in background

@@ -125,6 +125,16 @@ struct SellerVerificationScreen: View {
                    manualVerificationComplete
         }
     
+    private var isSellerVerificationSubmittedOrApproved: Bool {
+        let status = UserDefaults.sellerVerafied.lowercased()
+        return status == "pending" || status == "verified"
+    }
+    
+    private var isSellerVerificationNotAppliedOrRejected: Bool {
+        let status = UserDefaults.sellerVerafied.lowercased()
+        return status.isEmpty || status == "rejected"
+    }
+    
     // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
@@ -237,19 +247,23 @@ struct SellerVerificationScreen: View {
                             kycStatus: kycStatus,
                             statusMessage: kycStatusMessage,
                             statusColor: kycStatusColor,
-                            isActionEnabled: phoneVerificationComplete && !kycVerificationComplete,
+                            isActionEnabled: isSellerVerificationSubmittedOrApproved ? true : (phoneVerificationComplete && !kycVerificationComplete),
                             onVerifyTap: {
-                                hasStartedKycFlow = true
                                 Task {
-                                    if kycLink.isEmpty {
-                                        await fetchKycLinkSilently()
+                                    if isSellerVerificationSubmittedOrApproved {
+                                        checkKYCStatus(forVerified: true)
+                                    } else {
+                                        hasStartedKycFlow = true
+                                        if kycLink.isEmpty {
+                                            await fetchKycLinkSilently()
+                                        }
+                                        openKYCInBrowser(url: kycLink)
                                     }
-                                    openKYCInBrowser(url: kycLink)
                                 }
                             }
                         )
-                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected") || !phoneVerificationComplete)
-                        .opacity((UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected") && !phoneVerificationComplete ? 0.5 : 1.0)
+                        .disabled(isSellerVerificationNotAppliedOrRejected && !phoneVerificationComplete)
+                        .opacity(isSellerVerificationNotAppliedOrRejected && !phoneVerificationComplete ? 0.5 : 1.0)
                         
             
             FinalPaymentMethodCard(
@@ -258,10 +272,13 @@ struct SellerVerificationScreen: View {
                 selectedCardIndex: $selectedCardIndex,
                 isActionEnabled: phoneVerificationComplete && !paymentMethodComplete,
                 isPending: UserDefaults.sellerVerafied == "pending" || UserDefaults.sellerVerafied == "verified",
+                allowAddCard: isSellerVerificationNotAppliedOrRejected,
                 onAddCard: { navigateToAddCard = true },
                 onSelectCard: { index in
                     selectedCardIndex = index
                     self.cardId = self.cardArr[index].card_id ?? ""
+                    paymentMethodComplete = !cardId.isEmpty
+                    updateManualVerificationIfNeeded()
                 }
             )
             .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
@@ -462,28 +479,32 @@ struct SellerVerificationScreen: View {
         
         if status.lowercased() == "active" {
             kycVerificationComplete = true
-            hudMsg = "KYC verified successfully"
-//            showhud = true
-            if !forVerified{
-                if UserDefaults.hasCardAdded {
-                    Task {
-                        SVProgressHUD.show()
-                        await viewModel.getCard()
-                        await SVProgressHUD.dismiss()
-                        cardSuccess()
-                        paymentMethodComplete = true
-                        updateManualVerificationIfNeeded()
-                    }
+            if !forVerified {
+                hudMsg = "KYC verified successfully"
+            }
+            if !forVerified, isSellerVerificationNotAppliedOrRejected {
+                // ✅ In rejected / not-applied flow: after KYC is verified, always fetch cards.
+                Task {
+                    SVProgressHUD.show()
+                    await viewModel.getCard()
+                    await SVProgressHUD.dismiss()
+                    cardSuccess()
+                    // Do NOT mark payment complete until user selects a card (or adds a new one).
+                    paymentMethodComplete = false
                 }
             }
         } else if status.lowercased() == "pending" {
             kycVerificationComplete = false
-            hudMsg = "KYC verification is pending. Please wait for approval."
-            showhud = true
+            if !forVerified {
+                hudMsg = "KYC verification is pending. Please wait for approval."
+                showhud = true
+            }
         } else {
             kycVerificationComplete = false
-            hudMsg = "KYC verification inactive."
-            showhud = true
+            if !forVerified {
+                hudMsg = "KYC verification inactive."
+                showhud = true
+            }
         }
         
         
@@ -603,7 +624,7 @@ struct SellerVerificationScreen: View {
         let response = self.viewModel.paymentDetailDict
         if response.status == "success" {
             UserDefaults.sellerVerafied = response.data?.status ?? ""
-            if UserDefaults.sellerVerafied == "verified" || UserDefaults.sellerVerafied == "pending" {
+            if isSellerVerificationSubmittedOrApproved {
                 idVerificationComplete = true
                 phoneVerificationComplete = true
                 paymentMethodComplete = true
@@ -621,6 +642,9 @@ struct SellerVerificationScreen: View {
                 }
                 // Keep KYC link ready, but don't evaluate/show KYC status until user taps Verify.
                 Task { await fetchKycLinkSilently() }
+                
+                // ✅ When seller verification is pending/verified, always check KYC status.
+                checkKYCStatus(forVerified: true)
             } else {
                 idVerificationComplete = false
                 phoneVerificationComplete = false
@@ -1168,6 +1192,7 @@ struct FinalPaymentMethodCard: View {
     @Binding var selectedCardIndex: Int?
     let isActionEnabled: Bool
     let isPending: Bool
+    let allowAddCard: Bool
     let onAddCard: () -> Void
     let onSelectCard: (Int) -> Void
     
@@ -1200,14 +1225,7 @@ struct FinalPaymentMethodCard: View {
                 
                 Spacer()
                 
-                if isCompleted {
-                    ZStack {
-                        
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.green)
-                    }
-                } else if isActionEnabled {
+                if allowAddCard && (isActionEnabled || isCompleted || !cardArr.isEmpty) {
                     Button(action: onAddCard) {
                         Text("Add")
                             .font(.custom(poppinsSemiBold, size: 14))
@@ -1223,7 +1241,7 @@ struct FinalPaymentMethodCard: View {
             }
             
             // Card List
-            if !cardArr.isEmpty && (isPending || isCompleted) {
+            if !cardArr.isEmpty && (isPending || isCompleted || isActionEnabled) {
                 VStack(spacing: 12) {
                     ForEach(Array(cardArr.enumerated()), id: \.offset) { index, card in
                         FinalPaymentMethodRow(

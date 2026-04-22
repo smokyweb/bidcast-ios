@@ -477,6 +477,7 @@ struct ProTipCard: View {
 struct GenericTabView<T>: View where T: CaseIterable & Hashable & RawRepresentable, T.RawValue == String {
 
     @Binding var selectedTab: T
+    var tabs: [T]? = nil
     var onTabChange: (() -> Void)? = nil
     var tabWidth: CGFloat = 120
     var selectedColor: Color = .defaultTheme
@@ -486,7 +487,8 @@ struct GenericTabView<T>: View where T: CaseIterable & Hashable & RawRepresentab
         VStack(spacing: 0) {
 
             HStack(spacing: 0) {
-                ForEach(Array(T.allCases), id: \.self) { tab in
+                let visibleTabs = tabs ?? Array(T.allCases)
+                ForEach(visibleTabs, id: \.self) { tab in
                     Button(action: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             selectedTab = tab

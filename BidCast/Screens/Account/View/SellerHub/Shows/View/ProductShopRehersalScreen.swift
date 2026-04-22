@@ -117,6 +117,16 @@ struct ProductShopRehersalScreen: View {
         Set(productDataFromEvent.compactMap { $0.id })
     }
     
+    private var availableTabs: [RehearsalProductSegment] {
+        if auctionTypeId == 9 {
+            // ✅ For auctionTypeId == 9 (Surprise Sets) show all tabs,
+            // but the content list will only render Surprise Sets.
+            return [.buynow, .auction, .sold, .Surprise]
+        } else {
+            return [.buynow, .auction, .offers, .sold]
+        }
+    }
+    
     init(
         mode: RehearsalSelectionMode = .auction,
         roomId: String,
@@ -171,49 +181,46 @@ struct ProductShopRehersalScreen: View {
            
             
             // MARK: - Tab View
-            GenericTabView(selectedTab: $segment) {
+            GenericTabView(selectedTab: $segment, tabs: availableTabs) {
+                resetData()
+                
+                // ✅ Surprise auction: always show Surprise Sets only (for every tab).
+                if auctionTypeId == 9 {
+                    fetchSurpriseSet()
+                    return
+                }
+                
                 if segment == .auction {
-                    resetData()
-                    guard auctionTypeId != 9 else { return }
                     self.saleType = "auction"
                     self.type = ""
                     self.status = ""
                     fetchProduct()
                 } else if segment == .offers {
-                    resetData()
-                    guard auctionTypeId != 9 else { return }
                     self.saleType = "accept_offers"
                     self.type = ""
                     self.status = ""
                     fetchProduct()
                 } else if segment == .buynow {
-                    resetData()
-                    guard auctionTypeId != 9 else { return }
                     self.saleType = ""
                     self.status = ""
                     self.type = "buy_now"
                     fetchProduct()
                 } else if segment == .sold {
-                    resetData()
-                    guard auctionTypeId != 9 else { return }
                     self.saleType = ""
                     self.status = "inactive"
                     self.type = "buy_now"
                     fetchProduct()
-                    
                 } else if segment == .Surprise {
-                    resetData()
-                    guard auctionTypeId == 9 else { return }
                     fetchSurpriseSet()
                 }
             }
             
             // MARK: - Heading
-            ProductHeading(count: segment == .Surprise ? surpriseSetData.count : displayedProducts.count)
+            ProductHeading(count: auctionTypeId == 9 ? surpriseSetData.count : (segment == .Surprise ? surpriseSetData.count : displayedProducts.count))
                 .padding(.vertical,6)
                 .padding(.horizontal, 16)
             
-            if segment == .Surprise {
+            if auctionTypeId == 9 {
                 // MARK: - Surprise Sets Content
                 if surpriseSetData.isEmpty && !isLoading {
                     GeometryReader { geo in
@@ -288,6 +295,7 @@ struct ProductShopRehersalScreen: View {
                                     roomId: roomId,
                                     isPinned: pinnedProductIds.contains(productId),
                                     actionTitle: mode.buttonTitle,
+                                    showsActionButton: auctionTypeId != 9,
                                     onPinTapped: {
                                         togglePin(productId)
                                     },
@@ -331,6 +339,7 @@ struct ProductShopRehersalScreen: View {
                 fetchProduct()
             }
         }
+        // For auctionTypeId == 9 we keep all tabs visible; content stays Surprise-only.
         .onDisappear {
             resetData()
         }
@@ -634,6 +643,7 @@ struct ProductRehearsalListItem: View {
     var roomId: String
     var isPinned: Bool
     var actionTitle: String
+    var showsActionButton: Bool = true
     var onPinTapped: (() -> Void)?
     var onActionTapped: (() -> Void)?
     
@@ -682,19 +692,21 @@ struct ProductRehearsalListItem: View {
 
                 // Action Button
                 HStack(spacing: 8) {
-                    Button(action: {
-                        onActionTapped?()
-                    }) {
-                        Text(actionTitle)
-                            .font(.custom("Poppins-SemiBold", size: 12))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .background(Color(.sRGB, red: 0.98, green: 0.96, blue: 0.95))
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    if showsActionButton {
+                        Button(action: {
+                            onActionTapped?()
+                        }) {
+                            Text(actionTitle)
+                                .font(.custom("Poppins-SemiBold", size: 12))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(Color(.sRGB, red: 0.98, green: 0.96, blue: 0.95))
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                        }
+                        .foregroundColor(.black.opacity(0.85))
                     }
-                    .foregroundColor(.black.opacity(0.85))
                     
-                    if actionTitle == "Start Auction" {
+                    if showsActionButton, actionTitle == "Start Auction" {
                         Button(action: {
                             onPinTapped?()
                         }) {

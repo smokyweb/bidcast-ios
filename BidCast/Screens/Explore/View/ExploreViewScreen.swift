@@ -393,7 +393,7 @@ struct SubCategoryRow: View {
     }
 
     private var rowContent: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
             // Image
             CustomProfileImage(url: subCategory.image ?? "",isCircular: false,cornerRadius: 12,size: 50,defaultImage: "photo")
 //            AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
@@ -417,7 +417,11 @@ struct SubCategoryRow: View {
             Text(subCategory.name ?? "Unknown")
                 .font(.custom(poppinsSemiBold, size: 15))
                 .foregroundColor(.primary)
-                .lineLimit(1)
+                .multilineTextAlignment(.leading)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, minHeight: 40, alignment: .topLeading)
+                .layoutPriority(1)
 
             Spacer()
 
@@ -426,6 +430,7 @@ struct SubCategoryRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+        .frame(minHeight: 74, alignment: .top)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.white)

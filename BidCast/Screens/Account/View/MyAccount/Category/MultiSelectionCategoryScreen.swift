@@ -256,13 +256,14 @@ struct CategoryCard: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .frame(maxWidth: .infinity, minHeight: 34, alignment: .center)
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
                 .frame(maxWidth: .infinity)
         }
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
-        .frame(height: 150, alignment: .top)
+        .frame(height: 160, alignment: .top)
         .background(isSelected ? Color.defaultTheme.opacity(0.2) : Color.gray.opacity(0.1))
         .cornerRadius(12)
         .overlay(

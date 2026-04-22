@@ -282,7 +282,7 @@ struct SubCategoryCard: View {
     let isSelected: Bool
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             AsyncImage(url: URL(string: subCategory.image ?? "")) { image in
                 image
                     .resizable()
@@ -302,7 +302,13 @@ struct SubCategoryCard: View {
             Text(subCategory.name ?? "")
                 .font(.subheadline)
                 .foregroundColor(.black)
-                .lineLimit(1)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
         }
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .frame(height: 150, alignment: .top)
     }
 }

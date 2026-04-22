@@ -70,7 +70,7 @@ struct PaymentAndShipping_Screen: View {
                                 Spacer()
                             }
                         } else {
-                            ForEach(cardArr, id: \.cardID) { cardVal in
+                            ForEach(Array(cardArr.enumerated()), id: \.offset) { _, cardVal in
                                 let card = cardVal
                                 CardCell(
                                     image: "creditcard.fill",
@@ -147,21 +147,43 @@ struct PaymentAndShipping_Screen: View {
                                 Spacer()
                             }
                         } else {
-                            ForEach(sampleAddresses, id: \.id) { address in
+                            ForEach(Array(sampleAddresses.enumerated()), id: \.offset) { _, address in
                                 AddressListCell(
                                     address: address,
                                     onTapDefault: {
+                                        guard let id = address.id, id != 0 else {
+                                            alertType = .sheetType(
+                                                icon: .alert,
+                                                title: "Error",
+                                                message: "Invalid address selected.",
+                                                primaryBtnText: "",
+                                                secondaryBtnText: AppString.ok.localized
+                                            )
+                                            showError = true
+                                            return
+                                        }
                                         Task {
                                             SVProgressHUD.show()
-                                            await self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(address.id ?? 0)"))
+                                            await self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(id)"))
                                             await SVProgressHUD.dismiss()
                                             defaultSuccess()
                                         }
                                     },
                                     onTapDelete: {
+                                        guard let id = address.id, id != 0 else {
+                                            alertType = .sheetType(
+                                                icon: .alert,
+                                                title: "Error",
+                                                message: "Invalid address selected.",
+                                                primaryBtnText: "",
+                                                secondaryBtnText: AppString.ok.localized
+                                            )
+                                            showError = true
+                                            return
+                                        }
                                         Task {
                                             SVProgressHUD.show()
-                                            await self.viewModel.deleteAddress(parameters: AddressDefaultParam(address_id: "\(address.id ?? 0)"))
+                                            await self.viewModel.deleteAddress(parameters: AddressDefaultParam(address_id: "\(id)"))
                                             await SVProgressHUD.dismiss()
                                             if self.viewModel.errorMessage?.isEmpty ?? true {
                                                 self.sampleAddresses.removeAll()
@@ -287,6 +309,17 @@ struct PaymentAndShipping_Screen: View {
     }
     
     func deleteCard(with cardId: String) {
+        guard !cardId.isEmpty else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: "Invalid card selected.",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            return
+        }
         Task {
             await performAPICalls(
                 isConcurrent: true,
@@ -316,6 +349,17 @@ struct PaymentAndShipping_Screen: View {
     }
     
     func setDefaultCard(with cardId: String) {
+        guard !cardId.isEmpty else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: "Invalid card selected.",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            return
+        }
         Task {
             await performAPICalls(
                 isConcurrent: true,
