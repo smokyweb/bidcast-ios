@@ -137,6 +137,12 @@ public final class WatchStreamViewController: UIViewController {
 
     private let pinnedCard = PinnedProductCard()
 
+    // iOS Parity Phase 6d (2026-04-22): broadcast-to-all-viewers banner
+    // that briefly celebrates a randomizer winner, regardless of whether
+    // this viewer entered or not. Matches the PWA's `#viewerFreebieWinner`
+    // overlay.
+    private let randomizerWinnerBanner = RandomizerWinnerBanner()
+
     // QA-FIX-cmo93i6xk00oc3u1hmlx3xtof polish: "Winning: {name}" / "You're
     // winning!" chip under the pinned card. Driven from onHighestBid +
     // resetPerItemBidState.
@@ -276,6 +282,7 @@ public final class WatchStreamViewController: UIViewController {
         view.addSubview(highestBidLabel)
         view.addSubview(pinnedCard)
         view.addSubview(leaderChip)
+        view.addSubview(randomizerWinnerBanner)
         view.addSubview(myMaxBidLabel)
         view.addSubview(chatTableView)
         view.addSubview(chatInput)
@@ -357,6 +364,14 @@ public final class WatchStreamViewController: UIViewController {
             raidButton.centerYAnchor.constraint(equalTo: bidButton.centerYAnchor),
             raidButton.widthAnchor.constraint(equalToConstant: 68),
             raidButton.heightAnchor.constraint(equalToConstant: 32),
+
+            // iOS Parity Phase 6d: randomizer winner banner, centered
+            // near the top so it's visible over the video without
+            // obscuring the pinned card / bid chrome.
+            randomizerWinnerBanner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 54),
+            randomizerWinnerBanner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            randomizerWinnerBanner.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16),
+            randomizerWinnerBanner.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
         ])
 
         chatTableView.dataSource = self
@@ -587,10 +602,17 @@ public final class WatchStreamViewController: UIViewController {
         socket.onPollVoteResult { [weak self] payload in
             self?.pollSheet?.update(with: payload)
         }
-        socket.onPollEnded { [weak self] _ in
-            self?.appendSystemChat("Poll ended.")
-            self?.pollSheet?.dismiss(animated: true)
-            self?.pollSheet = nil
+        socket.onPollEnded { [weak self] payload in
+            guard let self = self else { return }
+            self.appendSystemChat("Poll ended.")
+            // iOS Parity Phase 6b (2026-04-22): leave the result card
+            // visible for 8s so viewers can see final vote counts,
+            // matching the PWA (5–10s) and Android behavior.
+            self.pollSheet?.update(with: payload)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) { [weak self] in
+                self?.pollSheet?.dismiss(animated: true)
+                self?.pollSheet = nil
+            }
         }
         socket.onVoteError { [weak self] payload in
             let msg = payload["message"] as? String ?? "Unable to cast vote."
@@ -619,9 +641,13 @@ public final class WatchStreamViewController: UIViewController {
             self.present(sheet, animated: true)
         }
         socket.onFreebieWinner { [weak self] payload in
+            guard let self = self else { return }
             let name = (payload["user_name"] as? String) ?? "Someone"
-            self?.appendSystemChat("\(name) won the freebie.")
-            self?.freebieSheet?.announceWinner(name)
+            self.appendSystemChat("\(name) won the freebie.")
+            self.freebieSheet?.announceWinner(name)
+            // iOS Parity Phase 6d: broadcast winner banner visible even
+            // for viewers who didn't enter.
+            self.randomizerWinnerBanner.show(winnerName: name, duration: 6.0)
         }
 
         socket.onTipSettingUpdated { [weak self] payload in

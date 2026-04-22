@@ -110,14 +110,27 @@ public final class HostPublisherViewController: UIViewController {
 
     private lazy var pinFirstButton = makeButton("Pin First Product")
     private lazy var startAuctionButton = makeButton("Start Auction")
-    private lazy var runNextButton = makeButton("Run Next")
-    private lazy var pollButton = makeButton("Create Poll")
-    private lazy var tipSettingsButton = makeButton("Tip Settings")
-    private lazy var raidButton = makeButton("Raid")
-    private lazy var randomizerButton = makeButton("Start Randomizer")
+    private lazy var runNextButton = makeButton("Skip to Next Item")
+    // iOS Parity Phase 6g (2026-04-22): compact top-right More Options
+    // button that presents an action sheet with the 5 live-host features
+    // (Poll / Tip Settings / Randomizer / Raid / Skip) + End show.
+    // Matches Android AgoraPublisherActivity "More" menu + the PWA
+    // More Options dropdown.
+    private lazy var moreOptionsButton = makeButton("⊕ More Options")
     private lazy var muteButton = makeButton("Mute / Unmute")
     private lazy var cameraButton = makeButton("Switch Camera")
     private lazy var closeButton = makeButton("End / Close")
+
+    private let noMoreItemsLabel: UILabel = {
+        let l = UILabel()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.text = "No more items in the queue"
+        l.textColor = .systemOrange
+        l.font = .systemFont(ofSize: 12, weight: .semibold)
+        l.textAlignment = .center
+        l.isHidden = true
+        return l
+    }()
 
     private let chatTableView: UITableView = {
         let t = UITableView()
@@ -139,6 +152,19 @@ public final class HostPublisherViewController: UIViewController {
     private var currentPinnedProductTitle: String?
     private var lastBidTimerSeconds: Int = -1
     private var hasAutoAdvancedForCurrentTimer = false
+
+    // iOS Parity Phase 6g (2026-04-22) state guards:
+    //   - Only one poll may be active at a time. Flipped on
+    //     `poll_created` from the server for this room, cleared on
+    //     `poll_ended`.
+    //   - Only one randomizer (freebie) active at a time. Flipped on
+    //     `create-freebie` / `get-freebie`, cleared on winner.
+    //   - Remaining pinned products counter from `auction_next_product`
+    //     `remaining_pinned_products` field; drives the "No more items"
+    //     indicator.
+    private var pollActive = false
+    private var randomizerActive = false
+    private var remainingPinnedProducts: Int = -1
 
     // MARK: Lifecycle
 
@@ -168,7 +194,12 @@ public final class HostPublisherViewController: UIViewController {
         view.addSubview(stack)
         view.addSubview(chatTableView)
 
-        [pinFirstButton, startAuctionButton, runNextButton, pollButton, tipSettingsButton, raidButton, randomizerButton, muteButton, cameraButton, closeButton].forEach { stack.addArrangedSubview($0) }
+        // iOS Parity Phase 6g: slim primary stack (frequent actions) +
+        // More Options action sheet for the 5 live-host features. This
+        // mirrors Android's compact host toolbar rather than the long
+        // debug vertical list we scaffolded in Phase 2.
+        [pinFirstButton, startAuctionButton, runNextButton, moreOptionsButton, muteButton, cameraButton, closeButton].forEach { stack.addArrangedSubview($0) }
+        view.addSubview(noMoreItemsLabel)
 
         NSLayoutConstraint.activate([
             localVideoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -200,7 +231,12 @@ public final class HostPublisherViewController: UIViewController {
             currentProductLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             currentProductLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
 
-            stack.topAnchor.constraint(equalTo: currentProductLabel.bottomAnchor, constant: 12),
+            noMoreItemsLabel.topAnchor.constraint(equalTo: currentProductLabel.bottomAnchor, constant: 2),
+            noMoreItemsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            noMoreItemsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            noMoreItemsLabel.heightAnchor.constraint(equalToConstant: 16),
+
+            stack.topAnchor.constraint(equalTo: noMoreItemsLabel.bottomAnchor, constant: 10),
             stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
 
@@ -218,13 +254,53 @@ public final class HostPublisherViewController: UIViewController {
         pinFirstButton.addTarget(self, action: #selector(pinFirstProduct), for: .touchUpInside)
         startAuctionButton.addTarget(self, action: #selector(startAuction), for: .touchUpInside)
         runNextButton.addTarget(self, action: #selector(runNextProduct), for: .touchUpInside)
-        pollButton.addTarget(self, action: #selector(createPoll), for: .touchUpInside)
-        tipSettingsButton.addTarget(self, action: #selector(configureTipSettings), for: .touchUpInside)
-        raidButton.addTarget(self, action: #selector(sendRaid), for: .touchUpInside)
-        randomizerButton.addTarget(self, action: #selector(startRandomizer), for: .touchUpInside)
+        moreOptionsButton.addTarget(self, action: #selector(showMoreOptions), for: .touchUpInside)
         muteButton.addTarget(self, action: #selector(toggleMute), for: .touchUpInside)
         cameraButton.addTarget(self, action: #selector(switchCamera), for: .touchUpInside)
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
+    }
+
+    // iOS Parity Phase 6g: central More Options menu. This is the
+    // single entry point for Poll / Tip Settings / Randomizer / Raid.
+    // Skip-to-next and End are also surfaced here for discoverability;
+    // Skip is additionally in the main stack (`runNextButton`).
+    @objc private func showMoreOptions() {
+        let sheet = UIAlertController(title: "Live Options", message: nil, preferredStyle: .actionSheet)
+
+        let pollTitle = pollActive ? "End Active Poll" : "📊 Create Poll"
+        sheet.addAction(UIAlertAction(title: pollTitle, style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            if self.pollActive {
+                self.endActivePoll()
+            } else {
+                self.presentCreatePollSheet()
+            }
+        })
+        sheet.addAction(UIAlertAction(title: "💲 Tip Settings", style: .default) { [weak self] _ in
+            self?.presentTipSettingsSheet()
+        })
+        let randTitle = randomizerActive ? "🎯 Randomizer (running)" : "🎯 Randomizer"
+        let randAction = UIAlertAction(title: randTitle, style: .default) { [weak self] _ in
+            self?.presentRandomizerSheet()
+        }
+        randAction.isEnabled = !randomizerActive
+        sheet.addAction(randAction)
+        sheet.addAction(UIAlertAction(title: "👥 Raid Another Host", style: .default) { [weak self] _ in
+            self?.presentRaidSheet()
+        })
+        sheet.addAction(UIAlertAction(title: "⏭ Skip to Next Item", style: .default) { [weak self] _ in
+            self?.runNextProduct()
+        })
+        sheet.addAction(UIAlertAction(title: "End Show", style: .destructive) { [weak self] _ in
+            self?.closeTapped()
+        })
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        if let popover = sheet.popoverPresentationController {
+            popover.sourceView = moreOptionsButton
+            popover.sourceRect = moreOptionsButton.bounds
+        }
+        present(sheet, animated: true)
     }
 
     private func bindSocketListeners() {
@@ -322,16 +398,61 @@ public final class HostPublisherViewController: UIViewController {
             self.lastBidTimerSeconds = -1
             self.hasAutoAdvancedForCurrentTimer = false
             self.appendSystem("Advanced to next item.")
+            // iOS Parity Phase 6f (2026-04-22): remaining-queue counter
+            // drives the "No more items" indicator. Node emits this as
+            // `remaining_pinned_products` in the auction_next_product
+            // payload (see PWA spec 2026-04-22).
+            if let remaining = payload["remaining_pinned_products"] as? Int {
+                self.remainingPinnedProducts = remaining
+                self.noMoreItemsLabel.isHidden = remaining > 0
+            }
         }
 
         socket.onRunNextProductError { [weak self] payload in
+            guard let self = self else { return }
             let message = payload["message"] as? String ?? "run_next_product failed"
-            self?.appendSystem(message)
+            self.appendSystem(message)
+            // If the server reports the queue is empty, show the indicator.
+            let lc = message.lowercased()
+            if lc.contains("no more") || lc.contains("empty") || lc.contains("no product") {
+                self.remainingPinnedProducts = 0
+                self.noMoreItemsLabel.isHidden = false
+            }
+        }
+
+        // iOS Parity Phase 6b: host-side poll state tracking. Flip
+        // `pollActive` when the server confirms a new poll for this room
+        // and clear it on `poll_ended`. Capture the poll_id so the host
+        // can emit `end_poll` before duration expires.
+        socket.onPollCreated { [weak self] payload in
+            guard let self = self, self.roomMatches(payload) else { return }
+            self.pollActive = true
+            if let i = payload["poll_id"] as? Int { self.activePollId = i }
+            else if let s = payload["poll_id"] as? String, let i = Int(s) { self.activePollId = i }
+            self.appendSystem("Poll is live.")
+        }
+        socket.onPollEnded { [weak self] _ in
+            guard let self = self else { return }
+            self.pollActive = false
+            self.activePollId = nil
+            self.appendSystem("Poll ended.")
+        }
+
+        // iOS Parity Phase 6d: host-side randomizer state. `get-freebie`
+        // broadcasts the running freebie state; clear on winner.
+        socket.onFreebie { [weak self] payload in
+            guard let self = self, self.roomMatches(payload) else { return }
+            self.randomizerActive = true
+            if let arr = payload["users"] as? [Any] {
+                self.appendSystem("Randomizer entries: \(arr.count)")
+            }
         }
 
         socket.onFreebieWinner { [weak self] payload in
+            guard let self = self else { return }
             let name = payload["user_name"] as? String ?? "Someone"
-            self?.appendSystem("Randomizer winner: \(name)")
+            self.appendSystem("Randomizer winner: \(name)")
+            self.randomizerActive = false
         }
     }
 
@@ -413,76 +534,89 @@ public final class HostPublisherViewController: UIViewController {
         appendSystem("Requested next item.")
     }
 
-    @objc private func createPoll() {
+    // iOS Parity Phase 6b (2026-04-22): Create Poll presents the new
+    // CreatePollSheet with dynamic options + duration choices. Only one
+    // poll may be active; if one is already running, we show the
+    // "End Active Poll" path instead (wired in showMoreOptions).
+    private func presentCreatePollSheet() {
         guard let context = context else { return }
-        let alert = UIAlertController(title: "Create poll", message: nil, preferredStyle: .alert)
-        alert.addTextField { $0.placeholder = "Question" }
-        alert.addTextField { $0.placeholder = "Option 1" }
-        alert.addTextField { $0.placeholder = "Option 2" }
-        alert.addTextField { $0.placeholder = "Duration seconds (default 30)"; $0.keyboardType = .numberPad }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Create", style: .default) { [weak self] _ in
-            let fields = alert.textFields ?? []
-            let question = fields[safe: 0]?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let o1 = fields[safe: 1]?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let o2 = fields[safe: 2]?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let duration = Int(fields[safe: 3]?.text ?? "") ?? 30
-            guard !question.isEmpty, !o1.isEmpty, !o2.isEmpty else { return }
-            BidcastSocketManager.shared.emitCreatePoll(roomId: context.roomId, question: question, options: [o1, o2], durationSeconds: duration)
-            self?.appendSystem("Poll created.")
-        })
-        present(alert, animated: true)
+        if pollActive {
+            appendSystem("A poll is already running.")
+            return
+        }
+        let sheet = CreatePollSheet(roomId: context.roomId)
+        sheet.onSubmitted = { [weak self] q, _, _ in
+            self?.appendSystem("Poll created: \(q)")
+        }
+        let nav = UINavigationController(rootViewController: sheet)
+        present(nav, animated: true)
     }
 
-    @objc private func configureTipSettings() {
+    private var activePollId: Int?
+
+    private func endActivePoll() {
         guard let context = context else { return }
-        let alert = UIAlertController(title: "Tip settings", message: nil, preferredStyle: .alert)
-        alert.addTextField { $0.placeholder = "Tip message shown to viewers" }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Save", style: .default) { [weak self] _ in
-            let msg = alert.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            guard !msg.isEmpty else { return }
-            BidcastSocketManager.shared.emitSaveTipSetting(showId: context.showId, tipMessage: msg, showInLiveChat: true)
-            self?.appendSystem("Tip settings updated.")
-        })
-        present(alert, animated: true)
+        guard let pid = activePollId else {
+            appendSystem("No active poll id recorded; cannot end poll.")
+            pollActive = false
+            return
+        }
+        BidcastSocketManager.shared.emitEndPoll(roomId: context.roomId, pollId: String(pid))
+        appendSystem("Ending poll...")
     }
 
-    @objc private func startRandomizer() {
+    // iOS Parity Phase 6c (2026-04-22): Tip Settings presents the new
+    // HostTipSettingsSheet which emits `tip_setting_save` directly.
+    private func presentTipSettingsSheet() {
         guard let context = context else { return }
-        let alert = UIAlertController(title: "Randomizer", message: "Give away an item at random.", preferredStyle: .alert)
-        alert.addTextField { $0.placeholder = "Product id"; $0.text = self.currentPinnedProductId }
-        alert.addTextField { $0.placeholder = "Duration seconds (default 30)"; $0.keyboardType = .numberPad }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Start", style: .default) { [weak self] _ in
-            let pid = alert.textFields?[0].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let dur = alert.textFields?[1].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let secs = Int(dur) ?? 30
-            guard !pid.isEmpty else { return }
-            BidcastSocketManager.shared.emitCreateFreebie(roomId: context.roomId, productId: pid, timeSeconds: String(secs))
-            self?.appendSystem("Randomizer started for product \(pid).")
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(secs)) {
-                BidcastSocketManager.shared.emitFinalizeFreebie(roomId: context.roomId)
-                self?.appendSystem("Randomizer finalized.")
+        let sheet = HostTipSettingsSheet(showId: context.showId)
+        sheet.onSaved = { [weak self] _, _ in
+            self?.appendSystem("Tip settings saved.")
+        }
+        let nav = UINavigationController(rootViewController: sheet)
+        present(nav, animated: true)
+    }
+
+    // iOS Parity Phase 6d (2026-04-22): Randomizer uses the new
+    // HostRandomizerSheet (start → live → winner stages).
+    private func presentRandomizerSheet() {
+        guard let context = context else { return }
+        if randomizerActive {
+            appendSystem("A randomizer is already running.")
+            return
+        }
+        let sheet = HostRandomizerSheet(
+            roomId: context.roomId,
+            defaultProductId: currentPinnedProductId
+        )
+        sheet.currentUserId = currentUserId
+        sheet.onFinalized = { [weak self] in
+            self?.randomizerActive = false
+        }
+        let nav = UINavigationController(rootViewController: sheet)
+        present(nav, animated: true)
+        randomizerActive = true
+    }
+
+    // iOS Parity Phase 6e (2026-04-22): Raid uses the new HostRaidSheet
+    // which fetches live hosts via GET /api/get-live-seller.
+    private func presentRaidSheet() {
+        guard let context = context else { return }
+        let sheet = HostRaidSheet(
+            sourceRoomId: context.roomId,
+            sourceHostId: context.sellerId
+        )
+        sheet.onRaidSent = { [weak self] targetRoom, _ in
+            guard let self = self, let context = self.context else { return }
+            self.appendSystem("Raid sent to \(targetRoom). Ending your show…")
+            // Mirror Android behavior: after raid, end own room + dismiss.
+            BidcastSocketManager.shared.emitEndRoom(roomId: context.roomId)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+                self?.dismiss(animated: true)
             }
-        })
-        present(alert, animated: true)
-    }
-
-    @objc private func sendRaid() {
-        guard let context = context else { return }
-        let alert = UIAlertController(title: "Raid", message: "Send your viewers to another room.", preferredStyle: .alert)
-        alert.addTextField { $0.placeholder = "Target room id" }
-        alert.addTextField { $0.placeholder = "Target host id (optional)" }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Send", style: .default) { [weak self] _ in
-            let targetRoom = alert.textFields?[0].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let targetHost = alert.textFields?[1].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            guard !targetRoom.isEmpty else { return }
-            BidcastSocketManager.shared.emitCreateRaid(sourceRoomId: context.roomId, targetRoomId: targetRoom, sourceHostId: context.sellerId, targetHostId: targetHost)
-            self?.appendSystem("Raid requested to \(targetRoom).")
-        })
-        present(alert, animated: true)
+        }
+        let nav = UINavigationController(rootViewController: sheet)
+        present(nav, animated: true)
     }
 
     @objc private func toggleMute() {
@@ -563,8 +697,6 @@ extension HostPublisherViewController: BidcastAgoraEngineDelegate {
     }
 }
 
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
-    }
-}
+// (private `subscript(safe:)` extension removed in Phase 6g — no
+// longer needed after migrating host options from UIAlertController
+// multi-field forms to dedicated sheets.)

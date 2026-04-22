@@ -94,6 +94,7 @@
 		6A1343D3B1CAE939F9EA0E53 /* OrderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACE4FFEBC859E2625559803 /* OrderCell.swift */; };
 		6E8A41549AE612F6ABEF1AD7 /* ActivityViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68742898C64B4EDB066B94C /* ActivityViewController+JobA.swift */; };
 		6F454C8D98704442989CDB50 /* P3InventoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F404CE78A9D9641E21CA958 /* P3InventoryViewController.swift */; };
+		713244BDA80DDB3B4B980341 /* RandomizerWinnerBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D740FAB2DEF128711D5B04 /* RandomizerWinnerBanner.swift */; };
 		719247438922231E7B0AB14D /* LiveShowResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74F4817944166571BB38060 /* LiveShowResolver.swift */; };
 		73384A3DB969B7C74C2E4E12 /* AuthModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13964D5D936229853B559B40 /* AuthModels.swift */; };
 		773E4011A7C894E13E18CE2E /* SharedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A85499583460213220ADD14 /* SharedTypes.swift */; };
@@ -101,6 +102,7 @@
 		78FD4415BCEC3675DB8F9972 /* OrderTrackingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80FE421DA7F24F1B95A2AAC0 /* OrderTrackingViewController.swift */; };
 		7D1940C09D75729053A0D91E /* BidcastSocketManager+BreakSpot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D74FA7AC158E57DC614444 /* BidcastSocketManager+BreakSpot.swift */; };
 		7DC1484EAFF04B487A2F32BF /* AgoraTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD549688A494109280A7C84 /* AgoraTokenService.swift */; };
+		81AD48298700681CBAFFCF02 /* HostRaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F484C63A17F745275EECB93 /* HostRaidSheet.swift */; };
 		8D614B3BBF0C43D7A556066B /* LiveBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D446CA1D33C79E4207805 /* LiveBanner.swift */; };
 		91544E02BC76211FDBC7CC2F /* BrowseLiveShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71C43B2975058C0DF5081A5 /* BrowseLiveShowsViewController.swift */; };
 		96CE40F094667688E8FE9CEF /* BlockedUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0414616AC3503F24999ABE9 /* BlockedUsersViewController.swift */; };
@@ -375,9 +377,11 @@
 		A29645D3B33AB3D8E006B8AE /* AddCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C284B8599DCFDF93DB9DAC5 /* AddCardViewController.swift */; };
 		AAE04D7B8120C24CC2FE2628 /* PromotedShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A84D77880AB9168013066D /* PromotedShowsViewController.swift */; };
 		AC454D4EAF8AFC1FFCE7ECC0 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92854237A9CA66B04D7E19B4 /* NotificationCell.swift */; };
+		AFF24BE8952BBD5A134CEF22 /* HostTipSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F14D7E9182099A07181FEB /* HostTipSettingsSheet.swift */; };
 		B0FC4E609DAF005BE80E02DE /* KYCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12844365BAA19B1DA07DDC0E /* KYCViewController.swift */; };
 		B29B454CB9EE3799CA7D5AE9 /* ConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8B42CE98AE667B27B558E2 /* ConversationListViewController.swift */; };
 		B2E746F08EA7F60AFA95891A /* OrderListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D484CA4B228EDF7A4826965 /* OrderListViewController.swift */; };
+		B79C4717992385B832C122DF /* CreatePollSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8F49698526C1BF44053E04 /* CreatePollSheet.swift */; };
 		BA964053ACE92B91FC5628DC /* SellerReviewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF747379397AD318120AB24 /* SellerReviewsViewController.swift */; };
 		BFA647F1A9D2E24127E536B4 /* LiveChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C645D1B25E8492D6844357 /* LiveChatMessage.swift */; };
 		C10642D29CA2980B5D4522CB /* AccountViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70043368BF81CF5C3FFB83E /* AccountViewController+JobA.swift */; };
@@ -455,6 +459,7 @@
 		E6F544F586F81F51E3B84188 /* FirebaseChatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3140A1AFCB837D8C39800F /* FirebaseChatStore.swift */; };
 		E84E4DF781DD0373962631C2 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1E4D6A9298135841D1A601 /* FilterViewController.swift */; };
 		E9CB470484E599E8E1F3CE7D /* ShowModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2743C8AA23BBFFA30F2E7A /* ShowModels.swift */; };
+		F6044E0A8A30C0DB7A86F708 /* HostRandomizerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66E43F882FADFEA61A68454 /* HostRandomizerSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -482,6 +487,7 @@
 		09A743B5B26F1614C6AE7CAE /* ProductResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductResponses.swift; path = BidCast/Models/Product/ProductResponses.swift; sourceTree = SOURCE_ROOT; };
 		0E3140A1AFCB837D8C39800F /* FirebaseChatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FirebaseChatStore.swift; path = BidCast/Screens/Phase4/Chat/FirebaseChatStore.swift; sourceTree = SOURCE_ROOT; };
 		0ED04FC3989273E1A6F2FE11 /* Phase3Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Phase3Common.swift; path = BidCast/Screens/Phase3/Common/Phase3Common.swift; sourceTree = SOURCE_ROOT; };
+		0F484C63A17F745275EECB93 /* HostRaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostRaidSheet.swift; path = BidCast/Live/Host/HostRaidSheet.swift; sourceTree = SOURCE_ROOT; };
 		12844365BAA19B1DA07DDC0E /* KYCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KYCViewController.swift; path = BidCast/Screens/Phase4/KYC/KYCViewController.swift; sourceTree = SOURCE_ROOT; };
 		13964D5D936229853B559B40 /* AuthModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthModels.swift; path = BidCast/Models/Auth/AuthModels.swift; sourceTree = SOURCE_ROOT; };
 		14371208B2B8B28094D4C90E /* Pods-BidCast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.debug.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.debug.xcconfig"; sourceTree = "<group>"; };
@@ -489,9 +495,11 @@
 		1C8B42CE98AE667B27B558E2 /* ConversationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConversationListViewController.swift; path = BidCast/Screens/Phase3/Chat/ConversationListViewController.swift; sourceTree = SOURCE_ROOT; };
 		1CD549688A494109280A7C84 /* AgoraTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AgoraTokenService.swift; path = BidCast/Live/Services/AgoraTokenService.swift; sourceTree = SOURCE_ROOT; };
 		1F9B41C38C8EF3CD46A3BB8D /* TutorialsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TutorialsListViewController.swift; path = BidCast/Screens/Phase3/HelpSettings/TutorialsListViewController.swift; sourceTree = SOURCE_ROOT; };
+		23D740FAB2DEF128711D5B04 /* RandomizerWinnerBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RandomizerWinnerBanner.swift; path = BidCast/Live/RandomizerWinnerBanner.swift; sourceTree = SOURCE_ROOT; };
 		23D74FDC9423E11596567E40 /* NotificationListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationListViewModel.swift; path = BidCast/Screens/Phase3/Notifications/NotificationListViewModel.swift; sourceTree = SOURCE_ROOT; };
 		26204AEEBBD60E3A4ADC36BE /* ProductFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductFilter.swift; path = BidCast/Screens/Main/Explore/Model/ProductFilter.swift; sourceTree = SOURCE_ROOT; };
 		2FC241F88EF009FEE4C22BE2 /* LivePollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LivePollSheet.swift; path = BidCast/Live/LivePollSheet.swift; sourceTree = SOURCE_ROOT; };
+		30F14D7E9182099A07181FEB /* HostTipSettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostTipSettingsSheet.swift; path = BidCast/Live/Host/HostTipSettingsSheet.swift; sourceTree = SOURCE_ROOT; };
 		35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectionCell.swift; sourceTree = "<group>"; };
 		35062E042DCB3D0C006C0BCE /* LabelCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelCollectionCell.xib; sourceTree = "<group>"; };
 		35062E072DCB3DDA006C0BCE /* CategoryCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionCell.swift; sourceTree = "<group>"; };
@@ -845,6 +853,7 @@
 		B37D446CA1D33C79E4207805 /* LiveBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveBanner.swift; path = BidCast/Live/Common/LiveBanner.swift; sourceTree = SOURCE_ROOT; };
 		B509479C9B43335AC7A04899 /* ProductModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductModels.swift; path = BidCast/Screens/Main/Explore/Model/ProductModels.swift; sourceTree = SOURCE_ROOT; };
 		B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreCategoryChipCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreCategoryChipCell.swift; sourceTree = SOURCE_ROOT; };
+		B66E43F882FADFEA61A68454 /* HostRandomizerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostRandomizerSheet.swift; path = BidCast/Live/Host/HostRandomizerSheet.swift; sourceTree = SOURCE_ROOT; };
 		B68742898C64B4EDB066B94C /* ActivityViewController+JobA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ActivityViewController+JobA.swift"; path = "BidCast/Screens/Phase3/Common/ActivityViewController+JobA.swift"; sourceTree = SOURCE_ROOT; };
 		B6AB4CA99C7E8B488B9ACCF6 /* HomeViewController+JobA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HomeViewController+JobA.swift"; path = "BidCast/Screens/Phase3/Common/HomeViewController+JobA.swift"; sourceTree = SOURCE_ROOT; };
 		B74F4817944166571BB38060 /* LiveShowResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveShowResolver.swift; path = BidCast/Live/Services/LiveShowResolver.swift; sourceTree = SOURCE_ROOT; };
@@ -860,6 +869,7 @@
 		CA6A496E856BC3682F1ED901 /* PremierShopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PremierShopViewController.swift; path = BidCast/Screens/Phase3/Shop/PremierShopViewController.swift; sourceTree = SOURCE_ROOT; };
 		CDF34FDDBD24932B292BD0F9 /* ChatThreadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatThreadViewController.swift; path = BidCast/Screens/Phase3/Chat/ChatThreadViewController.swift; sourceTree = SOURCE_ROOT; };
 		CE5347999F62D30593095CB9 /* ShopModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShopModels.swift; path = BidCast/Models/Shop/ShopModels.swift; sourceTree = SOURCE_ROOT; };
+		CF8F49698526C1BF44053E04 /* CreatePollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreatePollSheet.swift; path = BidCast/Live/Host/CreatePollSheet.swift; sourceTree = SOURCE_ROOT; };
 		CFF747379397AD318120AB24 /* SellerReviewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerReviewsViewController.swift; path = BidCast/Screens/Phase3/Social/SellerReviewsViewController.swift; sourceTree = SOURCE_ROOT; };
 		D0D5410091C94EB5A6FD2051 /* SendTipViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SendTipViewController.swift; path = BidCast/Screens/Phase4/Tips/SendTipViewController.swift; sourceTree = SOURCE_ROOT; };
 		D3444379BBFEAFC243CD33C2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "BidCast/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -1157,6 +1167,11 @@
 				A891486EB201F947CA4AA833 /* LiveAuthGuard.swift */,
 				D71C43B2975058C0DF5081A5 /* BrowseLiveShowsViewController.swift */,
 				DD50480097ACD5296C524E81 /* PinnedProductCard.swift */,
+				CF8F49698526C1BF44053E04 /* CreatePollSheet.swift */,
+				30F14D7E9182099A07181FEB /* HostTipSettingsSheet.swift */,
+				B66E43F882FADFEA61A68454 /* HostRandomizerSheet.swift */,
+				0F484C63A17F745275EECB93 /* HostRaidSheet.swift */,
+				23D740FAB2DEF128711D5B04 /* RandomizerWinnerBanner.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3228,6 +3243,11 @@
 				D73C4DBCAE4E0F713D6F1F33 /* LiveAuthGuard.swift in Sources */,
 				91544E02BC76211FDBC7CC2F /* BrowseLiveShowsViewController.swift in Sources */,
 				4BEF49D9AE7CBE26105FC2FE /* PinnedProductCard.swift in Sources */,
+				B79C4717992385B832C122DF /* CreatePollSheet.swift in Sources */,
+				AFF24BE8952BBD5A134CEF22 /* HostTipSettingsSheet.swift in Sources */,
+				F6044E0A8A30C0DB7A86F708 /* HostRandomizerSheet.swift in Sources */,
+				81AD48298700681CBAFFCF02 /* HostRaidSheet.swift in Sources */,
+				713244BDA80DDB3B4B980341 /* RandomizerWinnerBanner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
