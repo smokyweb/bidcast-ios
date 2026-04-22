@@ -254,22 +254,22 @@ final class OrderDetailViewController: UIViewController {
         returnBtn.addTarget(self, action: #selector(openReturn), for: .touchUpInside)
         stack.addArrangedSubview(returnBtn)
 
-        let supportBtn = makeButton(title: "Raise support ticket",
-                                    style: .bordered)
+        let supportBtn = makeButton(title: "Raise support ticket", style: .bordered)
         supportBtn.addTarget(self, action: #selector(openSupport), for: .touchUpInside)
         stack.addArrangedSubview(supportBtn)
 
         return stack
     }
 
+    enum ButtonStyle { case filled, bordered }
     private func makeButton(title: String,
-                            style: UIButton.Configuration.Style = .filled,
-                            tint: UIColor = .tintColor) -> UIButton {
+                            style: ButtonStyle = .filled,
+                            tint: UIColor = .systemBlue) -> UIButton {
         var cfg: UIButton.Configuration
         switch style {
         case .bordered:
             cfg = .bordered()
-        default:
+        case .filled:
             cfg = .filled()
         }
         cfg.baseBackgroundColor = tint
