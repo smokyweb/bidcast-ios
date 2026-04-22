@@ -145,6 +145,17 @@ public final class BidcastSocketManager {
 
     // MARK: - Helpers
 
+    /// Internal bridge exposed for extension files (BreakSpot, etc.) to
+    /// reach the private `emit(_:_:)` plumbing without duplicating the
+    /// `#if canImport(SocketIO)` logic. Not part of the public API.
+    internal func _emitBridge(_ event: String, _ payload: [String: Any]) {
+        emit(event, payload)
+    }
+
+    internal func _listenBridge(_ event: String, _ handler: @escaping ([String: Any]) -> Void) {
+        listen(event, handler: handler)
+    }
+
     @discardableResult
     private func emit(_ event: String, _ payload: [String: Any]) -> Bool {
         #if canImport(SocketIO)
