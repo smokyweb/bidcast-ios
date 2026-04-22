@@ -7,6 +7,8 @@
 	<!-- Leave as pk_test_* for sandbox testing; flip to pk_live_* at go-live. -->
 	<key>STRIPE_PUBLISHABLE_KEY</key>
 	<string>pk_test_TODO_TREY_REPLACE</string>
+	<key>AGORA_APP_ID</key>
+	<string>TODO_TREY_REPLACE_AGORA_APP_ID</string>
 	<!-- iOS parity Phase 4m (2026-04-22): Deep linking URL scheme. -->
 	<key>CFBundleURLTypes</key>
 	<array>

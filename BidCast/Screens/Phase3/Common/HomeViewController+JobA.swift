@@ -54,6 +54,12 @@ extension HomeViewController {
 
     @objc private func jobAOpenShowsMenu() {
         let sheet = UIAlertController(title: "Shows", message: nil, preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: "Watch live shows", style: .default) { [weak self] _ in
+            // Phase 5: browse the Android `get-live-show` feed and tap a
+            // tile to open WatchStreamViewController. Lives under
+            // BrowseLiveShowsViewController introduced this phase.
+            self?.p3Push(BrowseLiveShowsViewController())
+        })
         sheet.addAction(UIAlertAction(title: "Scheduled shows", style: .default) { [weak self] _ in
             self?.p3Push(ScheduledShowsViewController())
         })

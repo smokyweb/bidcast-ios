@@ -146,7 +146,10 @@ final class DeepLinkRouter {
             case .kycComplete:
                 NotificationCenter.default.post(name: .bidcastKYCCompleted, object: nil)
             case .stream(let id):
-                self.push(self.buildViewController(for: "stream", id: "\(id)"))
+                // Phase 5: resolve the show on-demand via LiveShowResolver,
+                // then present WatchStreamViewController modally. A bare
+                // `push` doesn't fit — live viewer is always fullscreen.
+                self.openLiveStream(showId: id)
                 debugLog("[DeepLink] stream/\(id)")
             case .order(let id):
                 self.push(self.buildViewController(for: "order", id: "\(id)"))
@@ -209,8 +212,10 @@ final class DeepLinkRouter {
             }
             return nil
         case "stream":
-            // TODO-PHASE5: Phase 5 will ship WatchStreamViewController that
-            // takes a show_id. For now, fall through to the home feed.
+            // Phase 5: see openLiveStream(showId:) — WatchStreamViewController
+            // needs an Agora token + room id, which require an async backend
+            // call. That path bypasses this sync VC builder and drives the
+            // navigation itself once the token lands.
             return nil
         case "product":
             // Phase 2 product detail exists; Checkout can be opened inline.
@@ -222,6 +227,75 @@ final class DeepLinkRouter {
         default:
             return nil
         }
+    }
+
+    /// Phase 5: resolve a show id to a full LiveShowContext (via
+    /// LiveShowResolver) and present WatchStreamViewController fullscreen.
+    /// Surfaces backend / auth errors as in-app alerts on the root window
+    /// rather than silently swallowing them.
+    private func openLiveStream(showId: Int) {
+        let userId = DeepLinkRouter.currentUserIdString()
+        Task { @MainActor in
+            do {
+                let ctx = try await LiveShowResolver.resolveViewerContext(
+                    showId: showId,
+                    currentUserId: userId
+                )
+                let vc = WatchStreamViewController()
+                vc.context = ctx
+                vc.currentUserId = userId
+                vc.currentUserName = DeepLinkRouter.currentUserName()
+                vc.currentUserImage = DeepLinkRouter.currentUserImage()
+                vc.modalPresentationStyle = .fullScreen
+                DeepLinkRouter.presentOnTopmost(vc)
+            } catch {
+                DeepLinkRouter.presentAlert(
+                    title: "Live show unavailable",
+                    message: (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                )
+            }
+        }
+    }
+
+    private static func currentUserIdString() -> String {
+        for key in ["userId", "user_id", "userID", "id", "CURRENT_USER_ID"] {
+            if let v = UserDefaults.standard.string(forKey: key), !v.isEmpty { return v }
+            let n = UserDefaults.standard.integer(forKey: key)
+            if n > 0 { return String(n) }
+        }
+        return ""
+    }
+
+    private static func currentUserName() -> String {
+        for key in ["userName", "user_name", "firstName", "first_name"] {
+            if let v = UserDefaults.standard.string(forKey: key), !v.isEmpty { return v }
+        }
+        return "Viewer"
+    }
+
+    private static func currentUserImage() -> String {
+        for key in ["profilePicture", "user_image", "avatar"] {
+            if let v = UserDefaults.standard.string(forKey: key), !v.isEmpty { return v }
+        }
+        return ""
+    }
+
+    private static func presentOnTopmost(_ vc: UIViewController) {
+        guard let scene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first(where: { $0.activationState == .foregroundActive }) ?? UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first,
+              let root = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+            return
+        }
+        var top = root
+        while let presented = top.presentedViewController { top = presented }
+        top.present(vc, animated: true)
+    }
+
+    private static func presentAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        presentOnTopmost(alert)
     }
 
     private func push(_ vc: UIViewController?) {
