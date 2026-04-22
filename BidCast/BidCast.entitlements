@@ -17,5 +17,20 @@
     -->
     <key>aps-environment</key>
     <string>development</string>
+
+    <!--
+      iOS parity phase 4m (2026-04-22): Universal Links entitlement.
+      TODO-TREY: Before go-live Trey must host
+        https://bidcast.betaplanets.com/.well-known/apple-app-site-association
+      with an `applinks` entry for appID `YQGQU3RV34.io.bidcast` covering paths
+      /stream/*, /order/*, /chat/*, /profile/*, /product/* — and enable the
+      "Associated Domains" capability on the App Store provisioning profile.
+      Until that file is live, https:// links will open Safari but the
+      custom `bidcast://` scheme already routes via DeepLinkRouter.
+    -->
+    <key>com.apple.developer.associated-domains</key>
+    <array>
+        <string>applinks:bidcast.betaplanets.com</string>
+    </array>
 </dict>
 </plist>

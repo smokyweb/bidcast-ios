@@ -107,15 +107,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenHex = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
         debugLog("APNs device token (raw hex): \(tokenHex)")
-        #if canImport(FirebaseMessaging)
-        // Hand the raw APNs token to Firebase so it can mint an FCM token.
-        Messaging.messaging().apnsToken = deviceToken
-        #endif
+        // iOS parity Phase 4l: hand the APNs token to the PushRegistrationService,
+        // which forwards to Firebase Messaging + registers with the backend.
+        PushRegistrationService.shared.didReceiveApnsToken(deviceToken)
     }
 
     func application(_ application: UIApplication,
                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
         debugLog("APNs registration failed: \(error)")
+    }
+
+    // MARK: - Silent / background push (iOS parity Phase 4l)
+
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        PushRegistrationService.shared.handleSilentPush(userInfo, completion: completionHandler)
+    }
+
+    // MARK: - URL scheme + Universal Links (iOS parity Phase 4m)
+
+    func application(_ app: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        DeepLinkRouter.shared.route(url: url)
+        return true
+    }
+
+    func application(_ application: UIApplication,
+                     continue userActivity: NSUserActivity,
+                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        return DeepLinkRouter.shared.routeUniversalLink(userActivity) != nil
     }
 
     // MARK: UISceneSession Lifecycle
@@ -189,17 +211,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler:
                                 @escaping (UNNotificationPresentationOptions) -> Void) {
-        debugLog("Foreground push received: \(notification.request.content.userInfo)")
-        completionHandler([.banner, .sound, .badge, .list])
+        let opts = PushRegistrationService.shared.handleForegroundNotification(notification)
+        completionHandler(opts)
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        debugLog("Notification tapped: \(response.notification.request.content.userInfo)")
-        // TODO(phase 2+): parse payload and route to the appropriate VC
-        // (live show, chat thread, order detail, etc.) to match Android's
-        // MyFirebaseMessagingService + DashActivity deep-link handling.
+        // iOS parity Phase 4l+4m: route to the appropriate VC via DeepLinkRouter.
+        PushRegistrationService.shared.handleNotificationTap(response)
         completionHandler()
     }
 }
@@ -213,12 +233,10 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
         debugLog("FCM registration token: \(token)")
-        // Persist locally so SignIn + any future "send device details" call
-        // can include it in the device-details payload.
-        UserDefaults.standard.setValue(token, forKey: "fcmDeviceToken")
-        // TODO(phase 2): once APIManager auth-token refresh lands, POST this
-        // token via APIEndPoint.sendDeviceDetails (already wired) on every
-        // rotation. Android triggers this from MyFirebaseMessagingService.
+        // iOS parity Phase 4l: PushRegistrationService persists + auto-syncs
+        // with the backend on every token rotation, matching Android's
+        // MyFirebaseMessagingService.
+        PushRegistrationService.shared.didReceiveFcmToken(token)
     }
 }
 #endif
