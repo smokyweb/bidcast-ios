@@ -140,11 +140,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // connecting to Firebase yet.
     private func configureFirebase() {
         #if canImport(FirebaseCore)
+        // QA-FIX-cmoafjxce002xzl1hgb5uj1l8: GoogleService-Info.plist on the QA branch
+        // still contains placeholder strings (e.g. REPLACE-FROM-FIREBASE-CONSOLE-ios)
+        // because the iOS app entry in the Firebase console hasn't been created yet.
+        // FirebaseApp.configure() calls [FIROptions validateWithTarget:] which
+        // raises an NSException on an invalid GOOGLE_APP_ID format and crashes the
+        // app on launch. Guard the configure call so we only bootstrap Firebase
+        // when the plist looks real. Push/analytics will silently no-op until the
+        // real plist is dropped in, but the app will at least launch.
+        guard isFirebaseOptionsPlistValid() else {
+            NSLog("[BidCast] Skipping FirebaseApp.configure(): GoogleService-Info.plist has placeholder values")
+            return
+        }
         FirebaseApp.configure()
         #if canImport(FirebaseMessaging)
         Messaging.messaging().delegate = self
         #endif
         #endif
+    }
+
+    private func isFirebaseOptionsPlistValid() -> Bool {
+        guard
+            let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+            let dict = NSDictionary(contentsOfFile: path) as? [String: Any]
+        else {
+            return false
+        }
+        guard let appId = dict["GOOGLE_APP_ID"] as? String, !appId.isEmpty else {
+            return false
+        }
+        if appId.uppercased().contains("REPLACE") { return false }
+        // Firebase expects GOOGLE_APP_ID of the form `1:NNN:ios:HHHHH`.
+        // Do a lightweight format check so we don't trigger the framework's
+        // fatal NSException on obviously-bogus values.
+        let pattern = "^[0-9]+:[0-9]+:(ios|android):[0-9a-f]+$"
+        return appId.range(of: pattern, options: .regularExpression) != nil
     }
 
     // MARK: - APNs + FCM registration (iOS parity phase 1c scaffold)
