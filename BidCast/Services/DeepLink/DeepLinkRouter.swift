@@ -225,14 +225,67 @@ final class DeepLinkRouter {
     }
 
     private func push(_ vc: UIViewController?) {
-        guard let vc = vc,
-              let nav = Self.currentNavigationController() else {
+        guard let vc = vc else { return }
+        guard let nav = Self.currentNavigationController(preferredTabForTarget: vc) else {
+            // No ambient nav — wrap in one and present modally so the user
+            // still lands on the deep-linked screen.
+            let wrap = UINavigationController(rootViewController: vc)
+            wrap.modalPresentationStyle = .fullScreen
+            Self.topViewController()?.present(wrap, animated: true)
             return
         }
         nav.pushViewController(vc, animated: true)
     }
 
-    private static func currentNavigationController() -> UINavigationController? {
+    // MARK: - Tab-aware navigation resolver
+    //
+    // For each deep-link target we want the user to feel like they're on
+    // the right tab before the push. Orders/Activity/Chat land on the
+    // Activity tab (index 3); Stream/Product/Profile land on the Home
+    // tab (index 0). KYC / Wallet land on the Account tab (index 4).
+    //
+    // The TabBarViewController defined at
+    // BidCast/Screens/TabBar/View/TabBarViewController.swift indexes tabs
+    // as: 0 home, 1 explore, 2 sell, 3 activity, 4 account.
+
+    private static let tabHome     = 0
+    private static let tabExplore  = 1
+    private static let tabSell     = 2
+    private static let tabActivity = 3
+    private static let tabAccount  = 4
+
+    private static func preferredTabIndex(for vc: UIViewController) -> Int {
+        switch vc {
+        case is OrderListViewController,
+             is ChatThreadViewController,
+             is ConversationListViewController,
+             is NotificationListViewController:
+            return tabActivity
+        case is WalletViewController,
+             is PaymentMethodsListViewController,
+             is KYCViewController,
+             is SellerPublicProfileViewController:
+            return tabAccount
+        case is CheckoutViewController:
+            return tabHome
+        default:
+            return tabHome
+        }
+    }
+
+    private static func topViewController() -> UIViewController? {
+        let scene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first(where: { $0.activationState == .foregroundActive })
+            ?? UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first
+        let keyWindow = scene?.windows.first(where: { $0.isKeyWindow }) ?? scene?.windows.first
+        var root = keyWindow?.rootViewController
+        while let presented = root?.presentedViewController { root = presented }
+        return root
+    }
+
+    private static func currentNavigationController(preferredTabForTarget vc: UIViewController? = nil)
+        -> UINavigationController? {
         let scene = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .first(where: { $0.activationState == .foregroundActive })
@@ -241,9 +294,31 @@ final class DeepLinkRouter {
         var root = keyWindow?.rootViewController
         while let presented = root?.presentedViewController { root = presented }
 
+        // Tab-bar-aware resolution: switch to the right tab first, then find
+        // the first UINavigationController embedded in that tab. Our tab VCs
+        // (Sell / Activity) embed a child UINavigationController via swizzle;
+        // return that nav so pushes land inside the tab context.
+        if let tab = (root as? UITabBarController) ?? findTabBar(in: root) {
+            if let vc = vc {
+                tab.selectedIndex = preferredTabIndex(for: vc)
+            }
+            let selected = tab.selectedViewController
+            if let nav = selected as? UINavigationController { return nav }
+            if let nav = selected?.children.compactMap({ $0 as? UINavigationController }).first {
+                return nav
+            }
+            return nil
+        }
         if let nav = root as? UINavigationController { return nav }
-        if let tab = root as? UITabBarController,
-           let nav = tab.selectedViewController as? UINavigationController { return nav }
+        return nil
+    }
+
+    private static func findTabBar(in vc: UIViewController?) -> UITabBarController? {
+        guard let vc = vc else { return nil }
+        if let t = vc as? UITabBarController { return t }
+        for child in vc.children {
+            if let t = findTabBar(in: child) { return t }
+        }
         return nil
     }
 }
