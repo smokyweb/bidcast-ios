@@ -53,6 +53,12 @@ final class TutorialsListViewController: UIViewController, UITableViewDataSource
     private func loadAll() {
         SVProgressHUD.show()
         Task { @MainActor in
+            // NOTE 2026-04-22: deferred dismiss matches the pattern used by
+            // other Phase 3 screens (SellerOffersViewController /
+            // P3AnalyticsViewController) and avoids the Swift 6 ambiguity
+            // where `SVProgressHUD.dismiss()` inside an async context can
+            // resolve to the async `dismissWithCompletion:` bridge.
+            defer { SVProgressHUD.dismiss(withDelay: 0) }
             async let howTask: GetHowToSellResponse = APIManager.shared.request(type: .getHowToSellStep, header: true)
             async let prepTask: GetPrepareStepResponse = APIManager.shared.request(type: .getPrepareStep, header: true)
             async let lesTask: GetLessonsResponse = APIManager.shared.request(type: .getLesson, header: true)
@@ -63,10 +69,8 @@ final class TutorialsListViewController: UIViewController, UITableViewDataSource
                 self.howTo = how.data ?? []
                 self.prepare = prep.data ?? []
                 self.lessons = les.data ?? []
-                SVProgressHUD.dismiss()
                 self.tableView.reloadData()
             } catch {
-                SVProgressHUD.dismiss()
                 self.p3Alert(message: (error as? DataError)?.getErrorMessage() ?? error.localizedDescription)
             }
         }
