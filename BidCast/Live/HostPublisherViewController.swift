@@ -111,6 +111,10 @@ public final class HostPublisherViewController: UIViewController {
     private lazy var pinFirstButton = makeButton("Pin First Product")
     private lazy var startAuctionButton = makeButton("Start Auction")
     private lazy var runNextButton = makeButton("Run Next")
+    private lazy var pollButton = makeButton("Create Poll")
+    private lazy var tipSettingsButton = makeButton("Tip Settings")
+    private lazy var raidButton = makeButton("Raid")
+    private lazy var randomizerButton = makeButton("Start Randomizer")
     private lazy var muteButton = makeButton("Mute / Unmute")
     private lazy var cameraButton = makeButton("Switch Camera")
     private lazy var closeButton = makeButton("End / Close")
@@ -130,6 +134,8 @@ public final class HostPublisherViewController: UIViewController {
     private var chatMessages: [(String, String)] = []
     private var currentPinnedProductId: String?
     private var currentPinnedProductTitle: String?
+    private var lastBidTimerSeconds: Int = -1
+    private var hasAutoAdvancedForCurrentTimer = false
 
     // MARK: Lifecycle
 
@@ -158,7 +164,7 @@ public final class HostPublisherViewController: UIViewController {
         view.addSubview(stack)
         view.addSubview(chatTableView)
 
-        [pinFirstButton, startAuctionButton, runNextButton, muteButton, cameraButton, closeButton].forEach { stack.addArrangedSubview($0) }
+        [pinFirstButton, startAuctionButton, runNextButton, pollButton, tipSettingsButton, raidButton, randomizerButton, muteButton, cameraButton, closeButton].forEach { stack.addArrangedSubview($0) }
 
         NSLayoutConstraint.activate([
             localVideoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -203,6 +209,10 @@ public final class HostPublisherViewController: UIViewController {
         pinFirstButton.addTarget(self, action: #selector(pinFirstProduct), for: .touchUpInside)
         startAuctionButton.addTarget(self, action: #selector(startAuction), for: .touchUpInside)
         runNextButton.addTarget(self, action: #selector(runNextProduct), for: .touchUpInside)
+        pollButton.addTarget(self, action: #selector(createPoll), for: .touchUpInside)
+        tipSettingsButton.addTarget(self, action: #selector(configureTipSettings), for: .touchUpInside)
+        raidButton.addTarget(self, action: #selector(sendRaid), for: .touchUpInside)
+        randomizerButton.addTarget(self, action: #selector(startRandomizer), for: .touchUpInside)
         muteButton.addTarget(self, action: #selector(toggleMute), for: .touchUpInside)
         cameraButton.addTarget(self, action: #selector(switchCamera), for: .touchUpInside)
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
@@ -228,6 +238,24 @@ public final class HostPublisherViewController: UIViewController {
             let remaining = self.stringValue(payload["remaining"]) ?? self.stringValue(payload["time"]) ?? self.stringValue(payload["duration"])
             if let remaining = remaining {
                 self.timerLabel.text = "Timer \(remaining)"
+                let seconds = Int(Double(remaining) ?? -1)
+                // Reset edge detector when a new positive timer starts.
+                if seconds > 0 && seconds != self.lastBidTimerSeconds {
+                    self.hasAutoAdvancedForCurrentTimer = false
+                }
+                // Core bug fix for task cmo93i7ga:
+                // If the timer reaches zero and the host has not already
+                // advanced the item for this auction cycle, request the next
+                // product automatically. This mirrors the Android/PWA host
+                // behavior Trey asked us to restore.
+                if seconds == 0 && !self.hasAutoAdvancedForCurrentTimer {
+                    self.hasAutoAdvancedForCurrentTimer = true
+                    if let context = self.context {
+                        BidcastSocketManager.shared.emitRunNextProduct(roomId: context.roomId)
+                        self.appendSystem("Timer hit 0, auto-requested next item.")
+                    }
+                }
+                self.lastBidTimerSeconds = seconds
             }
         }
 
@@ -244,6 +272,8 @@ public final class HostPublisherViewController: UIViewController {
             let amount = self.stringValue(payload["bid_amount"]) ?? "?"
             self.appendSystem("Sold to \(winner) at $\(amount)")
             self.timerLabel.text = "Timer idle"
+            self.lastBidTimerSeconds = -1
+            self.hasAutoAdvancedForCurrentTimer = false
         }
 
         socket.onChat { [weak self] payload in
@@ -256,6 +286,8 @@ public final class HostPublisherViewController: UIViewController {
 
         socket.onAuctionStarted { [weak self] _ in
             self?.appendSystem("Auction started.")
+            self?.lastBidTimerSeconds = -1
+            self?.hasAutoAdvancedForCurrentTimer = false
         }
 
         socket.onProductPinned { [weak self] payload in
@@ -274,12 +306,19 @@ public final class HostPublisherViewController: UIViewController {
             self.currentPinnedProductTitle = title
             self.currentProductLabel.text = title.map { "Now selling: \($0)" } ?? "Now selling next item"
             self.timerLabel.text = "Timer restarted"
+            self.lastBidTimerSeconds = -1
+            self.hasAutoAdvancedForCurrentTimer = false
             self.appendSystem("Advanced to next item.")
         }
 
         socket.onRunNextProductError { [weak self] payload in
             let message = payload["message"] as? String ?? "run_next_product failed"
             self?.appendSystem(message)
+        }
+
+        socket.onFreebieWinner { [weak self] payload in
+            let name = payload["user_name"] as? String ?? "Someone"
+            self?.appendSystem("Randomizer winner: \(name)")
         }
     }
 
@@ -352,6 +391,78 @@ public final class HostPublisherViewController: UIViewController {
         appendSystem("Requested next item.")
     }
 
+    @objc private func createPoll() {
+        guard let context = context else { return }
+        let alert = UIAlertController(title: "Create poll", message: nil, preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = "Question" }
+        alert.addTextField { $0.placeholder = "Option 1" }
+        alert.addTextField { $0.placeholder = "Option 2" }
+        alert.addTextField { $0.placeholder = "Duration seconds (default 30)"; $0.keyboardType = .numberPad }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Create", style: .default) { [weak self] _ in
+            let fields = alert.textFields ?? []
+            let question = fields[safe: 0]?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let o1 = fields[safe: 1]?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let o2 = fields[safe: 2]?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let duration = Int(fields[safe: 3]?.text ?? "") ?? 30
+            guard !question.isEmpty, !o1.isEmpty, !o2.isEmpty else { return }
+            BidcastSocketManager.shared.emitCreatePoll(roomId: context.roomId, question: question, options: [o1, o2], durationSeconds: duration)
+            self?.appendSystem("Poll created.")
+        })
+        present(alert, animated: true)
+    }
+
+    @objc private func configureTipSettings() {
+        guard let context = context else { return }
+        let alert = UIAlertController(title: "Tip settings", message: nil, preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = "Tip message shown to viewers" }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Save", style: .default) { [weak self] _ in
+            let msg = alert.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            guard !msg.isEmpty else { return }
+            BidcastSocketManager.shared.emitSaveTipSetting(showId: context.showId, tipMessage: msg, showInLiveChat: true)
+            self?.appendSystem("Tip settings updated.")
+        })
+        present(alert, animated: true)
+    }
+
+    @objc private func startRandomizer() {
+        guard let context = context else { return }
+        let alert = UIAlertController(title: "Randomizer", message: "Give away an item at random.", preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = "Product id"; $0.text = self.currentPinnedProductId }
+        alert.addTextField { $0.placeholder = "Duration seconds (default 30)"; $0.keyboardType = .numberPad }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Start", style: .default) { [weak self] _ in
+            let pid = alert.textFields?[0].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let dur = alert.textFields?[1].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let secs = Int(dur) ?? 30
+            guard !pid.isEmpty else { return }
+            BidcastSocketManager.shared.emitCreateFreebie(roomId: context.roomId, productId: pid, timeSeconds: String(secs))
+            self?.appendSystem("Randomizer started for product \(pid).")
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(secs)) {
+                BidcastSocketManager.shared.emitFinalizeFreebie(roomId: context.roomId)
+                self?.appendSystem("Randomizer finalized.")
+            }
+        })
+        present(alert, animated: true)
+    }
+
+    @objc private func sendRaid() {
+        guard let context = context else { return }
+        let alert = UIAlertController(title: "Raid", message: "Send your viewers to another room.", preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = "Target room id" }
+        alert.addTextField { $0.placeholder = "Target host id (optional)" }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Send", style: .default) { [weak self] _ in
+            let targetRoom = alert.textFields?[0].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let targetHost = alert.textFields?[1].text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            guard !targetRoom.isEmpty else { return }
+            BidcastSocketManager.shared.emitCreateRaid(sourceRoomId: context.roomId, targetRoomId: targetRoom, sourceHostId: context.sellerId, targetHostId: targetHost)
+            self?.appendSystem("Raid requested to \(targetRoom).")
+        })
+        present(alert, animated: true)
+    }
+
     @objc private func toggleMute() {
         isMuted.toggle()
         BidcastAgoraEngine.shared.setMicrophoneMuted(isMuted)
@@ -412,4 +523,10 @@ extension HostPublisherViewController: BidcastAgoraEngineDelegate {
     public func agoraRemoteJoined(uid: UInt) {}
     public func agoraRemoteLeft(uid: UInt) {}
     public func agoraError(_ error: String) { appendSystem(error) }
+}
+
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
 }
