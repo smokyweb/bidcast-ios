@@ -247,7 +247,10 @@ public final class HostPublisherViewController: UIViewController {
             let remaining = self.stringValue(payload["remaining"]) ?? self.stringValue(payload["time"]) ?? self.stringValue(payload["duration"])
             if let remaining = remaining {
                 self.timerLabel.text = "Timer \(remaining)"
-                let seconds = Int(Double(remaining) ?? -1)
+                // Host countdown polish: text red under 10s, matches
+                // viewer UX and gives host visual cue before auto-advance.
+                let seconds = Int(Double(remaining) ?? Double(Int.max))
+                self.timerLabel.textColor = (0...10).contains(seconds) ? .systemRed : .white
                 // Reset edge detector when a new positive timer starts.
                 if seconds > 0 && seconds != self.lastBidTimerSeconds {
                     self.hasAutoAdvancedForCurrentTimer = false
