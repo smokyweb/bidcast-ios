@@ -252,7 +252,7 @@ struct TabbarScreen: View {
     // Store navigation intent when sell sheet button is tapped
     private func storePendingNavigation(for tappedTab: SellTabOption) {
         if tappedTab == .lesson {
-            if !UserDefaults.isFirstShowCreated {
+            if UserDefaults.isFirstShowCreated {
                 if UserDefaults.sellerVerafied == "verified" {
                     pendingNavigation = .title
                 } else {

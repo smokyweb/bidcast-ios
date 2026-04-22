@@ -18,78 +18,6 @@
             endingLineNumber = "398"
             landmarkName = "navigationLinks"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "8A4AFDF9-472B-4602-8641-FB2AD7F7CF96 - 7ffb734b810cd7b4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(BidCast.CusNavLink&lt;BidCast.OTPVerificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.AddCardScreen&gt;, BidCast.CusNavLink&lt;BidCast.AccountScreen&gt;)&gt; in BidCast.SellerVerificationScreen.navigationLinks.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/Ankit_SkyeStoneAI/Documents/bidcast/BidCast/Screens/Account/View/SellerHub/SellerVerification/View/SellerVerificationScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398">
-               </Location>
-               <Location
-                  uuid = "8A4AFDF9-472B-4602-8641-FB2AD7F7CF96 - acd2bfd310f56464"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () async -&gt; () in closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(BidCast.CusNavLink&lt;BidCast.OTPVerificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.AddCardScreen&gt;, BidCast.CusNavLink&lt;BidCast.AccountScreen&gt;)&gt; in BidCast.SellerVerificationScreen.navigationLinks.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/Ankit_SkyeStoneAI/Documents/bidcast/BidCast/Screens/Account/View/SellerHub/SellerVerification/View/SellerVerificationScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398">
-               </Location>
-               <Location
-                  uuid = "8A4AFDF9-472B-4602-8641-FB2AD7F7CF96 - e41e4ecdf01e974c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 () async -&gt; () in closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(BidCast.CusNavLink&lt;BidCast.OTPVerificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.AddCardScreen&gt;, BidCast.CusNavLink&lt;BidCast.AccountScreen&gt;)&gt; in BidCast.SellerVerificationScreen.navigationLinks.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/Ankit_SkyeStoneAI/Documents/bidcast/BidCast/Screens/Account/View/SellerHub/SellerVerification/View/SellerVerificationScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398">
-               </Location>
-               <Location
-                  uuid = "8A4AFDF9-472B-4602-8641-FB2AD7F7CF96 - a98b4fa3b739c9bb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 () async -&gt; () in closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(BidCast.CusNavLink&lt;BidCast.OTPVerificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.AddCardScreen&gt;, BidCast.CusNavLink&lt;BidCast.AccountScreen&gt;)&gt; in BidCast.SellerVerificationScreen.navigationLinks.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/Ankit_SkyeStoneAI/Documents/bidcast/BidCast/Screens/Account/View/SellerHub/SellerVerification/View/SellerVerificationScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398">
-               </Location>
-               <Location
-                  uuid = "8A4AFDF9-472B-4602-8641-FB2AD7F7CF96 - 1430a7c16017a352"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 () async -&gt; () in closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(BidCast.CusNavLink&lt;BidCast.OTPVerificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.AddCardScreen&gt;, BidCast.CusNavLink&lt;BidCast.AccountScreen&gt;)&gt; in BidCast.SellerVerificationScreen.navigationLinks.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/Ankit_SkyeStoneAI/Documents/bidcast/BidCast/Screens/Account/View/SellerHub/SellerVerification/View/SellerVerificationScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -122,22 +50,6 @@
             endingLineNumber = "981"
             landmarkName = "shopSheetContent"
             landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4F09FC00-7F25-4522-ABF2-C862D24FF417"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1778"
-            endingLineNumber = "1778"
-            landmarkName = "showData(from:selectedID:)"
-            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
