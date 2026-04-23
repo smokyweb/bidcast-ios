@@ -156,7 +156,23 @@ enum JobAActivitySwizzle {
             let original = class_getInstanceMethod(cls, originalSel),
             let swizzled = class_getInstanceMethod(cls, swizzledSel)
         else { return }
-        method_exchangeImplementations(original, swizzled)
+
+        let didAdd = class_addMethod(
+            cls,
+            originalSel,
+            method_getImplementation(swizzled),
+            method_getTypeEncoding(swizzled)
+        )
+        if didAdd {
+            class_replaceMethod(
+                cls,
+                swizzledSel,
+                method_getImplementation(original),
+                method_getTypeEncoding(original)
+            )
+        } else {
+            method_exchangeImplementations(original, swizzled)
+        }
     }
 }
 

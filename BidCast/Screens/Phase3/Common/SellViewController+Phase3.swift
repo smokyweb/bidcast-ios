@@ -63,7 +63,28 @@ enum P3SellSwizzle {
             let original = class_getInstanceMethod(cls, originalSel),
             let swizzled = class_getInstanceMethod(cls, swizzledSel)
         else { return }
-        method_exchangeImplementations(original, swizzled)
+
+        // Safe subclass swizzle pattern: if SellViewController inherits
+        // UIViewController.viewWillAppear without overriding it, a raw
+        // method_exchangeImplementations would mutate UIViewController's IMP
+        // globally and crash other controllers (including UINavigationController)
+        // with an unrecognized selector during launch.
+        let didAdd = class_addMethod(
+            cls,
+            originalSel,
+            method_getImplementation(swizzled),
+            method_getTypeEncoding(swizzled)
+        )
+        if didAdd {
+            class_replaceMethod(
+                cls,
+                swizzledSel,
+                method_getImplementation(original),
+                method_getTypeEncoding(original)
+            )
+        } else {
+            method_exchangeImplementations(original, swizzled)
+        }
     }
 }
 
