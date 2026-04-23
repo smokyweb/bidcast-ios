@@ -37,12 +37,18 @@ struct SignUpRequest:Encodable {
     var password:String
     var passwordConf:String
     var roleID : Int
-    
+    /// Optional referral code. iOS Parity P0.5 (2026-04-23): added to
+    /// match Android's `CreateAccountFragment`, which accepts a referral
+    /// code argument (also pre-filled by /invite/<code> deep links) and
+    /// forwards it as `referral_code` multipart.
+    var referralCode: String? = nil
+
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
         case lastName = "last_name"
         case passwordConf = "password_confirmation"
         case roleID = "role_id"
+        case referralCode = "referral_code"
         case email, password
     }
 }

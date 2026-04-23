@@ -177,6 +177,47 @@ All event names + payload shapes already match Android's `SocketManager.kt`
 
 ---
 
+## iOS Parity P0 follow-ups (2026-04-23)
+
+### Associated-domain / AASA for /invite links (P0.5)
+
+The iOS app now handles `/invite/<code>` universal links — tapping one
+presents `SignUpViewController` with the referral code pre-filled (code
+is forwarded as `referral_code` multipart in the register request).
+
+**Backend action required:** publish an updated
+`apple-app-site-association` file on `bidcast.betaplanets.com` so Apple
+whitelists that path. The `paths` array must include the invite prefix
+alongside the existing Bidcast routes, e.g.:
+
+```json
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "<TEAM_ID>.io.bidcast",
+        "paths": [
+          "/stream/*",
+          "/show/*",
+          "/live/*",
+          "/order/*",
+          "/chat/*",
+          "/profile/*",
+          "/product/*",
+          "/invite/*"
+        ]
+      }
+    ]
+  }
+}
+```
+
+Serve it at `https://bidcast.betaplanets.com/.well-known/apple-app-site-association`
+with `Content-Type: application/json` and no redirect.
+
+---
+
 ## Known non-blockers
 
 1. **Randomizer uses instant-pick, not lucky-wheel.** Matches PWA. Android

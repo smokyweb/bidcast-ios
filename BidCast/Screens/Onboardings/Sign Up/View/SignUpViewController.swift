@@ -25,6 +25,7 @@ enum formData : Int,CaseIterable{
     case email
     case password
     case confirmPass
+    case referralCode
     var title : String{
         switch self {
         case .firstName:
@@ -37,6 +38,8 @@ enum formData : Int,CaseIterable{
             return AppString.Title.password
         case .confirmPass:
             return AppString.Title.confirmPass
+        case .referralCode:
+            return "Referral code (optional)"
         }
     }
     var placeholder: String {
@@ -51,6 +54,8 @@ enum formData : Int,CaseIterable{
             return AppString.Placeholder.password
         case .confirmPass:
             return AppString.Placeholder.confirmPass
+        case .referralCode:
+            return "Enter referral code"
         }
     }
 }
@@ -67,12 +72,17 @@ class SignUpViewController: UIViewController {
     var email  = ""
     var password  = ""
     var conFirmPassowrd  = ""
+    /// iOS Parity P0.5 (2026-04-23): optional referral code that gets
+    /// forwarded as `referral_code` multipart in the register request.
+    /// Can be pre-filled by `DeepLinkRouter` when the user taps a
+    /// `/invite/<code>` universal link.
+    var referralCode = ""
     var roleID  = 2
  
     //MARK: sectionData.
     var sectionData: [SignUpSection: Int] = [
         .headingTitle : 1,
-        .formData : 5,
+        .formData : 6,
         .continueBtn : 1
     ]
 
@@ -137,11 +147,18 @@ class SignUpViewController: UIViewController {
         }
         else if Reachability.isConnectedToNetwork(){
             DispatchQueue.main.async {
-                let signUpParam = SignUpRequest(firstName: self.firstName,
-                                                lastName: self.lastName,
-                                                email: self.email,
-                                                password: self.password,
-                                                passwordConf: self.conFirmPassowrd, roleID: self.roleID)
+                // iOS Parity P0.5: forward the optional referral_code.
+                let trimmedReferral = self.referralCode
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                let signUpParam = SignUpRequest(
+                    firstName: self.firstName,
+                    lastName: self.lastName,
+                    email: self.email,
+                    password: self.password,
+                    passwordConf: self.conFirmPassowrd,
+                    roleID: self.roleID,
+                    referralCode: trimmedReferral.isEmpty ? nil : trimmedReferral
+                )
                 debugLog(signUpParam)
                 SVProgressHUD.show()
                 self.viewModel.signUp(parameters: signUpParam)
@@ -235,6 +252,22 @@ extension SignUpViewController: UITableViewDelegate,UITableViewDataSource{
                 cell.entertext = { [weak self] text in
                     guard let self = self else { return }
                     self.conFirmPassowrd = text.text ?? ""
+                }
+                cell.selectionStyle = .none
+                return cell
+            case .referralCode:
+                // iOS Parity P0.5: optional referral code input. May be
+                // pre-filled by a deep-link into this VC.
+                let cell = signUpTblView.dequeueCell(with: TextFieldWithLabelCell.self)
+                cell.titleOlt.text = options[indexPath.row].title
+                cell.textFieldOlt.placeholder = options[indexPath.row].placeholder
+                cell.textFieldOlt.text = self.referralCode
+                cell.textFieldOlt.autocapitalizationType = .allCharacters
+                cell.textFieldOlt.autocorrectionType = .no
+                cell.eyeBtnOlt.isHidden = true
+                cell.entertext = { [weak self] text in
+                    guard let self = self else { return }
+                    self.referralCode = text.text ?? ""
                 }
                 cell.selectionStyle = .none
                 return cell

@@ -29,6 +29,8 @@ enum DeepLinkTarget: Equatable {
     case chat(String)        // chatKey "{max}_chats_{min}"
     case profile(Int)
     case product(Int)
+    /// iOS Parity P0.5: `/invite/<code>` universal link — pre-fill signup.
+    case invite(String)
     case kycComplete
     case unknown(URL)
 }
@@ -131,6 +133,12 @@ final class DeepLinkRouter {
             if let idStr = parts.dropFirst().first, let id = Int(idStr) {
                 return .product(id)
             }
+        case "invite":
+            // iOS Parity P0.5: /invite/<code> → land on signup with the
+            // field pre-filled. Code is URL-safe alphanum, length >= 3.
+            if let code = parts.dropFirst().first, code.count >= 2 {
+                return .invite(String(code))
+            }
         case "kyc-complete", "kyccomplete":
             return .kycComplete
         default: break
@@ -163,10 +171,36 @@ final class DeepLinkRouter {
             case .product(let id):
                 self.push(self.buildViewController(for: "product", id: "\(id)"))
                 debugLog("[DeepLink] product/\(id)")
+            case .invite(let code):
+                // iOS Parity P0.5: present SignUp with the referral field
+                // pre-filled. If the user is already signed in we just
+                // surface a toast via debug log; deep link is a no-op for
+                // signed-in users (matches Android).
+                self.presentSignUpForInvite(code: code)
+                debugLog("[DeepLink] invite/\(code)")
             case .unknown(let url):
                 debugLog("[DeepLink] unknown: \(url.absoluteString)")
             }
         }
+    }
+
+    /// iOS Parity P0.5: land on SignUp with a referral code pre-filled.
+    /// If the user is already authenticated, this is a no-op — they
+    /// shouldn't be bounced back to a signup form.
+    private func presentSignUpForInvite(code: String) {
+        let token = UserDefaults.accessToken
+        if !token.isEmpty {
+            debugLog("[DeepLink] /invite ignored for signed-in user")
+            return
+        }
+        let storyboard = UIStoryboard(name: "Onboardings", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(
+            withIdentifier: "SignUpViewController") as? SignUpViewController
+        else {
+            return
+        }
+        vc.referralCode = code
+        DeepLinkRouter.presentOnTopmost(vc)
     }
 
     // MARK: - VC resolution
