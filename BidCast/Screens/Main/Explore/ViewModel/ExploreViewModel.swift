@@ -58,8 +58,47 @@ final class ExploreViewModel {
 
     func setSelectedCategory(_ categoryID: Int?) {
         self.filter.categoryID = categoryID
+        // Tapping a different top-level category clears the sub-category.
+        self.filter.subCategoryID = nil
         self.filter.page = 1
         fetchProducts(reset: true)
+    }
+
+    /// P2.15 — drill into a sub-category under the currently-selected
+    /// category. Pass `nil` to clear the sub-filter (back to "All
+    /// <category>").
+    func setSelectedSubcategory(_ subcategoryID: Int?) {
+        self.filter.subCategoryID = subcategoryID
+        self.filter.page = 1
+        fetchProducts(reset: true)
+    }
+
+    /// P2.15 — switch the explore type tab (All / Recommended / Popular).
+    /// Mirrors Android's ExploreTypeFragment behaviour of reloading the
+    /// product grid without changing the currently-selected category.
+    func setExploreType(_ type: ExploreType) {
+        guard self.filter.exploreType != type else { return }
+        self.filter.exploreType = type
+        self.filter.page = 1
+        fetchProducts(reset: true)
+    }
+
+    /// P2.15 — async fetch of sub-categories for the category picker sheet.
+    /// Returns an empty list on any transport/decoding error so the sheet
+    /// can show "no sub-categories".
+    func fetchSubcategories(categoryID: Int) async -> [SubCategory] {
+        do {
+            let req = GetSubCategoriesRequest(categoryIds: [categoryID], subcategoryIds: nil)
+            let resp: GetSubCategoriesResponse = try await APIManager.shared.postMultipartForm(
+                type: .getSubCategories(param: req),
+                fields: ["category_ids": "\(categoryID)"],
+                header: true
+            )
+            return resp.data?.flatMap { $0.subcategories ?? [] } ?? []
+        } catch {
+            debugLog("Explore: getSubCategories failed -> \(error.localizedDescription)")
+            return []
+        }
     }
 
     func setSearch(_ query: String) {

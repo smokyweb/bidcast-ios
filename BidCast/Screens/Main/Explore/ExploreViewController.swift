@@ -32,6 +32,9 @@ final class ExploreViewController: UIViewController {
 
     private let searchBarHeight: CGFloat = 44
     private let categoryRailHeight: CGFloat = 92
+    /// P2.15 — segmented control between the category rail and the
+    /// filter button row.
+    private let exploreTypeBarHeight: CGFloat = 36
     private let filterBarHeight: CGFloat = 48
     private let productCellAspectRatio: CGFloat = 1.25 // height = width * ratio
     private let productGridSpacing: CGFloat = 12
@@ -64,6 +67,17 @@ final class ExploreViewController: UIViewController {
         cv.delegate = self
         cv.tag = 100 // categories
         return cv
+    }()
+
+    /// P2.15 — Explore type tabs (All / Recommended / Popular). Mirrors
+    /// Android's ExploreFragment segmented control.
+    private lazy var exploreTypeControl: UISegmentedControl = {
+        let items = ExploreType.allCases.map { $0.displayName }
+        let c = UISegmentedControl(items: items)
+        c.selectedSegmentIndex = 0
+        c.translatesAutoresizingMaskIntoConstraints = false
+        c.addTarget(self, action: #selector(onExploreTypeChanged), for: .valueChanged)
+        return c
     }()
 
     private lazy var filterBar: UIView = {
@@ -163,6 +177,7 @@ final class ExploreViewController: UIViewController {
     private func buildUI() {
         view.addSubview(searchBar)
         view.addSubview(categoryCollectionView)
+        view.addSubview(exploreTypeControl)
         view.addSubview(filterBar)
         filterBar.addSubview(resultsLabel)
         filterBar.addSubview(filterButton)
@@ -183,7 +198,12 @@ final class ExploreViewController: UIViewController {
             categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryCollectionView.heightAnchor.constraint(equalToConstant: categoryRailHeight),
 
-            filterBar.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor),
+            exploreTypeControl.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor, constant: 4),
+            exploreTypeControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            exploreTypeControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            exploreTypeControl.heightAnchor.constraint(equalToConstant: exploreTypeBarHeight),
+
+            filterBar.topAnchor.constraint(equalTo: exploreTypeControl.bottomAnchor),
             filterBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             filterBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             filterBar.heightAnchor.constraint(equalToConstant: filterBarHeight),
@@ -209,6 +229,13 @@ final class ExploreViewController: UIViewController {
     }
 
     // MARK: - Actions
+
+    @objc private func onExploreTypeChanged() {
+        let idx = exploreTypeControl.selectedSegmentIndex
+        let types = ExploreType.allCases
+        guard idx >= 0, idx < types.count else { return }
+        viewModel.setExploreType(types[idx])
+    }
 
     @objc private func onFilterTap() {
         let vc = FilterViewController()
@@ -281,12 +308,14 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             } else {
                 newID = viewModel.categories[indexPath.item - 1].id
             }
-            // Toggle off if tapping the already-selected one (except "All").
-            if newID != nil && newID == viewModel.filter.categoryID {
-                viewModel.setSelectedCategory(nil)
-            } else {
-                viewModel.setSelectedCategory(newID)
+            // P2.15 — if the user re-taps the already-selected category,
+            // open the sub-category picker sheet (mirrors Android's
+            // ExploreFragment behaviour). First tap just selects.
+            if let id = newID, id == viewModel.filter.categoryID {
+                presentSubcategoryPicker(for: id)
+                return
             }
+            viewModel.setSelectedCategory(newID)
             collectionView.reloadData()
             return
         }
@@ -294,6 +323,25 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         guard let pid = viewModel.products[indexPath.item].id else { return }
         let vc = ProductDetailsViewController(productId: pid)
         navigationController?.pushViewController(vc, animated: true)
+    }
+
+    /// P2.15 — present the sub-category sheet for a given top-level
+    /// category id.
+    fileprivate func presentSubcategoryPicker(for categoryID: Int) {
+        let sheet = ExploreSubcategoryPickerSheet(
+            categoryID: categoryID,
+            currentSubcategoryID: viewModel.filter.subCategoryID,
+            viewModel: viewModel
+        )
+        sheet.onPicked = { [weak self] subcategoryID in
+            self?.viewModel.setSelectedSubcategory(subcategoryID)
+        }
+        sheet.modalPresentationStyle = .pageSheet
+        if let pc = sheet.sheetPresentationController {
+            pc.detents = [.medium(), .large()]
+            pc.prefersGrabberVisible = true
+        }
+        present(sheet, animated: true)
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

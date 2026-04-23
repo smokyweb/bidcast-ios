@@ -31,6 +31,7 @@
 		2C2A476481FE0B1DFCD78B29 /* InterestsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A540C19861B3EE8F455703 /* InterestsViewController.swift */; };
 		2C6A4BE282FEAA86D3E72944 /* AddShippingAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC124BD4A638D834BA6288C0 /* AddShippingAddressViewController.swift */; };
 		2F171C614638B60B62FA5711 /* Pods_BidCastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */; };
+		3129465798C6368A1D0977C3 /* ExploreSubcategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F2483193313940405A04F1 /* ExploreSubcategoryPickerSheet.swift */; };
 		35062E052DCB3D0C006C0BCE /* LabelCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35062E042DCB3D0C006C0BCE /* LabelCollectionCell.xib */; };
 		35062E062DCB3D0C006C0BCE /* LabelCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */; };
 		35062E092DCB3DDA006C0BCE /* CategoryCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35062E082DCB3DDA006C0BCE /* CategoryCollectionCell.xib */; };
@@ -613,6 +614,7 @@
 		6B9D4CDA8BDD3AC963D9AE13 /* UserSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserSearchViewController.swift; path = BidCast/Screens/Phase3/Social/UserSearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		6DDB4279976C054755433938 /* HostShowProductsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostShowProductsSheet.swift; path = BidCast/Live/Host/HostShowProductsSheet.swift; sourceTree = SOURCE_ROOT; };
 		725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreProductCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreProductCell.swift; sourceTree = SOURCE_ROOT; };
+		73F2483193313940405A04F1 /* ExploreSubcategoryPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreSubcategoryPickerSheet.swift; path = BidCast/Screens/Main/Explore/ExploreSubcategoryPickerSheet.swift; sourceTree = SOURCE_ROOT; };
 		759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubContainerViewController.swift; path = BidCast/Screens/Phase3/SellerHub/SellerHubContainerViewController.swift; sourceTree = SOURCE_ROOT; };
 		76DA4AF8952B2D8E80A42050 /* BidsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BidsListViewController.swift; path = BidCast/Screens/Phase8_Parity/Activity/BidsListViewController.swift; sourceTree = SOURCE_ROOT; };
 		777D4BE6998F55C5600FD8CB /* ReturnRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReturnRequestViewController.swift; path = BidCast/Screens/Phase3/Orders/ReturnRequestViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1268,6 +1270,7 @@
 				6DDB4279976C054755433938 /* HostShowProductsSheet.swift */,
 				DDC84F369DF7AE045D7863D1 /* APIManager+Unauthorized.swift */,
 				0C204EF8B7CB25E52E7B4B9A /* WatchStreamViewController+Report.swift */,
+				73F2483193313940405A04F1 /* ExploreSubcategoryPickerSheet.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3388,6 +3391,7 @@
 				9FC34515966CBC11248D538C /* HostShowProductsSheet.swift in Sources */,
 				35404D5EAE555161170D0149 /* APIManager+Unauthorized.swift in Sources */,
 				3DF7455B8BDAFD1E31C91872 /* WatchStreamViewController+Report.swift in Sources */,
+				3129465798C6368A1D0977C3 /* ExploreSubcategoryPickerSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

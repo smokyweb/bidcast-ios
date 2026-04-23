@@ -18,9 +18,16 @@ import Foundation
 struct ProductFilter: Equatable {
     var search: String = ""
     var categoryID: Int? = nil
+    /// P2.15 — optional sub-category drill-down. `nil` means "all sub-categories
+    /// under the selected category"; a non-nil value maps to Android's
+    /// `sub_category_ids` multipart field on `v1/get-product`.
+    var subCategoryID: Int? = nil
     var minPrice: Int? = nil   // nil == not set; 0 is a real, user-chosen value
     var maxPrice: Int? = nil
     var sortBy: ProductSort = .newest
+    /// P2.15 — Explore type tab. Mirrors Android's `type` query param on
+    /// `get-category`: "all" (default), "recommended", or "popular".
+    var exploreType: ExploreType = .all
     var page: Int = 1
 
     static let empty = ProductFilter()
@@ -44,6 +51,9 @@ struct ProductFilter: Equatable {
             // Android sends as a comma-separated list under `category_ids`.
             fields["category_ids"] = String(c)
         }
+        if let sc = subCategoryID {
+            fields["sub_category_ids"] = String(sc)
+        }
         if let mn = minPrice {
             fields["min_price"] = String(mn)
         }
@@ -54,6 +64,13 @@ struct ProductFilter: Equatable {
         // Marketplace tab — Android defaults this to "marketplace" for the
         // public Explore view (non-user-specific product listings).
         fields["marketplace"] = "marketplace"
+        // P2.15 — Explore type tab. Omit for "all" to mirror Android: their
+        // "All" tab passes no `type` (it posts only "all" to get-category
+        // for the rail refresh but doesn't include it on v1/get-product).
+        // We send it for completeness so backend teams can filter later.
+        if exploreType != .all {
+            fields["type"] = exploreType.rawValue
+        }
         return fields
     }
 }
@@ -81,6 +98,26 @@ enum ProductSort: String, CaseIterable {
         case .priceLowToHigh:   return "Price: Low to High"
         case .priceHighToLow:   return "Price: High to Low"
         case .popular:          return "Popular"
+        }
+    }
+}
+
+// MARK: - Explore type tabs (P2.15)
+
+/// Mirrors Android's `type` query parameter on `get-category`. The
+/// backend uses this to gate the product list (recommended = curated,
+/// popular = trending). Sent as a form field on `v1/get-product` calls
+/// through `ProductFilter.formFields()`.
+enum ExploreType: String, CaseIterable {
+    case all        = "all"
+    case recommended = "recommended"
+    case popular    = "popular"
+
+    var displayName: String {
+        switch self {
+        case .all:          return "All"
+        case .recommended:  return "Recommended"
+        case .popular:      return "Popular"
         }
     }
 }
