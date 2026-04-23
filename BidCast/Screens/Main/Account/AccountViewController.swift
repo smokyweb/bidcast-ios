@@ -294,8 +294,10 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                         self.navigationController?.pushViewController(
                             InterestsViewController(), animated: true)
                     case 6:
+                        // P2.14: replace the P0.6 "coming soon" placeholder
+                        // with the real Clips list for the current user.
                         self.navigationController?.pushViewController(
-                            ClipsPlaceholderViewController(), animated: true)
+                            ClipsListViewController(), animated: true)
                     default:
                         break
                     }

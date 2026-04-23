@@ -110,7 +110,11 @@ enum APIEndPoint {
     case sendTipAmount(param: [String: Any])
 
     //MARK: - CLIPS
-    case getUserClips
+    /// P2.14 — Android's `ApiInterface.getUserClips(sellerId, page)` is a
+    /// GET with two query params. We use associated values here so the
+    /// path builder below can append them; leave both nil to query the
+    /// current user's own clips with page=1.
+    case getUserClips(sellerId: String? = nil, page: String? = nil)
     case makeClip(param: [String: Any])
 
     //MARK: - ORDERS
@@ -299,7 +303,12 @@ extension APIEndPoint: EndPointType {
         case .sendTipAmount:            return "send-tip-amount"
 
         //MARK: - CLIPS
-        case .getUserClips:             return "get-clips"
+        case let .getUserClips(sellerId, page):
+            var parts: [String] = []
+            if let s = sellerId, !s.isEmpty { parts.append("seller_id=\(s)") }
+            if let p = page, !p.isEmpty { parts.append("page=\(p)") }
+            let suffix = parts.isEmpty ? "" : "?\(parts.joined(separator: "&"))"
+            return "get-clips\(suffix)"
         case .makeClip:                 return "make-clip"
 
         //MARK: - ORDERS

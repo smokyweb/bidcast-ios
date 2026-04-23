@@ -84,6 +84,7 @@
 		3A384A6281113FDA57DE43F5 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21244668DEEF7671D981566 /* AnyCodable.swift */; };
 		3C184E81B718B01389C40225 /* PremierShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6A496E856BC3682F1ED901 /* PremierShopViewController.swift */; };
 		3CD74CE0A79FABAEB6D8A937 /* NotificationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55124F2FA5B8C454B004B043 /* NotificationListViewController.swift */; };
+		3CEA4905883BEA025169774B /* ClipEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464B4FABA6B20445BB15BF9B /* ClipEditViewController.swift */; };
 		3DD94C738E86E35DC495D7B3 /* SellerHubOverviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124D4CCB870A5A69C4DE1EB0 /* SellerHubOverviewViewController.swift */; };
 		3DF7455B8BDAFD1E31C91872 /* WatchStreamViewController+Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C204EF8B7CB25E52E7B4B9A /* WatchStreamViewController+Report.swift */; };
 		3F4249B89CD9A406424EA3B1 /* Phase3Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED04FC3989273E1A6F2FE11 /* Phase3Common.swift */; };
@@ -100,6 +101,7 @@
 		57324D62832AFC787CAAD03A /* BidsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DA4AF8952B2D8E80A42050 /* BidsListViewController.swift */; };
 		5922452888E93A0F0CCBBF78 /* ScheduleShowEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5508443EBE2AB8958021592B /* ScheduleShowEditorViewController.swift */; };
 		5A324D2E894038236234D4A4 /* P3SellerStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CF4A8F9B07236C322DA557 /* P3SellerStatusViewController.swift */; };
+		5AFC4A589B3AEF0E47E29764 /* ClipsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100742FD90EA6FA8920B3D04 /* ClipsListViewController.swift */; };
 		5F904C3A82E70A39D603B4EB /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C7449A9F19C4B4AD66306B /* ChatModels.swift */; };
 		602D4152A4E4844C3EB0B50A /* DebugLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F949A18166AFFB3A195A95 /* DebugLogger.swift */; };
 		620B4099AD162CCC4ABD98DF /* NotificationListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D74FDC9423E11596567E40 /* NotificationListViewModel.swift */; };
@@ -525,6 +527,7 @@
 		0ED04FC3989273E1A6F2FE11 /* Phase3Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Phase3Common.swift; path = BidCast/Screens/Phase3/Common/Phase3Common.swift; sourceTree = SOURCE_ROOT; };
 		0F4344138708DB8FF7AAE3E0 /* ClipsPlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClipsPlaceholderViewController.swift; path = BidCast/Screens/Phase8_Parity/Account/ClipsPlaceholderViewController.swift; sourceTree = SOURCE_ROOT; };
 		0F484C63A17F745275EECB93 /* HostRaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostRaidSheet.swift; path = BidCast/Live/Host/HostRaidSheet.swift; sourceTree = SOURCE_ROOT; };
+		100742FD90EA6FA8920B3D04 /* ClipsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClipsListViewController.swift; path = BidCast/Screens/Phase8_Parity/Account/ClipsListViewController.swift; sourceTree = SOURCE_ROOT; };
 		124D4CCB870A5A69C4DE1EB0 /* SellerHubOverviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubOverviewViewController.swift; path = BidCast/Screens/Phase3/SellerHub/SellerHubOverviewViewController.swift; sourceTree = SOURCE_ROOT; };
 		12844365BAA19B1DA07DDC0E /* KYCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KYCViewController.swift; path = BidCast/Screens/Phase4/KYC/KYCViewController.swift; sourceTree = SOURCE_ROOT; };
 		13964D5D936229853B559B40 /* AuthModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthModels.swift; path = BidCast/Models/Auth/AuthModels.swift; sourceTree = SOURCE_ROOT; };
@@ -597,6 +600,7 @@
 		3D444074ABC55F3F88244296 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreViewModel.swift; path = BidCast/Screens/Main/Explore/ViewModel/ExploreViewModel.swift; sourceTree = SOURCE_ROOT; };
 		3D684DC4B59B844DA0DF63B2 /* PaymentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentModels.swift; path = BidCast/Models/Payments/PaymentModels.swift; sourceTree = SOURCE_ROOT; };
 		45FF4B99B7A47A0748FF95F8 /* OffersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OffersListViewController.swift; path = BidCast/Screens/Phase8_Parity/Activity/OffersListViewController.swift; sourceTree = SOURCE_ROOT; };
+		464B4FABA6B20445BB15BF9B /* ClipEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClipEditViewController.swift; path = BidCast/Screens/Phase8_Parity/Account/ClipEditViewController.swift; sourceTree = SOURCE_ROOT; };
 		4AC04063BB71F679C6C53627 /* SubscriptionPlansViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionPlansViewController.swift; path = BidCast/Screens/Phase3/Shop/SubscriptionPlansViewController.swift; sourceTree = SOURCE_ROOT; };
 		4B404496A60F2953D0A82C18 /* StripeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StripeService.swift; path = BidCast/Services/Payments/StripeService.swift; sourceTree = SOURCE_ROOT; };
 		4C9A403386B6DDF14087E028 /* NewChatSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewChatSearchViewController.swift; path = BidCast/Screens/Phase3/Chat/NewChatSearchViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1274,6 +1278,8 @@
 				0C204EF8B7CB25E52E7B4B9A /* WatchStreamViewController+Report.swift */,
 				73F2483193313940405A04F1 /* ExploreSubcategoryPickerSheet.swift */,
 				124D4CCB870A5A69C4DE1EB0 /* SellerHubOverviewViewController.swift */,
+				100742FD90EA6FA8920B3D04 /* ClipsListViewController.swift */,
+				464B4FABA6B20445BB15BF9B /* ClipEditViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3396,6 +3402,8 @@
 				3DF7455B8BDAFD1E31C91872 /* WatchStreamViewController+Report.swift in Sources */,
 				3129465798C6368A1D0977C3 /* ExploreSubcategoryPickerSheet.swift in Sources */,
 				3DD94C738E86E35DC495D7B3 /* SellerHubOverviewViewController.swift in Sources */,
+				5AFC4A589B3AEF0E47E29764 /* ClipsListViewController.swift in Sources */,
+				3CEA4905883BEA025169774B /* ClipEditViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

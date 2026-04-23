@@ -189,17 +189,10 @@ final class SellerPublicProfileViewController: UIViewController {
     }
 
     private func makeClipsChild() -> UIViewController {
-        // P2.14 delivers the real ClipsListViewController. In the interim,
-        // we embed a placeholder so Reviews/Clips tabs both feel reachable
-        // and the tab row reads the same as Android's SellerProfileActivity.
-        return makePlaceholderChild(
-            prompt: "Highlight clips from this seller's recorded shows.",
-            cta: "Open clips",
-            action: { [weak self] in
-                guard let self = self else { return }
-                self.p3Push(ClipsPlaceholderViewController())
-            }
-        )
+        // P2.14: inline the real ClipsListViewController so the Clips tab
+        // matches Android's SellerProfileActivity behaviour (seller-scoped
+        // clips rendered directly in the tab).
+        return ClipsListViewController(sellerId: userId)
     }
 
     private func load() {
