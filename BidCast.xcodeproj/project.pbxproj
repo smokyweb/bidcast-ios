@@ -84,6 +84,7 @@
 		3A384A6281113FDA57DE43F5 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21244668DEEF7671D981566 /* AnyCodable.swift */; };
 		3C184E81B718B01389C40225 /* PremierShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6A496E856BC3682F1ED901 /* PremierShopViewController.swift */; };
 		3CD74CE0A79FABAEB6D8A937 /* NotificationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55124F2FA5B8C454B004B043 /* NotificationListViewController.swift */; };
+		3DD94C738E86E35DC495D7B3 /* SellerHubOverviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124D4CCB870A5A69C4DE1EB0 /* SellerHubOverviewViewController.swift */; };
 		3DF7455B8BDAFD1E31C91872 /* WatchStreamViewController+Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C204EF8B7CB25E52E7B4B9A /* WatchStreamViewController+Report.swift */; };
 		3F4249B89CD9A406424EA3B1 /* Phase3Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED04FC3989273E1A6F2FE11 /* Phase3Common.swift */; };
 		45CE471FBE9EEEE394B8E1B7 /* ProductModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B509479C9B43335AC7A04899 /* ProductModels.swift */; };
@@ -524,6 +525,7 @@
 		0ED04FC3989273E1A6F2FE11 /* Phase3Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Phase3Common.swift; path = BidCast/Screens/Phase3/Common/Phase3Common.swift; sourceTree = SOURCE_ROOT; };
 		0F4344138708DB8FF7AAE3E0 /* ClipsPlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClipsPlaceholderViewController.swift; path = BidCast/Screens/Phase8_Parity/Account/ClipsPlaceholderViewController.swift; sourceTree = SOURCE_ROOT; };
 		0F484C63A17F745275EECB93 /* HostRaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostRaidSheet.swift; path = BidCast/Live/Host/HostRaidSheet.swift; sourceTree = SOURCE_ROOT; };
+		124D4CCB870A5A69C4DE1EB0 /* SellerHubOverviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubOverviewViewController.swift; path = BidCast/Screens/Phase3/SellerHub/SellerHubOverviewViewController.swift; sourceTree = SOURCE_ROOT; };
 		12844365BAA19B1DA07DDC0E /* KYCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KYCViewController.swift; path = BidCast/Screens/Phase4/KYC/KYCViewController.swift; sourceTree = SOURCE_ROOT; };
 		13964D5D936229853B559B40 /* AuthModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthModels.swift; path = BidCast/Models/Auth/AuthModels.swift; sourceTree = SOURCE_ROOT; };
 		14371208B2B8B28094D4C90E /* Pods-BidCast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.debug.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1271,6 +1273,7 @@
 				DDC84F369DF7AE045D7863D1 /* APIManager+Unauthorized.swift */,
 				0C204EF8B7CB25E52E7B4B9A /* WatchStreamViewController+Report.swift */,
 				73F2483193313940405A04F1 /* ExploreSubcategoryPickerSheet.swift */,
+				124D4CCB870A5A69C4DE1EB0 /* SellerHubOverviewViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3392,6 +3395,7 @@
 				35404D5EAE555161170D0149 /* APIManager+Unauthorized.swift in Sources */,
 				3DF7455B8BDAFD1E31C91872 /* WatchStreamViewController+Report.swift in Sources */,
 				3129465798C6368A1D0977C3 /* ExploreSubcategoryPickerSheet.swift in Sources */,
+				3DD94C738E86E35DC495D7B3 /* SellerHubOverviewViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

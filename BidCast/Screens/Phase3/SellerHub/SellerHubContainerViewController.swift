@@ -26,6 +26,27 @@ final class SellerHubContainerViewController: UIViewController {
 
     private var hubData: SellerHubData?
 
+    // MARK: - P2.20 — Overview / Sections pager
+    //
+    // Android ships a full viewpager with Overview as the landing tab. iOS
+    // doesn't need that level of chrome yet; we use a two-segment control
+    // that swaps between:
+    //   * "Overview" — SellerHubOverviewViewController (KPI + account
+    //     health + suggested next step), the Android OverviewFragment
+    //     equivalent.
+    //   * "Sections" — the existing grid of nav tiles (Inventory, Orders,
+    //     Wallet, Analytics, …). This keeps all previously-reachable
+    //     sub-screens one tap away while promoting Overview to the hero
+    //     slot for parity with Android.
+    private enum HubTab: Int { case overview, sections }
+    private let hubSegmented: UISegmentedControl = {
+        let c = UISegmentedControl(items: ["Overview", "Sections"])
+        c.selectedSegmentIndex = 0
+        c.translatesAutoresizingMaskIntoConstraints = false
+        return c
+    }()
+    private let overviewVC = SellerHubOverviewViewController()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Seller Hub"
@@ -45,7 +66,13 @@ final class SellerHubContainerViewController: UIViewController {
             stack.bottomAnchor.constraint(equalTo: scroll.bottomAnchor),
             stack.widthAnchor.constraint(equalTo: scroll.widthAnchor)
         ])
+        hubSegmented.addTarget(self, action: #selector(onHubTabChanged), for: .valueChanged)
+
         load()
+    }
+
+    @objc private func onHubTabChanged() {
+        render()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -73,11 +100,34 @@ final class SellerHubContainerViewController: UIViewController {
 
     private func render() {
         stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        stack.addArrangedSubview(kpiRow())
-        stack.addArrangedSubview(accountHealthCard())
-        stack.addArrangedSubview(tilesSection(title: "Selling", tiles: sellingTiles()))
-        stack.addArrangedSubview(tilesSection(title: "Finance (Phase 4)", tiles: financeTiles()))
-        stack.addArrangedSubview(tilesSection(title: "Growth", tiles: growthTiles()))
+        // P2.20 — tab row always present.
+        stack.addArrangedSubview(hubSegmented)
+
+        let tab = HubTab(rawValue: hubSegmented.selectedSegmentIndex) ?? .overview
+        switch tab {
+        case .overview:
+            renderOverview()
+        case .sections:
+            // Legacy-style nav tiles grouped into Selling / Finance / Growth.
+            stack.addArrangedSubview(tilesSection(title: "Selling", tiles: sellingTiles()))
+            stack.addArrangedSubview(tilesSection(title: "Finance (Phase 4)", tiles: financeTiles()))
+            stack.addArrangedSubview(tilesSection(title: "Growth", tiles: growthTiles()))
+        }
+    }
+
+    /// P2.20 — embed the new OverviewVC as a child so navigation/push
+    /// flows still go through the container's navigation controller.
+    private func renderOverview() {
+        if overviewVC.parent !== self {
+            addChild(overviewVC)
+            overviewVC.didMove(toParent: self)
+        }
+        overviewVC.hubData = hubData
+        overviewVC.view.translatesAutoresizingMaskIntoConstraints = false
+        stack.addArrangedSubview(overviewVC.view)
+        // Give the overview a reasonable height so it scrolls inside our
+        // outer stack without collapsing.
+        overviewVC.view.heightAnchor.constraint(greaterThanOrEqualToConstant: 320).isActive = true
     }
 
     // MARK: - KPI row
