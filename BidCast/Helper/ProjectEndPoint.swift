@@ -102,7 +102,7 @@ enum APIEndPoint {
 
     //MARK: - BIDS
     case createBid(param: [String: Any])
-    case fetchBids
+    case fetchBids(page: String)
 
     //MARK: - TIPS
     case getAllTips(param: [String: Any])
@@ -291,7 +291,7 @@ extension APIEndPoint: EndPointType {
 
         //MARK: - BIDS
         case .createBid:                return "bid/store"
-        case .fetchBids:                return "bid/fetch"
+        case .fetchBids(let page):      return "bid/fetch?page=\(page)"
 
         //MARK: - TIPS
         case .getAllTips:               return "get-all-tips"
@@ -398,7 +398,7 @@ extension APIEndPoint: EndPointType {
              .getShippingProfile, .getShippingDetails,
              .getSurpriseProduct, .getSetDetails,
              .getLiveSeller, .getShowDetails, .getShowOverview,
-             .fetchBids, .getTipAmount, .getUserClips,
+             .fetchBids(_), .getTipAmount, .getUserClips,
              .getPaymentCard, .getKYCDetails, .walletInfo,
              .fetchSellerVerification, .fetchBuyerIdentity,
              .getShippingAddress,

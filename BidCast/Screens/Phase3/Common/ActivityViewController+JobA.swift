@@ -1,20 +1,27 @@
 //
 //  ActivityViewController+JobA.swift
 //  BidCast — iOS parity Job A (App-flow wiring, 2026-04-22)
+//          + iOS Parity Phase 8 / P1.7 (2026-04-23) — expanded to 4 tabs
 //
 //  The stock Activity tab (BidCast/Screens/Main/Activity/ActivityViewController.swift)
 //  renders entirely-static mock cells. For Job A we replace its visible
 //  content with a real "Activity hub" that surfaces the live Phase 3
-//  features a buyer / viewer needs:
+//  features a buyer / viewer needs.
 //
-//      segment 0 — Orders        -> OrderListViewController   (Phase 3a)
-//      segment 1 — Messages      -> ConversationListViewController (Phase 3c)
-//      segment 2 — Notifications -> NotificationListViewController  (Phase 3b)
+//  Android parity (ActivityFragment + ViewPager2): tabs are
+//      segment 0 — Messages  -> ConversationListViewController (Phase 3c)
+//      segment 1 — Bids      -> BidsListViewController         (Phase 8 P1.7)
+//      segment 2 — Offers    -> OffersListViewController       (Phase 8 P1.7)
+//      segment 3 — Purchases -> OrderListViewController (myPurchases)
+//
+//  Notifications remain reachable via a top-right bell icon (Android
+//  exposes them as a standalone `NotificationActivity`; iOS surfaces the
+//  same list on-demand so we don't compete for tab real-estate).
 //
 //  Same strategy as P3SellSwizzle: we swizzle viewWillAppear(_:) so the
 //  existing storyboard stub keeps working, but the first time it appears
 //  we wipe its placeholder subviews and embed a UIPageViewController-like
-//  container that hosts the three Phase 3 list VCs behind a segmented
+//  container that hosts the four Phase 3 list VCs behind a segmented
 //  control. This avoids a storyboard rewrite and keeps the existing
 //  TabBarViewController routing untouched.
 //
@@ -26,7 +33,7 @@ import UIKit
 final class JobAActivityHubViewController: UIViewController {
 
     private let segmented: UISegmentedControl = {
-        let s = UISegmentedControl(items: ["Orders", "Messages", "Notifications"])
+        let s = UISegmentedControl(items: ["Messages", "Bids", "Offers", "Purchases"])
         s.selectedSegmentIndex = 0
         s.translatesAutoresizingMaskIntoConstraints = false
         return s
@@ -35,8 +42,10 @@ final class JobAActivityHubViewController: UIViewController {
     private let container = UIView()
     private var current: UIViewController?
 
-    private lazy var orders = OrderListViewController()
     private lazy var messages = ConversationListViewController()
+    private lazy var bids = BidsListViewController()
+    private lazy var offers = OffersListViewController()
+    private lazy var purchases = OrderListViewController(kind: .myPurchases)
     private lazy var notifs = NotificationListViewController()
 
     override func viewDidLoad() {
@@ -59,29 +68,50 @@ final class JobAActivityHubViewController: UIViewController {
 
         segmented.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
 
-        // Nav-bar: Preferences in the top-right so users can reach the
-        // Phase 3 Preferences hub from Activity in one tap (it also
-        // lives on Account; Activity gives a second entry).
+        // Nav-bar:
+        //   left  — Saved items (Android `SavedItemsFragment` entry point)
+        //   right — Notifications bell (Android `NotificationActivity`)
+        //   right — Preferences (iOS legacy — same shortcut as pre-P1)
+        let saved = UIBarButtonItem(
+            image: UIImage(systemName: "heart"),
+            style: .plain, target: self, action: #selector(openSavedItems)
+        )
+        navigationItem.leftBarButtonItem = saved
+
+        let notifications = UIBarButtonItem(
+            image: UIImage(systemName: "bell"),
+            style: .plain, target: self, action: #selector(openNotifications)
+        )
         let prefs = UIBarButtonItem(
             image: UIImage(systemName: "slider.horizontal.3"),
             style: .plain, target: self, action: #selector(openPreferences)
         )
-        navigationItem.rightBarButtonItem = prefs
+        navigationItem.rightBarButtonItems = [prefs, notifications]
 
-        show(orders)
+        show(messages)
     }
 
     @objc private func segmentChanged() {
         switch segmented.selectedSegmentIndex {
-        case 0: show(orders)
-        case 1: show(messages)
-        case 2: show(notifs)
+        case 0: show(messages)
+        case 1: show(bids)
+        case 2: show(offers)
+        case 3: show(purchases)
         default: break
         }
     }
 
     @objc private func openPreferences() {
         p3Push(PreferencesViewController())
+    }
+
+    @objc private func openNotifications() {
+        p3Push(notifs)
+    }
+
+    @objc private func openSavedItems() {
+        // Wired in P1.11 — SavedItemsViewController is added then.
+        p3Push(SavedItemsViewController())
     }
 
     private func show(_ vc: UIViewController) {
@@ -104,8 +134,9 @@ final class JobAActivityHubViewController: UIViewController {
     }
 
     /// Entry point for DeepLinkRouter — pick a segment programmatically.
+    /// 0=Messages, 1=Bids, 2=Offers, 3=Purchases.
     func selectTab(_ index: Int) {
-        guard (0...2).contains(index) else { return }
+        guard (0...3).contains(index) else { return }
         segmented.selectedSegmentIndex = index
         segmentChanged()
     }

@@ -12,6 +12,7 @@
 		046546A8946BA2F51B2A7FB9 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D444074ABC55F3F88244296 /* ExploreViewModel.swift */; };
 		05DA4E9DBDF6A517B5B4CC7E /* ExploreProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */; };
 		07314BFEA1543196212E604B /* UserSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9D4CDA8BDD3AC963D9AE13 /* UserSearchViewController.swift */; };
+		0A1F499BB484E2F62801C027 /* SavedItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF364D8AA7E595C5828AC599 /* SavedItemsViewController.swift */; };
 		0BAF443AB360F3007411D1A6 /* LiveTipSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEF43D889CA6C7DE2F94037 /* LiveTipSheet.swift */; };
 		0CD640029C175F2CCF16442A /* PaymentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D684DC4B59B844DA0DF63B2 /* PaymentModels.swift */; };
 		111B4005830202C162146ECC /* CheckoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E54E2CB6039A222B007BAC /* CheckoutViewController.swift */; };
@@ -90,6 +91,7 @@
 		54694E118961EF52C28BF874 /* ShopModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5347999F62D30593095CB9 /* ShopModels.swift */; };
 		54E04391A6690EAA242F8610 /* LivePollSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC241F88EF009FEE4C22BE2 /* LivePollSheet.swift */; };
 		55F84DA1A83ED995A2F3AE08 /* PromoteToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3043DC81876761B1CC8A83 /* PromoteToolsViewController.swift */; };
+		57324D62832AFC787CAAD03A /* BidsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DA4AF8952B2D8E80A42050 /* BidsListViewController.swift */; };
 		5922452888E93A0F0CCBBF78 /* ScheduleShowEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5508443EBE2AB8958021592B /* ScheduleShowEditorViewController.swift */; };
 		5A324D2E894038236234D4A4 /* P3SellerStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CF4A8F9B07236C322DA557 /* P3SellerStatusViewController.swift */; };
 		5F904C3A82E70A39D603B4EB /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C7449A9F19C4B4AD66306B /* ChatModels.swift */; };
@@ -102,6 +104,7 @@
 		6BDB486CA4042A8A189696F2 /* HostPublisherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E39416BB0C806871E24145F /* HostPublisherViewController.swift */; };
 		6E8A41549AE612F6ABEF1AD7 /* ActivityViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68742898C64B4EDB066B94C /* ActivityViewController+JobA.swift */; };
 		6F454C8D98704442989CDB50 /* P3InventoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F404CE78A9D9641E21CA958 /* P3InventoryViewController.swift */; };
+		6FA04C31A4548E9FBD244DFC /* OffersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FF4B99B7A47A0748FF95F8 /* OffersListViewController.swift */; };
 		713244BDA80DDB3B4B980341 /* RandomizerWinnerBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D740FAB2DEF128711D5B04 /* RandomizerWinnerBanner.swift */; };
 		719247438922231E7B0AB14D /* LiveShowResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74F4817944166571BB38060 /* LiveShowResolver.swift */; };
 		73384A3DB969B7C74C2E4E12 /* AuthModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13964D5D936229853B559B40 /* AuthModels.swift */; };
@@ -384,6 +387,7 @@
 		9DA74D569746ACB06735FBCF /* ScheduledShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F54B929412273E39092D83 /* ScheduledShowsViewController.swift */; };
 		9E2A4A2D8AEAC33CD9C05932 /* LiveFreebieSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FC40679C2D8E8312B24B08 /* LiveFreebieSheet.swift */; };
 		A1E547D296B891C5BD7CE504 /* ExploreCategoryChipCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */; };
+		A2484AF08928B793E05AA68F /* FetchBidsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D914DB8901B91F26D4993BF /* FetchBidsResponse.swift */; };
 		A2504983A1F7108A8A8DCCD7 /* SellerHubContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */; };
 		A29645D3B33AB3D8E006B8AE /* AddCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C284B8599DCFDF93DB9DAC5 /* AddCardViewController.swift */; };
 		AAE04D7B8120C24CC2FE2628 /* PromotedShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A84D77880AB9168013066D /* PromotedShowsViewController.swift */; };
@@ -577,10 +581,12 @@
 		3D3D4F18B819095F488D9969 /* SellerHubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubModels.swift; path = BidCast/Models/SellerHub/SellerHubModels.swift; sourceTree = SOURCE_ROOT; };
 		3D444074ABC55F3F88244296 /* ExploreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreViewModel.swift; path = BidCast/Screens/Main/Explore/ViewModel/ExploreViewModel.swift; sourceTree = SOURCE_ROOT; };
 		3D684DC4B59B844DA0DF63B2 /* PaymentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentModels.swift; path = BidCast/Models/Payments/PaymentModels.swift; sourceTree = SOURCE_ROOT; };
+		45FF4B99B7A47A0748FF95F8 /* OffersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OffersListViewController.swift; path = BidCast/Screens/Phase8_Parity/Activity/OffersListViewController.swift; sourceTree = SOURCE_ROOT; };
 		4AC04063BB71F679C6C53627 /* SubscriptionPlansViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionPlansViewController.swift; path = BidCast/Screens/Phase3/Shop/SubscriptionPlansViewController.swift; sourceTree = SOURCE_ROOT; };
 		4B404496A60F2953D0A82C18 /* StripeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StripeService.swift; path = BidCast/Services/Payments/StripeService.swift; sourceTree = SOURCE_ROOT; };
 		4C9A403386B6DDF14087E028 /* NewChatSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewChatSearchViewController.swift; path = BidCast/Screens/Phase3/Chat/NewChatSearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		4D2743C8AA23BBFFA30F2E7A /* ShowModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowModels.swift; path = BidCast/Models/LiveStream/ShowModels.swift; sourceTree = SOURCE_ROOT; };
+		4D914DB8901B91F26D4993BF /* FetchBidsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FetchBidsResponse.swift; path = BidCast/Screens/Phase8_Parity/Activity/FetchBidsResponse.swift; sourceTree = SOURCE_ROOT; };
 		4F404CE78A9D9641E21CA958 /* P3InventoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = P3InventoryViewController.swift; path = BidCast/Screens/Phase3/SellerHub/P3InventoryViewController.swift; sourceTree = SOURCE_ROOT; };
 		52557220D9CDF3E039B0DCC0 /* Pods-BidCastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCastTests.debug.xcconfig"; path = "Target Support Files/Pods-BidCastTests/Pods-BidCastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5508443EBE2AB8958021592B /* ScheduleShowEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScheduleShowEditorViewController.swift; path = BidCast/Screens/Phase3/ShowScheduling/ScheduleShowEditorViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -593,6 +599,7 @@
 		6B9D4CDA8BDD3AC963D9AE13 /* UserSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserSearchViewController.swift; path = BidCast/Screens/Phase3/Social/UserSearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreProductCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreProductCell.swift; sourceTree = SOURCE_ROOT; };
 		759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubContainerViewController.swift; path = BidCast/Screens/Phase3/SellerHub/SellerHubContainerViewController.swift; sourceTree = SOURCE_ROOT; };
+		76DA4AF8952B2D8E80A42050 /* BidsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BidsListViewController.swift; path = BidCast/Screens/Phase8_Parity/Activity/BidsListViewController.swift; sourceTree = SOURCE_ROOT; };
 		777D4BE6998F55C5600FD8CB /* ReturnRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReturnRequestViewController.swift; path = BidCast/Screens/Phase3/Orders/ReturnRequestViewController.swift; sourceTree = SOURCE_ROOT; };
 		78AA442CBE70B435C24989AD /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnalyticsService.swift; path = BidCast/Services/Analytics/AnalyticsService.swift; sourceTree = SOURCE_ROOT; };
 		7A85499583460213220ADD14 /* SharedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SharedTypes.swift; path = BidCast/Models/Common/SharedTypes.swift; sourceTree = SOURCE_ROOT; };
@@ -903,6 +910,7 @@
 		CC124BD4A638D834BA6288C0 /* AddShippingAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AddShippingAddressViewController.swift; path = BidCast/Screens/Phase8_Parity/Addresses/AddShippingAddressViewController.swift; sourceTree = SOURCE_ROOT; };
 		CDF34FDDBD24932B292BD0F9 /* ChatThreadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatThreadViewController.swift; path = BidCast/Screens/Phase3/Chat/ChatThreadViewController.swift; sourceTree = SOURCE_ROOT; };
 		CE5347999F62D30593095CB9 /* ShopModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShopModels.swift; path = BidCast/Models/Shop/ShopModels.swift; sourceTree = SOURCE_ROOT; };
+		CF364D8AA7E595C5828AC599 /* SavedItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SavedItemsViewController.swift; path = BidCast/Screens/Phase8_Parity/Activity/SavedItemsViewController.swift; sourceTree = SOURCE_ROOT; };
 		CF8F49698526C1BF44053E04 /* CreatePollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreatePollSheet.swift; path = BidCast/Live/Host/CreatePollSheet.swift; sourceTree = SOURCE_ROOT; };
 		CFF747379397AD318120AB24 /* SellerReviewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerReviewsViewController.swift; path = BidCast/Screens/Phase3/Social/SellerReviewsViewController.swift; sourceTree = SOURCE_ROOT; };
 		D0D5410091C94EB5A6FD2051 /* SendTipViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SendTipViewController.swift; path = BidCast/Screens/Phase4/Tips/SendTipViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1232,6 +1240,10 @@
 				68874AF895229A8180BB1429 /* TrustedBuyerViewController.swift */,
 				04A540C19861B3EE8F455703 /* InterestsViewController.swift */,
 				0F4344138708DB8FF7AAE3E0 /* ClipsPlaceholderViewController.swift */,
+				76DA4AF8952B2D8E80A42050 /* BidsListViewController.swift */,
+				45FF4B99B7A47A0748FF95F8 /* OffersListViewController.swift */,
+				4D914DB8901B91F26D4993BF /* FetchBidsResponse.swift */,
+				CF364D8AA7E595C5828AC599 /* SavedItemsViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3340,6 +3352,10 @@
 				CCE345C0BB7975F5A9B21F1C /* TrustedBuyerViewController.swift in Sources */,
 				2C2A476481FE0B1DFCD78B29 /* InterestsViewController.swift in Sources */,
 				B7304EB8AD7545A66F2A96EB /* ClipsPlaceholderViewController.swift in Sources */,
+				57324D62832AFC787CAAD03A /* BidsListViewController.swift in Sources */,
+				6FA04C31A4548E9FBD244DFC /* OffersListViewController.swift in Sources */,
+				A2484AF08928B793E05AA68F /* FetchBidsResponse.swift in Sources */,
+				0A1F499BB484E2F62801C027 /* SavedItemsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
