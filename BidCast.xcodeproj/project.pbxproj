@@ -26,6 +26,7 @@
 		201130344F8E2F62583D8D33 /* Pods_BidCast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */; };
 		22924A679ED75626AA8EF14A /* PayoutRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83884B90A073FBD3258B7EEE /* PayoutRequestViewController.swift */; };
 		24644BF99445B92E37CC14BC /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916B49EB83DA44790C103CB7 /* NotificationSettingsViewController.swift */; };
+		2C6A4BE282FEAA86D3E72944 /* AddShippingAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC124BD4A638D834BA6288C0 /* AddShippingAddressViewController.swift */; };
 		2F171C614638B60B62FA5711 /* Pods_BidCastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */; };
 		35062E052DCB3D0C006C0BCE /* LabelCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35062E042DCB3D0C006C0BCE /* LabelCollectionCell.xib */; };
 		35062E062DCB3D0C006C0BCE /* LabelCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */; };
@@ -893,6 +894,7 @@
 		C4F8476682CF36D49865EB19 /* SellViewController+Phase3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SellViewController+Phase3.swift"; path = "BidCast/Screens/Phase3/Common/SellViewController+Phase3.swift"; sourceTree = SOURCE_ROOT; };
 		C96A4231A33F9F14FE686CB9 /* FollowersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowersListViewController.swift; path = BidCast/Screens/Phase3/Social/FollowersListViewController.swift; sourceTree = SOURCE_ROOT; };
 		CA6A496E856BC3682F1ED901 /* PremierShopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PremierShopViewController.swift; path = BidCast/Screens/Phase3/Shop/PremierShopViewController.swift; sourceTree = SOURCE_ROOT; };
+		CC124BD4A638D834BA6288C0 /* AddShippingAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AddShippingAddressViewController.swift; path = BidCast/Screens/Phase8_Parity/Addresses/AddShippingAddressViewController.swift; sourceTree = SOURCE_ROOT; };
 		CDF34FDDBD24932B292BD0F9 /* ChatThreadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatThreadViewController.swift; path = BidCast/Screens/Phase3/Chat/ChatThreadViewController.swift; sourceTree = SOURCE_ROOT; };
 		CE5347999F62D30593095CB9 /* ShopModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShopModels.swift; path = BidCast/Models/Shop/ShopModels.swift; sourceTree = SOURCE_ROOT; };
 		CF8F49698526C1BF44053E04 /* CreatePollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreatePollSheet.swift; path = BidCast/Live/Host/CreatePollSheet.swift; sourceTree = SOURCE_ROOT; };
@@ -1220,6 +1222,7 @@
 				BDCD483A81B07DB1D73C2585 /* FirebaseAvailability.swift */,
 				964B4C1790A55056AC67B4B7 /* ProductDetailsModels.swift */,
 				EC8940A4A0DE899C92C5A2AE /* ProductDetailsViewController.swift */,
+				CC124BD4A638D834BA6288C0 /* AddShippingAddressViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3324,6 +3327,7 @@
 				51F6433C892FEA305BC9FB28 /* FirebaseAvailability.swift in Sources */,
 				C30046DE85C9F44E0878B26A /* ProductDetailsModels.swift in Sources */,
 				C16F43489BF5119BD6B60CE7 /* ProductDetailsViewController.swift in Sources */,
+				2C6A4BE282FEAA86D3E72944 /* AddShippingAddressViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

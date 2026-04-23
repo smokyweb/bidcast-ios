@@ -209,32 +209,33 @@ final class CheckoutViewController: UIViewController {
     }
 
     private func pickAddress() {
-        // Try to present Phase 2's existing shipping address list. If not
-        // available, fall through to an inline prompt.
-        let a = UIAlertController(
-            title: "Address picker",
-            message: "Select an address in 'Shipping Addresses' first, or enter an address ID manually.",
-            preferredStyle: .alert
-        )
-        a.addTextField { tf in
-            tf.placeholder = "Address ID"
-            tf.keyboardType = .numberPad
-            tf.text = self.selectedAddress?.id.map { "\($0)" }
+        // iOS Parity P0.4: push MyAddressViewController in picker mode so
+        // the buyer can choose a real address (with add / edit / delete /
+        // set-default all available on the same screen).
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc: MyAddressViewController
+        if let fromStoryboard = storyboard.instantiateViewController(
+            withIdentifier: "MyAddressViewController") as? MyAddressViewController {
+            vc = fromStoryboard
+        } else {
+            // Fallback: instantiating the VC without its storyboard still
+            // works for the list + picker logic; the xib-driven outlets
+            // will be nil-safe in our configuration code.
+            vc = MyAddressViewController()
         }
-        a.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        a.addAction(UIAlertAction(title: "Use", style: .default) { [weak self] _ in
+        vc.onPick = { [weak self] addr in
             guard let self = self else { return }
-            if let txt = a.textFields?.first?.text, let id = Int(txt) {
-                self.selectedAddress = ShippingAddress(
-                    id: id, name: nil, phoneNumber: nil, streetAddress: nil,
-                    pincode: nil, city: nil, state: nil, type: nil,
-                    userId: nil, isDefault: nil
-                )
-                self.updateAddressButton()
-                Task { await self.recalc() }
-            }
-        })
-        present(a, animated: true)
+            self.selectedAddress = addr
+            self.updateAddressButton()
+            Task { await self.recalc() }
+        }
+        if let nav = navigationController {
+            nav.pushViewController(vc, animated: true)
+        } else {
+            let wrap = UINavigationController(rootViewController: vc)
+            wrap.modalPresentationStyle = .formSheet
+            present(wrap, animated: true)
+        }
     }
 
     // MARK: - Promo
