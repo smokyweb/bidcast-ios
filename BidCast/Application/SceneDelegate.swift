@@ -18,12 +18,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         self.navigateToLandingScreen()
-        // Phase 7c (2026-04-22): present onboarding carousel on first launch.
-        // No-op if already completed (tracked via UserDefaults).
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            guard let root = self?.window?.rootViewController else { return }
-            OnboardingCarouselViewController.presentIfNeeded(from: root)
-        }
+        // Phase 8 / P2.21 (2026-04-23): Android does NOT ship a first-launch
+        // onboarding carousel, and the flow-diff report flagged ours as an
+        // iOS-only divergence. Drop it so first-launch is identical on both
+        // platforms. `OnboardingCarouselViewController` is kept in the repo
+        // (and in the xcodeproj) so it can be reinstated later if product
+        // decides to add a carousel to both clients, but it is no longer
+        // auto-presented.
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
