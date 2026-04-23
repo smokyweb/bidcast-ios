@@ -386,6 +386,7 @@
 		9D754F90BD53060B82F123C9 /* ReturnRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777D4BE6998F55C5600FD8CB /* ReturnRequestViewController.swift */; };
 		9DA74D569746ACB06735FBCF /* ScheduledShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F54B929412273E39092D83 /* ScheduledShowsViewController.swift */; };
 		9E2A4A2D8AEAC33CD9C05932 /* LiveFreebieSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FC40679C2D8E8312B24B08 /* LiveFreebieSheet.swift */; };
+		A06F43998C3B8FF981414A0A /* AddEditProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56144A649DEF3D75878FB440 /* AddEditProductViewController.swift */; };
 		A1E547D296B891C5BD7CE504 /* ExploreCategoryChipCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */; };
 		A2484AF08928B793E05AA68F /* FetchBidsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D914DB8901B91F26D4993BF /* FetchBidsResponse.swift */; };
 		A2504983A1F7108A8A8DCCD7 /* SellerHubContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */; };
@@ -594,6 +595,7 @@
 		5508443EBE2AB8958021592B /* ScheduleShowEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScheduleShowEditorViewController.swift; path = BidCast/Screens/Phase3/ShowScheduling/ScheduleShowEditorViewController.swift; sourceTree = SOURCE_ROOT; };
 		55124F2FA5B8C454B004B043 /* NotificationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationListViewController.swift; path = BidCast/Screens/Phase3/Notifications/NotificationListViewController.swift; sourceTree = SOURCE_ROOT; };
 		556E40BE93A16B6D6416A876 /* LiveShowLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveShowLauncher.swift; path = BidCast/Live/LiveShowLauncher.swift; sourceTree = SOURCE_ROOT; };
+		56144A649DEF3D75878FB440 /* AddEditProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AddEditProductViewController.swift; path = BidCast/Screens/Phase8_Parity/Sell/AddEditProductViewController.swift; sourceTree = SOURCE_ROOT; };
 		57C645D1B25E8492D6844357 /* LiveChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveChatMessage.swift; path = BidCast/Live/Chat/LiveChatMessage.swift; sourceTree = SOURCE_ROOT; };
 		5ABF4CD48836189A44DC348D /* BidCast.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BidCast.entitlements; path = BidCast/BidCast.entitlements; sourceTree = SOURCE_ROOT; };
 		5F1E4D6A9298135841D1A601 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterViewController.swift; path = BidCast/Screens/Main/Explore/View/FilterViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1247,6 +1249,7 @@
 				4D914DB8901B91F26D4993BF /* FetchBidsResponse.swift */,
 				CF364D8AA7E595C5828AC599 /* SavedItemsViewController.swift */,
 				3201425B9F2DF5B3C415AD5B /* SellerVerificationSheet.swift */,
+				56144A649DEF3D75878FB440 /* AddEditProductViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3360,6 +3363,7 @@
 				A2484AF08928B793E05AA68F /* FetchBidsResponse.swift in Sources */,
 				0A1F499BB484E2F62801C027 /* SavedItemsViewController.swift in Sources */,
 				E7BC43578C9184262BAEE07C /* SellerVerificationSheet.swift in Sources */,
+				A06F43998C3B8FF981414A0A /* AddEditProductViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

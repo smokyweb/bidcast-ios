@@ -61,7 +61,9 @@ final class P3InventoryViewController: P3ListViewController {
     }
 
     @objc private func addProduct() {
-        p3Push(EditProductPlaceholderViewController(mode: .create))
+        // iOS Parity P1.9a (2026-04-23): route to the new real Add/Edit Product
+        // form instead of the minimal placeholder.
+        p3Push(AddEditProductViewController(mode: .create))
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -80,7 +82,8 @@ final class P3InventoryViewController: P3ListViewController {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        p3Push(EditProductPlaceholderViewController(mode: .edit(items[indexPath.row])))
+        // iOS Parity P1.9a (2026-04-23): open the real edit form.
+        p3Push(AddEditProductViewController(mode: .edit(items[indexPath.row])))
     }
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
