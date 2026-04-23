@@ -291,6 +291,10 @@ public final class HostPublisherViewController: UIViewController {
         sheet.addAction(UIAlertAction(title: "⏭ Skip to Next Item", style: .default) { [weak self] _ in
             self?.runNextProduct()
         })
+        // iOS Parity P1.12 (2026-04-23): open Host products picker.
+        sheet.addAction(UIAlertAction(title: "📦 Show products", style: .default) { [weak self] _ in
+            self?.presentShowProductsSheet()
+        })
         sheet.addAction(UIAlertAction(title: "End Show", style: .destructive) { [weak self] _ in
             self?.closeTapped()
         })
@@ -300,6 +304,35 @@ public final class HostPublisherViewController: UIViewController {
             popover.sourceView = moreOptionsButton
             popover.sourceRect = moreOptionsButton.bounds
         }
+        present(sheet, animated: true)
+    }
+
+    /// iOS Parity P1.12 — present the Android `ProductsForLiveShowFragment`
+    /// equivalent as a half-sheet. The host stays on-stream while browsing
+    /// their inventory and can pin a new product in one tap.
+    private weak var activeProductsSheet: HostShowProductsSheet?
+
+    @objc private func presentShowProductsSheet() {
+        let sheet = HostShowProductsSheet(
+            roomId: context.roomId,
+            currentPinnedProductId: currentPinnedProductId
+        ) { [weak self] productId, product in
+            guard let self = self else { return }
+            BidcastSocketManager.shared.emitPinProduct(
+                roomId: self.context.roomId, productId: productId)
+            // Optimistic update: title + id; server-side product_pinned
+            // callback will reconfirm and the listener on the host VC
+            // already handles banner + label refresh.
+            self.currentPinnedProductId = productId
+            self.currentPinnedProductTitle = product.title
+            self.currentProductLabel.text = product.title ?? "Pinned product"
+        }
+        sheet.modalPresentationStyle = .pageSheet
+        if let presentation = sheet.sheetPresentationController {
+            presentation.detents = [.medium(), .large()]
+            presentation.prefersGrabberVisible = true
+        }
+        activeProductsSheet = sheet
         present(sheet, animated: true)
     }
 
@@ -385,6 +418,9 @@ public final class HostPublisherViewController: UIViewController {
             let title = (payload["product"] as? [String: Any])?["title"] as? String
             self.currentPinnedProductTitle = title
             self.currentProductLabel.text = title.map { "Pinned: \($0)" } ?? "Pinned product id: \(self.currentPinnedProductId ?? "?")"
+            // iOS Parity P1.12: if the host products sheet is open,
+            // update its checkmark in real time.
+            self.activeProductsSheet?.didReceivePinUpdate(productId: self.currentPinnedProductId)
         }
 
         socket.onAuctionNextProduct { [weak self] payload in

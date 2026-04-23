@@ -388,6 +388,7 @@
 		9D754F90BD53060B82F123C9 /* ReturnRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777D4BE6998F55C5600FD8CB /* ReturnRequestViewController.swift */; };
 		9DA74D569746ACB06735FBCF /* ScheduledShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F54B929412273E39092D83 /* ScheduledShowsViewController.swift */; };
 		9E2A4A2D8AEAC33CD9C05932 /* LiveFreebieSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FC40679C2D8E8312B24B08 /* LiveFreebieSheet.swift */; };
+		9FC34515966CBC11248D538C /* HostShowProductsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDB4279976C054755433938 /* HostShowProductsSheet.swift */; };
 		A06F43998C3B8FF981414A0A /* AddEditProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56144A649DEF3D75878FB440 /* AddEditProductViewController.swift */; };
 		A1E547D296B891C5BD7CE504 /* ExploreCategoryChipCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65843DA8C1860CC51C84EC0 /* ExploreCategoryChipCell.swift */; };
 		A2484AF08928B793E05AA68F /* FetchBidsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D914DB8901B91F26D4993BF /* FetchBidsResponse.swift */; };
@@ -607,6 +608,7 @@
 		5F1E4D6A9298135841D1A601 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterViewController.swift; path = BidCast/Screens/Main/Explore/View/FilterViewController.swift; sourceTree = SOURCE_ROOT; };
 		68874AF895229A8180BB1429 /* TrustedBuyerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TrustedBuyerViewController.swift; path = BidCast/Screens/Phase8_Parity/Account/TrustedBuyerViewController.swift; sourceTree = SOURCE_ROOT; };
 		6B9D4CDA8BDD3AC963D9AE13 /* UserSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserSearchViewController.swift; path = BidCast/Screens/Phase3/Social/UserSearchViewController.swift; sourceTree = SOURCE_ROOT; };
+		6DDB4279976C054755433938 /* HostShowProductsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostShowProductsSheet.swift; path = BidCast/Live/Host/HostShowProductsSheet.swift; sourceTree = SOURCE_ROOT; };
 		725B4ADA92EF0461D592B215 /* ExploreProductCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreProductCell.swift; path = BidCast/Screens/Main/Explore/View/ExploreProductCell.swift; sourceTree = SOURCE_ROOT; };
 		759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerHubContainerViewController.swift; path = BidCast/Screens/Phase3/SellerHub/SellerHubContainerViewController.swift; sourceTree = SOURCE_ROOT; };
 		76DA4AF8952B2D8E80A42050 /* BidsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BidsListViewController.swift; path = BidCast/Screens/Phase8_Parity/Activity/BidsListViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1259,6 +1261,7 @@
 				18824BE5A4EADA7D37EB6774 /* ProductMetaUploader.swift */,
 				30F2449A8EF24BD23FAF2FBF /* ShowProductsPickerViewController.swift */,
 				4E2F4992BDF858537A8E2624 /* ShowCouponsPickerViewController.swift */,
+				6DDB4279976C054755433938 /* HostShowProductsSheet.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3376,6 +3379,7 @@
 				4690462D8803ABEC8CADC312 /* ProductMetaUploader.swift in Sources */,
 				24C047478FD82CF7EFBE8D27 /* ShowProductsPickerViewController.swift in Sources */,
 				B10F4197B030768C35657022 /* ShowCouponsPickerViewController.swift in Sources */,
+				9FC34515966CBC11248D538C /* HostShowProductsSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
