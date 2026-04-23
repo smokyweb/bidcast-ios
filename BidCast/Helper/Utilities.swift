@@ -42,7 +42,22 @@ var isSelectedStoragechange = false
 var pushViewController = UINavigationController()
 var isFieldActionChanged: Bool = true
 var subscriptionKey = "all"
-let musicPlayer = MPMusicPlayerController.systemMusicPlayer
+// QA-FIX-cmoafjxce002xzl1hgb5uj1l8 (2026-04-23, wave 4):
+// `let musicPlayer = MPMusicPlayerController.systemMusicPlayer` used to live
+// here as a file-level eager global. Swift evaluates file-level `let`
+// initializers the first time *any* symbol from the file is touched. On
+// iOS 14.5+ `MPMusicPlayerController.systemMusicPlayer` requires the
+// `NSAppleMusicUsageDescription` Info.plist key; without it the MediaPlayer
+// framework can throw or return an unusable instance synchronously during
+// that eager init, which then takes down app launch (the first thing we do
+// is call `Utilities.sharedInstance.getVC(…)` from TabBarViewController's
+// `viewDidLoad`, which touches this file).
+//
+// The symbol `musicPlayer` was declared but never referenced anywhere else
+// in the codebase, so the safest fix is to delete it entirely. If the app
+// ever needs a system music player it should (a) add the usage key, and
+// (b) access `MPMusicPlayerController.systemMusicPlayer` lazily inside a
+// function, not at module init time.
 var audioPlayer: AVAudioPlayer?
 
 //var statesList:[StatesModel] = []

@@ -74,6 +74,10 @@
 	<string>BidCast uses Bluetooth so audio can play on connected headphones or speakers during live shows.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>BidCast uses Bluetooth so audio can play on connected headphones or speakers during live shows.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>BidCast may play short audio clips during live shows using the system music player.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>BidCast may use motion data to stabilize live video and handle orientation during streams.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Outfit-Bold.ttf</string>
