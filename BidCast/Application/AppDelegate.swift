@@ -48,6 +48,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         JobAHomeSwizzle.installIfNeeded()
         JobAActivitySwizzle.installIfNeeded()
         JobAAccountSwizzle.installIfNeeded()
+        // Phase 8 / P2.19 (2026-04-23): install report/block overflow on
+        // the live viewer. Safe to call multiple times; internal guard.
+        P2ViewerReportSwizzle.installIfNeeded()
         // Phase 7i (2026-04-22): wire the .bidcastLiveAuthExpired notification
         // so any 401/403 from the live-stream socket or HTTP layer kicks the
         // user back to sign-in. Phase 5 published the notification from
