@@ -50,47 +50,53 @@ enum RehearsalSelectionMode {
 
 // MARK: - Main Screen
 struct ProductShopRehersalScreen: View {
+    // MARK: - Inputs
     var mode: RehearsalSelectionMode = .auction
-    @State var searchText: String = ""
     @Environment(\.presentationMode) var presentationMode
-    @State private var selectedIndex: Int = 0
-    @State private var isLoading: Bool = false
     var roomId: String
+
+    // MARK: - UI state
+    @State private var searchText: String = ""
+    @State private var isLoading: Bool = false
+    @State private var showSortSheet = false
+    @State private var selectedSort: String = "newest"
+    @State private var selectedOptions: String = ""
+    @State private var showCreateProductSheet = false
+    @State private var showManageProductSheet = false
+    @State private var showAddActionSheet = false
+    @State private var showCreateSurpriseSheet = false
+
+    // MARK: - Pagination / filtering
     @State private var isFetchingMore = false
     @State private var canLoadMore = true
     @State private var saleType = "auction"
     @State private var type = ""
     @State private var status = ""
+    @State private var totalCount = 0
+    @State private var currentPage: Int = 1
+    @State var segment: RehearsalProductSegment = .buynow
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
+    // MARK: - Dependencies
     @StateObject var socketManager = SocketManagerService.shared
-    
-    @State private var showSortSheet = false
-    @State private var selectedSort: String = "newest"
-    @State private var selectedOptions: String = ""
     
     @State private var viewModel = ScheduleViewModel()
     @State var productViewModel = ProductViewModel()
     
-    @State private var totalCount = 0
+    // MARK: - Data
     @Binding var auctionTypeId : Int
     @Binding var productDataFromEvent: [ProductDataModel1]
-    @State private var productDataFromAPI: [ProductDataModel1] = []
-    @State private var sortedProductData: [ProductDataModel1] = []
     @State private var pinnedProductIds: Set<Int> = []
-    
     @State private var apiProducts: [ProductDataModel1] = []
     @State private var displayedProducts: [ProductDataModel1] = []
     @State private var surpriseSetData: [ProductSurpriseData] = []
     
     var categoryId: String = "-1"
     var categoryName: String = ""
-    @State var currentPage: Int = 1
-    @State var segment: RehearsalProductSegment = .buynow
     
     var onTapCancel: (() -> Void)?
     var onProductSelected: ((ProductDataModel1) -> Void)?
@@ -98,21 +104,11 @@ struct ProductShopRehersalScreen: View {
     var onSurpriseSetUnitSelected: ((Int,Int ,ProductSurpriseData, String, Int, Int, Bool) -> Void)?
     @State private var socketListenersConfigured = false
     
-    // NEW: State for Create Product Sheet
-    @State private var showCreateProductSheet = false
     var onProductCreated: (() -> Void)?
     
-    // State for Manage Product Sheet
-    @State private var showManageProductSheet = false
     @State private var selectedSurpriseSet: ProductSurpriseData?
     
-    // State for Add Action Sheet
-    @State private var showAddActionSheet = false
-    @State private var showCreateSurpriseSheet = false
-    
-//    @State private var selectedSurpriseSet: ProductSurpriseData?
-
-    
+    // MARK: - Derived values
     private var eventProductIds: Set<Int> {
         Set(productDataFromEvent.compactMap { $0.id })
     }
@@ -156,270 +152,272 @@ struct ProductShopRehersalScreen: View {
         self._segment = State(initialValue: auctionTypeId.wrappedValue == 9 ? .Surprise : .buynow)
     }
     
+    private var headingCount: Int {
+        if auctionTypeId == 9 { return surpriseSetData.count }
+        if segment == .Surprise { return surpriseSetData.count }
+        return displayedProducts.count
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // MARK: - Header with Search & Close
-            HStack(spacing: 12) {
-                SearchBarView(placeholder: "Search shop...") { text in
-                    resetData()
-                    self.searchText = text
-                    fetchProduct()
-                }
-                
-                Button(action: {
-                    onTapCancel?()
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.custom(poppinsSemiBold, size: 20.0))
-                        .foregroundColor(.black)
-                }
-            }
-           
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Color.backGround)
-           
-            
-            // MARK: - Tab View
-            GenericTabView(selectedTab: $segment, tabs: availableTabs) {
-                resetData()
-                
-                // ✅ Surprise auction: always show Surprise Sets only (for every tab).
-                if auctionTypeId == 9 {
-                    fetchSurpriseSet()
-                    return
-                }
-                
-                if segment == .auction {
-                    self.saleType = "auction"
-                    self.type = ""
-                    self.status = ""
-                    fetchProduct()
-                } else if segment == .offers {
-                    self.saleType = "accept_offers"
-                    self.type = ""
-                    self.status = ""
-                    fetchProduct()
-                } else if segment == .buynow {
-                    self.saleType = ""
-                    self.status = ""
-                    self.type = "buy_now"
-                    fetchProduct()
-                } else if segment == .sold {
-                    self.saleType = ""
-                    self.status = "inactive"
-                    self.type = "buy_now"
-                    fetchProduct()
-                } else if segment == .Surprise {
-                    fetchSurpriseSet()
-                }
-            }
+            headerView
+            tabsView
             
             // MARK: - Heading
-            ProductHeading(count: auctionTypeId == 9 ? surpriseSetData.count : (segment == .Surprise ? surpriseSetData.count : displayedProducts.count))
+            ProductHeading(count: headingCount)
                 .padding(.vertical,6)
                 .padding(.horizontal, 16)
             
-            if auctionTypeId == 9 {
-                // MARK: - Surprise Sets Content
-                if surpriseSetData.isEmpty && !isLoading {
-                    GeometryReader { geo in
-                        VStack {
-                            NoDataView(message: "No Surprise Sets found")
-                                .padding(.top, -100)
-                            Spacer()
-                        }
-                        .frame(width: geo.size.width, height: geo.size.height)
-                    }
-                } else {
-                    ScrollView(showsIndicators: false) {
-                        LazyVStack(spacing: 12) {
-                            if isLoading {
-                                ForEach(0..<4, id: \.self) { _ in
-                                    PurchasesViewShimmerView()
-                                        .padding(.horizontal, 16)
-                                }
-                            } else {
-                            ForEach(surpriseSetData, id: \.id) { surpriseSet in
-                                    ProductSurpriseCard(
-                                        data: surpriseSet,
-                                        onManageProducts: {
-                                            selectedSurpriseSet = surpriseSet
-                                            showManageProductSheet = true
-                                        },
-                                        onPin: {
-                                            // Handle pin action
-                                        },
-                                        onTap: {
-                                            // Check if type is buy_now or auction
-                                            if surpriseSet.type == "auction" {
-                                                // For auction type, show auction settings sheet
-                                                onSurpriseSetSelected?(surpriseSet)
-                                            } else {
-                                                // For buy_now type, start directly without auction sheet
-                                                onSurpriseSetUnitSelected?(0,0,surpriseSet, "\(surpriseSet.price ?? 0)", 0, 0, false)
-                                            }
-                                        }
-                                    )
-                                    .padding(.horizontal, 16)
-                                }
-                            }
-                        }
-                        .padding(.vertical, 8)
-                    }
-                    .background(Color.backGround)
-                }
-            } else if displayedProducts.isEmpty {
-                GeometryReader { geo in
-                    VStack {
-                        NoDataView(message: "No Product found")
-                            .padding(.top, -100)
-                        Spacer()
-                    }
-                    .frame(width: geo.size.width, height: geo.size.height)
-                }
-            } else {
-                ScrollView(showsIndicators: false) {
-                    LazyVStack(spacing: 8) {
-                        if isLoading && displayedProducts.isEmpty {
-                            ForEach(0..<8) { _ in
-                                PurchasesViewShimmerView()
-                                    .padding(.horizontal, 16)
-                            }
-                        } else {
-                            ForEach(displayedProducts, id: \.id) { product in
-                                let productId = product.id ?? 0
-                                
-                                ProductRehearsalListItem(
-                                    product: product,
-                                    roomId: roomId,
-                                    isPinned: pinnedProductIds.contains(productId),
-                                    actionTitle: mode.buttonTitle,
-                                    showsActionButton: auctionTypeId != 9,
-                                    onPinTapped: {
-                                        togglePin(productId)
-                                    },
-                                    onActionTapped: {
-                                        onProductSelected?(product)
-                                    }
-                                )
-                                .onAppear {
-                                    guard let lastApiProduct = apiProducts.last,
-                                          lastApiProduct.id == product.id else { return }
-                                    loadNextPageIfNeeded()
-                                }
-                            }
-                        }
-                        
-                        // Bottom Loader
-                        if isFetchingMore {
-                            ProgressView()
-                                .padding(.vertical, 16)
-                        }
-                    }
-                    .padding(.vertical, 8)
-                }
-                
-                .background(Color.backGround)
-            }
-            PrimaryButton(title: "Add New", onButtonClick: {
-                showAddActionSheet = true
-            })
+            contentView
+            addNewButton
         }
         .edgesIgnoringSafeArea(.top)
         .background(Color.backGround)
-        .onAppear {
-            setupSocketListeners()
-            if auctionTypeId == 9 {
-                self.resetData()
-                segment = .Surprise
-                fetchSurpriseSet()
-            } else if displayedProducts.isEmpty {
-                resetData()
-                fetchProduct()
-            }
-        }
-        // For auctionTypeId == 9 we keep all tabs visible; content stays Surprise-only.
-        .onDisappear {
-            resetData()
-        }
+        .onAppear(perform: handleOnAppear)
+        .onDisappear(perform: resetData)
         .onChange(of: selectedSort) { _ in
             resetData()
             fetchProduct()
         }
-        .sheet(isPresented: $showCreateProductSheet) {
-            let lockedCategoryId = (displayedProducts.first?.category?.id ?? 0) != 0
-            ? "\(displayedProducts.first?.category?.id ?? 0)"
-            : categoryId
-            
-            let lockedCategoryName = !(displayedProducts.first?.category?.name ?? "").isEmpty
-            ? (displayedProducts.first?.category?.name ?? "")
-            : categoryName
-            
-            ListProductScreen(forSheet:true,
-                              onCancel:{
-                showCreateProductSheet = false
-            },
-                              preSelectedCategoryId: lockedCategoryId,
-                              preSelectedCategoryName: lockedCategoryName,
-                              isCategoryLocked: true)
-            .onDisappear {
-                // Refresh product list after creating
+        .sheet(isPresented: $showCreateProductSheet) { createProductSheet }
+        .bottomSheet(isPresented: $showSortSheet, height: screenHeight * 0.6, topBarCornerRadius: 20, contentBackgroundColor: Color(.backGround), topBarBackgroundColor: Color(.backGround), showTopIndicator: false, onDismiss: { showSortSheet = false }) {
+            SortByBottomSheet(isPresented: $showSortSheet, selectedSort: $selectedSort)
+        }
+        .sheet(isPresented: $showManageProductSheet) { manageProductSheet }
+        .sheet(isPresented: $showCreateSurpriseSheet) { createSurpriseSheet }
+        .confirmationDialog("What would you like to create?", isPresented: $showAddActionSheet, titleVisibility: .visible) {
+            Button("Create Product") { showCreateProductSheet = true }
+            Button("Create Surprise Set") { showCreateSurpriseSheet = true }
+            Button("Cancel", role: .cancel) {}
+        }
+    }
+    
+    // MARK: - Header / Tabs / Content
+    private var headerView: some View {
+        HStack(spacing: 12) {
+            SearchBarView(placeholder: "Search shop...") { text in
                 resetData()
+                searchText = text
                 fetchProduct()
-                onProductCreated?()
+            }
+            
+            Button(action: { onTapCancel?() }) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.custom(poppinsSemiBold, size: 20.0))
+                    .foregroundColor(.black)
             }
         }
-        .bottomSheet(
-            isPresented: $showSortSheet,
-            height: screenHeight * 0.6,
-            topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.backGround),
-            topBarBackgroundColor: Color(.backGround),
-            showTopIndicator: false,
-            onDismiss: {
-                showSortSheet = false
-            },
-            content: {
-                SortByBottomSheet(
-                    isPresented: $showSortSheet,
-                    selectedSort: $selectedSort
-                )
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color.backGround)
+    }
+    
+    private var tabsView: some View {
+        GenericTabView(selectedTab: $segment, tabs: availableTabs) {
+            resetData()
+            
+            if auctionTypeId == 9 {
+                fetchSurpriseSet()
+                return
             }
-        )
-        .sheet(isPresented: $showManageProductSheet) {
-            if let index = surpriseSetData.firstIndex(where: { $0.id == selectedSurpriseSet?.id }) {
-
-                   ManageProductSheet(
-                       surpriseData: $surpriseSetData[index],   // 👈 Binding here
-                       onStartAuction: {itemId,productId,product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
-                           onSurpriseSetUnitSelected?(itemId,productId,product, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
-                           showManageProductSheet = false
-                       },
-                       didUpdate: {
-                           fetchSurpriseSet()   // optional
-                       }
-                   )
-               }
-           }
-        .sheet(isPresented: $showCreateSurpriseSheet) {
-            CreateSurpriseScreen()
-                .onDisappear {
-                    // Refresh surprise set list after creating
-                    if segment == .Surprise {
-                        resetData()
-                        fetchSurpriseSet()
+            
+            switch segment {
+            case .auction:
+                saleType = "auction"
+                type = ""
+                status = ""
+                fetchProduct()
+            case .offers:
+                saleType = "accept_offers"
+                type = ""
+                status = ""
+                fetchProduct()
+            case .buynow:
+                saleType = ""
+                status = ""
+                type = "buy_now"
+                fetchProduct()
+            case .sold:
+                saleType = ""
+                status = "inactive"
+                type = "buy_now"
+                fetchProduct()
+            case .Surprise:
+                fetchSurpriseSet()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var contentView: some View {
+        if auctionTypeId == 9 {
+            surpriseSetsContent
+        } else if displayedProducts.isEmpty {
+            emptyProductsContent
+        } else {
+            productsListContent
+        }
+    }
+    
+    private var addNewButton: some View {
+        PrimaryButton(title: "Add New", onButtonClick: { showAddActionSheet = true })
+    }
+    
+    // MARK: - Surprise Sets Content
+    @ViewBuilder
+    private var surpriseSetsContent: some View {
+        if surpriseSetData.isEmpty && !isLoading {
+            GeometryReader { geo in
+                VStack {
+                    NoDataView(message: "No Surprise Sets found")
+                        .padding(.top, -100)
+                    Spacer()
+                }
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
+        } else {
+            ScrollView(showsIndicators: false) {
+                LazyVStack(spacing: 12) {
+                    if isLoading {
+                        ForEach(0..<4, id: \.self) { _ in
+                            PurchasesViewShimmerView()
+                                .padding(.horizontal, 16)
+                        }
+                    } else {
+                        ForEach(surpriseSetData, id: \.id) { surpriseSet in
+                            ProductSurpriseCard(
+                                data: surpriseSet,
+                                onManageProducts: {
+                                    selectedSurpriseSet = surpriseSet
+                                    showManageProductSheet = true
+                                },
+                                onPin: { },
+                                onTap: {
+                                    if surpriseSet.type == "auction" {
+                                        onSurpriseSetSelected?(surpriseSet)
+                                    } else {
+                                        onSurpriseSetUnitSelected?(0, 0, surpriseSet, "\(surpriseSet.price ?? 0)", 0, 0, false)
+                                    }
+                                }
+                            )
+                            .padding(.horizontal, 16)
+                        }
                     }
                 }
+                .padding(.vertical, 8)
+            }
+            .background(Color.backGround)
         }
-        .confirmationDialog("What would you like to create?", isPresented: $showAddActionSheet, titleVisibility: .visible) {
-            Button("Create Product") {
-                showCreateProductSheet = true
+    }
+    
+    // MARK: - Products List Content
+    private var emptyProductsContent: some View {
+        GeometryReader { geo in
+            VStack {
+                NoDataView(message: "No Product found")
+                    .padding(.top, -100)
+                Spacer()
             }
-            Button("Create Surprise Set") {
-                showCreateSurpriseSheet = true
+            .frame(width: geo.size.width, height: geo.size.height)
+        }
+    }
+    
+    private var productsListContent: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: 8) {
+                if isLoading && displayedProducts.isEmpty {
+                    ForEach(0..<8) { _ in
+                        PurchasesViewShimmerView()
+                            .padding(.horizontal, 16)
+                    }
+                } else {
+                    ForEach(displayedProducts, id: \.id) { product in
+                        let productId = product.id ?? 0
+                        ProductRehearsalListItem(
+                            product: product,
+                            roomId: roomId,
+                            isPinned: pinnedProductIds.contains(productId),
+                            actionTitle: mode.buttonTitle,
+                            showsActionButton: auctionTypeId != 9,
+                            onPinTapped: { togglePin(productId) },
+                            onActionTapped: { onProductSelected?(product) }
+                        )
+                        .onAppear {
+                            guard let lastApiProduct = apiProducts.last,
+                                  lastApiProduct.id == product.id else { return }
+                            loadNextPageIfNeeded()
+                        }
+                    }
+                }
+                
+                if isFetchingMore {
+                    ProgressView()
+                        .padding(.vertical, 16)
+                }
             }
-            Button("Cancel", role: .cancel) {}
+            .padding(.vertical, 8)
+        }
+        .background(Color.backGround)
+    }
+    
+    // MARK: - Sheets
+    private var createProductSheet: some View {
+        let lockedCategoryId = (displayedProducts.first?.category?.id ?? 0) != 0
+        ? "\(displayedProducts.first?.category?.id ?? 0)"
+        : categoryId
+        
+        let lockedCategoryName = !(displayedProducts.first?.category?.name ?? "").isEmpty
+        ? (displayedProducts.first?.category?.name ?? "")
+        : categoryName
+        
+        return ListProductScreen(
+            forSheet: true,
+            onCancel: { showCreateProductSheet = false },
+            preSelectedCategoryId: lockedCategoryId,
+            preSelectedCategoryName: lockedCategoryName,
+            isCategoryLocked: true
+        )
+        .onDisappear {
+            resetData()
+            fetchProduct()
+            onProductCreated?()
+        }
+    }
+    
+    @ViewBuilder
+    private var manageProductSheet: some View {
+        if let index = surpriseSetData.firstIndex(where: { $0.id == selectedSurpriseSet?.id }) {
+            ManageProductSheet(
+                surpriseData: $surpriseSetData[index],
+                onStartAuction: { itemId, productId, product, bidAmount, requiredTime, counterBidTime, isSuddenDeath in
+                    onSurpriseSetUnitSelected?(itemId, productId, product, bidAmount, requiredTime, counterBidTime, isSuddenDeath)
+                    showManageProductSheet = false
+                },
+                didUpdate: { fetchSurpriseSet() }
+            )
+        }
+    }
+    
+    private var createSurpriseSheet: some View {
+        CreateSurpriseScreen()
+            .onDisappear {
+                if segment == .Surprise {
+                    resetData()
+                    fetchSurpriseSet()
+                }
+            }
+    }
+    
+    // MARK: - Lifecycle
+    private func handleOnAppear() {
+        setupSocketListeners()
+        if auctionTypeId == 9 {
+            resetData()
+            segment = .Surprise
+            fetchSurpriseSet()
+        } else if displayedProducts.isEmpty {
+            resetData()
+            fetchProduct()
         }
     }
     
@@ -474,10 +472,8 @@ struct ProductShopRehersalScreen: View {
 extension ProductShopRehersalScreen {
     
     private func resetData() {
-        productDataFromAPI = []
         apiProducts = []
         displayedProducts = []
-        sortedProductData = []
         currentPage = 1
         canLoadMore = true
         isFetchingMore = false
@@ -533,7 +529,7 @@ extension ProductShopRehersalScreen {
     private func loadNextPageIfNeeded() {
         guard canLoadMore,
               !isFetchingMore,
-              productDataFromAPI.count < totalCount else { return }
+              apiProducts.count < totalCount else { return }
         
         currentPage += 1
         fetchProduct(isLoaderShown: false)

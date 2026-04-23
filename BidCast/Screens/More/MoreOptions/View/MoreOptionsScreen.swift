@@ -7,129 +7,6 @@
 
 import SwiftUI
 
-//struct MoreOptionsScreen: View {
-//    @State private var selectedOption: String? = nil
-//  
-//
-//    @Binding var isPresented: Bool
-//    @Binding var isVerifiedBuyersOn: Bool
-//    @Binding var isMicOn : Bool
-//
-//    var onEndShow: () -> Void
-//    var onCloneItems: () -> Void
-//    var onTipSettings: () -> Void
-//    var onMulticast: () -> Void
-//    var onAddCoupons: () -> Void
-//    var onRaid: () -> Void
-//    var onCreatePoll: () -> Void
-//    var onZoomOut: () -> Void
-//    var onZoomIn: () -> Void
-//    var onMicToggle: () -> Void
-//    var onVerifiedBuyerToggle: ((Bool) -> Void)? = nil
-//
-//    let columns = [GridItem(.flexible()), GridItem(.flexible())]
-//
-//    var body: some View {
-//      
-//            VStack(spacing: 12) {
-//                // Header
-//                HStack {
-//                    Text("More Options")
-//                        .font(.custom(poppinsBold, size: 16.0))
-//                    Spacer()
-//                    Button(action: {
-//                        isPresented = false
-//                    }) {
-//                        Image(systemName: "xmark")
-//                            .fontWeight(.heavy)
-//                            .font(.custom(poppinsExtraBold, size: 22.0))
-//                            .foregroundColor(.black)
-//                    }
-//                }
-//                .padding(.horizontal)
-//                ScrollView {
-//                // Verified Buyers Toggle
-//                    Toggle(isOn: $isVerifiedBuyersOn) {
-//                        VStack(alignment: .leading, spacing: 4) {
-//                            HStack {
-//                                Text("Verified Buyers")
-//                                    .font(.custom(poppinsSemiBold, size: 13.0))
-//                                Image(systemName: "questionmark.circle")
-//                                    .foregroundColor(.gray)
-//                            }
-//                            Text("When on, allows bids from verified buyers only")
-//                                .font(.custom(poppinsRegular, size: 11.0))
-//                                .foregroundColor(.gray)
-//                        }
-//                    }
-//                    .padding(.horizontal, 4)
-//                    Divider()
-//                        .onChange(of: isVerifiedBuyersOn) { newValue in
-//                            onVerifiedBuyerToggle?(newValue)
-//                        }
-//                    
-//                // Option Buttons Grid
-//                LazyVGrid(columns: columns, spacing: 12) {
-//                    OptionGridButtonView(label: "End Show", icon: "stop.fill", isSelected: selectedOption == "End Show", action: {
-//                        selectedOption = "End Show"
-//                        onEndShow()
-//                    })
-//                    OptionGridButtonView(label: "Clone Items", icon: "doc.on.doc", isSelected: selectedOption == "Clone Items", action: {
-//                        selectedOption = "Clone Items"
-//                        onCloneItems()
-//                    })
-//                    OptionGridButtonView(label: "Tip Settings", icon: "dollarsign.circle", isSelected: selectedOption == "Tip Settings", action: {
-//                        selectedOption = "Tip Settings"
-//                        onTipSettings()
-//                    })
-//                    OptionGridButtonView(label: "Multicast", icon: "rectangle.stack", isSelected: selectedOption == "Multicast", action: {
-//                        selectedOption = "Multicast"
-//                        onMulticast()
-//                    })
-//                    OptionGridButtonView(label: "Add Coupons", icon: "tag", isSelected: selectedOption == "Add Coupons", action: {
-//                        selectedOption = "Add Coupons"
-//                        onAddCoupons()
-//                    })
-//                    OptionGridButtonView(label: "Raid", icon: "paperplane", isSelected: selectedOption == "Raid", action: {
-//                        selectedOption = "Raid"
-//                        onRaid()
-//                    })
-//                    OptionGridButtonView(label: "Create Poll", icon: "list.bullet", isSelected: selectedOption == "Create Poll", action: {
-//                        selectedOption = "Create Poll"
-//                        onCreatePoll()
-//                    })
-//                }
-//
-//                Divider()
-//
-//                // Broadcasting Options
-//                VStack(spacing: 12) {
-//                    Text("Broadcasting Options")
-//                        .font(.custom(poppinsSemiBold, size: 13.0))
-//                        .foregroundColor(.gray)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                        .padding(.horizontal, 0)
-//
-//                    HStack(spacing: 16) {
-//                        OptionButtonView(label: "Zoom Out", icon: "minus.magnifyingglass", action: onZoomOut)
-//                        OptionButtonView(label: "Zoom In", icon: "plus.magnifyingglass", action: onZoomIn)
-//                        OptionButtonView(label: "Mic", icon: isMicOn ? "mic.fill" : "mic.slash.fill", action: onMicToggle)
-//                    }
-//                }
-//
-//                Spacer(minLength: 16)
-//            }
-//            .padding()
-//        }
-//        .edgesIgnoringSafeArea(.top)
-////        .padding(.top,-12)
-//        .background(Color.white)
-//        .cornerRadius(20)
-//    }
-//}
-
-import SwiftUI
-
 struct MoreOptionsScreen: View {
     @State private var selectedOption: String? = nil
     @State private var toggleScale: CGFloat = 1.0
@@ -155,7 +32,7 @@ struct MoreOptionsScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            VStack(spacing: 20) {
+            VStack(spacing: 8) {
                 // Header
                 HStack {
                     Text("More Options")
@@ -171,19 +48,20 @@ struct MoreOptionsScreen: View {
                     }) {
                         ZStack {
                             Circle()
-                                .fill(Color.gray.opacity(0.1))
+                                .fill(Color.black)
                                 .frame(width: 32, height: 32)
                             
                             Image(systemName: "xmark")
+                                .renderingMode(.template)
                                 .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                         }
                     }
                 }
                 .padding(.horizontal, 20)
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 12) {
                         // Verified Buyers Toggle Card
                         VStack(spacing: 0) {
                             Toggle(isOn: Binding(
@@ -209,7 +87,7 @@ struct MoreOptionsScreen: View {
                                         
                                         Image(systemName: "checkmark.shield.fill")
                                             .font(.system(size: 18))
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(.defaultTheme)
                                     }
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -230,7 +108,7 @@ struct MoreOptionsScreen: View {
                                     }
                                 }
                             }
-                            .toggleStyle(SwitchToggleStyle(tint: .blue))
+                            .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
                             .padding(16)
                         }
                         .background(
@@ -251,7 +129,7 @@ struct MoreOptionsScreen: View {
                             HStack {
                                 Image(systemName: "square.grid.2x2.fill")
                                     .font(.system(size: 16))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.defaultTheme)
                                 
                                 Text("Quick Actions")
                                     .font(.custom(poppinsSemiBold, size: 15))
@@ -337,13 +215,9 @@ struct MoreOptionsScreen: View {
                 
                 Spacer(minLength: 0)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, 0)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 24)
-                .fill(Color.backGround)
-                .shadow(color: Color.black.opacity(0.15), radius: 20, x: 0, y: -5)
-        )
+        .background(Color.backGround)
         .edgesIgnoringSafeArea(.top)
     }
 }

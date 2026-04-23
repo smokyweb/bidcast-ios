@@ -32,8 +32,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2652"
             endingLineNumber = "2652"
-            landmarkName = "RehearsalScreen"
-            landmarkType = "21">
+            landmarkName = "isInternetAvailable()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -48,7 +48,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "981"
             endingLineNumber = "981"
-            landmarkName = "shopSheetContent"
+            landmarkName = "sellSheetContent"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>

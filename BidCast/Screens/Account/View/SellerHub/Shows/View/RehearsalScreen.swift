@@ -18,6 +18,7 @@ enum ProductShowType {
 }
 
 struct RehearsalScreen: View {
+    // MARK: - Environment / Inputs
     @EnvironmentObject  var appRootManager: AppRootManager
     @Binding var showUd: String
     var roomID: String = ""
@@ -25,9 +26,11 @@ struct RehearsalScreen: View {
     var isLocal: Bool = true
     @Environment(\.presentationMode) var presentationMode
     
+    // MARK: - View models
     @State var viewModel = ShowsViewModel()
     @StateObject var agoraViewModel = AgoraViewModel()
     
+    // MARK: - Core state
     @State var BiddingDetail = BiddingModel()
     @State var productData = [ProductDataModel1]()
     @Binding var productListData: [ProductDataModel1]
@@ -84,7 +87,7 @@ struct RehearsalScreen: View {
     @State private var liveElapsedTime: String = "00:00:00"
     
     var tabBarHeight: CGFloat {
-        UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
+        Self.safeAreaBottomInset ?? 49
     }
     
     @State var comeFromPrepare = false
@@ -205,6 +208,8 @@ struct RehearsalScreen: View {
     @State private var isSurpriseSetAuctionActive: Bool = false
     
     @StateObject private var viewModelFreebie = RandomizerViewModel()
+    
+    // MARK: - Body
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -254,107 +259,17 @@ struct RehearsalScreen: View {
             }
         )
         
-        .sheet(isPresented: $navigateToRandomizer) {
-            RandomizerView(roomId : $roomId ,didTapSpin : { value in
-                showSpin = value
-               
-            },didSpinWheel:{
-                socketManager.finalizeFreebie(room_id: self.roomId)
-            },onWinnerSelected: { winner in
-                randomWinner = winner.name ?? ""
-                
-                
-                randomWinnerImage = winner.profile_image ?? ""
-                navigateToRandomizer = false
-                showWinnerOnParent = true
-                showSpin = false
-            }, didTapAddManual: {
-                navigateToRandomizer = false
-                showUserSheet = true
-            },didTapRemove:{ index in
-                socketManager.removeFreebieuser(room_id: roomId, user_id : "\(wheelTitles[index].id ?? 0)")
-                wheelTitles.remove(at: index)
-            },usersName: $viewModelFreebie.options, userList:$wheelTitles)
-            .presentationDetents([.fraction(showSpin ? 0.90 : 0.55)])
-                .presentationCornerRadius(25)
-                .presentationDragIndicator(.hidden)
-                .presentationBackground(Color.black.opacity(0.1))
-//                .interactiveDismissDisabled()
-        }
+        .sheet(isPresented: $navigateToRandomizer) { randomizerSheet }
        
  
-        .sheet(isPresented: $showPollSheet) {
-            CreatePollScreen(
-                isPresented: $showPollSheet,
-                onCreatePoll: { pollModel in
-                    print(pollModel)
-                    SocketManagerService.shared.createPoll(poll: pollModel)
-                },
-                roomId: self.roomId,
-                errorMessageClosure: { msg in
-                    hudMsg = msg
-                    showhudAlert = true
-                }
-            )
-            .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
-            .presentationCornerRadius(25)              // ✅ Rounded top corners
-            .presentationDragIndicator(.hidden)        // optional
-        }
+        .sheet(isPresented: $showPollSheet) { createPollSheet }
         
 
-        .sheet(isPresented: $showLivePollScreen) {
-            if let poll = currentPollModel {
-                LivePollHostView(poll: poll,onEndPoll: { pollId,roomId in
-                    socketManager.endPoll(pollId: "\(pollId)", roomId: roomId)
-                    showPollCard = false
-                    showLivePollScreen = false
-                },onCancel:{
-                    showLivePollScreen = false
-                })
-                .presentationDetents([.fraction(0.80)])   // ✅ Bottom-sheet height
-                .presentationCornerRadius(24)              // ✅ Rounded top corners
-                .presentationDragIndicator(.hidden)
-            }
-                  // optional
-        }
+        .sheet(isPresented: $showLivePollScreen) { livePollHostSheet }
         
-        .sheet(isPresented: $showNotesEditorSheet) {
-            
-                RichTextEditorSheet(
-                    onSave: { attributedText in
-                        let richText = attributedText.toHTML().htmlToString
-                        showNotes = richText
-                        socketManager.sendAddShowNote(roomId: self.roomId, showNote: richText)
-                        showNotesEditorSheet = false
-                    },
-                    onCancel: {
-                        showNotesEditorSheet = false
-                    }
-                )
-                .presentationDetents([.fraction(0.50)])
-                .presentationCornerRadius(25)
-                .presentationDragIndicator(.hidden)
-            }
+        .sheet(isPresented: $showNotesEditorSheet) { notesEditorSheet }
         
-        .sheet(isPresented: $showNotesSheet) {
-            ShowNotesSheet(
-                noteText:$showNotes ,
-                forHost : .constant(true),
-                onPost: { note in
-                    showNotes.removeAll()
-                    showNotes += note
-                    print("Posted note: \(note)")
-                    showNotesSheet = false
-                    socketManager.sendAddShowNote(roomId: self.roomId,
-                                                  showNote: showNotes)
-                },didTapCancel: {
-                    showNotesSheet = false
-                }
-            )
-            .presentationDetents([.fraction(0.80)])
-            .presentationCornerRadius(25)
-            .presentationDragIndicator(.hidden)
-        }
+        .sheet(isPresented: $showNotesSheet) { notesSheet }
         .bottomSheet(
             isPresented: $showShopSheet,
             height: screenHeight * 0.85,
@@ -377,80 +292,10 @@ struct RehearsalScreen: View {
             
         }
 
-        .sheet(isPresented: $showAuctionSheet) {
-            AuctionSettingsSheet(
-                startingBid:auctionedProductData.pricing ?? "",
-                onTapCancel: {
-                    showAuctionSheet = false
-                },
-                onStartAuction: { bid, reqTime, counterTime, suddenDeath in
-                    showAuctionSheet = false
-                    showShopSheet = false
-                    hasAuctionStarted = true
-
-                    socketManager.startAuction(
-                        roomId: roomId,
-                        products: [nextProductId],
-                        startingBidAmount: bid,
-                        requireTime: reqTime,
-                        counterBidTime: counterTime,
-                        suddenDeath: suddenDeath,auctionTypeId:self.auctionTypeId
-                    )
-                },
-                onShowToast: { message in
-                           hudMsg = message
-                    showhudAlert = true
-                       },
-            )
-            .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
-            .presentationCornerRadius(25)              // ✅ Rounded top corners
-            .presentationDragIndicator(.hidden)        // optional
-        }
+        .sheet(isPresented: $showAuctionSheet) { auctionSettingsSheet }
         
         // Surprise Set Auction Sheet
-        .sheet(isPresented: $showSurpriseAuctionSheet) {
-            if let surpriseSet = selectedSurpriseSetForAuction {
-                AuctionSettingsSheet(
-                    startingBid: "\(surpriseSet.price ?? 0)",
-                    onTapCancel: {
-                        showSurpriseAuctionSheet = false
-                        selectedSurpriseSetForAuction = nil
-                    },
-                    onStartAuction: { bid, reqTime, counterTime, suddenDeath in
-                        showSurpriseAuctionSheet = false
-                        showShopSheet = false
-                        hasAuctionStarted = true
-                        
-                        // Store the surprise set data for UI display
-                        currentSurpriseSetData = surpriseSet
-                        
-                        // Get first available item and unit
-                        let firstItem = surpriseSet.items?.first
-                        let firstAvailableUnit = firstItem?.units?.first(where: { $0.status != "sold" }) ?? firstItem?.units?.first
-                        
-                        socketManager.startAuctionBreakSpot(
-                            roomId: roomId,
-                            productSetId: surpriseSet.id,
-                            productSetItemId: firstItem?.id ?? 0,
-                            productSetItemUnitId: firstAvailableUnit?.id ?? 0,
-                            startingBidAmount: Double(bid) ?? 0,
-                            requireTime: reqTime,
-                            counterBidTime: counterTime,
-                            suddenDeath: suddenDeath
-                        )
-                        
-                        selectedSurpriseSetForAuction = nil
-                    },
-                    onShowToast: { message in
-                        hudMsg = message
-                        showhudAlert = true
-                    }
-                )
-                .presentationDetents([.fraction(0.70)])
-                .presentationCornerRadius(25)
-                .presentationDragIndicator(.hidden)
-            }
-        }
+        .sheet(isPresented: $showSurpriseAuctionSheet) { surpriseAuctionSettingsSheet }
         
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -463,180 +308,7 @@ struct RehearsalScreen: View {
                 showSellSheet = false
             },
             content: {
-                switch currentBottomSheet {
-                case .more:
-                    MoreOptionsScreen(
-                        isPresented: $showSellSheet,
-                        isVerifiedBuyersOn: $verifiedOnly,
-                        isMicOn: $isMicOn,
-                        onEndShow: {
-                            print("End Show")
-                            endShow()
-                        },
-                        onCloneItems: { print("Clone Items") },
-                        onTipSettings: {
-                            print("Tip Settings")
-                            showTipSetting = true
-                            showSellSheet  = false
-                        },
-                        onMulticast: { print("Multicast") },
-                        onAddCoupons: { print("Add Coupons") },
-                        onClickRandomizer:  {
-                            showSellSheet = false
-                            navigateToRandomizer = true
-                        },
-                        onRaid: {
-                            print("Raid")
-                            showRaidSheet = true
-                            showSellSheet = false
-//                            SellerScreen(
-//                                sellers: $sellers,
-//                                selectedSellerID: $selectedSellers,
-//                                onRaidCreated: { selectedSellers in
-//                                    // Handle the selected sellers when raid is created
-//                                    print("Raid created with sellers: \(String(describing: selectedSellers))")
-//                                    handleRaid(selectedSeller: selectedSellers)
-//                                },onCancel: {
-//                                    showRaidSheet = false
-//                                    selectedSellers = nil
-//                                }
-//                            )
-                        },
-                        onCreatePoll: {
-                            print("Create Poll")
-                            showPollSheet = true
-                            showSellSheet = false
-                        },
-                        
-                        onZoomOut: {
-                            print("Zoom Out")
-                            var zoomFactor = agoraManager.zoomFactor
-                            if zoomFactor > 1.0 {
-                                zoomFactor -= 0.2
-                            }
-                            agoraManager.adjustZoom(with: zoomFactor)
-                        },
-                        onZoomIn: {
-                            print("Zoom In")
-                            var zoomFactor = agoraManager.zoomFactor
-                            if zoomFactor < 2.0 {
-                                zoomFactor += 0.2
-                            }
-                            agoraManager.adjustZoom(with: zoomFactor)
-                        },
-                        onMicToggle: {
-                            isMicOn.toggle()
-                            agoraManager.toggleAudioMute()
-                            //                            castManager.toggleAudioMute()
-                        },
-                        onVerifiedBuyerToggle: { isOn in
-                            let allowBidForAll = !isOn
-                            if !roomId.isEmpty   {
-                                socketManager.AllowBidForAll(roomId: roomId, allow_bid_for_all: allowBidForAll)
-                                print("✅ allowBidForAll updated to \(allowBidForAll) for room: \(liveRoomId)")
-                            }
-                        }
-                    )
-                case .promote:
-                    PromoteShowSheet(
-                        boosts: $boosts,
-                        onPromotionSelected: { selectedBoost in
-                            handleBoostClick(selectedBoost)
-                            handleBoostClick(selectedBoost)
-                        },
-                        onClose: { showSellSheet = false }
-                    )
-                case .clip:
-                    CreateClipBottomSheetView(
-                        isPresented: $showSellSheet,
-                        videoURL: URL(string: clipURL)!,
-                        onCreateClip: { start, end in
-                            print("Clip range: \(start.seconds) to \(end.seconds)")
-                        },onEditClip: {
-                            //                            showEditClip = true
-                            print("🚀 Starting navigation to edit screen")
-                            
-                            // ✅ Set BOTH flags
-                            isNavigatingToEdit = true
-                            shouldPreventReload = true
-                            
-                            showSellSheet = false
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                                showEditClip = true
-                            }
-                            
-                        }
-                    )
-                case .share:
-//                    ShareShowBottomSheetView(
-//                        isPresented: $showSellSheet,
-//                        showTitle: "John's Live Show",
-//                        username: "johnsmith",
-//                        showImage: Image("icWatch"),
-//                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
-//                        onShare: { platform in
-//                            print("Shared to \(platform)")
-//                        }
-//
-//                    )
-                    
-                    DynamicShareBottomSheetView(
-                            isPresented: $showSellSheet,
-                            contentType: .show(
-                                title: showsData.title ?? "Live Show",
-                                username: UserDefaults.userName,
-                                imageURL: showsData.thumbnail?.first ?? "",
-                                isLive: isLive,
-                                message: "Join my live auction! Don't miss out."
-                            ),
-                            messageList: messageList,
-                            onSendToChat: { chat, message in
-                                // Handle chat opening
-                                handleOpenChat(with: chat)
-                            }
-                        )
-                    //                          .presentationDetents([.height(500)])
-                    .presentationDragIndicator(.visible)
-                case .switchView:
-                    EmptyView()
-                case .shop:
-                    EmptyView()
-                case .endShow:
-                    EndShowBottomSheetView(
-                        isPresented: $showSellSheet,
-                        onCreateRaid: {
-                            print("Raid Created")
-                            getLiveSeller()
-                        },
-                        onEndShow: {
-                            if freebieActive{
-                           
-                                alertType = .sheetType(
-                                    icon: .info,
-                                    title: "Freebie Live",
-                                    message: "A freebie is currently running. Ending the show will stop the freebie. Are you sure you want to continue?",
-                                    primaryBtnText: "Okay",
-                                    secondaryBtnText: "Cancel",
-                                    sheetSecondaryColor: .defaultThemeLight,
-                                    secondaryTextColor: .defaultTheme,
-                                    buttonWidth: screenWidth - 60,
-                                    contentSize: 12.0
-                                )
-                                withAnimation(.snappy){
-                                    showSellSheet = false
-                                    showFreebieSheet = true
-                                }
-                            }else{
-                                self.endShow()
-                                
-                                self.isLive = false
-                            }
-                        }
-                    )
-                case .none:
-                    EmptyView()
-                }
+                sellSheetContent
                 
             }
         )
@@ -938,21 +610,22 @@ struct RehearsalScreen: View {
     
     @ViewBuilder
     private func videoLayer(_ geometry: GeometryProxy) -> some View {
+        let size = geometry.size
         ZStack {
 
             // 🔒 Remote video view (ALWAYS mounted)
             VideoContainerView(uiView: agoraManager.remoteVideoView)
                 .frame(
-                    width: geometry.size.width,
-                    height: geometry.size.height
+                    width: size.width,
+                    height: size.height
                 )
                 .opacity(agoraManager.remoteUserId != nil ? 1 : 0)
 
             // 🔒 Local video view (ALWAYS mounted)
             VideoContainerView(uiView: agoraManager.localVideoView)
                 .frame(
-                    width: geometry.size.width,
-                    height: geometry.size.height
+                    width: size.width,
+                    height: size.height
                 )
                 .opacity(agoraManager.remoteUserId == nil ? 1 : 0)
 
@@ -972,6 +645,13 @@ struct RehearsalScreen: View {
         }
         .background(Color.black)
         .ignoresSafeArea()
+    }
+
+    private static var safeAreaBottomInset: CGFloat? {
+        let scenes = UIApplication.shared.connectedScenes
+        let windowScene = scenes.first { $0 is UIWindowScene } as? UIWindowScene
+        let keyWindow = windowScene?.windows.first { $0.isKeyWindow }
+        return keyWindow?.safeAreaInsets.bottom
     }
 
 
@@ -1055,6 +735,339 @@ struct RehearsalScreen: View {
                             // Freebie mode - no action needed for surprise sets
             }
         )
+    }
+
+    // MARK: - Sheet content (extracted for readability)
+    @ViewBuilder
+    private var randomizerSheet: some View {
+        RandomizerView(
+            roomId: $roomId,
+            didTapSpin: { value in
+                showSpin = value
+            },
+            didSpinWheel: {
+                socketManager.finalizeFreebie(room_id: self.roomId)
+            },
+            onWinnerSelected: { winner in
+                randomWinner = winner.name ?? ""
+                randomWinnerImage = winner.profile_image ?? ""
+                navigateToRandomizer = false
+                showWinnerOnParent = true
+                showSpin = false
+            },
+            didTapAddManual: {
+                navigateToRandomizer = false
+                showUserSheet = true
+            },
+            didTapRemove: { index in
+                guard index >= 0, index < wheelTitles.count else { return }
+                socketManager.removeFreebieuser(room_id: roomId, user_id: "\(wheelTitles[index].id ?? 0)")
+                wheelTitles.remove(at: index)
+            },
+            usersName: $viewModelFreebie.options,
+            userList: $wheelTitles
+        )
+        .presentationDetents([.fraction(showSpin ? 0.90 : 0.55)])
+        .presentationCornerRadius(25)
+        .presentationDragIndicator(.hidden)
+        .presentationBackground(Color.black.opacity(0.1))
+    }
+
+    @ViewBuilder
+    private var createPollSheet: some View {
+        CreatePollScreen(
+            isPresented: $showPollSheet,
+            onCreatePoll: { pollModel in
+                print(pollModel)
+                SocketManagerService.shared.createPoll(poll: pollModel)
+            },
+            roomId: self.roomId,
+            errorMessageClosure: { msg in
+                hudMsg = msg
+                showhudAlert = true
+            }
+        )
+        .presentationDetents([.fraction(0.70)])
+        .presentationCornerRadius(25)
+        .presentationDragIndicator(.hidden)
+    }
+
+    @ViewBuilder
+    private var livePollHostSheet: some View {
+        if let poll = currentPollModel {
+            LivePollHostView(
+                poll: poll,
+                onEndPoll: { pollId, roomId in
+                    socketManager.endPoll(pollId: "\(pollId)", roomId: roomId)
+                    showPollCard = false
+                    showLivePollScreen = false
+                },
+                onCancel: {
+                    showLivePollScreen = false
+                }
+            )
+            .presentationDetents([.fraction(0.80)])
+            .presentationCornerRadius(24)
+            .presentationDragIndicator(.hidden)
+        }
+    }
+
+    @ViewBuilder
+    private var notesEditorSheet: some View {
+        RichTextEditorSheet(
+            onSave: { attributedText in
+                let richText = attributedText.toHTML().htmlToString
+                showNotes = richText
+                socketManager.sendAddShowNote(roomId: self.roomId, showNote: richText)
+                showNotesEditorSheet = false
+            },
+            onCancel: {
+                showNotesEditorSheet = false
+            }
+        )
+        .presentationDetents([.fraction(0.50)])
+        .presentationCornerRadius(25)
+        .presentationDragIndicator(.hidden)
+    }
+
+    @ViewBuilder
+    private var notesSheet: some View {
+        ShowNotesSheet(
+            noteText: $showNotes,
+            forHost: .constant(true),
+            onPost: { note in
+                showNotes.removeAll()
+                showNotes += note
+                print("Posted note: \(note)")
+                showNotesSheet = false
+                socketManager.sendAddShowNote(roomId: self.roomId, showNote: showNotes)
+            },
+            didTapCancel: {
+                showNotesSheet = false
+            }
+        )
+        .presentationDetents([.fraction(0.80)])
+        .presentationCornerRadius(25)
+        .presentationDragIndicator(.hidden)
+    }
+
+    @ViewBuilder
+    private var auctionSettingsSheet: some View {
+        AuctionSettingsSheet(
+            startingBid: auctionedProductData.pricing ?? "",
+            onTapCancel: {
+                showAuctionSheet = false
+            },
+            onStartAuction: { bid, reqTime, counterTime, suddenDeath in
+                showAuctionSheet = false
+                showShopSheet = false
+                hasAuctionStarted = true
+
+                socketManager.startAuction(
+                    roomId: roomId,
+                    products: [nextProductId],
+                    startingBidAmount: bid,
+                    requireTime: reqTime,
+                    counterBidTime: counterTime,
+                    suddenDeath: suddenDeath,
+                    auctionTypeId: self.auctionTypeId
+                )
+            },
+            onShowToast: { message in
+                hudMsg = message
+                showhudAlert = true
+            }
+        )
+        .presentationDetents([.fraction(0.70)])
+        .presentationCornerRadius(25)
+        .presentationDragIndicator(.hidden)
+    }
+
+    @ViewBuilder
+    private var surpriseAuctionSettingsSheet: some View {
+        if let surpriseSet = selectedSurpriseSetForAuction {
+            AuctionSettingsSheet(
+                startingBid: "\(surpriseSet.price ?? 0)",
+                onTapCancel: {
+                    showSurpriseAuctionSheet = false
+                    selectedSurpriseSetForAuction = nil
+                },
+                onStartAuction: { bid, reqTime, counterTime, suddenDeath in
+                    showSurpriseAuctionSheet = false
+                    showShopSheet = false
+                    hasAuctionStarted = true
+
+                    currentSurpriseSetData = surpriseSet
+
+                    let firstItem = surpriseSet.items?.first
+                    let firstAvailableUnit = firstItem?.units?.first(where: { $0.status != "sold" }) ?? firstItem?.units?.first
+
+                    socketManager.startAuctionBreakSpot(
+                        roomId: roomId,
+                        productSetId: surpriseSet.id,
+                        productSetItemId: firstItem?.id ?? 0,
+                        productSetItemUnitId: firstAvailableUnit?.id ?? 0,
+                        startingBidAmount: Double(bid) ?? 0,
+                        requireTime: reqTime,
+                        counterBidTime: counterTime,
+                        suddenDeath: suddenDeath
+                    )
+
+                    selectedSurpriseSetForAuction = nil
+                },
+                onShowToast: { message in
+                    hudMsg = message
+                    showhudAlert = true
+                }
+            )
+            .presentationDetents([.fraction(0.70)])
+            .presentationCornerRadius(25)
+            .presentationDragIndicator(.hidden)
+        }
+    }
+
+    // MARK: - Bottom sheet content (More/Promote/Clip/Share/End show)
+    @ViewBuilder
+    private var sellSheetContent: some View {
+        switch currentBottomSheet {
+        case .more:
+            MoreOptionsScreen(
+                isPresented: $showSellSheet,
+                isVerifiedBuyersOn: $verifiedOnly,
+                isMicOn: $isMicOn,
+                onEndShow: {
+                    print("End Show")
+                    endShow()
+                },
+                onCloneItems: { print("Clone Items") },
+                onTipSettings: {
+                    print("Tip Settings")
+                    showTipSetting = true
+                    showSellSheet = false
+                },
+                onMulticast: { print("Multicast") },
+                onAddCoupons: { print("Add Coupons") },
+                onClickRandomizer: {
+                    showSellSheet = false
+                    navigateToRandomizer = true
+                },
+                onRaid: {
+                    print("Raid")
+                    showRaidSheet = true
+                    showSellSheet = false
+                },
+                onCreatePoll: {
+                    print("Create Poll")
+                    showPollSheet = true
+                    showSellSheet = false
+                },
+                onZoomOut: {
+                    print("Zoom Out")
+                    var zoomFactor = agoraManager.zoomFactor
+                    if zoomFactor > 1.0 {
+                        zoomFactor -= 0.2
+                    }
+                    agoraManager.adjustZoom(with: zoomFactor)
+                },
+                onZoomIn: {
+                    print("Zoom In")
+                    var zoomFactor = agoraManager.zoomFactor
+                    if zoomFactor < 2.0 {
+                        zoomFactor += 0.2
+                    }
+                    agoraManager.adjustZoom(with: zoomFactor)
+                },
+                onMicToggle: {
+                    isMicOn.toggle()
+                    agoraManager.toggleAudioMute()
+                },
+                onVerifiedBuyerToggle: { isOn in
+                    let allowBidForAll = !isOn
+                    if !roomId.isEmpty {
+                        socketManager.AllowBidForAll(roomId: roomId, allow_bid_for_all: allowBidForAll)
+                        print("✅ allowBidForAll updated to \(allowBidForAll) for room: \(liveRoomId)")
+                    }
+                }
+            )
+        case .promote:
+            PromoteShowSheet(
+                boosts: $boosts,
+                onPromotionSelected: { selectedBoost in
+                    handleBoostClick(selectedBoost)
+                    handleBoostClick(selectedBoost)
+                },
+                onClose: { showSellSheet = false }
+            )
+        case .clip:
+            CreateClipBottomSheetView(
+                isPresented: $showSellSheet,
+                videoURL: URL(string: clipURL)!,
+                onCreateClip: { start, end in
+                    print("Clip range: \(start.seconds) to \(end.seconds)")
+                },
+                onEditClip: {
+                    print("🚀 Starting navigation to edit screen")
+                    isNavigatingToEdit = true
+                    shouldPreventReload = true
+                    showSellSheet = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        showEditClip = true
+                    }
+                }
+            )
+        case .share:
+            DynamicShareBottomSheetView(
+                isPresented: $showSellSheet,
+                contentType: .show(
+                    title: showsData.title ?? "Live Show",
+                    username: UserDefaults.userName,
+                    imageURL: showsData.thumbnail?.first ?? "",
+                    isLive: isLive,
+                    message: "Join my live auction! Don't miss out."
+                ),
+                messageList: messageList,
+                onSendToChat: { chat, message in
+                    handleOpenChat(with: chat)
+                }
+            )
+            .presentationDragIndicator(.visible)
+        case .switchView:
+            EmptyView()
+        case .shop:
+            EmptyView()
+        case .endShow:
+            EndShowBottomSheetView(
+                isPresented: $showSellSheet,
+                onCreateRaid: {
+                    print("Raid Created")
+                    getLiveSeller()
+                },
+                onEndShow: {
+                    if freebieActive {
+                        alertType = .sheetType(
+                            icon: .info,
+                            title: "Freebie Live",
+                            message: "A freebie is currently running. Ending the show will stop the freebie. Are you sure you want to continue?",
+                            primaryBtnText: "Okay",
+                            secondaryBtnText: "Cancel",
+                            sheetSecondaryColor: .defaultThemeLight,
+                            secondaryTextColor: .defaultTheme,
+                            buttonWidth: screenWidth - 60,
+                            contentSize: 12.0
+                        )
+                        withAnimation(.snappy) {
+                            showSellSheet = false
+                            showFreebieSheet = true
+                        }
+                    } else {
+                        self.endShow()
+                        self.isLive = false
+                    }
+                }
+            )
+        case .none:
+            EmptyView()
+        }
     }
     
     @ViewBuilder
@@ -1230,6 +1243,11 @@ struct RehearsalScreen: View {
 
     @ViewBuilder
     private func sideControls(_ geometry: GeometryProxy) -> some View {
+        sideControlsContainer(geometry)
+    }
+
+    @ViewBuilder
+    private func sideControlsContainer(_ geometry: GeometryProxy) -> some View {
         VStack {
             Spacer()
             VStack(spacing: 4) {
@@ -1267,64 +1285,9 @@ struct RehearsalScreen: View {
             if showLiveControls {
                 VStack(alignment: .leading, spacing: 12) {
                     
-                    // MARK: - Text Input & Send Button
-                    HStack {
-                        ZStack(alignment: .trailing) {
-                            TextField(
-                                "",
-                                text: $commentText,
-                                prompt: Text("Say something...")
-                                    .foregroundColor(.gray)
-                                    .font(.custom(poppinsRegular, size: 13))
-                            )
-                            .foregroundColor(.white)
-                            .font(.custom(poppinsRegular, size: 13))
-                            .padding(.horizontal, 8)
-                            .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
-                            .frame(height: 40)
-                            .frame(width: BiddingDetail.products != nil ? screenWidth-45 : screenWidth-90)
-                            .cornerRadius(8)
-                            .background(
-                                Capsule().fill(Color.black.opacity(0.35))
-                            )
-                            .overlay(
-                                Capsule().stroke(Color.white, lineWidth: 1)
-                            )
-                            
-                            Button(action: {
-                                hideKeyboard()
-                                if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    let userId = UserDefaults.userId
-                                    let userName = UserDefaults.userName
-                                    let userImage = UserDefaults.profileURL
-                                    SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
-                                    commentText = ""
-                                }
-                            }) {
-                                Image(systemName: "chevron.right")
-                                    .resizable()
-                                    .frame(width: 12, height: 12)
-                                    .foregroundColor(.white)
-                                    .padding(10)
-                            }
-                            .transition(.opacity)
-                            .animation(.easeInOut(duration: 0.2), value: commentText)
-                        }
-                    }
-                    .padding(.leading,16)
-                    .padding(.trailing, productData != nil ? 54 : 16)
-                    .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
+                    chatInputRow
                     
-                    // MARK: - Poll Card
-                    if showPollCard, let poll = currentPollModel {
-                        PollPreviewCardView(
-                            poll: poll,
-                            remainingTime: remainingTimer ?? 0,
-                            onPollCardTapped: { showLivePollScreen = true }
-                        )
-                        .preferredColorScheme(.light)
-                        .padding()
-                    }
+                    pollPreviewSection
                     
                     // MARK: - Product Details
                     if hasAuctionStarted {
@@ -1575,6 +1538,67 @@ struct RehearsalScreen: View {
                     }
                 }
             }
+        }
+    }
+
+    // MARK: - Chat input / Poll preview (extracted)
+    private var chatInputRow: some View {
+        HStack {
+            ZStack(alignment: .trailing) {
+                TextField(
+                    "",
+                    text: $commentText,
+                    prompt: Text("Say something...")
+                        .foregroundColor(.gray)
+                        .font(.custom(poppinsRegular, size: 13))
+                )
+                .foregroundColor(.white)
+                .font(.custom(poppinsRegular, size: 13))
+                .padding(.horizontal, 8)
+                .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
+                .frame(height: 40)
+                .frame(width: BiddingDetail.products != nil ? screenWidth - 45 : screenWidth - 90)
+                .cornerRadius(8)
+                .background(Capsule().fill(Color.black.opacity(0.35)))
+                .overlay(Capsule().stroke(Color.white, lineWidth: 1))
+
+                Button(action: sendChatMessage) {
+                    Image(systemName: "chevron.right")
+                        .resizable()
+                        .frame(width: 12, height: 12)
+                        .foregroundColor(.white)
+                        .padding(10)
+                }
+                .transition(.opacity)
+                .animation(.easeInOut(duration: 0.2), value: commentText)
+            }
+        }
+        .padding(.leading, 16)
+        .padding(.trailing, productData != nil ? 54 : 16)
+        .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
+    }
+
+    @ViewBuilder
+    private var pollPreviewSection: some View {
+        if showPollCard, let poll = currentPollModel {
+            PollPreviewCardView(
+                poll: poll,
+                remainingTime: remainingTimer ?? 0,
+                onPollCardTapped: { showLivePollScreen = true }
+            )
+            .preferredColorScheme(.light)
+            .padding()
+        }
+    }
+
+    private func sendChatMessage() {
+        hideKeyboard()
+        if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let userId = UserDefaults.userId
+            let userName = UserDefaults.userName
+            let userImage = UserDefaults.profileURL
+            SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
+            commentText = ""
         }
     }
 
