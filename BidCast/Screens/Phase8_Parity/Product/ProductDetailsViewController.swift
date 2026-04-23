@@ -424,11 +424,22 @@ final class ProductDetailsViewController: UIViewController {
         }
     }
 
-    /// Buy Now handler — P0.2 wires this to push Checkout. P0.1 leaves it
-    /// as a no-op stub so the commit stays atomic.
+    /// Buy Now handler — pushes `CheckoutViewController(productId:)` so the
+    /// buyer lands on the existing Phase 4 checkout flow.
+    /// Wired as part of iOS Parity P0.2.
     @objc func onTapBuyNow() {
-        // P0.2 (follow-up commit) pushes CheckoutViewController(productId:).
-        debugLog("[ProductDetails] Buy Now tapped for product \(productId) — wiring arrives in P0.2")
+        let pid = details?.id ?? productId
+        let vc = CheckoutViewController(productId: pid)
+        if let nav = navigationController {
+            nav.pushViewController(vc, animated: true)
+        } else {
+            // Fallback: wrap in a nav and present modally. Should not happen
+            // in normal tab flow, but keeps the button functional from
+            // contexts like deep-link opened in a bare VC.
+            let wrap = UINavigationController(rootViewController: vc)
+            wrap.modalPresentationStyle = .fullScreen
+            present(wrap, animated: true)
+        }
     }
 }
 

@@ -499,6 +499,25 @@ public final class WatchStreamViewController: UIViewController {
                let amount = self.stringValue(from: payload["bid_amount"]) {
                 self.appendSystemChat("\(winner) won at $\(amount)")
             }
+            // iOS Parity P0.2: if the local user is the winner, offer to
+            // check out immediately. Android celebrates with a "You won!"
+            // overlay; iOS presents a confirmation alert that pushes
+            // CheckoutViewController(productId:) so the winner can
+            // complete payment without leaving the show viewer context.
+            let winnerUserId = self.stringValue(from: payload["user_id"]) ?? ""
+            let me = self.currentUserId
+            if !me.isEmpty, winnerUserId == me {
+                // Prefer the payload product id, fall back to the tracked
+                // currentProductId for the current auction.
+                let pidRaw = self.stringValue(from: payload["product_id"])
+                    ?? ((payload["product"] as? [String: Any])?["id"] as? String)
+                    ?? self.currentProductId
+                if let pidStr = pidRaw, let pid = Int(pidStr) {
+                    self.presentYouWonCheckout(productId: pid)
+                } else {
+                    self.appendSystemChat("You won! Check My Orders to complete checkout.")
+                }
+            }
         }
 
         socket.onAuctionStarted { [weak self] payload in
@@ -1165,5 +1184,37 @@ private extension UITextField {
     func setLeftPadding(_ amount: CGFloat) {
         leftView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: frame.height))
         leftViewMode = .always
+    }
+}
+
+// MARK: - iOS Parity P0.2: "You won" → Checkout bridge
+
+extension WatchStreamViewController {
+    /// Show a winner confirmation alert; on tap "Check out", push the
+    /// existing Phase 4 `CheckoutViewController(productId:)`. Mirrors
+    /// Android's behavior of routing the auction winner into the buy-now
+    /// flow after `bid_finalized` resolves.
+    fileprivate func presentYouWonCheckout(productId: Int) {
+        let alert = UIAlertController(
+            title: "🎉 You won!",
+            message: "You're the winning bidder. Complete your purchase now?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Later", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Check out", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            let vc = CheckoutViewController(productId: productId)
+            let wrap = UINavigationController(rootViewController: vc)
+            wrap.modalPresentationStyle = .fullScreen
+            self.present(wrap, animated: true)
+        })
+        // Delay briefly so the alert doesn't fight the sold-banner UI.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+            guard let self = self else { return }
+            // Only present if nothing else is already modal.
+            if self.presentedViewController == nil {
+                self.present(alert, animated: true)
+            }
+        }
     }
 }
