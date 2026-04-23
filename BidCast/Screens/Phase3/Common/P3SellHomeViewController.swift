@@ -1,6 +1,7 @@
 //
 //  P3SellHomeViewController.swift
 //  BidCast — iOS parity Phase 3i (2026-04-22)
+//          + iOS Parity Phase 8 / P1.8 (2026-04-23) — added seller gating
 //
 //  Landing screen for the Sell tab. The old Sell tab was a 29-line
 //  Xcode-generated stub. This VC replaces it with a real hub that
@@ -9,6 +10,17 @@
 //    - Scheduled Shows (create / edit)
 //    - Inventory (add / edit products)
 //    - Preferences
+//
+//  P1.8 additions: before the List-a-Product + Schedule-a-Show tiles
+//  perform their action, we load the current profile via
+//  `GET api/get-profile` and check Android's `DashActivity.verificationDialog()`
+//  preconditions:
+//      - sellerIdentityStatus == "verified"
+//      - kycStatus == "active"
+//      - hasCardAdded == true
+//      - hasShippingAddress == true
+//  When any of these are missing we present `SellerVerificationSheet`
+//  listing the missing items and tap-throughs to the fix.
 //
 //  The existing TabBarViewController loads "Sell" from the `Sell`
 //  storyboard via the SellViewController class; we leave that storyboard
@@ -23,8 +35,16 @@
 //
 
 import UIKit
+import SVProgressHUD
 
 final class P3SellHomeViewController: UIViewController {
+
+    // Cached profile so repeat taps within the same session don't re-hit
+    // the backend. Invalidated when the user comes back from KYC / payment
+    // / shipping flows via `viewWillAppear`.
+    private var cachedProfile: UserProfileData?
+    private var cachedKyc: CheckKycData?
+    private var isFetchingProfile = false
 
     private let scroll = UIScrollView()
     private let stack: UIStackView = {
@@ -77,7 +97,9 @@ final class P3SellHomeViewController: UIViewController {
             title: "Schedule a show",
             subtitle: "Set a date, time, category, and share"
         ) { [weak self] in
-            self?.p3Push(ScheduleShowEditorViewController(mode: .create))
+            self?.runWithVerification {
+                self?.p3Push(ScheduleShowEditorViewController(mode: .create))
+            }
         })
 
         stack.addArrangedSubview(tile(
@@ -85,7 +107,9 @@ final class P3SellHomeViewController: UIViewController {
             title: "Manage inventory",
             subtitle: "Add, edit, and delete products"
         ) { [weak self] in
-            self?.p3Push(P3InventoryViewController())
+            self?.runWithVerification {
+                self?.p3Push(P3InventoryViewController())
+            }
         })
 
         stack.addArrangedSubview(tile(
@@ -131,6 +155,68 @@ final class P3SellHomeViewController: UIViewController {
     private func body(_ s: String) -> UILabel {
         let l = UILabel(); l.text = s
         l.font = .systemFont(ofSize: 14); l.textColor = .secondaryLabel; l.numberOfLines = 0; return l
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Invalidate profile / KYC cache so that coming back from a KYC
+        // or card flow re-gates against the new state.
+        cachedProfile = nil
+        cachedKyc = nil
+    }
+
+    // MARK: - Verification gating (Android DashActivity.verificationDialog)
+
+    private func runWithVerification(_ onReady: @escaping () -> Void) {
+        loadProfileAndKyc { [weak self] profile, kyc in
+            guard let self = self else { return }
+            let missing = SellerVerificationSheet.missingItems(profile: profile, kyc: kyc)
+            if missing.isEmpty {
+                onReady()
+            } else {
+                let sheet = SellerVerificationSheet(missing: missing)
+                sheet.modalPresentationStyle = .pageSheet
+                if let s = sheet.sheetPresentationController {
+                    s.detents = [.medium(), .large()]
+                    s.prefersGrabberVisible = true
+                }
+                self.present(sheet, animated: true)
+            }
+        }
+    }
+
+    private func loadProfileAndKyc(completion: @escaping (UserProfileData?, CheckKycData?) -> Void) {
+        if let p = cachedProfile, let k = cachedKyc {
+            completion(p, k); return
+        }
+        if isFetchingProfile { return }
+        isFetchingProfile = true
+        SVProgressHUD.show()
+        Task { @MainActor in
+            defer {
+                self.isFetchingProfile = false
+                SVProgressHUD.dismiss()
+            }
+            var profile: UserProfileData? = nil
+            var kyc: CheckKycData? = nil
+            do {
+                let resp: UserProfileResponse = try await APIManager.shared.request(
+                    type: .getProfile, header: true)
+                profile = resp.data
+            } catch {
+                // fall through — verification sheet will still show "unable to verify"
+            }
+            do {
+                let resp: CheckKycResponse = try await APIManager.shared.postMultipartForm(
+                    type: .checkKyc, fields: [:], header: true)
+                kyc = resp.data
+            } catch {
+                // ignore — kyc check failure just means we'll ask the user to complete it
+            }
+            self.cachedProfile = profile
+            self.cachedKyc = kyc
+            completion(profile, kyc)
+        }
     }
 
     private func tile(icon: String, title: String, subtitle: String,
