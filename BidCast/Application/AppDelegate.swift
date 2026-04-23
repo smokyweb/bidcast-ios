@@ -148,8 +148,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // app on launch. Guard the configure call so we only bootstrap Firebase
         // when the plist looks real. Push/analytics will silently no-op until the
         // real plist is dropped in, but the app will at least launch.
-        guard isFirebaseOptionsPlistValid() else {
-            NSLog("[BidCast] Skipping FirebaseApp.configure(): GoogleService-Info.plist has placeholder values")
+        guard FirebaseAvailability.isConfiguredPlistReal else {
+            NSLog("[BidCast] Skipping FirebaseApp.configure(): GoogleService-Info.plist has placeholder values — register the iOS app in the bidcast-a527c Firebase console to enable Chat / FCM / Analytics")
             return
         }
         FirebaseApp.configure()
@@ -159,23 +159,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
 
-    private func isFirebaseOptionsPlistValid() -> Bool {
-        guard
-            let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
-            let dict = NSDictionary(contentsOfFile: path) as? [String: Any]
-        else {
-            return false
-        }
-        guard let appId = dict["GOOGLE_APP_ID"] as? String, !appId.isEmpty else {
-            return false
-        }
-        if appId.uppercased().contains("REPLACE") { return false }
-        // Firebase expects GOOGLE_APP_ID of the form `1:NNN:ios:HHHHH`.
-        // Do a lightweight format check so we don't trigger the framework's
-        // fatal NSException on obviously-bogus values.
-        let pattern = "^[0-9]+:[0-9]+:(ios|android):[0-9a-f]+$"
-        return appId.range(of: pattern, options: .regularExpression) != nil
-    }
+    // QA hotfix 2026-04-23: validity check moved to
+    // BidCast/Services/Firebase/FirebaseAvailability.swift so
+    // FirebaseChatStore can reuse the exact same logic and NOT instantiate
+    // (which would trigger Database.database() → implicit FIRApp.configure
+    // → NSException) when the plist is still a placeholder.
 
     // MARK: - APNs + FCM registration (iOS parity phase 1c scaffold)
     //

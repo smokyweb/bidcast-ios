@@ -83,6 +83,7 @@
 		4BEF49D9AE7CBE26105FC2FE /* PinnedProductCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD50480097ACD5296C524E81 /* PinnedProductCard.swift */; };
 		4CE24CC286573C397415FF07 /* LiveShowContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8C4DCD8B9F8A4687437E06 /* LiveShowContext.swift */; };
 		4FAA48C9BF98CCDFD60E73DC /* SellerPublicProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D749AAB947215ABB6F6BC0 /* SellerPublicProfileViewController.swift */; };
+		51F6433C892FEA305BC9FB28 /* FirebaseAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCD483A81B07DB1D73C2585 /* FirebaseAvailability.swift */; };
 		53184D30B07E4C94A8801434 /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8984987AB8B37690C621F04 /* PreferencesViewController.swift */; };
 		54694E118961EF52C28BF874 /* ShopModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5347999F62D30593095CB9 /* ShopModels.swift */; };
 		54E04391A6690EAA242F8610 /* LivePollSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC241F88EF009FEE4C22BE2 /* LivePollSheet.swift */; };
@@ -880,6 +881,7 @@
 		B9E54E2CB6039A222B007BAC /* CheckoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CheckoutViewController.swift; path = BidCast/Screens/Phase4/Checkout/CheckoutViewController.swift; sourceTree = SOURCE_ROOT; };
 		B9F043188CB960D04E344F42 /* P3SellHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = P3SellHomeViewController.swift; path = BidCast/Screens/Phase3/Common/P3SellHomeViewController.swift; sourceTree = SOURCE_ROOT; };
 		BA4C4041ABF2438EB119F955 /* BidcastSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BidcastSocketManager.swift; path = BidCast/Live/Socket/BidcastSocketManager.swift; sourceTree = SOURCE_ROOT; };
+		BDCD483A81B07DB1D73C2585 /* FirebaseAvailability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FirebaseAvailability.swift; path = BidCast/Services/Firebase/FirebaseAvailability.swift; sourceTree = SOURCE_ROOT; };
 		BDEF43D889CA6C7DE2F94037 /* LiveTipSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveTipSheet.swift; path = BidCast/Live/LiveTipSheet.swift; sourceTree = SOURCE_ROOT; };
 		BEF74A4C9E5773DA7334D4E3 /* AffiliateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AffiliateViewController.swift; path = BidCast/Screens/Phase3/Social/AffiliateViewController.swift; sourceTree = SOURCE_ROOT; };
 		C00D4DE9B3EF8A9A4194A7F3 /* OrderListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OrderListViewModel.swift; path = BidCast/Screens/Phase3/Orders/OrderListViewModel.swift; sourceTree = SOURCE_ROOT; };
@@ -1211,6 +1213,7 @@
 				F6A644D99DEB282F72D6EC1D /* WatchStreamViewController.swift */,
 				2E39416BB0C806871E24145F /* HostPublisherViewController.swift */,
 				FC094AEF9EE06EE5D8B2E0D6 /* BidcastAgoraEngine.swift */,
+				BDCD483A81B07DB1D73C2585 /* FirebaseAvailability.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3312,6 +3315,7 @@
 				1C3A479CA2F46BC6C5D76D46 /* WatchStreamViewController.swift in Sources */,
 				6BDB486CA4042A8A189696F2 /* HostPublisherViewController.swift in Sources */,
 				E4694F49A6EDF19408B0CB15 /* BidcastAgoraEngine.swift in Sources */,
+				51F6433C892FEA305BC9FB28 /* FirebaseAvailability.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3367,7 +3371,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = BidCast/BidCast.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 181;
+				CURRENT_PROJECT_VERSION = 182;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
@@ -3405,7 +3409,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = BidCast/BidCast.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 181;
+				CURRENT_PROJECT_VERSION = 182;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
@@ -3564,7 +3568,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 181;
+				CURRENT_PROJECT_VERSION = 182;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -3584,7 +3588,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 181;
+				CURRENT_PROJECT_VERSION = 182;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -3603,7 +3607,7 @@
 			baseConfigurationReference = 9C01742AE13B328D7B6441D7 /* Pods-BidCast-BidCastUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 181;
+				CURRENT_PROJECT_VERSION = 182;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -3621,7 +3625,7 @@
 			baseConfigurationReference = E579EECEA2975FF8E6E38335 /* Pods-BidCast-BidCastUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 181;
+				CURRENT_PROJECT_VERSION = 182;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;

@@ -37,6 +37,18 @@ final class FirebaseChatStore: ChatStore {
 
     static let shared: ChatStore = {
         #if canImport(FirebaseDatabase)
+        // QA hotfix 2026-04-23: `Database.database()` (called by our
+        // stored-property initializer below) internally triggers
+        // `+[FIRApp defaultApp]` which, if Firebase isn't configured yet,
+        // calls `+[FIRApp configure]` — and that raises an NSException on
+        // the placeholder GOOGLE_APP_ID we ship until the iOS app gets
+        // registered in the bidcast-a527c Firebase console. Gate on the
+        // same plist-validity check AppDelegate uses so we never even
+        // instantiate FirebaseChatStore when the plist is fake.
+        guard FirebaseAvailability.isConfiguredPlistReal else {
+            NSLog("[BidCast] FirebaseChatStore unavailable (placeholder GoogleService-Info.plist) — falling back to InMemoryChatStore")
+            return InMemoryChatStore.shared
+        }
         return FirebaseChatStore()
         #else
         return InMemoryChatStore.shared
@@ -335,10 +347,10 @@ enum ChatStoreRegistry {
     /// FirebaseChatStore automatically via `#if canImport`.
     static var active: ChatStore = {
         #if canImport(FirebaseDatabase)
-        // TODO-TREY: ensure BidCast/GoogleService-Info.plist is the REAL
-        // file from the Firebase console (the repo ships a placeholder).
-        // Without the real plist, Firebase.initialize() throws and we fall
-        // back to in-memory silently.
+        // QA hotfix 2026-04-23: FirebaseChatStore.shared now self-gates on
+        // FirebaseAvailability.isConfiguredPlistReal and returns
+        // InMemoryChatStore when the committed GoogleService-Info.plist is
+        // still a placeholder. Safe to route through it unconditionally.
         return FirebaseChatStore.shared
         #else
         return InMemoryChatStore.shared
