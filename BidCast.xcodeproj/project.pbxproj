@@ -48,6 +48,7 @@
 		3521563D2DCDE24B0014BBBC /* TwoLabelTitleViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3521563A2DCDE24B0014BBBC /* TwoLabelTitleViewCell.swift */; };
 		352156402DCDE65C0014BBBC /* DownloadwithTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3521563F2DCDE65C0014BBBC /* DownloadwithTitleCell.xib */; };
 		352156412DCDE65C0014BBBC /* DownloadwithTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3521563E2DCDE65C0014BBBC /* DownloadwithTitleCell.swift */; };
+		35404D5EAE555161170D0149 /* APIManager+Unauthorized.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC84F369DF7AE045D7863D1 /* APIManager+Unauthorized.swift */; };
 		357D641B2DCA104900E73D91 /* CollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357D641A2DCA104900E73D91 /* CollectionViewCell.xib */; };
 		357D641C2DCA104900E73D91 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357D64192DCA104900E73D91 /* CollectionViewCell.swift */; };
 		357D641F2DCA136900E73D91 /* ProductCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357D641E2DCA136900E73D91 /* ProductCollectionViewCell.xib */; };
@@ -991,6 +992,7 @@
 		DBB2DF41002CD8D163CFB8F0 /* Pods_BidCast_BidCastUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BidCast_BidCastUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC8C4DCD8B9F8A4687437E06 /* LiveShowContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveShowContext.swift; path = BidCast/Live/Models/LiveShowContext.swift; sourceTree = SOURCE_ROOT; };
 		DD50480097ACD5296C524E81 /* PinnedProductCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PinnedProductCard.swift; path = BidCast/Live/PinnedProductCard.swift; sourceTree = SOURCE_ROOT; };
+		DDC84F369DF7AE045D7863D1 /* APIManager+Unauthorized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "APIManager+Unauthorized.swift"; path = "BidCast/Helper/APIManager+Unauthorized.swift"; sourceTree = SOURCE_ROOT; };
 		DE378E847C398975C6A1E294 /* Pods-BidCastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCastTests.release.xcconfig"; path = "Target Support Files/Pods-BidCastTests/Pods-BidCastTests.release.xcconfig"; sourceTree = "<group>"; };
 		DEA831EEA9BCA5141D495061 /* Pods-BidCast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.release.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.release.xcconfig"; sourceTree = "<group>"; };
 		E579EECEA2975FF8E6E38335 /* Pods-BidCast-BidCastUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast-BidCastUITests.release.xcconfig"; path = "Target Support Files/Pods-BidCast-BidCastUITests/Pods-BidCast-BidCastUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -1262,6 +1264,7 @@
 				30F2449A8EF24BD23FAF2FBF /* ShowProductsPickerViewController.swift */,
 				4E2F4992BDF858537A8E2624 /* ShowCouponsPickerViewController.swift */,
 				6DDB4279976C054755433938 /* HostShowProductsSheet.swift */,
+				DDC84F369DF7AE045D7863D1 /* APIManager+Unauthorized.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3380,6 +3383,7 @@
 				24C047478FD82CF7EFBE8D27 /* ShowProductsPickerViewController.swift in Sources */,
 				B10F4197B030768C35657022 /* ShowCouponsPickerViewController.swift in Sources */,
 				9FC34515966CBC11248D538C /* HostShowProductsSheet.swift in Sources */,
+				35404D5EAE555161170D0149 /* APIManager+Unauthorized.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

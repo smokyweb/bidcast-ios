@@ -67,6 +67,8 @@ final class APIManager {
         debugLog("API Response >>> \n")
         debugLog(data.prettyPrintedJSONString ?? "")
         
+        // P2.17 global 401 handling — broadcast before throwing so SceneDelegate can pop to SignIn.
+        if let http = response as? HTTPURLResponse { APIManager.handleStatusCodeIfNeeded(http.statusCode) }
         guard let response = response as? HTTPURLResponse,
               200 ... 299 ~= response.statusCode else {
             let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
@@ -153,6 +155,8 @@ final class APIManager {
         debugLog("API Response >>> \n")
         debugLog(data.prettyPrintedJSONString ?? "")
 
+        // P2.17 global 401 handling — see APIManager+Unauthorized.swift.
+        if let http = response as? HTTPURLResponse { APIManager.handleStatusCodeIfNeeded(http.statusCode) }
         guard let response = response as? HTTPURLResponse,
               200 ... 299 ~= response.statusCode else {
             let dataObj = try? JSONDecoder().decode(ApiError.self, from: data)
@@ -235,6 +239,8 @@ final class APIManager {
                 completion(.failure(.invalidData))
                 return
             }
+            // P2.17 global 401 handling — see APIManager+Unauthorized.swift.
+            if let http = response as? HTTPURLResponse { APIManager.handleStatusCodeIfNeeded(http.statusCode) }
             guard let response = response as? HTTPURLResponse,
                   200 ... 599 ~= response.statusCode else {
                 do {
@@ -321,6 +327,8 @@ final class APIManager {
         
         // Create data task
         let task = URLSession(configuration: config).dataTask(with: request) { data, response, error in
+            // P2.17 global 401 handling — fire before returning so SceneDelegate hears it even on network/decode errors.
+            if let http = response as? HTTPURLResponse { APIManager.handleStatusCodeIfNeeded(http.statusCode) }
             // Handle error
             if let error = error {
                 completion(.failure(.network(error)))
@@ -424,6 +432,8 @@ final class APIManager {
         config.timeoutIntervalForResource = 120
         
         URLSession(configuration: config).dataTask(with: request) { data, response, error in
+            // P2.17 global 401 handling — see APIManager+Unauthorized.swift.
+            if let http = response as? HTTPURLResponse { APIManager.handleStatusCodeIfNeeded(http.statusCode) }
             guard let data, error == nil else {
                 completion(.failure(.invalidData))
                 return
@@ -523,6 +533,8 @@ final class APIManager {
         config.timeoutIntervalForResource = 120
         
         URLSession(configuration: config).dataTask(with: request) { data, response, error in
+            // P2.17 global 401 handling — see APIManager+Unauthorized.swift.
+            if let http = response as? HTTPURLResponse { APIManager.handleStatusCodeIfNeeded(http.statusCode) }
             guard let data, error == nil else {
                 completion(.failure(.invalidData))
                 return
@@ -551,6 +563,20 @@ final class APIManager {
     
     
     
+    // P2.17: the two async `uploadImageWithMultipleKeys` overloads both
+    // call `performURLSessionDataWithAuth` which fires the global 401
+    // interceptor before the caller sees the response.
+    private func performURLSessionDataWithAuth(
+        configuration: URLSessionConfiguration,
+        request: URLRequest
+    ) async throws -> (Data, URLResponse) {
+        let (data, response) = try await URLSession(configuration: configuration).data(for: request)
+        if let http = response as? HTTPURLResponse {
+            APIManager.handleStatusCodeIfNeeded(http.statusCode)
+        }
+        return (data, response)
+    }
+
     func uploadImageWithMultipleKeys<T: Decodable>(
         type: APIEndPoint,
         urlArray: [[String]]? = nil,
@@ -621,7 +647,8 @@ final class APIManager {
         config.waitsForConnectivity = true
         config.timeoutIntervalForResource = 120
         
-        let (data, response) = try await URLSession(configuration: config).data(for: request)
+        // P2.17: route through helper so 401 interceptor fires.
+        let (data, response) = try await performURLSessionDataWithAuth(configuration: config, request: request)
         debugLog("response >>> \(response)")
         debugLog("API Response >>> \n")
         debugLog(data.prettyPrintedJSONString ?? "")
@@ -716,7 +743,8 @@ final class APIManager {
         config.waitsForConnectivity = true
         config.timeoutIntervalForResource = 120
         
-        let (data, response) = try await URLSession(configuration: config).data(for: request)
+        // P2.17: route through helper so 401 interceptor fires.
+        let (data, response) = try await performURLSessionDataWithAuth(configuration: config, request: request)
         debugLog("response >>> \(response)")
         debugLog("API Response >>> \n")
         debugLog(data.prettyPrintedJSONString ?? "")
