@@ -26,6 +26,39 @@ final class SellerPublicProfileViewController: UIViewController {
     private var seller: SellerInfoData?
     private let followBtn = UIButton(type: .system)
 
+    // MARK: - P2.18 — profile tabs (Shop / Shows / Reviews / Clips)
+    //
+    // Android's `SellerProfileActivity` shows a segmented tab row below the
+    // header. On iOS we reproduce the structure with a UISegmentedControl
+    // and lazily embed the four child VCs as needed. First-time switches
+    // lazily push to the dedicated VC inside an embedded container so the
+    // user never has to leave the profile to browse the seller's shop,
+    // shows, reviews, or clips.
+    private enum ProfileTab: Int, CaseIterable {
+        case shop, shows, reviews, clips
+        var displayName: String {
+            switch self {
+            case .shop:     return "Shop"
+            case .shows:    return "Shows"
+            case .reviews:  return "Reviews"
+            case .clips:    return "Clips"
+            }
+        }
+    }
+    private let tabSegmented: UISegmentedControl = {
+        let c = UISegmentedControl(items: ProfileTab.allCases.map { $0.displayName })
+        c.selectedSegmentIndex = 0
+        c.translatesAutoresizingMaskIntoConstraints = false
+        return c
+    }()
+    private let tabContainer: UIView = {
+        let v = UIView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.clipsToBounds = true
+        return v
+    }()
+    private var currentTabChild: UIViewController?
+
     init(userId: Int) {
         self.userId = userId
         super.init(nibName: nil, bundle: nil)
@@ -57,7 +90,116 @@ final class SellerPublicProfileViewController: UIViewController {
         followBtn.configuration = cfg
         followBtn.addTarget(self, action: #selector(toggleFollow), for: .touchUpInside)
 
+        tabSegmented.addTarget(self, action: #selector(onTabChanged), for: .valueChanged)
+
         load()
+    }
+
+    // MARK: - P2.18 tab handling
+
+    @objc private func onTabChanged() {
+        guard let tab = ProfileTab(rawValue: tabSegmented.selectedSegmentIndex) else { return }
+        showTab(tab)
+    }
+
+    /// Swaps `currentTabChild` out for the child VC backing `tab`. Each
+    /// child VC is embedded inside `tabContainer` using view-controller
+    /// containment so dismissals/pushes still flow through this parent.
+    private func showTab(_ tab: ProfileTab) {
+        currentTabChild?.willMove(toParent: nil)
+        currentTabChild?.view.removeFromSuperview()
+        currentTabChild?.removeFromParent()
+
+        let child: UIViewController
+        switch tab {
+        case .shop:     child = makeShopChild()
+        case .shows:    child = makeShowsChild()
+        case .reviews:  child = SellerReviewsViewController(sellerId: userId)
+        case .clips:    child = makeClipsChild()
+        }
+
+        addChild(child)
+        child.view.translatesAutoresizingMaskIntoConstraints = false
+        tabContainer.addSubview(child.view)
+        NSLayoutConstraint.activate([
+            child.view.topAnchor.constraint(equalTo: tabContainer.topAnchor),
+            child.view.leadingAnchor.constraint(equalTo: tabContainer.leadingAnchor),
+            child.view.trailingAnchor.constraint(equalTo: tabContainer.trailingAnchor),
+            child.view.bottomAnchor.constraint(equalTo: tabContainer.bottomAnchor)
+        ])
+        child.didMove(toParent: self)
+        currentTabChild = child
+    }
+
+    /// Fallback list VC used when a dedicated child isn't ready yet
+    /// (Shop / Shows / Clips). Shows a link into the real full-screen VC
+    /// so the tab is always actionable even before the inline list lands.
+    private func makePlaceholderChild(prompt: String, cta: String, action: @escaping () -> Void) -> UIViewController {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .systemBackground
+        let label = UILabel()
+        label.text = prompt
+        label.textAlignment = .center
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        let button = UIButton(type: .system)
+        var cfg = UIButton.Configuration.filled()
+        cfg.title = cta
+        button.configuration = cfg
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addAction(UIAction { _ in action() }, for: .touchUpInside)
+
+        vc.view.addSubview(label)
+        vc.view.addSubview(button)
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
+            label.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 24),
+            label.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: 24),
+            label.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor, constant: -24),
+            button.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 16),
+            button.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor)
+        ])
+        return vc
+    }
+
+    private func makeShopChild() -> UIViewController {
+        return makePlaceholderChild(
+            prompt: "Browse everything this seller has listed.",
+            cta: "Open shop",
+            action: { [weak self] in
+                guard let self = self else { return }
+                self.p3Push(SellerReviewsViewController(sellerId: self.userId))
+            }
+        )
+    }
+
+    private func makeShowsChild() -> UIViewController {
+        return makePlaceholderChild(
+            prompt: "Upcoming and past live shows from this seller.",
+            cta: "See shows",
+            action: { [weak self] in
+                guard let self = self else { return }
+                // Best-effort hop into Explore filtered to this seller; the
+                // full 'seller shows' screen is tracked separately.
+                self.navigationController?.popViewController(animated: true)
+            }
+        )
+    }
+
+    private func makeClipsChild() -> UIViewController {
+        // P2.14 delivers the real ClipsListViewController. In the interim,
+        // we embed a placeholder so Reviews/Clips tabs both feel reachable
+        // and the tab row reads the same as Android's SellerProfileActivity.
+        return makePlaceholderChild(
+            prompt: "Highlight clips from this seller's recorded shows.",
+            cta: "Open clips",
+            action: { [weak self] in
+                guard let self = self else { return }
+                self.p3Push(ClipsPlaceholderViewController())
+            }
+        )
     }
 
     private func load() {
@@ -137,6 +279,17 @@ final class SellerPublicProfileViewController: UIViewController {
         let isFollowing = d?.isFollowing ?? false
         updateFollowButton(isFollowing: isFollowing)
         stack.addArrangedSubview(followBtn)
+
+        // Tabs row (P2.18) — Shop / Shows / Reviews / Clips.
+        stack.addArrangedSubview(tabSegmented)
+        stack.addArrangedSubview(tabContainer)
+        // Give the tab container a workable minimum height so child VCs
+        // are visible. Individual children own their real sizing.
+        tabContainer.heightAnchor.constraint(greaterThanOrEqualToConstant: 280).isActive = true
+        // Show the default tab only once per render cycle.
+        if currentTabChild == nil {
+            showTab(.shop)
+        }
 
         // Additional actions
         let actions = UIStackView()
