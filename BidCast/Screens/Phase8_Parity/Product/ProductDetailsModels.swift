@@ -13,7 +13,7 @@ struct ProductDetailsResponse: Codable {
     let status: String?
     let message: String?
     let errorType: String?
-    let data: ProductDetailsData?
+    let data: P8ProductDetailsData?
 
     enum CodingKeys: String, CodingKey {
         case status, message, data
@@ -21,7 +21,9 @@ struct ProductDetailsResponse: Codable {
     }
 }
 
-struct ProductDetailsData: Codable {
+// Renamed from `ProductDetailsData` to avoid collision with the legacy
+// `ProductDetailsData` declared in BidCast/Models/Product/ProductResponses.swift.
+struct P8ProductDetailsData: Codable {
     let id: Int?
     let title: String?
     let description: String?
@@ -42,9 +44,9 @@ struct ProductDetailsData: Codable {
     let images: [String?]?
     let thumbnail: [String?]?
     let videos: [String?]?
-    let category: ProductDetailsCategory?
-    let subCategory: ProductDetailsCategory?
-    let user: ProductDetailsUser?
+    let category: P8ProductDetailsCategory?
+    let subCategory: P8ProductDetailsCategory?
+    let user: P8ProductDetailsUser?
     let userId: Int?
     let createdAt: String?
     let weight: Double?
@@ -102,7 +104,7 @@ struct ProductDetailsData: Codable {
     }
 }
 
-struct ProductDetailsCategory: Codable {
+struct P8ProductDetailsCategory: Codable {
     let id: Int?
     let name: String?
     let image: String?
@@ -110,7 +112,7 @@ struct ProductDetailsCategory: Codable {
     let color: String?
 }
 
-struct ProductDetailsUser: Codable {
+struct P8ProductDetailsUser: Codable {
     let id: Int?
     let name: String?
     let email: String?
