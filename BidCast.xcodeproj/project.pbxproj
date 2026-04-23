@@ -27,6 +27,7 @@
 		201130344F8E2F62583D8D33 /* Pods_BidCast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */; };
 		22924A679ED75626AA8EF14A /* PayoutRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83884B90A073FBD3258B7EEE /* PayoutRequestViewController.swift */; };
 		24644BF99445B92E37CC14BC /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916B49EB83DA44790C103CB7 /* NotificationSettingsViewController.swift */; };
+		24C047478FD82CF7EFBE8D27 /* ShowProductsPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F2449A8EF24BD23FAF2FBF /* ShowProductsPickerViewController.swift */; };
 		2C2A476481FE0B1DFCD78B29 /* InterestsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A540C19861B3EE8F455703 /* InterestsViewController.swift */; };
 		2C6A4BE282FEAA86D3E72944 /* AddShippingAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC124BD4A638D834BA6288C0 /* AddShippingAddressViewController.swift */; };
 		2F171C614638B60B62FA5711 /* Pods_BidCastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */; };
@@ -396,6 +397,7 @@
 		AC454D4EAF8AFC1FFCE7ECC0 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92854237A9CA66B04D7E19B4 /* NotificationCell.swift */; };
 		AFF24BE8952BBD5A134CEF22 /* HostTipSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F14D7E9182099A07181FEB /* HostTipSettingsSheet.swift */; };
 		B0FC4E609DAF005BE80E02DE /* KYCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12844365BAA19B1DA07DDC0E /* KYCViewController.swift */; };
+		B10F4197B030768C35657022 /* ShowCouponsPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2F4992BDF858537A8E2624 /* ShowCouponsPickerViewController.swift */; };
 		B29B454CB9EE3799CA7D5AE9 /* ConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8B42CE98AE667B27B558E2 /* ConversationListViewController.swift */; };
 		B2E746F08EA7F60AFA95891A /* OrderListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D484CA4B228EDF7A4826965 /* OrderListViewController.swift */; };
 		B7304EB8AD7545A66F2A96EB /* ClipsPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4344138708DB8FF7AAE3E0 /* ClipsPlaceholderViewController.swift */; };
@@ -532,6 +534,7 @@
 		2E39416BB0C806871E24145F /* HostPublisherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostPublisherViewController.swift; path = BidCast/Live/HostPublisherViewController.swift; sourceTree = SOURCE_ROOT; };
 		2FC241F88EF009FEE4C22BE2 /* LivePollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LivePollSheet.swift; path = BidCast/Live/LivePollSheet.swift; sourceTree = SOURCE_ROOT; };
 		30F14D7E9182099A07181FEB /* HostTipSettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostTipSettingsSheet.swift; path = BidCast/Live/Host/HostTipSettingsSheet.swift; sourceTree = SOURCE_ROOT; };
+		30F2449A8EF24BD23FAF2FBF /* ShowProductsPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowProductsPickerViewController.swift; path = BidCast/Screens/Phase8_Parity/Shows/ShowProductsPickerViewController.swift; sourceTree = SOURCE_ROOT; };
 		3201425B9F2DF5B3C415AD5B /* SellerVerificationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerVerificationSheet.swift; path = BidCast/Screens/Phase8_Parity/Sell/SellerVerificationSheet.swift; sourceTree = SOURCE_ROOT; };
 		35062E032DCB3D0C006C0BCE /* LabelCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectionCell.swift; sourceTree = "<group>"; };
 		35062E042DCB3D0C006C0BCE /* LabelCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelCollectionCell.xib; sourceTree = "<group>"; };
@@ -592,6 +595,7 @@
 		4C9A403386B6DDF14087E028 /* NewChatSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewChatSearchViewController.swift; path = BidCast/Screens/Phase3/Chat/NewChatSearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		4D2743C8AA23BBFFA30F2E7A /* ShowModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowModels.swift; path = BidCast/Models/LiveStream/ShowModels.swift; sourceTree = SOURCE_ROOT; };
 		4D914DB8901B91F26D4993BF /* FetchBidsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FetchBidsResponse.swift; path = BidCast/Screens/Phase8_Parity/Activity/FetchBidsResponse.swift; sourceTree = SOURCE_ROOT; };
+		4E2F4992BDF858537A8E2624 /* ShowCouponsPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShowCouponsPickerViewController.swift; path = BidCast/Screens/Phase8_Parity/Shows/ShowCouponsPickerViewController.swift; sourceTree = SOURCE_ROOT; };
 		4F404CE78A9D9641E21CA958 /* P3InventoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = P3InventoryViewController.swift; path = BidCast/Screens/Phase3/SellerHub/P3InventoryViewController.swift; sourceTree = SOURCE_ROOT; };
 		52557220D9CDF3E039B0DCC0 /* Pods-BidCastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCastTests.debug.xcconfig"; path = "Target Support Files/Pods-BidCastTests/Pods-BidCastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5508443EBE2AB8958021592B /* ScheduleShowEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScheduleShowEditorViewController.swift; path = BidCast/Screens/Phase3/ShowScheduling/ScheduleShowEditorViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1253,6 +1257,8 @@
 				3201425B9F2DF5B3C415AD5B /* SellerVerificationSheet.swift */,
 				56144A649DEF3D75878FB440 /* AddEditProductViewController.swift */,
 				18824BE5A4EADA7D37EB6774 /* ProductMetaUploader.swift */,
+				30F2449A8EF24BD23FAF2FBF /* ShowProductsPickerViewController.swift */,
+				4E2F4992BDF858537A8E2624 /* ShowCouponsPickerViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3368,6 +3374,8 @@
 				E7BC43578C9184262BAEE07C /* SellerVerificationSheet.swift in Sources */,
 				A06F43998C3B8FF981414A0A /* AddEditProductViewController.swift in Sources */,
 				4690462D8803ABEC8CADC312 /* ProductMetaUploader.swift in Sources */,
+				24C047478FD82CF7EFBE8D27 /* ShowProductsPickerViewController.swift in Sources */,
+				B10F4197B030768C35657022 /* ShowCouponsPickerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
