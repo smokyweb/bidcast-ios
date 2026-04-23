@@ -66,6 +66,10 @@ final class JobAAccountMenuViewController: UIViewController, UITableViewDataSour
                 make: { UserSearchViewController() }),
             Row(title: "Coupons", icon: "ticket",
                 make: { CouponsViewController() }),
+            // iOS Parity P1.11 (2026-04-23): expose Saved items here as
+            // well as on the Activity tab's nav bar.
+            Row(title: "Saved items", icon: "heart",
+                make: { SavedItemsViewController() }),
             Row(title: "Blocked users", icon: "person.slash",
                 make: { BlockedUsersViewController() })
         ]),
