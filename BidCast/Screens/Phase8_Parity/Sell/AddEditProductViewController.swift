@@ -17,9 +17,9 @@
 //    - condition picker (new / used)
 //    - toggles: accept_offers, flash_sale, reserve_for_live
 //
-//  Deferred to P1.9b:
+//  Added in P1.9b (2026-04-23):
 //    - image multi-picker + thumbnail selector (calls store-product-meta
-//      with product_images[], videos[], thumbnail[]).
+//      with product_images[] and thumbnail[]).
 //
 //  Backend:
 //    - POST api/store-product (multipart form) creates or updates the
@@ -30,6 +30,7 @@
 
 import UIKit
 import SVProgressHUD
+import PhotosUI
 
 final class AddEditProductViewController: UIViewController {
 
@@ -61,6 +62,39 @@ final class AddEditProductViewController: UIViewController {
     private let acceptOffersSwitch = UISwitch()
     private let flashSaleSwitch = UISwitch()
     private let reserveForLiveSwitch = UISwitch()
+
+    // MARK: - Image state (P1.9b)
+
+    /// In-memory selected images, in display order. Index 0 is the
+    /// thumbnail unless `thumbnailIndex` is different.
+    private var pickedImages: [UIImage] = []
+    private var thumbnailIndex: Int = 0
+
+    private lazy var imagesCollection: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 88, height: 88)
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 8
+        layout.sectionInset = .init(top: 0, left: 4, bottom: 0, right: 4)
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .secondarySystemBackground
+        cv.layer.cornerRadius = 8
+        cv.showsHorizontalScrollIndicator = false
+        cv.register(PickedImageCell.self, forCellWithReuseIdentifier: PickedImageCell.reuseID)
+        cv.translatesAutoresizingMaskIntoConstraints = false
+        return cv
+    }()
+
+    private lazy var addImagesButton: UIButton = {
+        let btn = UIButton(type: .system)
+        var cfg = UIButton.Configuration.bordered()
+        cfg.title = "Add photos"
+        cfg.image = UIImage(systemName: "photo.badge.plus")
+        cfg.imagePadding = 6
+        btn.configuration = cfg
+        btn.addTarget(self, action: #selector(pickImages), for: .touchUpInside)
+        return btn
+    }()
 
     // MARK: - Selection state
 
@@ -196,8 +230,8 @@ final class AddEditProductViewController: UIViewController {
         dimsStack.spacing = 8
         dimsStack.distribution = .fillEqually
 
-        // Image upload placeholder (P1.9b will wire this)
-        let imagesPlaceholder = makeImagesPlaceholder()
+        // Image multi-picker + strip (P1.9b)
+        let imagesSection = makeImagesSection()
 
         let stack = UIStackView(arrangedSubviews: [
             sectionLabel("Basics"),
@@ -219,7 +253,7 @@ final class AddEditProductViewController: UIViewController {
             sectionLabel("Options"),
             acceptOffersRow, flashSaleRow, reserveForLiveRow,
             sectionLabel("Photos"),
-            imagesPlaceholder,
+            imagesSection,
             UIView()
         ])
         stack.axis = .vertical
@@ -275,27 +309,37 @@ final class AddEditProductViewController: UIViewController {
         return row
     }
 
-    private func makeImagesPlaceholder() -> UIView {
-        let lbl = UILabel()
-        lbl.text = "Image upload lands in the next build (P1.9b)."
-        lbl.font = .systemFont(ofSize: 12)
-        lbl.textColor = .tertiaryLabel
-        lbl.numberOfLines = 0
-        lbl.textAlignment = .center
-        let wrap = UIView()
-        wrap.backgroundColor = .secondarySystemBackground
-        wrap.layer.cornerRadius = 8
-        wrap.translatesAutoresizingMaskIntoConstraints = false
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        wrap.addSubview(lbl)
+    private func makeImagesSection() -> UIView {
+        let strip = UIView()
+        strip.translatesAutoresizingMaskIntoConstraints = false
+        imagesCollection.dataSource = self
+        imagesCollection.delegate = self
+        strip.addSubview(imagesCollection)
+        strip.addSubview(addImagesButton)
+        addImagesButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            wrap.heightAnchor.constraint(equalToConstant: 80),
-            lbl.centerXAnchor.constraint(equalTo: wrap.centerXAnchor),
-            lbl.centerYAnchor.constraint(equalTo: wrap.centerYAnchor),
-            lbl.leadingAnchor.constraint(greaterThanOrEqualTo: wrap.leadingAnchor, constant: 12),
-            lbl.trailingAnchor.constraint(lessThanOrEqualTo: wrap.trailingAnchor, constant: -12)
+            imagesCollection.topAnchor.constraint(equalTo: strip.topAnchor),
+            imagesCollection.leadingAnchor.constraint(equalTo: strip.leadingAnchor),
+            imagesCollection.trailingAnchor.constraint(equalTo: strip.trailingAnchor),
+            imagesCollection.heightAnchor.constraint(equalToConstant: 96),
+            addImagesButton.topAnchor.constraint(equalTo: imagesCollection.bottomAnchor, constant: 8),
+            addImagesButton.leadingAnchor.constraint(equalTo: strip.leadingAnchor),
+            addImagesButton.bottomAnchor.constraint(equalTo: strip.bottomAnchor)
         ])
-        return wrap
+        return strip
+    }
+
+    @objc private func pickImages() {
+        var config = PHPickerConfiguration(photoLibrary: .shared())
+        config.filter = .images
+        config.selectionLimit = max(0, 10 - pickedImages.count)
+        if config.selectionLimit == 0 {
+            p3Alert(message: "You can attach up to 10 images. Remove one to add another.")
+            return
+        }
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
     }
 
     // MARK: - Populate (edit)
@@ -512,11 +556,40 @@ final class AddEditProductViewController: UIViewController {
         Task { @MainActor in
             defer { SVProgressHUD.dismiss() }
             do {
-                let _: CreateProductResponse = try await APIManager.shared.postMultipartForm(
+                let resp: CreateProductResponse = try await APIManager.shared.postMultipartForm(
                     type: .storeProduct(param: StoreProductRequest.empty),
                     fields: fields, header: true)
-                self.p3Alert(title: "Saved",
-                             message: "Product saved. (Image upload lands in the next build.)") {
+
+                // Determine resulting product id so we can upload images.
+                let resultingId: Int? = {
+                    if case .edit(let p) = mode { return p.id }
+                    return resp.data?.id
+                }()
+
+                if let pid = resultingId, !self.pickedImages.isEmpty {
+                    SVProgressHUD.show(withStatus: "Uploading photos…")
+                    let imgDatas = self.pickedImages.compactMap { $0.jpegData(compressionQuality: 0.85) }
+                    let thumb = self.pickedImages.indices.contains(self.thumbnailIndex)
+                        ? self.pickedImages[self.thumbnailIndex].jpegData(compressionQuality: 0.85)
+                        : nil
+                    do {
+                        _ = try await ProductMetaUploader.upload(pending: .init(
+                            productId: pid,
+                            images: imgDatas,
+                            thumbnail: thumb
+                        ))
+                    } catch {
+                        // Non-fatal: we've created the product, just warn about images.
+                        self.p3Alert(title: "Saved without photos",
+                                     message: "The product was saved, but uploading photos failed: " +
+                                     ((error as? DataError)?.getErrorMessage() ?? error.localizedDescription)) {
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                        return
+                    }
+                }
+
+                self.p3Alert(title: "Saved", message: "Product saved.") {
                     self.navigationController?.popViewController(animated: true)
                 }
             } catch {
@@ -524,4 +597,137 @@ final class AddEditProductViewController: UIViewController {
             }
         }
     }
+}
+
+// MARK: - PHPickerViewControllerDelegate
+
+extension AddEditProductViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard !results.isEmpty else { return }
+        let group = DispatchGroup()
+        var gathered: [UIImage] = []
+        let lock = NSLock()
+        for r in results {
+            let provider = r.itemProvider
+            guard provider.canLoadObject(ofClass: UIImage.self) else { continue }
+            group.enter()
+            provider.loadObject(ofClass: UIImage.self) { obj, _ in
+                defer { group.leave() }
+                if let img = obj as? UIImage {
+                    lock.lock(); gathered.append(img); lock.unlock()
+                }
+            }
+        }
+        group.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.pickedImages.append(contentsOf: gathered)
+            self.imagesCollection.reloadData()
+        }
+    }
+}
+
+// MARK: - UICollectionView data source (image strip)
+
+extension AddEditProductViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        pickedImages.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: PickedImageCell.reuseID, for: indexPath) as! PickedImageCell
+        cell.imageView.image = pickedImages[indexPath.item]
+        cell.isThumbnail = (indexPath.item == thumbnailIndex)
+        cell.onRemove = { [weak self] in self?.removeImage(at: indexPath.item) }
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Tap to set as thumbnail.
+        thumbnailIndex = indexPath.item
+        imagesCollection.reloadData()
+    }
+
+    private func removeImage(at index: Int) {
+        guard pickedImages.indices.contains(index) else { return }
+        pickedImages.remove(at: index)
+        if thumbnailIndex >= pickedImages.count {
+            thumbnailIndex = max(0, pickedImages.count - 1)
+        }
+        imagesCollection.reloadData()
+    }
+}
+
+// MARK: - Picked image strip cell
+
+final class PickedImageCell: UICollectionViewCell {
+    static let reuseID = "PickedImageCell"
+
+    let imageView: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFill
+        v.clipsToBounds = true
+        v.layer.cornerRadius = 8
+        v.backgroundColor = .tertiarySystemBackground
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+
+    private let thumbBadge: UILabel = {
+        let l = UILabel()
+        l.text = " Thumb "
+        l.font = .systemFont(ofSize: 10, weight: .bold)
+        l.textColor = .white
+        l.backgroundColor = .systemBlue
+        l.layer.cornerRadius = 4
+        l.layer.masksToBounds = true
+        l.translatesAutoresizingMaskIntoConstraints = false
+        return l
+    }()
+
+    private let removeButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        b.tintColor = .white
+        b.backgroundColor = .black.withAlphaComponent(0.6)
+        b.layer.cornerRadius = 10
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }()
+
+    var onRemove: (() -> Void)?
+
+    var isThumbnail: Bool = false {
+        didSet {
+            thumbBadge.isHidden = !isThumbnail
+            layer.borderWidth = isThumbnail ? 2 : 0
+            layer.borderColor = UIColor.systemBlue.cgColor
+            layer.cornerRadius = 8
+        }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        contentView.addSubview(imageView)
+        contentView.addSubview(thumbBadge)
+        contentView.addSubview(removeButton)
+        thumbBadge.isHidden = true
+        removeButton.addAction(UIAction { [weak self] _ in self?.onRemove?() }, for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            thumbBadge.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            thumbBadge.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
+            thumbBadge.heightAnchor.constraint(equalToConstant: 16),
+            removeButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 2),
+            removeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -2),
+            removeButton.widthAnchor.constraint(equalToConstant: 20),
+            removeButton.heightAnchor.constraint(equalToConstant: 20),
+        ])
+    }
+    required init?(coder: NSCoder) { fatalError() }
 }
