@@ -1,6 +1,6 @@
 //
 //  AddShippingAddressViewController.swift
-//  BidCast \u2014 iOS Parity Phase 8 / P0.4 (2026-04-23)
+//  BidCast — iOS Parity Phase 8 / P0.4 (2026-04-23)
 //
 //  Form for creating or editing a shipping address. Mirrors Android's
 //  `AddShippingAddressFragment` (~234 lines) and posts to:
@@ -8,8 +8,8 @@
 //      multipart: type, name, phone_number, street_address, pincode, city, state
 //
 //  Two modes:
-//    .create       \u2192 empty form, "Add" button
-//    .edit(addr)   \u2192 pre-filled from ShippingAddress, "Save" button
+//    .create       → empty form, "Add" button
+//    .edit(addr)   → pre-filled from ShippingAddress, "Save" button
 //
 //  A small programmatic scroll + stack layout keeps the view xib-free so
 //  we don't have to author a new storyboard.

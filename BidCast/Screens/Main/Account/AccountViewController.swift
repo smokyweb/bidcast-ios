@@ -55,11 +55,24 @@ class AccountViewController: UIViewController {
     var imageName = ["inventory","mic","orders","wallet","tag","tag","shipping","people","seller","shop","analysis","analysis"]
     var tabName = ["Inventory","Shows","My Orders","Wallet","Offers","Tips","Shipping","Affiliate Program","Seller Trainig","Premier Shop","Seller status","Seller Analytics"]
     
-    var sellerItems = ["284","$5.2K","4.8"]
-    var sellerItemsNAme = ["Items","Revenue","Rating"]
-    
-    var accPayImage = ["shipping","mic","shop","wallet","tag"]
-    var AccountPayment = ["Payment & Shipping","Addresses","Trusted Buyer","Notifications","Preferences"]
+    // iOS Parity P0.6: real stats — initial placeholder values are shown
+    // while the api/seller-hub-info fetch is in-flight; they're replaced
+    // by formatted numbers once the backend responds.
+    var sellerItems = ["—", "—", "—"]
+    var sellerItemsNAme = ["Items", "Revenue", "Rating"]
+
+    // iOS Parity P0.6: account-grid is now 7 items (up from 5) to match
+    // Android's AccountFragment.
+    var accPayImage = ["shipping", "shipping", "shop", "mic", "tag", "tag", "shop"]
+    var AccountPayment = [
+        "Payment & Shipping",
+        "Addresses",
+        "Trusted Buyer",
+        "Notifications",
+        "Preferences",
+        "Interests",
+        "Clips"
+    ]
     
     var creditName = ["Credits","Coupons"]
     var creditDate = ["284","$5.2K"]
@@ -73,6 +86,51 @@ class AccountViewController: UIViewController {
         self.configureHeaderView()
         configureTableView()
         self.initViewModel()
+        // iOS Parity P0.6: pull real stats from api/seller-hub-info.
+        self.fetchSellerHubStats()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Refresh stats on tab reselect so coming back from an order / payout
+        // update reflects immediately.
+        self.fetchSellerHubStats()
+    }
+
+    /// iOS Parity P0.6: replace the hardcoded '284 / $5.2K / 4.8' with
+    /// `api/seller-hub-info` output. Soft-fails — on network error we
+    /// keep the placeholder dashes.
+    private func fetchSellerHubStats() {
+        Task { [weak self] in
+            guard let self = self else { return }
+            do {
+                let resp: SellerHubResponse = try await APIManager.shared.request(
+                    type: .getSellerHubInfo, header: true
+                )
+                guard let d = resp.data else { return }
+                let items = d.items.map { "\($0)" } ?? "—"
+                let revenue: String = {
+                    if let r = d.revenue {
+                        let f = NumberFormatter()
+                        f.numberStyle = .currency
+                        f.currencyCode = "USD"
+                        f.maximumFractionDigits = (r >= 1000) ? 1 : 2
+                        return f.string(from: NSNumber(value: r)) ?? String(format: "$%.0f", r)
+                    }
+                    return "—"
+                }()
+                let rating: String = {
+                    if let r = d.rating { return String(format: "%.1f", r) }
+                    return "—"
+                }()
+                await MainActor.run {
+                    self.sellerItems = [items, revenue, rating]
+                    self.tableViewOlt.reloadData()
+                }
+            } catch {
+                debugLog("[Account] getSellerHubInfo failed -> \(error.localizedDescription)")
+            }
+        }
     }
     
     //MARK: initViewModel.
@@ -209,13 +267,35 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .paymentAcc:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
+                // iOS Parity P0.6: 7-item account grid with full tap-throughs.
                 cell.onItemSelected = { [weak self] index in
                     guard let self = self else { return }
                     switch index {
                     case 0:
-                        self.pushVC(with: PaymentAndShippingViewController.self, storyboardName: .main)
+                        // Payment & Shipping → cards + default address hub
+                        // Parity uses PaymentMethodsListViewController so we land
+                        // on the real Phase 4 implementation (the stock
+                        // PaymentAndShippingViewController has fetchApi()
+                        // commented out).
+                        let vc = PaymentMethodsListViewController()
+                        self.navigationController?.pushViewController(vc, animated: true)
                     case 1:
                         self.pushVC(with: MyAddressViewController.self, storyboardName: .main)
+                    case 2:
+                        self.navigationController?.pushViewController(
+                            TrustedBuyerViewController(), animated: true)
+                    case 3:
+                        self.navigationController?.pushViewController(
+                            NotificationListViewController(), animated: true)
+                    case 4:
+                        self.navigationController?.pushViewController(
+                            PreferencesViewController(), animated: true)
+                    case 5:
+                        self.navigationController?.pushViewController(
+                            InterestsViewController(), animated: true)
+                    case 6:
+                        self.navigationController?.pushViewController(
+                            ClipsPlaceholderViewController(), animated: true)
                     default:
                         break
                     }
