@@ -23,6 +23,17 @@ protocol ChatStore {
                      senderId: Int,
                      body: String,
                      completion: @escaping (Result<ChatMessage, Error>) -> Void)
+
+    /// P2.13 — send an image attachment.  Implementations are expected to
+    /// upload `jpegData` to wherever chat media lives (Firebase Storage on
+    /// Android), then append a `ChatMessage` with `mediaType == "image"`
+    /// and `mediaUrl == <downloaded URL>`. In-memory / offline stores can
+    /// fall back to a local data-url preview.
+    func sendImageMessage(conversationId: String,
+                          senderId: Int,
+                          jpegData: Data,
+                          completion: @escaping (Result<ChatMessage, Error>) -> Void)
+
     func markAsRead(conversationId: String, userId: Int)
     func blockUser(userId: Int,
                    completion: @escaping (Result<Void, Error>) -> Void)
@@ -118,6 +129,37 @@ final class InMemoryChatStore: ChatStore {
             } catch {
                 debugLog("sendChatNotification error: \(error.localizedDescription)")
             }
+        }
+    }
+
+    // P2.13 — in-memory image messages. Uploading is a no-op here; we stash
+    // a base64 data URL so the UI still renders. Real uploads happen in
+    // FirebaseChatStore (when FirebaseStorage is linked).
+    func sendImageMessage(conversationId: String,
+                          senderId: Int,
+                          jpegData: Data,
+                          completion: @escaping (Result<ChatMessage, Error>) -> Void) {
+        let dataURL = "data:image/jpeg;base64,\(jpegData.base64EncodedString())"
+        let msg = ChatMessage(
+            id: UUID().uuidString,
+            conversationId: conversationId,
+            senderId: senderId,
+            body: nil,
+            mediaUrl: dataURL,
+            mediaType: "image",
+            createdAt: ISO8601DateFormatter().string(from: Date()),
+            isRead: false,
+            isDeleted: false
+        )
+        lock.lock()
+        var msgs = messagesByConversationId[conversationId] ?? []
+        msgs.append(msg)
+        messagesByConversationId[conversationId] = msgs
+        let sinks = messageSinks.filter { $0.0 == conversationId }.map { $0.1 }
+        lock.unlock()
+        DispatchQueue.main.async {
+            sinks.forEach { $0(msgs) }
+            completion(.success(msg))
         }
     }
 

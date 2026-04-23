@@ -275,6 +275,152 @@ final class FirebaseChatStore: ChatStore {
         #endif
     }
 
+    // MARK: - Send image (P2.13)
+    //
+    // Android `Chats.sendImage` (currently commented out in their utils/Chats.kt)
+    // uploads to FirebaseStorage at `FireRef.IMAGE_STR/<chatKey>/image_<ts>.jpeg`
+    // then writes a ChatModel with `type == "image"` and
+    // `attachment.image == <download URL>` into /chats/<chatKey>/<pushId>.
+    //
+    // We mirror that contract when FirebaseStorage is linked. Without
+    // FirebaseStorage we delegate to InMemoryChatStore, which surfaces
+    // the picked image locally via a data-url so the UI still renders.
+    //
+    // NOTE: Android also uses `FireRef.IMAGE_STR` (Firebase Storage root
+    // `/chat_images`). We use the same path prefix so iOS + Android
+    // render each other's uploads.
+    func sendImageMessage(
+        conversationId: String,
+        senderId: Int,
+        jpegData: Data,
+        completion: @escaping (Result<ChatMessage, Error>) -> Void
+    ) {
+        #if canImport(FirebaseStorage) && canImport(FirebaseDatabase)
+        guard FirebaseAvailability.isConfiguredPlistReal else {
+            InMemoryChatStore.shared.sendImageMessage(
+                conversationId: conversationId, senderId: senderId,
+                jpegData: jpegData, completion: completion
+            )
+            return
+        }
+        let ts = Int64(Date().timeIntervalSince1970)
+        let path = "chat_images/\(conversationId)/image_\(ts).jpeg"
+        let storageRef = Storage.storage().reference().child(path)
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        storageRef.putData(jpegData, metadata: metadata) { _, err in
+            if let err = err {
+                DispatchQueue.main.async { completion(.failure(err)) }
+                return
+            }
+            storageRef.downloadURL { url, err in
+                if let err = err {
+                    DispatchQueue.main.async { completion(.failure(err)) }
+                    return
+                }
+                guard let url = url else {
+                    DispatchQueue.main.async {
+                        completion(.failure(NSError(domain: "FirebaseChatStore",
+                                                     code: -1,
+                                                     userInfo: [NSLocalizedDescriptionKey: "Missing download URL"])))
+                    }
+                    return
+                }
+                self.writeImageChatMessage(
+                    conversationId: conversationId,
+                    senderId: senderId,
+                    imageURL: url.absoluteString,
+                    completion: completion
+                )
+            }
+        }
+        #else
+        // Without FirebaseStorage, fall back to the in-memory path so the
+        // user still sees their image render locally. Cross-device send
+        // lands when FirebaseStorage is added to the Podfile.
+        InMemoryChatStore.shared.sendImageMessage(
+            conversationId: conversationId, senderId: senderId,
+            jpegData: jpegData, completion: completion
+        )
+        #endif
+    }
+
+    #if canImport(FirebaseDatabase)
+    /// Mirrors `FirebaseChatStore.sendMessage` but for image payloads.
+    /// Extracted so `sendImageMessage` above stays readable.
+    private func writeImageChatMessage(
+        conversationId: String,
+        senderId: Int,
+        imageURL: String,
+        completion: @escaping (Result<ChatMessage, Error>) -> Void
+    ) {
+        let parts = conversationId.split(separator: "_")
+        guard parts.count == 3,
+              let a = Int(parts[0]), let b = Int(parts[2]) else {
+            completion(.failure(NSError(domain: "FirebaseChatStore", code: -1,
+                                        userInfo: [NSLocalizedDescriptionKey: "Bad conversationId"])))
+            return
+        }
+        let receiverId = (a == senderId) ? b : a
+        let ref = db.child("chats").child(conversationId)
+        let msgKey = ref.childByAutoId().key ?? UUID().uuidString
+        let tz = TimeZone.current.identifier
+        let ts = Int64(Date().timeIntervalSince1970)
+        let users: [String: Any] = [
+            "senderId": "\(senderId)",
+            "senderName": UserDefaults.standard.string(forKey: "name") ?? "",
+            "senderImage": UserDefaults.standard.string(forKey: "image") ?? "",
+            "receiverId": "\(receiverId)",
+            "receiverName": "",
+            "receiverImage": ""
+        ]
+        let attachment: [String: Any] = [
+            "audio": "", "image": imageURL, "video": "", "thumbnail": ""
+        ]
+        let replyMessage: [String: Any] = [
+            "type": "text", "message": "", "senderId": "",
+            "senderName": "", "messageId": ""
+        ]
+        let payload: [String: Any] = [
+            "id": msgKey,
+            "type": "image",
+            "seen": false,
+            "unreadCount": 0,
+            "message": "",
+            "timezone": tz,
+            "timestamp": ts,
+            "isReply": false,
+            "users": users,
+            "replyMessage": replyMessage,
+            "attachment": attachment
+        ]
+        ref.child(msgKey).setValue(payload) { err, _ in
+            if let err = err {
+                DispatchQueue.main.async { completion(.failure(err)) }
+                return
+            }
+            let msg = ChatMessage(
+                id: msgKey,
+                conversationId: conversationId,
+                senderId: senderId,
+                body: nil,
+                mediaUrl: imageURL,
+                mediaType: "image",
+                createdAt: "\(ts)",
+                isRead: false,
+                isDeleted: false
+            )
+            DispatchQueue.main.async { completion(.success(msg)) }
+            self.updateChatList(
+                conversationId: conversationId,
+                senderId: senderId,
+                receiverId: receiverId,
+                payload: payload
+            )
+        }
+    }
+    #endif
+
     #if canImport(FirebaseDatabase)
     private func updateChatList(
         conversationId: String,
