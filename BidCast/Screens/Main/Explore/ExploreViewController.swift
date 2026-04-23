@@ -290,8 +290,10 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
             collectionView.reloadData()
             return
         }
-        // Product tap: nothing wired yet — the Product Detail screen is a
-        // separate task. This leaves a harmless gap (documented in the report).
+        // Product tap → push ProductDetailsViewController (iOS Parity P0.1).
+        guard let pid = viewModel.products[indexPath.item].id else { return }
+        let vc = ProductDetailsViewController(productId: pid)
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
