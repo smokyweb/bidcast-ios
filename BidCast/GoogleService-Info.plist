@@ -1,72 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-  ============================================================================
-  PARTIAL GoogleService-Info.plist (iOS parity phase 4x — 2026-04-22)
-  ============================================================================
-  The Firebase project is SHARED with Android (project id `bidcast-a527c`).
-  The cross-app values below (PROJECT_ID, GCM_SENDER_ID, STORAGE_BUCKET,
-  API_KEY) were ported from Android's committed `google-services.json` so
-  FirebaseApp.configure() can bootstrap on launch.
-
-  The iOS-specific values (GOOGLE_APP_ID, CLIENT_ID, REVERSED_CLIENT_ID) are
-  NOT present in Android's google-services.json because that file only
-  describes the Android app entry for project `bidcast-a527c`. The iOS app
-  must be REGISTERED inside the existing `bidcast-a527c` Firebase project
-  (NOT a brand-new project) to mint these three iOS-specific identifiers.
-
-  TODO-TREY — one-time Firebase console step (~5 minutes):
-    1. Open https://console.firebase.google.com/project/bidcast-a527c/settings/general
-    2. "Add app" → iOS
-       - Apple bundle ID: `io.bidcast`
-       - App nickname: BidCast iOS
-       - App Store ID: 8JZT9Q9Z39 (optional)
-    3. Download the generated `GoogleService-Info.plist` and overwrite THIS
-       file (keep the same path so the pbxproj reference stays valid).
-    4. Verify BUNDLE_ID=io.bidcast, PROJECT_ID=bidcast-a527c, API_KEY matches
-       the value below (same project → same API key).
-    5. Firebase Console → Cloud Messaging → Apple app configuration →
-       upload APNs `.p8` key (TODO-TREY item #4 in the FINAL report).
-    6. Enable "Push Notifications" + "Background Modes (Remote
-       notifications)" capabilities on the Xcode target if not already on.
-
-  Until the iOS app is registered in Firebase, FirebaseApp.configure() will
-  succeed with placeholder GOOGLE_APP_ID/CLIENT_ID values but FCM device
-  registration and any iOS-specific Firebase features will be inert.
-  ============================================================================
--->
 <plist version="1.0">
 <dict>
-    <!-- Cross-app values (ported from Android google-services.json, project bidcast-a527c) -->
-    <key>PROJECT_ID</key>
-    <string>bidcast-a527c</string>
-    <key>GCM_SENDER_ID</key>
-    <string>988454812680</string>
-    <key>STORAGE_BUCKET</key>
-    <string>bidcast-a527c.firebasestorage.app</string>
-    <key>API_KEY</key>
-    <string>AIzaSyC1TfaBJi35l1u_vqed6WR9dl9nSYISJKI</string>
-    <key>BUNDLE_ID</key>
-    <string>io.bidcast</string>
-    <!-- TODO-TREY: register the iOS app in the existing bidcast-a527c Firebase
-         project (Console → Project settings → Add app → iOS) to replace these three. -->
-    <key>GOOGLE_APP_ID</key>
-    <string>REPLACE-FROM-FIREBASE-CONSOLE-ios</string>
-    <key>CLIENT_ID</key>
-    <string>REPLACE-FROM-FIREBASE-CONSOLE-ios.apps.googleusercontent.com</string>
-    <key>REVERSED_CLIENT_ID</key>
-    <string>com.googleusercontent.apps.REPLACE-FROM-FIREBASE-CONSOLE-ios</string>
-    <key>IS_ADS_ENABLED</key>
-    <false/>
-    <key>IS_ANALYTICS_ENABLED</key>
-    <false/>
-    <key>IS_APPINVITE_ENABLED</key>
-    <true/>
-    <key>IS_GCM_ENABLED</key>
-    <true/>
-    <key>IS_SIGNIN_ENABLED</key>
-    <true/>
-    <key>PLIST_VERSION</key>
-    <string>1</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCNj2HJjnyrBtCxRwGSZNp_KDL0Y0nGXSQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>988454812680</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>io.bidcast</string>
+	<key>PROJECT_ID</key>
+	<string>bidcast-a527c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bidcast-a527c.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:988454812680:ios:edf78385ff0cb609dea5bd</string>
+	<key>DATABASE_URL</key>
+	<string>https://bidcast-a527c-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>
