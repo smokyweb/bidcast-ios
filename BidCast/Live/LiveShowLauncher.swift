@@ -34,16 +34,60 @@ enum LiveShowLauncher {
         presenter.present(vc, animated: true)
     }
 
+    /// BUGFIX 2026-04-29 (MC task cmohlvlro): always fetch a fresh Agora
+    /// token via the resolver before presenting the viewer. Previously we
+    /// reused the rtc_token cached on the Show object from the home/explore
+    /// feed, which is stale once Agora's TTL expires. When the cached token
+    /// is past TTL, Agora's joinChannel fails with a server-time-vs-token-time
+    /// mismatch error ("start time is different than current time"). Hitting
+    /// the resolver guarantees we use a freshly-issued token tied to the
+    /// current viewer's uid.
     static func launchViewer(from presenter: UIViewController, show: Show) {
-        guard let ctx = makeContext(from: show, isHost: false) else {
+        guard let showId = show.id else {
             presentMissingInfo(on: presenter, role: "viewer")
             return
         }
-        let vc = WatchStreamViewController()
-        vc.context = ctx
-        vc.modalPresentationStyle = .fullScreen
-        fillIdentityViewer(into: vc)
-        presenter.present(vc, animated: true)
+
+        let loader = UIAlertController(title: nil, message: "Joining show…", preferredStyle: .alert)
+        presenter.present(loader, animated: true)
+
+        let currentUserId: String = {
+            if let id = (UserDefaults.standard.value(forKey: "user_id") as? Int) { return String(id) }
+            if let s = UserDefaults.standard.string(forKey: "user_id") { return s }
+            return ""
+        }()
+
+        Task { [weak presenter] in
+            do {
+                let ctx = try await LiveShowResolver.resolveViewerContext(
+                    showId: showId,
+                    currentUserId: currentUserId
+                )
+                await MainActor.run {
+                    guard let presenter = presenter else { return }
+                    loader.dismiss(animated: false) {
+                        let vc = WatchStreamViewController()
+                        vc.context = ctx
+                        vc.modalPresentationStyle = .fullScreen
+                        fillIdentityViewer(into: vc)
+                        presenter.present(vc, animated: true)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    guard let presenter = presenter else { return }
+                    loader.dismiss(animated: false) {
+                        let alert = UIAlertController(
+                            title: "Could not join show",
+                            message: error.localizedDescription,
+                            preferredStyle: .alert
+                        )
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        presenter.present(alert, animated: true)
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Internals

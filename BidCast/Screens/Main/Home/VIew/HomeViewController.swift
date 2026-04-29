@@ -179,7 +179,10 @@ class HomeViewController: UIViewController {
     // MARK: - Tap handling
 
     private func handleShowTap(_ show: Show) {
-        if show.isLive == true {
+        // BUGFIX 2026-04-29 (MC task cmohlxj0h): use the stricter isActuallyLive
+        // gate so users tapping a not-yet-started show do not get sent to the
+        // live viewer (which would crash / show a black screen).
+        if show.isActuallyLive {
             // Full-screen viewer. LiveShowLauncher handles rtc_token/roomId
             // fast path; otherwise its resolver kicks in.
             LiveShowLauncher.launchViewer(from: self, show: show)
@@ -299,10 +302,13 @@ extension HomeViewController: UICollectionViewDelegate,
             let cell = collectionView.dequeueCell(ofType: CollectionCardCell.self)
             let s = shows[indexPath.item]
             cell.titleView?.text = s.title ?? "Untitled show"
-            cell.categoyView?.text = (s.isLive == true)
+            // BUGFIX 2026-04-29 (MC task cmohlxj0h): only show the red LIVE
+            // badge when the show is actually streaming.
+            let live = s.isActuallyLive
+            cell.categoyView?.text = live
                 ? "LIVE"
                 : (s.category?.name ?? "Upcoming")
-            cell.categoyView?.textColor = (s.isLive == true) ? .systemRed : .systemBlue
+            cell.categoyView?.textColor = live ? .systemRed : .systemBlue
             cell.profileNameOlt?.text = hostDisplayName(s)
             // Thumbnail image
             if let raw = showThumbnailURL(s), let url = URL(string: raw) {
