@@ -56,6 +56,20 @@ struct Show: Codable, Identifiable, Hashable {
     let user: UserPublic?
     let auction: ShowAuction?
 
+    /// BUGFIX 2026-04-29 (MC task cmohlxj0h): the backend `is_live` flag has
+    /// historically been set to `true` for scheduled shows that have not yet
+    /// started streaming, which caused the red "LIVE" badge to appear on
+    /// upcoming shows on the iOS home feed. Treat a show as actually live only
+    /// when it ALSO has the streaming primitives the viewer screen needs
+    /// (a non-empty rtc_token AND room_id) AND a non-null started_at.
+    var isActuallyLive: Bool {
+        guard isLive == true else { return false }
+        let hasToken = (rtcToken?.isEmpty == false)
+        let hasRoom  = (roomId?.isEmpty == false)
+        let started: Bool = (startedAt?.value != nil)
+        return hasToken && hasRoom && started
+    }
+
     enum CodingKeys: String, CodingKey {
         case id, title, date, time, language, products, thumbnail, category, user, auction
         case userId = "user_id"
