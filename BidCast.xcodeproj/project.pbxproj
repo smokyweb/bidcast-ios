@@ -81,6 +81,7 @@
 		35CE102B2DCC89AC0020D19A /* ShareCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CE10282DCC89AC0020D19A /* ShareCell.swift */; };
 		35F948AEAD230DBC32E8115D /* SellerHubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3D4F18B819095F488D9969 /* SellerHubModels.swift */; };
 		373642A9BD0BBD478476629C /* APIEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A034562ACE667390C6BDD32 /* APIEnvelope.swift */; };
+		3A3019A80F3B7D74C18B8C5E /* SellerPhoneOTPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3747CF7340D3361CFAED524 /* SellerPhoneOTPViewController.swift */; };
 		3A384A6281113FDA57DE43F5 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21244668DEEF7671D981566 /* AnyCodable.swift */; };
 		3C184E81B718B01389C40225 /* PremierShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6A496E856BC3682F1ED901 /* PremierShopViewController.swift */; };
 		3CD74CE0A79FABAEB6D8A937 /* NotificationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55124F2FA5B8C454B004B043 /* NotificationListViewController.swift */; };
@@ -1014,6 +1015,7 @@
 		EC7D4CCF8E67AA4E0BBD612E /* PushRegistrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PushRegistrationService.swift; path = BidCast/Services/Push/PushRegistrationService.swift; sourceTree = SOURCE_ROOT; };
 		EC8940A4A0DE899C92C5A2AE /* ProductDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductDetailsViewController.swift; path = BidCast/Screens/Phase8_Parity/Product/ProductDetailsViewController.swift; sourceTree = SOURCE_ROOT; };
 		F1F54B929412273E39092D83 /* ScheduledShowsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScheduledShowsViewController.swift; path = BidCast/Screens/Phase3/ShowScheduling/ScheduledShowsViewController.swift; sourceTree = SOURCE_ROOT; };
+		F3747CF7340D3361CFAED524 /* SellerPhoneOTPViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SellerPhoneOTPViewController.swift; path = BidCast/Screens/Phase8_Parity/Sell/SellerPhoneOTPViewController.swift; sourceTree = SOURCE_ROOT; };
 		F6A644D99DEB282F72D6EC1D /* WatchStreamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchStreamViewController.swift; path = BidCast/Live/WatchStreamViewController.swift; sourceTree = SOURCE_ROOT; };
 		FC094AEF9EE06EE5D8B2E0D6 /* BidcastAgoraEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BidcastAgoraEngine.swift; path = BidCast/Live/Agora/BidcastAgoraEngine.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -1280,6 +1282,7 @@
 				124D4CCB870A5A69C4DE1EB0 /* SellerHubOverviewViewController.swift */,
 				100742FD90EA6FA8920B3D04 /* ClipsListViewController.swift */,
 				464B4FABA6B20445BB15BF9B /* ClipEditViewController.swift */,
+				F3747CF7340D3361CFAED524 /* SellerPhoneOTPViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3404,6 +3407,7 @@
 				3DD94C738E86E35DC495D7B3 /* SellerHubOverviewViewController.swift in Sources */,
 				5AFC4A589B3AEF0E47E29764 /* ClipsListViewController.swift in Sources */,
 				3CEA4905883BEA025169774B /* ClipEditViewController.swift in Sources */,
+				3A3019A80F3B7D74C18B8C5E /* SellerPhoneOTPViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

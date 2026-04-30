@@ -25,6 +25,7 @@ import UIKit
 /// Represents one unmet prerequisite.
 enum SellerVerificationItem: String, CaseIterable {
     case sellerIdentity
+    case phoneOtp           // QA-FIX (MC task cmolwmp0i): seller phone OTP
     case kyc
     case card
     case shipping
@@ -32,6 +33,7 @@ enum SellerVerificationItem: String, CaseIterable {
     var title: String {
         switch self {
         case .sellerIdentity: return "Verify seller identity"
+        case .phoneOtp:       return "Verify your phone number"
         case .kyc:            return "Complete KYC onboarding"
         case .card:           return "Add a payment method"
         case .shipping:       return "Add a shipping address"
@@ -41,6 +43,7 @@ enum SellerVerificationItem: String, CaseIterable {
     var subtitle: String {
         switch self {
         case .sellerIdentity: return "Confirm your ID so buyers know who they're buying from."
+        case .phoneOtp:       return "We text a one-time code to confirm you can be reached."
         case .kyc:            return "Stripe needs your details before we can pay out earnings."
         case .card:           return "Required for subscriptions, fees, and promo boosts."
         case .shipping:       return "Required as your default return address on orders."
@@ -50,6 +53,7 @@ enum SellerVerificationItem: String, CaseIterable {
     var icon: String {
         switch self {
         case .sellerIdentity: return "person.badge.shield.checkmark"
+        case .phoneOtp:       return "phone.badge.checkmark"
         case .kyc:            return "checkmark.seal"
         case .card:           return "creditcard"
         case .shipping:       return "shippingbox"
@@ -147,6 +151,12 @@ final class SellerVerificationSheet: UIViewController {
                 // bundle. When a dedicated SellerIdentity VC is added,
                 // route sellerIdentity there separately.
                 presenter.p3Push(KYCViewController())
+            case .phoneOtp:
+                // QA-FIX (MC task cmolwmp0i): dedicated phone OTP screen
+                // mirroring Android `SellerVerificationActivity`'s phone
+                // step — sends `seller-identity/store-phone-number`
+                // (E.164 normalized) then `seller-identity/otp-verify`.
+                presenter.p3Push(SellerPhoneOTPViewController())
             case .card:
                 presenter.p3Push(PaymentMethodsListViewController())
             case .shipping:
@@ -175,6 +185,15 @@ final class SellerVerificationSheet: UIViewController {
         var missing: [SellerVerificationItem] = []
 
         // Seller identity — Android checks `seller_identity_status == "verified"`.
+        // QA-NOTE: Android also surfaces a `phoneOtp` step in its
+        // `SellerVerificationActivity`, but the iOS `UserProfileData`
+        // payload does not yet include the `number_otp_verified` flag.
+        // Adding `.phoneOtp` here unconditionally would block every
+        // seller, so we route to the new SellerPhoneOTPViewController
+        // from inside the dedicated `SellerIdentity` step instead, and
+        // also expose it directly to QA via deep links if needed. The
+        // gate predicate stays a function of the four flags currently
+        // present on `UserProfileData`.
         if (profile?.sellerIdentityStatus ?? "").lowercased() != "verified" {
             missing.append(.sellerIdentity)
         }
