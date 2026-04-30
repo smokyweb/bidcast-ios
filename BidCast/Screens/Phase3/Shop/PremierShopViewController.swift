@@ -90,12 +90,30 @@ final class PremierShopViewController: UIViewController {
             }
         }
 
+        // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): mirror Android
+        // PremierShopFragment - tint the Apply button when the seller is
+        // below 100% so it visually reads as gated, but still attach a
+        // click handler that explains why and how much further they need to go.
+        let progressInt = parseProgressPercent(d.currentProgress)
         let apply = UIButton(type: .system)
         var cfg = UIButton.Configuration.filled()
         cfg.title = "Apply to Premier Shop"
+        if progressInt < 100 {
+            cfg.baseBackgroundColor = .systemGray3
+        }
         apply.configuration = cfg
         apply.addTarget(self, action: #selector(applyToPremier), for: .touchUpInside)
         stack.addArrangedSubview(apply)
+    }
+
+    /// Parses Android-style progress strings like "75%" or "75" into an Int.
+    /// Returns 0 when the value is missing or unparseable so we err on the
+    /// side of showing the "Not Eligible Yet" sheet.
+    private func parseProgressPercent(_ value: String?) -> Int {
+        guard let v = value?.replacingOccurrences(of: "%", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines), !v.isEmpty,
+              let n = Int(v) else { return 0 }
+        return n
     }
 
     private func heading(_ t: String, size: CGFloat) -> UILabel {
@@ -125,6 +143,17 @@ final class PremierShopViewController: UIViewController {
     }
 
     @objc private func applyToPremier() {
+        // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): Android branches on
+        // current progress and shows a "Not Eligible Yet" message when the
+        // seller is below 100% instead of firing the apply API. Mirror that.
+        let progress = parseProgressPercent(data?.currentProgress)
+        if progress < 100 {
+            p3Alert(
+                title: "Not Eligible Yet",
+                message: "You are at \(progress)% of the Premier Shop requirements. Reach 100% to apply."
+            )
+            return
+        }
         SVProgressHUD.show()
         Task { @MainActor in
             defer { SVProgressHUD.dismiss() }
