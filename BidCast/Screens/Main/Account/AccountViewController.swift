@@ -263,6 +263,24 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 cell.segmentType = .sellerHub
                 cell.sellerItemsNAme = self.sellerItemsNAme
                 cell.seller = self.sellerItems
+                // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): make Items / Revenue / Rating
+                // tappable. Android AccountFragment routes them to:
+                //   Items   -> Inventory
+                //   Revenue -> Wallet
+                //   Rating  -> Seller Status
+                cell.onItemSelected = { [weak self] index in
+                    guard let self = self else { return }
+                    switch index {
+                    case 0:
+                        self.pushVC(with: InventoryViewController.self, storyboardName: .account)
+                    case 1:
+                        self.pushVC(with: WalletViewController.self, storyboardName: .account)
+                    case 2:
+                        self.pushVC(with: SellerStatusViewController.self, storyboardName: .account)
+                    default:
+                        break
+                    }
+                }
                 cell.collectionViewOlt.reloadData()
                 return cell
             case .paymentAcc:

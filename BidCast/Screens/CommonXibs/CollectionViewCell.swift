@@ -149,11 +149,10 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
         
         switch segmentType{
         case .sellerHub:
-            if isForDetails{
-                
-            }else{
-                onItemSelected?(indexPath.row)
-            }
+            // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): Items / Revenue / Rating
+            // cards on the Seller Hub dashboard are now tappable. Forward the
+            // tap up to the parent (AccountViewController routes them).
+            onItemSelected?(indexPath.row)
         case .account:
             if isForPayment{
                 
