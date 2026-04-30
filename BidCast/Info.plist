@@ -2,26 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- iOS parity Phase 4a (2026-04-22): Stripe publishable key. -->
-	<!-- Ported from Android Const.kt 2026-04-22 (same Stripe test account/backend). -->
-	<!-- TODO-TREY: flip pk_test_* → pk_live_* at App Store go-live. NEVER ship the Stripe SECRET key in the iOS client — secret keys belong on the Laravel backend only. -->
-	<key>STRIPE_PUBLISHABLE_KEY</key>
-	<string>pk_test_51SjiEtQzmy9jx34KXrnMJIwqLx5IfCN69oZsNCptlyBfChq7NrJVc8OjS5q16nvnuobjjp3Run8icoXQHn0D9eVG00nJyhk9zM</string>
-	<!-- Ported from Android Const.kt 2026-04-22 (APP_ID_AGORA, same Agora project). -->
 	<key>AGORA_APP_ID</key>
 	<string>6a0ab77ee15943df94524201d6c93877</string>
-	<!-- iOS parity Phase 4x (2026-04-22): Zego Cloud credentials, ported from Android Const.kt. -->
-	<!-- iOS references Zego in BidCast/Models/LiveStream/ShowModels.swift + ProjectEndPoint.swift -->
-	<key>ZEGO_APP_ID</key>
-	<string>1005763407</string>
-	<key>ZEGO_APP_SIGN</key>
-	<string>73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423</string>
-	<!-- iOS parity Phase 4x (2026-04-22): Backend + socket URLs (match Android Const.kt). -->
 	<key>BIDCAST_BASE_URL</key>
 	<string>https://backend.bidcast.betaplanets.com</string>
 	<key>BIDCAST_SOCKET_URL</key>
 	<string>https://node.bidcast.betaplanets.com/</string>
-	<!-- iOS parity Phase 4m (2026-04-22): Deep linking URL scheme. -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -35,12 +21,6 @@
 			</array>
 		</dict>
 	</array>
-	<!-- iOS parity Phase 4m (2026-04-22): Universal Links associated domain. -->
-	<!-- TODO-TREY: Universal Links require an `apple-app-site-association` file at -->
-	<!-- https://bidcast.betaplanets.com/.well-known/apple-app-site-association with -->
-	<!-- appID `YQGQU3RV34.io.bidcast` and paths for /stream/*, /order/*, /chat/*, /profile/*. -->
-	<!-- The entitlements file has a `com.apple.developer.associated-domains` entry; enabling -->
-	<!-- Associated Domains capability in the Apple Developer portal is a one-click step. -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>
@@ -48,36 +28,32 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<!-- QA-FIX-cmoafjxce002xzl1hgb5uj1l8 (2026-04-22): TestFlight build was crashing on launch -->
-	<!-- with EXC_CRASH because the binary links AVFoundation/Photos APIs (Agora SDK, Kingfisher, -->
-	<!-- CropViewController, ProfileViewController) without declaring the required NS*UsageDescription -->
-	<!-- keys. App Store validation lets the build through, but iOS TCC kills the app immediately -->
-	<!-- when it detects the privacy-relevant symbols. Add the full set now so the app launches -->
-	<!-- regardless of which screen is entered first. -->
-	<key>NSCameraUsageDescription</key>
-	<string>BidCast uses the camera so you can go live, stream auctions, capture product photos, update your profile picture, and scan payment cards.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>BidCast uses the microphone so you can go live and talk to viewers during auctions.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>BidCast uses your photo library so you can upload product images and set your profile picture.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>BidCast saves images you capture or download inside the app to your photo library.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>BidCast optionally uses your contacts to help you invite friends to live shows.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>BidCast uses your location to tailor shipping estimates and nearby live shows.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>BidCast uses Face ID to keep your account secure and speed up sign-in.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>BidCast uses tracking data to improve live show recommendations and relevant promotions.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>BidCast may play short audio clips during live shows using the system music player.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>BidCast uses Bluetooth so audio can play on connected headphones or speakers during live shows.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>BidCast uses Bluetooth so audio can play on connected headphones or speakers during live shows.</string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>BidCast may play short audio clips during live shows using the system music player.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>BidCast uses the camera so you can go live, stream auctions, capture product photos, update your profile picture, and scan payment cards.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>BidCast optionally uses your contacts to help you invite friends to live shows.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>BidCast uses Face ID to keep your account secure and speed up sign-in.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>BidCast uses your location to tailor shipping estimates and nearby live shows.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>BidCast uses the microphone so you can go live and talk to viewers during auctions.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>BidCast may use motion data to stabilize live video and handle orientation during streams.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>BidCast saves images you capture or download inside the app to your photo library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>BidCast uses your photo library so you can upload product images and set your profile picture.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>BidCast uses tracking data to improve live show recommendations and relevant promotions.</string>
+	<key>STRIPE_PUBLISHABLE_KEY</key>
+	<string>pk_test_51SjiEtQzmy9jx34KXrnMJIwqLx5IfCN69oZsNCptlyBfChq7NrJVc8OjS5q16nvnuobjjp3Run8icoXQHn0D9eVG00nJyhk9zM</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Outfit-Bold.ttf</string>
@@ -176,5 +152,9 @@
 		<key>UIImageName</key>
 		<string>logo1</string>
 	</dict>
+	<key>ZEGO_APP_ID</key>
+	<string>1005763407</string>
+	<key>ZEGO_APP_SIGN</key>
+	<string>73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423</string>
 </dict>
 </plist>
