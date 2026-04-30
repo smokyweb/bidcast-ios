@@ -419,7 +419,7 @@ extension SignUpViewController {
         UserDefaults.roleId = userData.roleID ?? 0
         UserDefaults.email = userData.email ?? ""
         UserDefaults.userId = userData.id ?? 0
-        UserDefaults.accessToken = userData.token
+        UserDefaults.accessToken = userData.token ?? ""
     }
 
     /// QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): land the user directly on
