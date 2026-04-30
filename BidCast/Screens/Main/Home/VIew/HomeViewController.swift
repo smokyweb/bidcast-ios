@@ -142,6 +142,11 @@ class HomeViewController: UIViewController {
         ]
         if let cid = selectedCategoryId {
             fields["category"] = "\(cid)"
+        } else {
+            // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): Android sends
+            // category=for_you for the default tab. Mirror that so the
+            // backend returns the personalized feed when available.
+            fields["category"] = "for_you"
         }
 
         do {
@@ -151,6 +156,33 @@ class HomeViewController: UIViewController {
                 header: true
             )
             let newItems = resp.data ?? []
+            // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): when the personalized
+            // "For You" feed is empty on first page, Android falls back to
+            // the full all-shows list so the user never sees a blank screen.
+            // For other categories the empty state is intentional and we
+            // respect it. Mirror that here.
+            if reset, page == 1, newItems.isEmpty, selectedCategoryId == nil {
+                debugLog("[Home] empty For-You feed -> falling back to all shows")
+                var fallbackFields = fields
+                fallbackFields["category"] = "all"
+                do {
+                    let resp2: GetMyShowResponse = try await APIManager.shared.postMultipartForm(
+                        type: .getLiveShow(param: [:]),
+                        fields: fallbackFields,
+                        header: true
+                    )
+                    self.shows = resp2.data ?? []
+                    self.currentPage = resp2.currentPage ?? 1
+                    self.totalPages = resp2.totalPage ?? self.currentPage
+                    self.collectionViewOlt.reloadData()
+                } catch {
+                    debugLog("[Home] For-You fallback failed -> \(error.localizedDescription)")
+                    self.shows = []
+                    self.collectionViewOlt.reloadData()
+                }
+                await MainActor.run { SVProgressHUD.dismiss() }
+                return
+            }
             if reset {
                 self.shows = newItems
             } else {
