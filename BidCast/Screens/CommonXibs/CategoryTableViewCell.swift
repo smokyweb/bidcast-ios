@@ -60,7 +60,7 @@ extension CategoryTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueCell(ofType: CategoryRowCollectionViewCell.self)
+        let cell = collectionView.dequeueCell(ofType: CategoryRowCollectionViewCell.self, for: indexPath)
         if transCategoryArr.count != 0 || !transCategoryArr.isEmpty{
             cell.categoryLabel.text = transCategoryArr[indexPath.row].name
             if selectedIndex == indexPath.row{

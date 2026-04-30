@@ -41,7 +41,7 @@ extension CategoryCollectionCell : UICollectionViewDelegate,UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueCell(ofType:CategoryRowCollectionViewCell.self)
+        let cell = collectionView.dequeueCell(ofType: CategoryRowCollectionViewCell.self, for: indexPath)
         if selectedIndex == indexPath.row{
             cell.outerStackView.backgroundColor = .secondary
         }else{

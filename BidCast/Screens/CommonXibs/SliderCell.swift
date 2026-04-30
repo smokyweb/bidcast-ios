@@ -85,7 +85,7 @@ extension SliderCell : UICollectionViewDelegate , UICollectionViewDataSource , U
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     
-//        let cell = collectionViewOlt.dequeueCell(ofType: ImagesCollectionViewCell.self)
+//        let cell = collectionViewOlt.dequeueCell(ofType: ImagesCollectionViewCell.self, for: indexPath)
 //        cell.profileImage.image = UIImage(named: arrImg[indexPath.row])
 //        cell.profileImage.makeCornerRounded(ofSize: Corner_12)
 //        cell.profileImage.addBorders(of: .black, width: Width_01)
@@ -94,11 +94,11 @@ extension SliderCell : UICollectionViewDelegate , UICollectionViewDataSource , U
         //TODO: Uncomment Code when fetch from server
         
         if imgArr == nil || imgArr!.isEmpty {
-        let cell = collectionViewOlt.dequeueCell(ofType: ImagesCollectionViewCell.self)
+        let cell = collectionViewOlt.dequeueCell(ofType: ImagesCollectionViewCell.self, for: indexPath)
         cell.profileImage.image = UIImage(named: "image1")
         return cell
         } else {
-            let cell = collectionViewOlt.dequeueCell(ofType: ImagesCollectionViewCell.self)
+            let cell = collectionViewOlt.dequeueCell(ofType: ImagesCollectionViewCell.self, for: indexPath)
             Utilities.sharedInstance.setImageWithUrl(imgStr: imgArr?[indexPath.row].addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "", imgView: cell.profileImage)
             
             return cell

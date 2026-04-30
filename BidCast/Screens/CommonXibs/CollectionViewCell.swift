@@ -89,13 +89,13 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
         switch segmentType{
         case .sellerHub:
             if isForDetails{
-                let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self)
+                let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self, for: indexPath)
                 cell.innerView.makeCornerRounded(ofSize: 12)
                 cell.labelOlt.text = self.seller[indexPath.row]
                 cell.productNameLbl.text = self.sellerItemsNAme[indexPath.row]
                 return cell
             }else{
-                let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self)
+                let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self, for: indexPath)
                 cell.innerView.makeCornerRounded(ofSize: 12)
                 if self.titleName.count != 0{
                     cell.productNameLbl.text = self.titleName[indexPath.row]
@@ -105,13 +105,13 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
             }
         case .account:
             if isForPayment{
-                let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self)
+                let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self, for: indexPath)
                 cell.innerView.makeCornerRounded(ofSize: 12)
                 cell.labelOlt.text = self.creditDate[indexPath.row]
                 cell.productNameLbl.text = self.creditName[indexPath.row]
                 return cell
             }else{
-                let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self)
+                let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self, for: indexPath)
                 cell.innerView.makeCornerRounded(ofSize: 12)
                 if self.AccountPayment.count != 0{
                     cell.productNameLbl.text = self.AccountPayment[indexPath.row]

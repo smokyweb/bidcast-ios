@@ -57,7 +57,7 @@ extension MyOrderCollectionCell: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            let cell = collectionViewOlt.dequeueCell(ofType: SellerRevenueCell.self)
+            let cell = collectionViewOlt.dequeueCell(ofType: SellerRevenueCell.self, for: indexPath)
             cell.innerView.makeCornerRounded(ofSize: 12)
         cell.labelOlt.text = orderName[indexPath.row].orderPrice
         cell.productNameLbl.text = orderName[indexPath.row].orderName

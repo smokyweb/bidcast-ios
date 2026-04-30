@@ -89,7 +89,7 @@ extension ColelctionWithLabelCell : UICollectionViewDelegate,UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
        
         if isForImpact{
-                let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self)
+                let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self, for: indexPath)
                 cell.innerView.makeCornerRounded(ofSize: 12)
             cell.labelOlt.textColor = .secondary
             cell.labelOlt.text = self.impactTitle[indexPath.row]
@@ -97,7 +97,7 @@ extension ColelctionWithLabelCell : UICollectionViewDelegate,UICollectionViewDat
             
                 return cell
         }else if isForKey{
-            let cell = collectionView.dequeueCell(ofType: KeyCollectionViewCell.self)
+            let cell = collectionView.dequeueCell(ofType: KeyCollectionViewCell.self, for: indexPath)
             cell.titleOlt.text = self.KeyName[indexPath.row]
             cell.imgOlt.image = UIImage(named: self.keyImage[indexPath.row])
             cell.subLabelOlt.text = self.keySubLabel[indexPath.row]
@@ -105,7 +105,7 @@ extension ColelctionWithLabelCell : UICollectionViewDelegate,UICollectionViewDat
            
             return cell
         }else{
-            let cell = collectionView.dequeueCell(ofType: MemberCollectionViewCell.self)
+            let cell = collectionView.dequeueCell(ofType: MemberCollectionViewCell.self, for: indexPath)
             cell.outerViewOlt.makeCornerRounded(ofSize: 12)
             return cell
         }

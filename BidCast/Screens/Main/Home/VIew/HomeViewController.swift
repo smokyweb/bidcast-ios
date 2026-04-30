@@ -269,7 +269,7 @@ extension HomeViewController: UICollectionViewDelegate,
         }
         switch rowType {
         case .category:
-            let cell = collectionView.dequeueCell(ofType: CategoryCollectionCell.self)
+            let cell = collectionView.dequeueCell(ofType: CategoryCollectionCell.self, for: indexPath)
             // Feed real category names into the existing xib-based rail.
             // Keep "For You" as the first chip (selectedIndex == 0).
             var titles = ["For You"]
@@ -295,11 +295,11 @@ extension HomeViewController: UICollectionViewDelegate,
             return cell
 
         case .label:
-            let cell = collectionView.dequeueCell(ofType: LabelCollectionCell.self)
+            let cell = collectionView.dequeueCell(ofType: LabelCollectionCell.self, for: indexPath)
             return cell
 
         case .data:
-            let cell = collectionView.dequeueCell(ofType: CollectionCardCell.self)
+            let cell = collectionView.dequeueCell(ofType: CollectionCardCell.self, for: indexPath)
             let s = shows[indexPath.item]
             cell.titleView?.text = s.title ?? "Untitled show"
             // BUGFIX 2026-04-29 (MC task cmohlxj0h): only show the red LIVE
