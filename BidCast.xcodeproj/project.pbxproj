@@ -164,7 +164,6 @@
 		99BC32382DC9DD0400E1BEA6 /* Jost-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99BC31712DC9DD0400E1BEA6 /* Jost-SemiBold.ttf */; };
 		99BC32392DC9DD0400E1BEA6 /* Inter_24pt-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99BC31A22DC9DD0400E1BEA6 /* Inter_24pt-SemiBold.ttf */; };
 		99BC323A2DC9DD0400E1BEA6 /* Inter_28pt-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99BC31B42DC9DD0400E1BEA6 /* Inter_28pt-SemiBold.ttf */; };
-		99BC323C2DC9DD0400E1BEA6 /* AlarmCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99BC307F2DC9DD0400E1BEA6 /* AlarmCell.xib */; };
 		99BC323E2DC9DD0400E1BEA6 /* Inter_18pt-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99BC31912DC9DD0400E1BEA6 /* Inter_18pt-SemiBoldItalic.ttf */; };
 		99BC32402DC9DD0400E1BEA6 /* AppBannerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99BC31032DC9DD0400E1BEA6 /* AppBannerCell.xib */; };
 		99BC32412DC9DD0400E1BEA6 /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99BC30E72DC9DD0400E1BEA6 /* HeaderView.xib */; };
@@ -189,7 +188,6 @@
 		99BC32592DC9DD0400E1BEA6 /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 99BC312B2DC9DD0400E1BEA6 /* Color.xcassets */; };
 		99BC325A2DC9DD0400E1BEA6 /* SegmentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99BC30F92DC9DD0400E1BEA6 /* SegmentCell.xib */; };
 		99BC325B2DC9DD0400E1BEA6 /* Outfit-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99BC317E2DC9DD0400E1BEA6 /* Outfit-SemiBold.ttf */; };
-		99BC325C2DC9DD0400E1BEA6 /* SubscriptionsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99BC307D2DC9DD0400E1BEA6 /* SubscriptionsCell.xib */; };
 		99BC325D2DC9DD0400E1BEA6 /* EditProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99BC30A12DC9DD0400E1BEA6 /* EditProfileCell.xib */; };
 		99BC325E2DC9DD0400E1BEA6 /* Jost-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99BC316A2DC9DD0400E1BEA6 /* Jost-ExtraLightItalic.ttf */; };
 		99BC325F2DC9DD0400E1BEA6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 99BC31482DC9DD0400E1BEA6 /* Preview Assets.xcassets */; };
@@ -264,7 +262,6 @@
 		99BC32B92DC9DD0400E1BEA6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31CB2DC9DD0400E1BEA6 /* Constants.swift */; };
 		99BC32BB2DC9DD0400E1BEA6 /* InventoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC30F22DC9DD0400E1BEA6 /* InventoryCell.swift */; };
 		99BC32BD2DC9DD0400E1BEA6 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31C52DC9DD0400E1BEA6 /* Reachability.swift */; };
-		99BC32BE2DC9DD0400E1BEA6 /* AlarmCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC307E2DC9DD0400E1BEA6 /* AlarmCell.swift */; };
 		99BC32BF2DC9DD0400E1BEA6 /* AppBannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31022DC9DD0400E1BEA6 /* AppBannerCell.swift */; };
 		99BC32C02DC9DD0400E1BEA6 /* MonsoonDetailsColCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31262DC9DD0400E1BEA6 /* MonsoonDetailsColCell.swift */; };
 		99BC32C12DC9DD0400E1BEA6 /* HBSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31C92DC9DD0400E1BEA6 /* HBSegmentedControl.swift */; };
@@ -282,7 +279,6 @@
 		99BC32D12DC9DD0400E1BEA6 /* SecondBtnCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC310E2DC9DD0400E1BEA6 /* SecondBtnCell.swift */; };
 		99BC32D22DC9DD0400E1BEA6 /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC30362DC9DD0400E1BEA6 /* SignInViewModel.swift */; };
 		99BC32D32DC9DD0400E1BEA6 /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC313A2DC9DD0400E1BEA6 /* UITextField+Extension.swift */; };
-		99BC32D42DC9DD0400E1BEA6 /* SubscriptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC307C2DC9DD0400E1BEA6 /* SubscriptionsCell.swift */; };
 		99BC32D62DC9DD0400E1BEA6 /* DateSelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC30E42DC9DD0400E1BEA6 /* DateSelectSheet.swift */; };
 		99BC32D72DC9DD0400E1BEA6 /* ContactUsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC30B92DC9DD0400E1BEA6 /* ContactUsViewController.swift */; };
 		99BC32D82DC9DD0400E1BEA6 /* TextViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31002DC9DD0400E1BEA6 /* TextViewCell.swift */; };
@@ -485,10 +481,6 @@
 		99BC30402DC9DD0400E1BEA6 /* DeviceDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailModel.swift; sourceTree = "<group>"; };
 		99BC30412DC9DD0400E1BEA6 /* DeviceDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsViewModel.swift; sourceTree = "<group>"; };
 		99BC307A2DC9DD0400E1BEA6 /* OurSubscriptionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OurSubscriptionModel.swift; sourceTree = "<group>"; };
-		99BC307C2DC9DD0400E1BEA6 /* SubscriptionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsCell.swift; sourceTree = "<group>"; };
-		99BC307D2DC9DD0400E1BEA6 /* SubscriptionsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SubscriptionsCell.xib; sourceTree = "<group>"; };
-		99BC307E2DC9DD0400E1BEA6 /* AlarmCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmCell.swift; sourceTree = "<group>"; };
-		99BC307F2DC9DD0400E1BEA6 /* AlarmCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlarmCell.xib; sourceTree = "<group>"; };
 		99BC30812DC9DD0400E1BEA6 /* OurSubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OurSubscriptionViewController.swift; sourceTree = "<group>"; };
 		99BC30832DC9DD0400E1BEA6 /* OurSubscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OurSubscriptionViewModel.swift; sourceTree = "<group>"; };
 		99BC30862DC9DD0400E1BEA6 /* LogOutModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutModel.swift; sourceTree = "<group>"; };
@@ -1200,10 +1192,6 @@
 		99BC30802DC9DD0400E1BEA6 /* Xib's */ = {
 			isa = PBXGroup;
 			children = (
-				99BC307C2DC9DD0400E1BEA6 /* SubscriptionsCell.swift */,
-				99BC307D2DC9DD0400E1BEA6 /* SubscriptionsCell.xib */,
-				99BC307E2DC9DD0400E1BEA6 /* AlarmCell.swift */,
-				99BC307F2DC9DD0400E1BEA6 /* AlarmCell.xib */,
 			);
 			path = "Xib's";
 			sourceTree = "<group>";
@@ -2632,7 +2620,6 @@
 				99BC32392DC9DD0400E1BEA6 /* Inter_24pt-SemiBold.ttf in Resources */,
 				99BC323A2DC9DD0400E1BEA6 /* Inter_28pt-SemiBold.ttf in Resources */,
 				35062E0D2DCB467A006C0BCE /* CollectionCardCell.xib in Resources */,
-				99BC323C2DC9DD0400E1BEA6 /* AlarmCell.xib in Resources */,
 				99BC323E2DC9DD0400E1BEA6 /* Inter_18pt-SemiBoldItalic.ttf in Resources */,
 				99BC32402DC9DD0400E1BEA6 /* AppBannerCell.xib in Resources */,
 				99BC32412DC9DD0400E1BEA6 /* HeaderView.xib in Resources */,
@@ -2662,7 +2649,6 @@
 				99BC32592DC9DD0400E1BEA6 /* Color.xcassets in Resources */,
 				99BC325A2DC9DD0400E1BEA6 /* SegmentCell.xib in Resources */,
 				99BC325B2DC9DD0400E1BEA6 /* Outfit-SemiBold.ttf in Resources */,
-				99BC325C2DC9DD0400E1BEA6 /* SubscriptionsCell.xib in Resources */,
 				99BC325D2DC9DD0400E1BEA6 /* EditProfileCell.xib in Resources */,
 				99BC325E2DC9DD0400E1BEA6 /* Jost-ExtraLightItalic.ttf in Resources */,
 				99BC325F2DC9DD0400E1BEA6 /* Preview Assets.xcassets in Resources */,
@@ -2906,7 +2892,6 @@
 				99BC32BD2DC9DD0400E1BEA6 /* Reachability.swift in Sources */,
 				357D641C2DCA104900E73D91 /* CollectionViewCell.swift in Sources */,
 				351E50352DCCBECD0082D2AD /* InfoCell.swift in Sources */,
-				99BC32BE2DC9DD0400E1BEA6 /* AlarmCell.swift in Sources */,
 				35B1CE412DCDF32C00DE9987 /* CategoryTableCell.swift in Sources */,
 				99BC32BF2DC9DD0400E1BEA6 /* AppBannerCell.swift in Sources */,
 				99BC32C02DC9DD0400E1BEA6 /* MonsoonDetailsColCell.swift in Sources */,
@@ -2931,7 +2916,6 @@
 				99BC32D22DC9DD0400E1BEA6 /* SignInViewModel.swift in Sources */,
 				357D64232DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.swift in Sources */,
 				99BC32D32DC9DD0400E1BEA6 /* UITextField+Extension.swift in Sources */,
-				99BC32D42DC9DD0400E1BEA6 /* SubscriptionsCell.swift in Sources */,
 				99BC32D62DC9DD0400E1BEA6 /* DateSelectSheet.swift in Sources */,
 				99BC32D72DC9DD0400E1BEA6 /* ContactUsViewController.swift in Sources */,
 				99BC32D82DC9DD0400E1BEA6 /* TextViewCell.swift in Sources */,
@@ -3052,7 +3036,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 200;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
@@ -3089,7 +3073,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 200;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
@@ -3248,7 +3232,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 200;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -3268,7 +3252,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 200;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -3287,7 +3271,7 @@
 			baseConfigurationReference = 9C01742AE13B328D7B6441D7 /* Pods-BidCast-BidCastUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 200;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -3305,7 +3289,7 @@
 			baseConfigurationReference = E579EECEA2975FF8E6E38335 /* Pods-BidCast-BidCastUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 200;
+				CURRENT_PROJECT_VERSION = 201;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
