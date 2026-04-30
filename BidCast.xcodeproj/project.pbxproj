@@ -125,6 +125,7 @@
 		7DC1484EAFF04B487A2F32BF /* AgoraTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD549688A494109280A7C84 /* AgoraTokenService.swift */; };
 		80EB4FEC8E340DC75EC622A5 /* BidcastSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA4C4041ABF2438EB119F955 /* BidcastSocketManager.swift */; };
 		81AD48298700681CBAFFCF02 /* HostRaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F484C63A17F745275EECB93 /* HostRaidSheet.swift */; };
+		8C983C7644762D866464DDA7 /* CreateShippingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1977982BBD59D47497099258 /* CreateShippingProfileViewController.swift */; };
 		8D614B3BBF0C43D7A556066B /* LiveBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D446CA1D33C79E4207805 /* LiveBanner.swift */; };
 		91544E02BC76211FDBC7CC2F /* BrowseLiveShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71C43B2975058C0DF5081A5 /* BrowseLiveShowsViewController.swift */; };
 		92AB411CA35DC4863FE8E415 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A524D6197BF88B3E1DE9A8A /* L10n.swift */; };
@@ -536,6 +537,7 @@
 		18824BE5A4EADA7D37EB6774 /* ProductMetaUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductMetaUploader.swift; path = BidCast/Screens/Phase8_Parity/Sell/ProductMetaUploader.swift; sourceTree = SOURCE_ROOT; };
 		18BE4AC0BF4EE35CA0926F0F /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeepLinkRouter.swift; path = BidCast/Services/DeepLink/DeepLinkRouter.swift; sourceTree = SOURCE_ROOT; };
 		18DC4B06968BA2C871E7FDAE /* OnboardingCarouselViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingCarouselViewController.swift; path = BidCast/Screens/Onboarding/OnboardingCarouselViewController.swift; sourceTree = SOURCE_ROOT; };
+		1977982BBD59D47497099258 /* CreateShippingProfileViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CreateShippingProfileViewController.swift; path = BidCast/Screens/Phase8_Parity/Sell/CreateShippingProfileViewController.swift; sourceTree = SOURCE_ROOT; };
 		1C8B42CE98AE667B27B558E2 /* ConversationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConversationListViewController.swift; path = BidCast/Screens/Phase3/Chat/ConversationListViewController.swift; sourceTree = SOURCE_ROOT; };
 		1CD549688A494109280A7C84 /* AgoraTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AgoraTokenService.swift; path = BidCast/Live/Services/AgoraTokenService.swift; sourceTree = SOURCE_ROOT; };
 		1F9B41C38C8EF3CD46A3BB8D /* TutorialsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TutorialsListViewController.swift; path = BidCast/Screens/Phase3/HelpSettings/TutorialsListViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1283,6 +1285,7 @@
 				100742FD90EA6FA8920B3D04 /* ClipsListViewController.swift */,
 				464B4FABA6B20445BB15BF9B /* ClipEditViewController.swift */,
 				F3747CF7340D3361CFAED524 /* SellerPhoneOTPViewController.swift */,
+				1977982BBD59D47497099258 /* CreateShippingProfileViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3408,6 +3411,7 @@
 				5AFC4A589B3AEF0E47E29764 /* ClipsListViewController.swift in Sources */,
 				3CEA4905883BEA025169774B /* ClipEditViewController.swift in Sources */,
 				3A3019A80F3B7D74C18B8C5E /* SellerPhoneOTPViewController.swift in Sources */,
+				8C983C7644762D866464DDA7 /* CreateShippingProfileViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
