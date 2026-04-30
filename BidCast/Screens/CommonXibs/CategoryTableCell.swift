@@ -44,9 +44,12 @@ class CategoryTableCell: UITableViewCell {
 extension CategoryTableCell : UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        // BUGFIX 2026-04-30 (MC task cmohlxj0h): use real title.count instead of
+        // hard-coded 5 to avoid out-of-bounds traps when the home feed sets a
+        // shorter title list than 5.
+        return title.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueCell(ofType: CategoryRowCollectionViewCell.self, for: indexPath)
         if selectedIndex == indexPath.row{
@@ -54,7 +57,11 @@ extension CategoryTableCell : UICollectionViewDelegate,UICollectionViewDataSourc
         }else{
             cell.outerStackView.backgroundColor = .bg
         }
-        cell.categoryLabel.text = title[indexPath.row]
+        if indexPath.row < title.count {
+            cell.categoryLabel.text = title[indexPath.row]
+        } else {
+            cell.categoryLabel.text = ""
+        }
         cell.outerStackView.makeCornerRounded(ofSize: 25)
         return cell
         

@@ -37,9 +37,15 @@ class CategoryCollectionCell: UICollectionViewCell {
 extension CategoryCollectionCell : UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        // BUGFIX 2026-04-30 (MC task cmohlxj0h): use the real title array count
+        // instead of a hard-coded 5. The parent (HomeViewController) sets `title`
+        // from the live category feed, which is variable length; with the old
+        // hard-coded 5 we would index past `title.count` and Swift would trap
+        // (SIGTRAP brk 1) inside the cell's collection view as soon as the home
+        // tab tried to render — exactly the post-sign-in crash on iOS 26.
+        return title.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueCell(ofType: CategoryRowCollectionViewCell.self, for: indexPath)
         if selectedIndex == indexPath.row{
@@ -47,11 +53,16 @@ extension CategoryCollectionCell : UICollectionViewDelegate,UICollectionViewData
         }else{
             cell.outerStackView.backgroundColor = .bg
         }
-        cell.categoryLabel.text = title[indexPath.row]
+        // Defensive bounds check — should be unreachable now that
+        // numberOfItemsInSection returns title.count, but keep it so a future
+        // mismatch can't crash the app.
+        if indexPath.row < title.count {
+            cell.categoryLabel.text = title[indexPath.row]
+        } else {
+            cell.categoryLabel.text = ""
+        }
         cell.outerStackView.makeCornerRounded(ofSize: 32)
         return cell
-        
-        
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 16
