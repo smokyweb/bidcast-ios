@@ -77,8 +77,8 @@ class MyAddressViewController: UIViewController {
             headerName: (onPick == nil) ? "My Addresses" : "Select Address",
             setRightImage: UIImage(systemName: "plus")?
                 .withTintColor(.darkBlue, renderingMode: .alwaysOriginal),
-            leftButtonAction: didTabBack,
-            rightButtonAction: onTapAddAddress
+            rightButtonAction: onTapAddAddress,
+            leftButtonAction: didTabBack
         )
         self.headerView.bottomLbl.isHidden = true
         self.headerView.cenetrVerticalConstraint.constant =

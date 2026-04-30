@@ -116,7 +116,6 @@
 		787F4EF59691B17E5D99AD36 /* ChatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97614BBEA24C8A1B74A1947F /* ChatStore.swift */; };
 		78FD4415BCEC3675DB8F9972 /* OrderTrackingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80FE421DA7F24F1B95A2AAC0 /* OrderTrackingViewController.swift */; };
 		794D4C1F8982B5C26310C433 /* LiveShowLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556E40BE93A16B6D6416A876 /* LiveShowLauncher.swift */; };
-		7A9F09492B2E5E47B99DF8FE /* EditProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99C570AE86FD79246397A6C /* EditProfileModel.swift */; };
 		7D1940C09D75729053A0D91E /* BidcastSocketManager+BreakSpot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D74FA7AC158E57DC614444 /* BidcastSocketManager+BreakSpot.swift */; };
 		7DC1484EAFF04B487A2F32BF /* AgoraTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD549688A494109280A7C84 /* AgoraTokenService.swift */; };
 		80EB4FEC8E340DC75EC622A5 /* BidcastSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA4C4041ABF2438EB119F955 /* BidcastSocketManager.swift */; };
@@ -401,7 +400,6 @@
 		A1E7B52E69421489DC40BF00 /* SavedItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB63645565A39F10F83F14D /* SavedItemsViewController.swift */; };
 		A2504983A1F7108A8A8DCCD7 /* SellerHubContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759840CB8731743F22EC3A47 /* SellerHubContainerViewController.swift */; };
 		A29645D3B33AB3D8E006B8AE /* AddCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C284B8599DCFDF93DB9DAC5 /* AddCardViewController.swift */; };
-		A76D7C81EA3F45637DC6CECD /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66F5423B269102021441D1 /* EditProfileViewController.swift */; };
 		AAE04D7B8120C24CC2FE2628 /* PromotedShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A84D77880AB9168013066D /* PromotedShowsViewController.swift */; };
 		AC454D4EAF8AFC1FFCE7ECC0 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92854237A9CA66B04D7E19B4 /* NotificationCell.swift */; };
 		ADC981C4018B216789AC865B /* ClipsPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC8A274661FE6D1057261DE6 /* ClipsPlaceholderViewController.swift */; };
@@ -418,7 +416,6 @@
 		BFA647F1A9D2E24127E536B4 /* LiveChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C645D1B25E8492D6844357 /* LiveChatMessage.swift */; };
 		C04AFD5E7AF461F8911D509C /* ProductDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0652163A1926A8BB313DFF07 /* ProductDetailsViewController.swift */; };
 		C10642D29CA2980B5D4522CB /* AccountViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70043368BF81CF5C3FFB83E /* AccountViewController+JobA.swift */; };
-		C2C9D4E609C9BF02060B4FEB /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 580DCFFC722F2C1F1A5E2A8C /* EditProfileViewModel.swift */; };
 		C2DE4414A6B995B7A6136BE5 /* HomeViewController+JobA.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AB4CA99C7E8B488B9ACCF6 /* HomeViewController+JobA.swift */; };
 		C3F3E04DED5E167E56951651 /* OffersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A021B471983584163501389 /* OffersListViewController.swift */; };
 		C5674C9D9CB68F0B2E619705 /* NotificationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E829422D92721FFA55E382B7 /* NotificationModels.swift */; };
@@ -613,7 +610,6 @@
 		55242E54232DF0845FB1BBE6 /* InterestsViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InterestsViewController.swift; sourceTree = "<group>"; };
 		556E40BE93A16B6D6416A876 /* LiveShowLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveShowLauncher.swift; path = BidCast/Live/LiveShowLauncher.swift; sourceTree = SOURCE_ROOT; };
 		57C645D1B25E8492D6844357 /* LiveChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveChatMessage.swift; path = BidCast/Live/Chat/LiveChatMessage.swift; sourceTree = SOURCE_ROOT; };
-		580DCFFC722F2C1F1A5E2A8C /* EditProfileViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		58F0DEB9FEC5C0BA6A233D32 /* ProductMetaUploader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProductMetaUploader.swift; sourceTree = "<group>"; };
 		5ABF4CD48836189A44DC348D /* BidCast.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BidCast.entitlements; path = BidCast/BidCast.entitlements; sourceTree = SOURCE_ROOT; };
 		5F1E4D6A9298135841D1A601 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterViewController.swift; path = BidCast/Screens/Main/Explore/View/FilterViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -922,7 +918,6 @@
 		B6AC8718C68935F43D80A312 /* OtpCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OtpCell.swift; sourceTree = "<group>"; };
 		B6B74C3EBFDFCBF0D38E6EA3 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainHelper.swift; path = BidCast/Helper/KeychainHelper.swift; sourceTree = SOURCE_ROOT; };
 		B74F4817944166571BB38060 /* LiveShowResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveShowResolver.swift; path = BidCast/Live/Services/LiveShowResolver.swift; sourceTree = SOURCE_ROOT; };
-		B99C570AE86FD79246397A6C /* EditProfileModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EditProfileModel.swift; sourceTree = "<group>"; };
 		B9E54E2CB6039A222B007BAC /* CheckoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CheckoutViewController.swift; path = BidCast/Screens/Phase4/Checkout/CheckoutViewController.swift; sourceTree = SOURCE_ROOT; };
 		B9F043188CB960D04E344F42 /* P3SellHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = P3SellHomeViewController.swift; path = BidCast/Screens/Phase3/Common/P3SellHomeViewController.swift; sourceTree = SOURCE_ROOT; };
 		BA4C4041ABF2438EB119F955 /* BidcastSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BidcastSocketManager.swift; path = BidCast/Live/Socket/BidcastSocketManager.swift; sourceTree = SOURCE_ROOT; };
@@ -935,7 +930,6 @@
 		C4F8476682CF36D49865EB19 /* SellViewController+Phase3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SellViewController+Phase3.swift"; path = "BidCast/Screens/Phase3/Common/SellViewController+Phase3.swift"; sourceTree = SOURCE_ROOT; };
 		C96A4231A33F9F14FE686CB9 /* FollowersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowersListViewController.swift; path = BidCast/Screens/Phase3/Social/FollowersListViewController.swift; sourceTree = SOURCE_ROOT; };
 		CA6A496E856BC3682F1ED901 /* PremierShopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PremierShopViewController.swift; path = BidCast/Screens/Phase3/Shop/PremierShopViewController.swift; sourceTree = SOURCE_ROOT; };
-		CB66F5423B269102021441D1 /* EditProfileViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		CC8A274661FE6D1057261DE6 /* ClipsPlaceholderViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipsPlaceholderViewController.swift; sourceTree = "<group>"; };
 		CDF34FDDBD24932B292BD0F9 /* ChatThreadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatThreadViewController.swift; path = BidCast/Screens/Phase3/Chat/ChatThreadViewController.swift; sourceTree = SOURCE_ROOT; };
 		CE5347999F62D30593095CB9 /* ShopModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShopModels.swift; path = BidCast/Models/Shop/ShopModels.swift; sourceTree = SOURCE_ROOT; };
@@ -1227,7 +1221,6 @@
 		9254FDA1D654BF496DAB7A1D /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				B99C570AE86FD79246397A6C /* EditProfileModel.swift */,
 			);
 			name = Model;
 			path = Model;
@@ -2441,7 +2434,6 @@
 		9BDCAF71F1E8B4EEC9F3E3E7 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				CB66F5423B269102021441D1 /* EditProfileViewController.swift */,
 			);
 			name = View;
 			path = View;
@@ -2481,7 +2473,6 @@
 		C3E2A29C1060750E78601E87 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				580DCFFC722F2C1F1A5E2A8C /* EditProfileViewModel.swift */,
 			);
 			name = ViewModel;
 			path = ViewModel;
@@ -3547,9 +3538,6 @@
 				4650E3631FC65DF385557CB7 /* TrustedBuyerViewController.swift in Sources */,
 				49254015C2F465C11B5F9D36 /* APIManager+Unauthorized.swift in Sources */,
 				6CFE14115295C599FA8B5744 /* OtpCell.swift in Sources */,
-				7A9F09492B2E5E47B99DF8FE /* EditProfileModel.swift in Sources */,
-				A76D7C81EA3F45637DC6CECD /* EditProfileViewController.swift in Sources */,
-				C2C9D4E609C9BF02060B4FEB /* EditProfileViewModel.swift in Sources */,
 				FDCC53D30054D30E82963072 /* ClipEditViewController.swift in Sources */,
 				ADC981C4018B216789AC865B /* ClipsPlaceholderViewController.swift in Sources */,
 				C8FF2E6B9C5D2BD54F779A3B /* FetchBidsResponse.swift in Sources */,
