@@ -188,9 +188,9 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         case .rememberMe:
             let cell = signTblView.dequeueCell(with: RemberMeCell.self)
-            if self.rememberMeSwitch ?? false{
-                cell.isRemembered = self.rememberMeSwitch ?? false
-            }
+            // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): always reflect the
+            // current rememberMe state on the cell (default ON for first launch).
+            cell.isRemembered = self.rememberMeSwitch ?? true
             cell.remmeber = { sender in
                 self.rememberMeSwitch = sender
             }
@@ -320,11 +320,22 @@ extension SignInViewController {
     
     //MARK: remember me work
     func getUserDetails() {
-        // Retrieve stored "Remember Me" preference
-        rememberMeSwitch = UserDefaults.rememberMe
+        // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): Android `LoginFragment.kt` defaults
+        // "Remember Me" to ON. Mirror that here: if the user has never made an
+        // explicit choice, treat the switch as ON. On any subsequent launch
+        // we honour the stored choice.
+        if UserDefaults.standard.object(forKey: UserDefaultsKeys.rememberMe) == nil {
+            rememberMeSwitch = true
+        } else {
+            rememberMeSwitch = UserDefaults.rememberMe
+        }
         // Retrieve stored credentials; password comes from Keychain.
-        self.SignInEmail = UserDefaults.username
-        self.SignInpassword = KeychainHelper.load(forKey: KeychainHelper.rememberMePasswordKey) ?? ""
+        // When Remember Me is on, auto-restore the saved email so the user
+        // doesn't have to retype it (Android parity).
+        if rememberMeSwitch ?? false {
+            self.SignInEmail = UserDefaults.username
+            self.SignInpassword = KeychainHelper.load(forKey: KeychainHelper.rememberMePasswordKey) ?? ""
+        }
 
         debugLog("email--", UserDefaults.username)
     }

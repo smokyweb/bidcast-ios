@@ -34,7 +34,10 @@ class RemberMeCell: UITableViewCell {
         super.awakeFromNib()
         self.rememberMeOlt.font = JostFont.defaultRegular(size: 13).value
         self.forgotPaswordOlt.font = JostFont.defaultSemiBold(size: 13).value
-        isRemembered = false
+        // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): Android `LoginFragment.kt` ships
+        // with the Remember Me checkbox pre-checked. Match that default; the parent
+        // VC overrides this when binding in viewDidLoad/cellForRow if a stored value exists.
+        isRemembered = true
         selectionStyle = .none
     }
     
