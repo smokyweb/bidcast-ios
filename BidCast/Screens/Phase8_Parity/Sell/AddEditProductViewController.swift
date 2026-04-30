@@ -21,6 +21,16 @@
 //    - image multi-picker + thumbnail selector (calls store-product-meta
 //      with product_images[] and thumbnail[]).
 //
+//  Added in QA-fix MC task cmolwmp0i00f64315lqq37lv3 (2026-04-30):
+//    - optional shipping-profile picker (api/get-shipping-profile)
+//    - when a profile is chosen, the manual weight + width/height/length
+//      fields are hidden (Android `ListAProductFragment` parity).
+//    - manual dims fields and shipping-profile selection are mutually
+//      exclusive on submit (we send `shipping_profile_id` with no W/H/L
+//      when a profile is picked).
+//    - "+ Add new" entry on the picker pushes
+//      `CreateShippingProfileViewController` (preloaded USPS dims).
+//
 //  Backend:
 //    - POST api/store-product (multipart form) creates or updates the
 //      product. For edit, fields include `product_id`.
@@ -58,6 +68,8 @@ final class AddEditProductViewController: UIViewController {
     private let salesFormatField = UITextField()
     private let conditionField = UITextField()
     private let mailClassField = UITextField()
+    /// QA-FIX (MC task cmolwmp0i): optional shipping-profile picker.
+    private let shippingProfileField = UITextField()
 
     private let acceptOffersSwitch = UISwitch()
     private let flashSaleSwitch = UISwitch()
@@ -103,10 +115,21 @@ final class AddEditProductViewController: UIViewController {
     private var selectedSalesFormat: SalesFormat = .buyNow
     private var selectedCondition: ProductCondition = .new
     private var selectedMailClass: String?
+    /// QA-FIX (MC task cmolwmp0i): selected shipping profile id (nil =
+    /// fall back to the manual dimension/weight fields).
+    private var selectedShippingProfileId: Int?
 
     private var availableCategories: [Category] = []
     private var availableSubCategories: [SubCategory] = []
     private var availableMailClasses: [MailClass] = []
+    /// QA-FIX (MC task cmolwmp0i): cached shipping profiles.
+    private var availableShippingProfiles: [ShippingProfile] = []
+
+    /// QA-FIX (MC task cmolwmp0i): we keep references to the manual
+    /// dimension rows so we can hide/show them based on whether a
+    /// shipping profile is selected.
+    private weak var weightRow: UIView?
+    private weak var dimsRow: UIView?
 
     // MARK: - Sales format enum
 
@@ -163,7 +186,15 @@ final class AddEditProductViewController: UIViewController {
         buildForm()
         loadCategories()
         loadMailClasses()
+        loadShippingProfiles()
         if case .edit(let p) = mode { populate(from: p) }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Refresh the profile list every time we re-appear so the user
+        // sees a freshly-created profile (via "+ Add new") on return.
+        loadShippingProfiles()
     }
 
     // MARK: - Form build
@@ -171,7 +202,8 @@ final class AddEditProductViewController: UIViewController {
     private func buildForm() {
         [titleField, priceField, quantityField, weightField, widthField,
          heightField, lengthField, skuField, categoryField, subCategoryField,
-         salesFormatField, conditionField, mailClassField].forEach {
+         salesFormatField, conditionField, mailClassField,
+         shippingProfileField].forEach {
             $0.borderStyle = .roundedRect
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -196,13 +228,14 @@ final class AddEditProductViewController: UIViewController {
         salesFormatField.placeholder = "Sales format"
         conditionField.placeholder = "Condition"
         mailClassField.placeholder = "Mail class (optional)"
+        shippingProfileField.placeholder = "Shipping profile (optional)"
 
         // Default selections
         salesFormatField.text = selectedSalesFormat.label
         conditionField.text = selectedCondition.label
 
         [categoryField, subCategoryField, salesFormatField,
-         conditionField, mailClassField].forEach {
+         conditionField, mailClassField, shippingProfileField].forEach {
             $0.isUserInteractionEnabled = true
             $0.tintColor = .clear  // don't show a blinking caret — this is a picker
         }
@@ -211,6 +244,7 @@ final class AddEditProductViewController: UIViewController {
         salesFormatField.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickSalesFormat)))
         conditionField.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickCondition)))
         mailClassField.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickMailClass)))
+        shippingProfileField.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickShippingProfile)))
 
         descView.font = .systemFont(ofSize: 15)
         descView.layer.borderColor = UIColor.separator.cgColor
@@ -233,6 +267,13 @@ final class AddEditProductViewController: UIViewController {
         // Image multi-picker + strip (P1.9b)
         let imagesSection = makeImagesSection()
 
+        // QA-FIX (MC task cmolwmp0i): keep references to the manual rows so
+        // we can hide them when a shipping profile is selected.
+        let weightRowView = labeled("Weight (lbs)", weightField)
+        let dimsRowView = labeled("Dimensions (in)", dimsStack)
+        self.weightRow = weightRowView
+        self.dimsRow = dimsRowView
+
         let stack = UIStackView(arrangedSubviews: [
             sectionLabel("Basics"),
             labeled("Title", titleField),
@@ -247,8 +288,9 @@ final class AddEditProductViewController: UIViewController {
             labeled("Category", categoryField),
             labeled("Sub-category", subCategoryField),
             sectionLabel("Shipping"),
-            labeled("Weight (lbs)", weightField),
-            labeled("Dimensions (in)", dimsStack),
+            labeled("Shipping profile", shippingProfileField),
+            weightRowView,
+            dimsRowView,
             labeled("Mail class", mailClassField),
             sectionLabel("Options"),
             acceptOffersRow, flashSaleRow, reserveForLiveRow,
@@ -380,6 +422,16 @@ final class AddEditProductViewController: UIViewController {
         acceptOffersSwitch.isOn = p.acceptOffers ?? false
         flashSaleSwitch.isOn = p.flashSale ?? false
         reserveForLiveSwitch.isOn = p.reserveForLive ?? false
+
+        // QA-FIX (MC task cmolwmp0i): preserve an existing shipping
+        // profile selection when editing. Title resolves to a placeholder
+        // id label until `loadShippingProfiles()` finishes — the
+        // re-render will be triggered by the user re-tapping the field.
+        if let spid = p.shippingProfileId {
+            selectedShippingProfileId = spid
+            shippingProfileField.text = "Profile #\(spid)"
+            applyShippingProfileVisibility()
+        }
     }
 
     // MARK: - Category loading
@@ -425,6 +477,51 @@ final class AddEditProductViewController: UIViewController {
             } catch {
                 self.availableMailClasses = []
             }
+        }
+    }
+
+    /// QA-FIX (MC task cmolwmp0i): pull existing shipping profiles so the
+    /// picker has data when the user taps it. Mirrors Android
+    /// `ListAProductFragment.getShippingProfiles()` on the same screen.
+    private func loadShippingProfiles() {
+        Task { @MainActor in
+            do {
+                let resp: GetShippingProfilesResponse = try await APIManager.shared.request(
+                    type: .getShippingProfile, header: true)
+                self.availableShippingProfiles = resp.data ?? []
+                // If a previously-selected profile is no longer in the list
+                // (e.g. it was deleted elsewhere), clear the field.
+                if let id = self.selectedShippingProfileId {
+                    if let match = self.availableShippingProfiles.first(where: { $0.id == id }) {
+                        // Resolve the human label now that the list is in.
+                        self.shippingProfileField.text = match.name ?? "Profile #\(id)"
+                    } else {
+                        self.selectedShippingProfileId = nil
+                        self.shippingProfileField.text = nil
+                        self.applyShippingProfileVisibility()
+                    }
+                }
+            } catch {
+                self.availableShippingProfiles = []
+            }
+        }
+    }
+
+    /// QA-FIX (MC task cmolwmp0i): hide manual weight + dims fields when a
+    /// shipping profile is selected. Mirrors Android
+    /// `ListAProductFragment` which calls `dimensionsLayout.isVisible =`
+    /// false on profile selection.
+    private func applyShippingProfileVisibility() {
+        let usingProfile = (selectedShippingProfileId != nil)
+        weightRow?.isHidden = usingProfile
+        dimsRow?.isHidden = usingProfile
+        if usingProfile {
+            // Clear residual manual values so we don't accidentally send
+            // both shipping_profile_id and width/height/length/weight.
+            weightField.text = nil
+            widthField.text = nil
+            heightField.text = nil
+            lengthField.text = nil
         }
     }
 
@@ -511,6 +608,35 @@ final class AddEditProductViewController: UIViewController {
         present(sheet, animated: true)
     }
 
+    /// QA-FIX (MC task cmolwmp0i): show the saved shipping profiles plus
+    /// a "None" option (clears the selection) and an "+ Add new" entry
+    /// that pushes `CreateShippingProfileViewController`.
+    @objc private func pickShippingProfile() {
+        let sheet = UIAlertController(title: "Shipping profile",
+                                      message: "Pick a saved profile or create a new one.",
+                                      preferredStyle: .actionSheet)
+        sheet.addAction(UIAlertAction(title: "None (use manual dimensions)",
+                                      style: .default) { [weak self] _ in
+            self?.selectedShippingProfileId = nil
+            self?.shippingProfileField.text = nil
+            self?.applyShippingProfileVisibility()
+        })
+        for p in availableShippingProfiles.prefix(30) {
+            let title = p.name ?? "Profile #\(p.id ?? 0)"
+            sheet.addAction(UIAlertAction(title: title, style: .default) { [weak self] _ in
+                self?.selectedShippingProfileId = p.id
+                self?.shippingProfileField.text = title
+                self?.applyShippingProfileVisibility()
+            })
+        }
+        sheet.addAction(UIAlertAction(title: "➕ Add new profile",
+                                      style: .default) { [weak self] _ in
+            self?.p3Push(CreateShippingProfileViewController())
+        })
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(sheet, animated: true)
+    }
+
     // MARK: - Save
 
     @objc private func save() {
@@ -543,10 +669,19 @@ final class AddEditProductViewController: UIViewController {
         if let sid = selectedSubCategoryId { fields["sub_category_id"] = "\(sid)" }
         if let sku = skuField.text, !sku.isEmpty { fields["sku"] = sku }
         if let mc = selectedMailClass { fields["mail_class"] = mc }
-        if let w = weightField.text, !w.isEmpty { fields["weight"] = w }
-        if let x = widthField.text, !x.isEmpty { fields["width"] = x }
-        if let y = heightField.text, !y.isEmpty { fields["height"] = y }
-        if let z = lengthField.text, !z.isEmpty { fields["length"] = z }
+
+        // QA-FIX (MC task cmolwmp0i): shipping profile and manual dims
+        // are mutually exclusive. When a profile is selected, send the
+        // profile id only; otherwise send whatever weight/W/H/L the user
+        // entered. Mirrors Android `ListAProductFragment.uploadProduct`.
+        if let spid = selectedShippingProfileId {
+            fields["shipping_profile_id"] = "\(spid)"
+        } else {
+            if let w = weightField.text, !w.isEmpty { fields["weight"] = w }
+            if let x = widthField.text, !x.isEmpty { fields["width"] = x }
+            if let y = heightField.text, !y.isEmpty { fields["height"] = y }
+            if let z = lengthField.text, !z.isEmpty { fields["length"] = z }
+        }
 
         if case .edit(let p) = mode, let id = p.id {
             fields["product_id"] = "\(id)"
