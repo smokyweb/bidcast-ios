@@ -9,7 +9,7 @@ workflows:
       vars:
         BUNDLE_ID: io.bidcast
         TEAM_ID: YQGQU3RV34
-      xcode: "16.2"
+      xcode: "26.4"
     scripts:
       - name: Install CocoaPods dependencies
         script: pod install --repo-update
