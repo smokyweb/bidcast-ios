@@ -385,16 +385,56 @@ extension SignUpViewController {
         SVProgressHUD.dismiss()
         if viewModel.signUpDict?.status == "success" {
             DispatchQueue.main.async {
-                //show success alert
-                self.succesuccessfullyAccCreatedAlert()
                 self.viewModel.requestType = .none
-                //save user details
-//                self.saveUserDetails(data: self.viewModel.signUpDict?.data)
+                // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): Android
+                // CreateAccountFragment auto-logs the user in after a
+                // successful signup and navigates straight to interest
+                // selection. Mirror that here when the API returns a token.
+                let data = self.viewModel.signUpDict?.data
+                if let token = data?.token, !token.isEmpty {
+                    self.persistSignedUpUser(data: data)
+                    self.navigateToInterestsAfterSignup()
+                } else {
+                    // No token in response — fall back to the legacy success
+                    // alert that prompts login.
+                    self.succesuccessfullyAccCreatedAlert()
+                }
             }
         }else{
             DispatchQueue.main.async {
                 Utilities.sharedInstance.showToast(source: self, message: self.viewModel.signUpDict?.message ?? "")
             }
+        }
+    }
+
+    /// QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): persist the freshly-signed-up
+    /// user to UserDefaults so subsequent authenticated APIs (interests,
+    /// profile) hit the wire with the new token. Mirrors
+    /// SignInViewController.saveUserDetails minus the landing-screen swap.
+    private func persistSignedUpUser(data: SignUpDataModel?) {
+        guard let userData = data else { return }
+        UserDefaults.name = userData.name ?? ""
+        UserDefaults.firstName = userData.firstName ?? ""
+        UserDefaults.lastName = userData.lastName ?? ""
+        UserDefaults.roleId = userData.roleID ?? 0
+        UserDefaults.email = userData.email ?? ""
+        UserDefaults.userId = userData.id ?? 0
+        UserDefaults.accessToken = userData.token
+    }
+
+    /// QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): land the user directly on
+    /// the Interests screen after signup, then promote it to the root once
+    /// they finish. Until a dedicated first-time-login flag exists, we just
+    /// push the existing InterestsViewController onto the current nav.
+    private func navigateToInterestsAfterSignup() {
+        let interests = InterestsViewController()
+        if let nav = self.navigationController {
+            nav.pushViewController(interests, animated: true)
+        } else {
+            // Defensive fallback: if there's no nav stack, swap to the main
+            // tab bar via the scene delegate so the user lands somewhere
+            // reasonable.
+            sceneDel.navigateToLandingScreen()
         }
     }
 }
