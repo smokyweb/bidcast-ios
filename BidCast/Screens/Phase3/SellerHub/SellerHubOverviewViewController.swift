@@ -80,6 +80,60 @@ final class SellerHubOverviewViewController: UIViewController {
         stack.addArrangedSubview(kpiRow())
         stack.addArrangedSubview(accountHealthCard())
         stack.addArrangedSubview(suggestedActionCard())
+        // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): Android OverAllFragment
+        // exposes Link Metrics info / Export Sales / Export Orders buttons.
+        // Render them here as 'coming soon' stubs (matches Android's toast-only
+        // behaviour) so users can find them and we keep parity for QA.
+        stack.addArrangedSubview(comingSoonRow())
+    }
+
+    private func comingSoonRow() -> UIView {
+        let card = UIStackView()
+        card.axis = .vertical
+        card.spacing = 8
+        card.backgroundColor = .secondarySystemGroupedBackground
+        card.layer.cornerRadius = 10
+        card.isLayoutMarginsRelativeArrangement = true
+        card.layoutMargins = .init(top: 14, left: 14, bottom: 14, right: 14)
+
+        let title = UILabel()
+        title.text = "More tools"
+        title.font = .systemFont(ofSize: 14, weight: .semibold)
+        card.addArrangedSubview(title)
+
+        card.addArrangedSubview(stubButton(
+            title: "Link Metrics info",
+            icon: "info.circle",
+            message: "Metrics info coming soon. We’ll add a breakdown of each metric here in an upcoming release."
+        ))
+        card.addArrangedSubview(stubButton(
+            title: "Export Sales",
+            icon: "square.and.arrow.up",
+            message: "Sales export is coming soon. You’ll be able to download your sales data as CSV from here."
+        ))
+        card.addArrangedSubview(stubButton(
+            title: "Export Orders",
+            icon: "square.and.arrow.up.on.square",
+            message: "Orders export is coming soon. You’ll be able to download your orders as CSV from here."
+        ))
+        return card
+    }
+
+    private func stubButton(title: String, icon: String, message: String) -> UIButton {
+        let btn = UIButton(type: .system)
+        var cfg = UIButton.Configuration.bordered()
+        cfg.title = title
+        cfg.image = UIImage(systemName: icon)
+        cfg.imagePadding = 8
+        cfg.imagePlacement = .leading
+        cfg.contentInsets = .init(top: 8, leading: 12, bottom: 8, trailing: 12)
+        btn.configuration = cfg
+        btn.contentHorizontalAlignment = .leading
+        btn.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            Utilities.sharedInstance.showToast(source: self, message: message)
+        }, for: .touchUpInside)
+        return btn
     }
 
     // MARK: - KPI tiles
