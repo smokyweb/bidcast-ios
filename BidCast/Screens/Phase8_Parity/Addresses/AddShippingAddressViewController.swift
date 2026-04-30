@@ -46,17 +46,17 @@ final class AddShippingAddressViewController: UIViewController {
     private let scroll = UIScrollView()
     private let stack = UIStackView()
 
-    private let nameField = Self.makeField(placeholder: "Full name")
+    private let nameField = AddShippingAddressViewController.makeField(placeholder: "Full name")
     private let phoneField: UITextField = {
-        let tf = Self.makeField(placeholder: "Phone number")
+        let tf = AddShippingAddressViewController.makeField(placeholder: "Phone number")
         tf.keyboardType = .phonePad
         return tf
     }()
-    private let streetField = Self.makeField(placeholder: "Street address")
-    private let cityField = Self.makeField(placeholder: "City")
-    private let stateField = Self.makeField(placeholder: "State")
+    private let streetField = AddShippingAddressViewController.makeField(placeholder: "Street address")
+    private let cityField = AddShippingAddressViewController.makeField(placeholder: "City")
+    private let stateField = AddShippingAddressViewController.makeField(placeholder: "State")
     private let pincodeField: UITextField = {
-        let tf = Self.makeField(placeholder: "ZIP / postal code")
+        let tf = AddShippingAddressViewController.makeField(placeholder: "ZIP / postal code")
         tf.keyboardType = .numbersAndPunctuation
         return tf
     }()

@@ -168,7 +168,7 @@ class HomeViewController: UIViewController {
                 self.present(alert, animated: true)
             }
         }
-        SVProgressHUD.dismiss()
+        await MainActor.run { SVProgressHUD.dismiss() }
     }
 
     private func loadNextPageIfPossible() {

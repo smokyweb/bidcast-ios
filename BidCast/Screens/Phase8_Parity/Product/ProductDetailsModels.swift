@@ -13,7 +13,7 @@ struct ProductDetailsResponse: Codable {
     let status: String?
     let message: String?
     let errorType: String?
-    let data: ProductDetailsData?
+    let data: ParityProductDetailsData?
 
     enum CodingKeys: String, CodingKey {
         case status, message, data
@@ -21,7 +21,7 @@ struct ProductDetailsResponse: Codable {
     }
 }
 
-struct ProductDetailsData: Codable {
+struct ParityProductDetailsData: Codable {
     let id: Int?
     let title: String?
     let description: String?

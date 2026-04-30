@@ -97,9 +97,4 @@ enum ProductMetaUploader {
     }
 }
 
-/// Minimal Data append helper used by the body builder above.
-fileprivate extension Data {
-    mutating func append(_ s: String) {
-        if let d = s.data(using: .utf8) { self.append(d) }
-    }
-}
+// Data.append(_ string: String) is provided by Extensions/Data+Extension.swift.

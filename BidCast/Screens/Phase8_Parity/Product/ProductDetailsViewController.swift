@@ -43,7 +43,7 @@ final class ProductDetailsViewController: UIViewController {
 
     // MARK: - State
 
-    private var details: ProductDetailsData?
+    private var details: ParityProductDetailsData?
     private var isSaved: Bool = false
     private var gallery: [ProductMediaItem] = []
 
@@ -437,7 +437,7 @@ final class ProductDetailsViewController: UIViewController {
             // in normal tab flow, but keeps the button functional from
             // contexts like deep-link opened in a bare VC.
             let wrap = UINavigationController(rootViewController: vc)
-            wrap.modalPresentationStyle = .fullScreen
+            wrap.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             present(wrap, animated: true)
         }
     }
