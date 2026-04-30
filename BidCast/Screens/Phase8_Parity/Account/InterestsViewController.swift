@@ -1,20 +1,113 @@
 //
 //  InterestsViewController.swift
-//  BidCast — iOS Parity Phase 8 / P0.6 (2026-04-23)
+//  BidCast — iOS Parity QA fix (MC task cmolwmp0i00f64315lqq37lv3)
 //
-//  Stub reachable from the Account tab grid. Android's
-//  `InterestsFragment` lets users pick favorite categories; porting the
-//  full multi-select sheet is scheduled for a later phase. For P0 we
-//  give QA something to tap into with the category context visible.
+//  Replacement for the P0.6 stub. Mirrors Android's two-step interest
+//  flow:
 //
+//    Android `CategoryFragment` → user picks parent categories
+//    Android `SubCategoryFragment` → user picks sub-categories under the
+//        chosen parents, with the Apr-2026 QA fixes applied:
+//          (a) parents that have NO sub-categories are filtered out of
+//              the list (commit `cmo7iad45...` on Android).
+//          (b) if NONE of the selected parents have sub-categories,
+//              the screen is skipped entirely and the empty selection
+//              is auto-submitted to `api/user/favorite` (commit
+//              `cmo7iad9e...` on Android).
+//          (c) sub-category title font is reduced to wrap nicely
+//              (Android sets it to ~15sp).
+//
+//  This screen is reachable from:
+//    - Account tab grid (existing).
+//    - Post-signup auto-route in SignUpViewController.swift.
+//    - Anywhere else that pushes `InterestsViewController()`.
+//
+//  Save endpoint: `api/user/favorite` (existing iOS endpoint; Android
+//  posts `category_ids` + `sub_category_ids` as JSON body via
+//  `GetSubCategoriesRequest`). The iOS endpoint is registered as multipart
+//  in ProjectEndPoint.swift, so we send the same fields as multipart for
+//  parity with the rest of the iOS app.
+//
+//  Constraints:
+//    - No new endpoints required (`getCategory` + `getSubCategories` +
+//      `userFavorite` already exist).
+//    - Programmatic UIKit; no XIB/storyboard.
 
 import UIKit
-import Kingfisher
 
 final class InterestsViewController: UIViewController {
 
-    private var categories: [CategoryModel] = []
-    private let stack = UIStackView()
+    // MARK: - State
+
+    /// Loaded parent categories (from `getCategory`).
+    private var parents: [CategoryModel] = []
+
+    /// Set of parent category ids the user has currently selected.
+    private var selectedParentIds: Set<Int> = []
+
+    /// Sub-category groups loaded from `getSubCategories` for the
+    /// currently selected parents. After fix-(a), groups with empty
+    /// `subcategories` arrays are filtered out before we render.
+    private var subGroups: [SubCategoryGroup] = []
+
+    /// Set of sub-category ids the user has selected.
+    private var selectedSubIds: Set<Int> = []
+
+    /// Two-phase flow:
+    ///   .pickParents → tapping continue loads subcategories.
+    ///   .pickSubs    → tapping save submits to `userFavorite`.
+    private enum Phase { case pickParents, pickSubs }
+    private var phase: Phase = .pickParents
+
+    // MARK: - UI
+
+    private let scroll = UIScrollView()
+    private let stack: UIStackView = {
+        let s = UIStackView()
+        s.axis = .vertical
+        s.spacing = 12
+        s.alignment = .fill
+        s.isLayoutMarginsRelativeArrangement = true
+        s.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        s.translatesAutoresizingMaskIntoConstraints = false
+        return s
+    }()
+
+    private let header: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 18, weight: .semibold)
+        l.numberOfLines = 0
+        l.textAlignment = .center
+        return l
+    }()
+
+    private let subHeader: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 13)
+        l.textColor = .secondaryLabel
+        l.numberOfLines = 0
+        l.textAlignment = .center
+        return l
+    }()
+
+    private lazy var primaryButton: UIButton = {
+        let b = UIButton(type: .system)
+        var cfg = UIButton.Configuration.filled()
+        cfg.title = "Continue"
+        cfg.cornerStyle = .medium
+        b.configuration = cfg
+        b.addTarget(self, action: #selector(primaryTap), for: .touchUpInside)
+        return b
+    }()
+
+    private lazy var loader: UIActivityIndicatorView = {
+        let v = UIActivityIndicatorView(style: .medium)
+        v.hidesWhenStopped = true
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,105 +115,322 @@ final class InterestsViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationItem.largeTitleDisplayMode = .never
         buildLayout()
+        renderForPhase()
         Task { await loadCategories() }
     }
 
     private func buildLayout() {
-        let header = UILabel()
-        header.text = "Pick the categories you care about most."
-        header.font = .systemFont(ofSize: 14)
-        header.textColor = .secondaryLabel
-        header.numberOfLines = 0
-        header.textAlignment = .center
-
-        let todo = UILabel()
-        todo.text = "Multi-select + save will come in a follow-up phase (P2)."
-        todo.font = .systemFont(ofSize: 12, weight: .semibold)
-        todo.textColor = .tertiaryLabel
-        todo.numberOfLines = 0
-        todo.textAlignment = .center
-
-        stack.axis = .vertical
-        stack.spacing = 12
-        stack.alignment = .fill
-        stack.isLayoutMarginsRelativeArrangement = true
-        stack.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-
-        let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scroll)
         scroll.addSubview(stack)
+        view.addSubview(loader)
         NSLayoutConstraint.activate([
             scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             stack.topAnchor.constraint(equalTo: scroll.topAnchor),
             stack.leadingAnchor.constraint(equalTo: scroll.leadingAnchor),
             stack.trailingAnchor.constraint(equalTo: scroll.trailingAnchor),
             stack.bottomAnchor.constraint(equalTo: scroll.bottomAnchor),
-            stack.widthAnchor.constraint(equalTo: scroll.widthAnchor)
+            stack.widthAnchor.constraint(equalTo: scroll.widthAnchor),
+            loader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-        stack.addArrangedSubview(header)
-        stack.addArrangedSubview(todo)
     }
+
+    // MARK: - Network
 
     @MainActor
     private func loadCategories() async {
+        loader.startAnimating()
+        defer { loader.stopAnimating() }
         do {
             let resp: ExploreGetCategoryResponse = try await APIManager.shared.request(
-                type: APIEndPoint.getCategory, header: true
-            )
-            self.categories = resp.data ?? []
-            renderChips()
+                type: APIEndPoint.getCategory, header: true)
+            self.parents = resp.data ?? []
+            renderForPhase()
         } catch {
-            debugLog("[Interests] getCategory failed -> \(error.localizedDescription)")
+            self.parents = []
+            renderForPhase()
+            p3Alert(message: "Couldn't load categories. " +
+                    ((error as? DataError)?.getErrorMessage() ?? error.localizedDescription))
         }
     }
 
-    private func renderChips() {
-        // Remove any existing chip rows (keep header + todo)
-        while stack.arrangedSubviews.count > 2 {
-            stack.arrangedSubviews.last?.removeFromSuperview()
+    @MainActor
+    private func loadSubCategories() async {
+        let parentIds = Array(selectedParentIds)
+        guard !parentIds.isEmpty else { return }
+        loader.startAnimating()
+        defer { loader.stopAnimating() }
+        do {
+            let req = GetSubCategoriesRequest(categoryIds: parentIds, subcategoryIds: nil)
+            // Backend reads `category_ids` as a multipart text field, same as
+            // AddEditProductViewController.loadSubCategories.
+            let fields: [String: String] = [
+                "category_ids": "[\(parentIds.map { String($0) }.joined(separator: ","))]"
+            ]
+            _ = req
+            let resp: GetSubCategoriesResponse = try await APIManager.shared.postMultipartForm(
+                type: .getSubCategories(param: req),
+                fields: fields, header: true)
+            let allGroups = resp.data ?? []
+            // QA-fix (a): drop parents with no subcategories.
+            let nonEmpty = allGroups.filter { !($0.subcategories ?? []).isEmpty }
+            self.subGroups = nonEmpty
+
+            // QA-fix (b): if NONE of the selected parents have any subs,
+            // skip the screen and auto-submit with empty sub list.
+            if nonEmpty.isEmpty {
+                await submitInterests()
+                return
+            }
+            self.phase = .pickSubs
+            renderForPhase()
+        } catch {
+            p3Alert(message: "Couldn't load sub-categories. " +
+                    ((error as? DataError)?.getErrorMessage() ?? error.localizedDescription))
+        }
+    }
+
+    @MainActor
+    private func submitInterests() async {
+        loader.startAnimating()
+        primaryButton.isEnabled = false
+        defer {
+            loader.stopAnimating()
+            primaryButton.isEnabled = true
+        }
+        let parentIds = Array(selectedParentIds)
+        let subIds = Array(selectedSubIds)
+        do {
+            // Mirror Android's `userFavorite(categoryIds, subcategoriesIds)`.
+            // Backend accepts these as multipart-form parts (same content
+            // shape we use for `getSubCategories` and `storeProduct`).
+            let fields: [String: String] = [
+                "category_ids": "[\(parentIds.map { String($0) }.joined(separator: ","))]",
+                "sub_category_ids": "[\(subIds.map { String($0) }.joined(separator: ","))]"
+            ]
+            let _: APIEmptyResponse = try await APIManager.shared.postMultipartForm(
+                type: .userFavorite(param: [:]),
+                fields: fields, header: true)
+            p3Alert(title: "Saved",
+                    message: "Your interests have been saved.") { [weak self] in
+                self?.handleSaveSuccess()
+            }
+        } catch {
+            p3Alert(message: "Couldn't save interests. " +
+                    ((error as? DataError)?.getErrorMessage() ?? error.localizedDescription))
+        }
+    }
+
+    private func handleSaveSuccess() {
+        // If we're embedded in the post-signup nav stack, send the user
+        // to the main app. Otherwise just pop.
+        if let nav = self.navigationController, nav.viewControllers.count > 1 {
+            // Likely we were pushed onto the signup nav. Drop back to root
+            // and let SceneDelegate.navigateToLandingScreen take over.
+            sceneDel.navigateToLandingScreen()
+        } else {
+            self.navigationController?.popViewController(animated: true)
+            self.dismiss(animated: true)
+        }
+    }
+
+    // MARK: - Rendering
+
+    private func renderForPhase() {
+        // Reset stack.
+        stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        stack.addArrangedSubview(header)
+        stack.addArrangedSubview(subHeader)
+        stack.setCustomSpacing(20, after: subHeader)
+
+        switch phase {
+        case .pickParents:
+            header.text = "Pick categories you care about"
+            subHeader.text = "Tap any number of categories. We'll use these to tailor your feed."
+            primaryButton.configuration?.title = "Continue"
+            renderParentChips()
+
+        case .pickSubs:
+            header.text = "Narrow it down"
+            subHeader.text = "Pick sub-categories so we can fine-tune your recommendations."
+            primaryButton.configuration?.title = "Save"
+            renderSubcategoryGroups()
         }
 
-        // Simple 2-column wrap using nested stack rows. Good enough for stub.
+        // Primary button row
+        let buttonRow = UIStackView(arrangedSubviews: [primaryButton])
+        buttonRow.axis = .horizontal
+        buttonRow.distribution = .fillEqually
+        primaryButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 48).isActive = true
+        stack.addArrangedSubview(buttonRow)
+
+        if phase == .pickSubs {
+            let backBtn = UIButton(type: .system)
+            var cfg = UIButton.Configuration.plain()
+            cfg.title = "Back to categories"
+            backBtn.configuration = cfg
+            backBtn.addTarget(self, action: #selector(backToParents), for: .touchUpInside)
+            stack.addArrangedSubview(backBtn)
+        }
+    }
+
+    private func renderParentChips() {
+        guard !parents.isEmpty else {
+            let lbl = UILabel()
+            lbl.text = "No categories available."
+            lbl.textColor = .secondaryLabel
+            lbl.textAlignment = .center
+            stack.addArrangedSubview(lbl)
+            return
+        }
+        // Two-column wrapping grid built from row-stacks.
         var row: UIStackView?
-        for (idx, cat) in categories.enumerated() {
-            if idx % 2 == 0 {
+        var rowCount = 0
+        for cat in parents {
+            if rowCount == 0 {
                 row = UIStackView()
                 row?.axis = .horizontal
-                row?.spacing = 12
+                row?.spacing = 10
                 row?.distribution = .fillEqually
                 stack.addArrangedSubview(row!)
             }
-            let chip = makeChip(title: cat.name ?? "Category")
+            let chip = makeChip(
+                id: cat.id ?? -1,
+                title: cat.name ?? "Category",
+                isSelected: selectedParentIds.contains(cat.id ?? -1),
+                fontSize: 14,
+                onTap: { [weak self] in self?.toggleParent(cat) }
+            )
             row?.addArrangedSubview(chip)
+            rowCount = (rowCount + 1) % 2
         }
-        // Pad the last row so chips don't stretch too wide
         if let r = row, r.arrangedSubviews.count == 1 {
-            let pad = UIView()
-            r.addArrangedSubview(pad)
+            r.addArrangedSubview(UIView()) // pad odd row
         }
     }
 
-    private func makeChip(title: String) -> UIView {
-        let v = UIView()
-        v.backgroundColor = .secondarySystemBackground
-        v.layer.cornerRadius = 10
-        let l = UILabel()
-        l.text = title
-        l.textAlignment = .center
-        l.font = .systemFont(ofSize: 14, weight: .medium)
-        l.translatesAutoresizingMaskIntoConstraints = false
-        v.addSubview(l)
-        NSLayoutConstraint.activate([
-            l.leadingAnchor.constraint(equalTo: v.leadingAnchor, constant: 12),
-            l.trailingAnchor.constraint(equalTo: v.trailingAnchor, constant: -12),
-            l.topAnchor.constraint(equalTo: v.topAnchor, constant: 14),
-            l.bottomAnchor.constraint(equalTo: v.bottomAnchor, constant: -14)
-        ])
-        return v
+    private func renderSubcategoryGroups() {
+        guard !subGroups.isEmpty else {
+            let lbl = UILabel()
+            lbl.text = "No sub-categories available."
+            lbl.textColor = .secondaryLabel
+            lbl.textAlignment = .center
+            stack.addArrangedSubview(lbl)
+            return
+        }
+        for group in subGroups {
+            let title = UILabel()
+            title.text = group.name ?? "Category"
+            // QA-fix (c): smaller, wrap-friendly font (Android: ~15sp).
+            title.font = .systemFont(ofSize: 15, weight: .semibold)
+            title.numberOfLines = 0
+            stack.addArrangedSubview(title)
+
+            let subs = group.subcategories ?? []
+            // 2-column chip grid for each parent.
+            var row: UIStackView?
+            var rowCount = 0
+            for sub in subs {
+                if rowCount == 0 {
+                    row = UIStackView()
+                    row?.axis = .horizontal
+                    row?.spacing = 10
+                    row?.distribution = .fillEqually
+                    stack.addArrangedSubview(row!)
+                }
+                let chip = makeChip(
+                    id: sub.id ?? -1,
+                    title: sub.name ?? "Sub-category",
+                    isSelected: selectedSubIds.contains(sub.id ?? -1),
+                    fontSize: 13,
+                    onTap: { [weak self] in self?.toggleSub(sub) }
+                )
+                row?.addArrangedSubview(chip)
+                rowCount = (rowCount + 1) % 2
+            }
+            if let r = row, r.arrangedSubviews.count == 1 {
+                r.addArrangedSubview(UIView())
+            }
+            stack.setCustomSpacing(12, after: row ?? title)
+        }
+    }
+
+    private func makeChip(id: Int,
+                          title: String,
+                          isSelected: Bool,
+                          fontSize: CGFloat,
+                          onTap: @escaping () -> Void) -> UIView {
+        let btn = UIButton(type: .system)
+        var cfg = UIButton.Configuration.bordered()
+        var titleAttr = AttributedString(title)
+        titleAttr.font = .systemFont(ofSize: fontSize, weight: .medium)
+        cfg.attributedTitle = titleAttr
+        cfg.baseBackgroundColor = isSelected ? .systemBlue.withAlphaComponent(0.18) : .secondarySystemBackground
+        cfg.baseForegroundColor = isSelected ? .systemBlue : .label
+        cfg.cornerStyle = .medium
+        cfg.contentInsets = .init(top: 10, leading: 12, bottom: 10, trailing: 12)
+        btn.configuration = cfg
+        btn.titleLabel?.numberOfLines = 0
+        btn.titleLabel?.textAlignment = .center
+        if isSelected {
+            btn.layer.borderWidth = 1.5
+            btn.layer.borderColor = UIColor.systemBlue.cgColor
+            btn.layer.cornerRadius = 8
+        }
+        btn.addAction(UIAction { _ in onTap() }, for: .touchUpInside)
+        return btn
+    }
+
+    // MARK: - Actions
+
+    private func toggleParent(_ cat: CategoryModel) {
+        guard let id = cat.id else { return }
+        if selectedParentIds.contains(id) {
+            selectedParentIds.remove(id)
+        } else {
+            selectedParentIds.insert(id)
+        }
+        renderForPhase()
+    }
+
+    private func toggleSub(_ sub: SubCategory) {
+        guard let id = sub.id else { return }
+        if selectedSubIds.contains(id) {
+            selectedSubIds.remove(id)
+        } else {
+            selectedSubIds.insert(id)
+        }
+        renderForPhase()
+    }
+
+    @objc private func primaryTap() {
+        switch phase {
+        case .pickParents:
+            guard !selectedParentIds.isEmpty else {
+                p3Alert(title: "Pick at least one",
+                        message: "Choose one or more categories to continue.")
+                return
+            }
+            Task { await loadSubCategories() }
+
+        case .pickSubs:
+            // It's OK to save with no subs selected — Android allows this
+            // (the multi-select grid does not enforce a min count).
+            Task { await submitInterests() }
+        }
+    }
+
+    @objc private func backToParents() {
+        // Going back wipes the sub selections so the user re-confirms
+        // them when they re-land on the sub screen.
+        selectedSubIds.removeAll()
+        subGroups.removeAll()
+        phase = .pickParents
+        renderForPhase()
     }
 }
