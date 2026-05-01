@@ -29,27 +29,14 @@ extension HomeViewController {
     }
 
     @objc public func jobAInstallHomeShowsButtonIfNeeded() {
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android has
+        // no floating blue Shows button on Home — the home feed itself surfaces
+        // shows directly. Disable the JobA install entirely so iOS matches.
+        // Keep the swizzle hookup intact so other JobA subscribers still fire,
+        // and keep the implementation here for reference / potential reuse.
         guard !jobAHomeButtonInstalled else { return }
         jobAHomeButtonInstalled = true
-
-        let btn = UIButton(type: .system)
-        var cfg = UIButton.Configuration.filled()
-        cfg.image = UIImage(systemName: "video.fill")
-        cfg.baseBackgroundColor = .systemBlue
-        cfg.baseForegroundColor = .white
-        cfg.cornerStyle = .capsule
-        cfg.contentInsets = .init(top: 10, leading: 10, bottom: 10, trailing: 10)
-        btn.configuration = cfg
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(jobAOpenShowsMenu), for: .touchUpInside)
-        btn.accessibilityLabel = "Shows"
-        view.addSubview(btn)
-        NSLayoutConstraint.activate([
-            btn.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            btn.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -80),
-            btn.widthAnchor.constraint(equalToConstant: 52),
-            btn.heightAnchor.constraint(equalToConstant: 52)
-        ])
+        return
     }
 
     @objc private func jobAOpenShowsMenu() {
