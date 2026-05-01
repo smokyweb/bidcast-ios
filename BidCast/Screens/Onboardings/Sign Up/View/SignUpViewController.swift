@@ -39,23 +39,29 @@ enum formData : Int,CaseIterable{
         case .confirmPass:
             return AppString.Title.confirmPass
         case .referralCode:
-            return "Referral code (optional)"
+            // VISUAL PARITY 2026-05-01: Android `fragment_create_account.xml`
+            // labels this field with `@string/enter_referral_code` =
+            // "Enter Referral Code" (no "(optional)" suffix).
+            return "Enter Referral Code"
         }
     }
     var placeholder: String {
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+        // sign-up uses descriptive "Enter Your ..." placeholders rather than
+        // the bullet password mask used on the sign-in screen.
         switch self {
         case .firstName:
             return AppString.Placeholder.firstName
         case .lastName:
             return AppString.Placeholder.lastName
         case .email:
-            return AppString.Placeholder.email
+            return "Enter Your Email"
         case .password:
-            return AppString.Placeholder.password
+            return "Enter Your Password"
         case .confirmPass:
             return AppString.Placeholder.confirmPass
         case .referralCode:
-            return "Enter referral code"
+            return "Enter Referral Code"
         }
     }
 }

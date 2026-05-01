@@ -11,11 +11,17 @@ enum AppString{
     
     enum VCName{
         static let riseShineSwing = "RISE SHINE & SWING"
-        static let forgotPassword = "FORGOT PASSWORD"
-        static let newPassword = "NEW PASSWORD"
-        static let enterCode = "ENTER CODE"
-        static let updatePassword = "UPDATE PASSWORD"
-        static let createYourAccount = "Create Your Account"
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+        // header titles for the auth tail are Title Case
+        // (`forgot_password`, `reset_password`, `enter_code`).
+        static let forgotPassword = "Forgot Password"
+        static let newPassword = "Reset Password"
+        static let enterCode = "Enter Code"
+        static let updatePassword = "Update Password"
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+        // `fragment_create_account.xml` Header title is `@string/create_account`
+        // = "Create Account".
+        static let createYourAccount = "Create Account"
         static let home = "HOME"
         static let newAlarm = "NEW ALARM"
         static let editAlarm = "EDIT ALARM"
@@ -46,11 +52,15 @@ enum AppString{
     }
     
     enum Header{
-        static let enterCode = "ENTER CODE"
-        static let createYourAccount = "Create Your Account"
+        // VISUAL PARITY 2026-05-01: Android `enter_code`, `forgot_password`
+        // are Title Case in the layout `headerTitle` slot.
+        static let enterCode = "Enter Code"
+        // VISUAL PARITY 2026-05-01: heading on the table-driven sign-up cell
+        // mirrors Android "Create Account" copy.
+        static let createYourAccount = "Create Account"
         static let success = "Success!"
         static let alert = "Alert"
-        static let forgotPassword = "FORGOT PASSWORD"
+        static let forgotPassword = "Forgot Password"
         static let privacyPolicy = "PRIVACY POLICY"
         static let termAndConditions = "TERM & CONDITIONS"
         static let home = "HOME"
@@ -80,11 +90,14 @@ enum AppString{
         static let confirmPassword = "CONFIRM PASSWORD"
         static let myAlarms = "My Alarms"
         static let alarmTitle = "Alarm Title"
-        static let firstName = "FIRST NAME"
-        static let lastName = "LAST NAME"
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+        // `fragment_create_account.xml` uses Title Case for field labels
+        // (`@string/first_name`, `@string/last_name`, `@string/confirm_password`).
+        static let firstName = "First Name"
+        static let lastName = "Last Name"
         static let email = "Email"
         static let zipCode = "ZIP CODE"
-        static let confirmPass = "CONFIRM PASSWORD"
+        static let confirmPass = "Confirm Password"
         static let phoneNumber = "PHONE NUMBER"
         static let message = "MESSAGE"
         static let sureYouWantLogout = "Are you sure you want to logout?"
@@ -117,11 +130,13 @@ enum AppString{
         static let password = "***********"
         static let oldpassword = "Enter Old Password"
         static let confirmPassword = "Confirm New Password"
-        static let firstName = "Enter First Name"
-        static let lastName = "Enter Last Name"
+        // VISUAL PARITY 2026-05-01: match Android `enter_your_first_name`,
+        // `enter_your_last_name`, `enter_your_password`, `enter_your_confirm_password`.
+        static let firstName = "Enter Your First Name"
+        static let lastName = "Enter Your Last Name"
         static let email = "Enter Email Address"
         static let zipCode = "Enter Zip Code"
-        static let confirmPass = "Enter Confirm Password"
+        static let confirmPass = "Enter Your Confirm Password"
         static let phoneNumber = "Enter Phone Number"
         static let message = "Type your message here..."
   
@@ -155,14 +170,20 @@ enum AppString{
         // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match Android
         // CTA copy (`@string/login` = "Login").
         static let signIn = "Login"
-        static let resendCode = "RESEND CODE"
-        static let continues = "CONTINUE"
+        // VISUAL PARITY 2026-05-01: Android `resend_code` (where present)
+        // and surrounding CTAs use Title Case.
+        static let resendCode = "Resend Code"
+        // VISUAL PARITY 2026-05-01: sign-up CTA matches Android
+        // `@string/create_account` = "Create Account".
+        static let continues = "Create Account"
         static let home = "HOME"
         static let enterCode = "Enter Code"
-        static let submit = "SUBMIT"
+        // VISUAL PARITY 2026-05-01: Android `@string/submit`, `@string/exit`
+        // are Title Case ("Submit", "Exit") on the auth fragments.
+        static let submit = "Submit"
         static let ok = "Ok"
-        static let login = "LOGIN"
-        static let exit = "EXIT"
+        static let login = "Login"
+        static let exit = "Exit"
         static let myMusic = "MY MUSIC"
         static let yes = "YES"
         static let no = "NO"
