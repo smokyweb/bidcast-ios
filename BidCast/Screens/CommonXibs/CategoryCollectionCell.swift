@@ -48,10 +48,29 @@ extension CategoryCollectionCell : UICollectionViewDelegate,UICollectionViewData
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueCell(ofType: CategoryRowCollectionViewCell.self, for: indexPath)
-        if selectedIndex == indexPath.row{
-            cell.outerStackView.backgroundColor = .secondary
-        }else{
-            cell.outerStackView.backgroundColor = .bg
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match Android
+        // home_category_tile.xml — selected tile uses warningAlt orange
+        // (#ED8430) on a rectangular card, unselected tiles use a white card
+        // with a hairline outline. Replaces the prior pill-shaped blue/secondary
+        // selection so the home feed looks like android_feed.jpg.
+        if selectedIndex == indexPath.row {
+            cell.outerStackView.backgroundColor = UIColor(red: 0xED/255.0,
+                                                          green: 0x84/255.0,
+                                                          blue: 0x30/255.0,
+                                                          alpha: 1.0)
+            cell.outerStackView.layer.borderWidth = 0
+            if let lbl = cell.categoryLabel {
+                lbl.textColor = .white
+                lbl.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+            }
+        } else {
+            cell.outerStackView.backgroundColor = .white
+            cell.outerStackView.layer.borderWidth = 1
+            cell.outerStackView.layer.borderColor = UIColor(white: 0.90, alpha: 1.0).cgColor
+            if let lbl = cell.categoryLabel {
+                lbl.textColor = UIColor(white: 0.10, alpha: 1.0)
+                lbl.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }
         }
         // Defensive bounds check — should be unreachable now that
         // numberOfItemsInSection returns title.count, but keep it so a future
@@ -61,7 +80,10 @@ extension CategoryCollectionCell : UICollectionViewDelegate,UICollectionViewData
         } else {
             cell.categoryLabel.text = ""
         }
-        cell.outerStackView.makeCornerRounded(ofSize: 32)
+        // Rectangular card (matches @drawable/home_category_tile_bg) instead
+        // of the pill we used pre-port.
+        cell.outerStackView.makeCornerRounded(ofSize: 12)
+        cell.outerStackView.layer.masksToBounds = true
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -72,8 +94,9 @@ extension CategoryCollectionCell : UICollectionViewDelegate,UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.collectionViewOlt.frame.width/2.4 - 20, height: 60)
-        
+        // VISUAL PARITY 2026-05-01: shorter rectangular cards (matches Android
+        // home_category_tile.xml ~64dp tall, three-up).
+        return CGSize(width: self.collectionViewOlt.frame.width/2.4 - 20, height: 64)
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.didTapBtn(indexPath.row)

@@ -70,8 +70,11 @@
         </scene>
     </scenes>
     <resources>
+        <!-- VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match Android
+             home which sits on pure white (`@color/background`) instead of the
+             former `@color/surface` light gray. -->
         <namedColor name="bgColor">
-            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

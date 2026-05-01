@@ -48,6 +48,17 @@ class HomeViewController: UIViewController {
 
     private let refreshControl = UIRefreshControl()
 
+    // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3):
+    // Android home replaces the BidCast wordmark header with a full-width
+    // pill search field plus a bell on the right (fragment_home.xml).
+    // We attach the field as a subview of the existing HeaderWithAppName
+    // host so storyboard constraints stay valid.
+    private let homeSearchField = UISearchTextField()
+    private let homeBellButton = UIButton(type: .system)
+    /// Selected filter tab index (0=Live Now, 1=Popular, 2=Coming Soon). Cosmetic
+    /// only for now; actual filtering wiring is out of this visual port's scope.
+    private var selectedFilterTabIndex: Int = 0
+
     // MARK: View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,13 +77,63 @@ class HomeViewController: UIViewController {
     }
 
     private func configureHeaderView() {
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): hide the
+        // wordmark + side icons that the legacy HeaderWithAppName ships and
+        // overlay an Android-style search-pill + bell row instead.
         self.headerViewolt.headerViewSetup(
-            rightButtonHidden: false,
-            leftButtonHidden: false,
-            headerName: "",
-            setRightImage: UIImage(systemName: "bell.fill")?.withTintColor(.black, renderingMode: .alwaysTemplate),
-            setLeftImage: UIImage(named: "ic_search")?.withTintColor(.black, renderingMode: .alwaysTemplate)
+            appButtonHidden: true,
+            rightButtonHidden: true,
+            leftButtonHidden: true,
+            headerName: ""
         )
+        self.installAndroidStyleSearchHeader()
+    }
+
+    /// Builds the Android home-fragment header (search field + bell) and
+    /// drops it on top of HeaderWithAppName's container.
+    private func installAndroidStyleSearchHeader() {
+        let host = self.headerViewolt!
+        host.backgroundColor = .white
+
+        homeSearchField.translatesAutoresizingMaskIntoConstraints = false
+        homeSearchField.placeholder = "What are you looking for?"
+        homeSearchField.borderStyle = .none
+        homeSearchField.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        homeSearchField.backgroundColor = UIColor(white: 0.96, alpha: 1.0)
+        homeSearchField.layer.cornerRadius = 22
+        homeSearchField.layer.borderWidth = 1
+        homeSearchField.layer.borderColor = UIColor(white: 0.90, alpha: 1.0).cgColor
+        homeSearchField.clipsToBounds = true
+        homeSearchField.leftViewMode = .always
+        let mag = UIImageView(image: UIImage(systemName: "magnifyingglass"))
+        mag.tintColor = UIColor(white: 0.55, alpha: 1.0)
+        mag.contentMode = .center
+        mag.frame = CGRect(x: 0, y: 0, width: 36, height: 22)
+        homeSearchField.leftView = mag
+        homeSearchField.returnKeyType = .search
+        homeSearchField.clearButtonMode = .whileEditing
+
+        homeBellButton.translatesAutoresizingMaskIntoConstraints = false
+        homeBellButton.setImage(
+            UIImage(systemName: "bell")?.withRenderingMode(.alwaysTemplate),
+            for: .normal
+        )
+        homeBellButton.tintColor = .black
+
+        host.addSubview(homeSearchField)
+        host.addSubview(homeBellButton)
+
+        NSLayoutConstraint.activate([
+            homeSearchField.leadingAnchor.constraint(equalTo: host.leadingAnchor, constant: 16),
+            homeSearchField.trailingAnchor.constraint(equalTo: homeBellButton.leadingAnchor, constant: -12),
+            homeSearchField.heightAnchor.constraint(equalToConstant: 44),
+            homeSearchField.bottomAnchor.constraint(equalTo: host.bottomAnchor, constant: -10),
+
+            homeBellButton.trailingAnchor.constraint(equalTo: host.trailingAnchor, constant: -16),
+            homeBellButton.centerYAnchor.constraint(equalTo: homeSearchField.centerYAnchor),
+            homeBellButton.widthAnchor.constraint(equalToConstant: 30),
+            homeBellButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
     }
 
     private func configureCollectionVIew() {
@@ -329,6 +390,15 @@ extension HomeViewController: UICollectionViewDelegate,
 
         case .label:
             let cell = collectionView.dequeueCell(ofType: LabelCollectionCell.self, for: indexPath)
+            // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): cell now
+            // renders 3 discrete filter tabs. Persist selection visually so
+            // taps stick across reloads.
+            cell.selectedIndex = self.selectedFilterTabIndex
+            cell.didTapTab = { [weak self, weak cell] tabIdx in
+                guard let self = self, let cell = cell else { return }
+                self.selectedFilterTabIndex = tabIdx
+                cell.selectedIndex = tabIdx
+            }
             return cell
 
         case .data:
