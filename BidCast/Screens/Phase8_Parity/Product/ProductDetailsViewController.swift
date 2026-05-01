@@ -69,7 +69,10 @@ final class ProductDetailsViewController: UIViewController {
         let l = UILabel()
         l.font = .systemFont(ofSize: 12, weight: .semibold)
         l.textColor = .white
-        l.backgroundColor = .systemBlue
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+        // pricing accent is `@color/primary` (#0058BD) for non-auction
+        // listings — switch from iOS dynamic systemBlue to AppColor.primary.
+        l.backgroundColor = AppColor.primary
         l.layer.cornerRadius = 6
         l.layer.masksToBounds = true
         l.textAlignment = .center
@@ -150,7 +153,9 @@ final class ProductDetailsViewController: UIViewController {
         galleryWrap.translatesAutoresizingMaskIntoConstraints = false
         galleryCollection.translatesAutoresizingMaskIntoConstraints = false
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.currentPageIndicatorTintColor = .systemBlue
+        // VISUAL PARITY 2026-05-01: Android selected dot color is
+        // `@color/primary` (brand blue).
+        pageControl.currentPageIndicatorTintColor = AppColor.primary
         pageControl.pageIndicatorTintColor = .tertiaryLabel
         galleryWrap.addSubview(galleryCollection)
         galleryWrap.addSubview(pageControl)
@@ -248,7 +253,10 @@ final class ProductDetailsViewController: UIViewController {
         buyCfg.title = "Buy Now"
         buyCfg.image = UIImage(systemName: "cart.fill")
         buyCfg.imagePadding = 6
-        buyCfg.baseBackgroundColor = .systemGreen
+        // VISUAL PARITY 2026-05-01: Android `buyButton` uses `@style/appBtn`
+        // = brand blue. Switch from `.systemGreen` to AppColor.primary so
+        // the primary CTA on this screen matches the rest of the app.
+        buyCfg.baseBackgroundColor = AppColor.primary
         buyNowBtn.configuration = buyCfg
         buyNowBtn.addTarget(self, action: #selector(onTapBuyNow), for: .touchUpInside)
 
@@ -338,7 +346,10 @@ final class ProductDetailsViewController: UIViewController {
         titleLbl.text = d.title
         priceLbl.text = d.displayPrice
         pricingBadge.text = "  \(d.pricingBadgeText)  "
-        pricingBadge.backgroundColor = (d.auction == true) ? .systemPurple : .systemBlue
+        // VISUAL PARITY 2026-05-01: auction listings keep the purple badge
+        // (matches Android's distinct auction color), buy-now listings use
+        // brand blue.
+        pricingBadge.backgroundColor = (d.auction == true) ? .systemPurple : AppColor.primary
         conditionLbl.text = d.productCondition.map { "Condition: \($0)" }
         skuLbl.text = (d.sku ?? "").isEmpty ? nil : "SKU: \(d.sku ?? "")"
         descriptionLbl.text = (d.description ?? "").isEmpty
@@ -383,7 +394,8 @@ final class ProductDetailsViewController: UIViewController {
         } else {
             cfg.title = "Save"
             cfg.image = UIImage(systemName: "heart")
-            cfg.baseForegroundColor = .systemBlue
+            // VISUAL PARITY 2026-05-01: Follow / Save accent uses brand blue.
+            cfg.baseForegroundColor = AppColor.primary
         }
         saveBtn.configuration = cfg
     }
