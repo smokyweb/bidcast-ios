@@ -75,10 +75,18 @@ class SignUpTodayCell: UITableViewCell {
         privacyTermsStack.spacing = 6
         privacyTermsStack.distribution = .fill
 
+        // HOTFIX 2026-05-01 (MC cmomwykts00233r1hcw317di3): JostFont.value
+        // returns UIFont? — if the custom Jost font isn't registered the
+        // value is nil, which bridges to NSNull in the attribute dict and
+        // crashes -[NSCoreTypesetter ...] with `-[NSNull pointSize]`.
+        // Build defensively: only add the font key if we have a real font,
+        // otherwise fall back to system font.
+        let linkFont: UIFont = JostFont.defaultRegular(size: 13).value
+            ?? UIFont.systemFont(ofSize: 13)
         let underline: [NSAttributedString.Key: Any] = [
             .underlineStyle: NSUnderlineStyle.single.rawValue,
-            .font: JostFont.defaultRegular(size: 13).value,
-            .foregroundColor: AppColor.darkGray
+            .font: linkFont,
+            .foregroundColor: AppColor.darkGray ?? UIColor.darkGray
         ]
         privacyButton.setAttributedTitle(
             NSAttributedString(string: "Privacy Policy", attributes: underline),
@@ -92,7 +100,7 @@ class SignUpTodayCell: UITableViewCell {
         termsButton.addTarget(self, action: #selector(didTapTerms(_:)), for: .touchUpInside)
 
         pipeLabel.text = "|"
-        pipeLabel.font = JostFont.defaultRegular(size: 13).value
+        pipeLabel.font = linkFont
         pipeLabel.textColor = AppColor.mediumDarkGray
         pipeLabel.setContentHuggingPriority(.required, for: .horizontal)
         pipeLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
