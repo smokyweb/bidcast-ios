@@ -815,7 +815,10 @@ final class PickedImageCell: UICollectionViewCell {
         l.text = " Thumb "
         l.font = .systemFont(ofSize: 10, weight: .bold)
         l.textColor = .white
-        l.backgroundColor = .systemBlue
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): brand blue
+        // accent for the "Thumb" badge so it matches Android product image
+        // selection state (`@color/primary`).
+        l.backgroundColor = AppColor.primary
         l.layer.cornerRadius = 4
         l.layer.masksToBounds = true
         l.translatesAutoresizingMaskIntoConstraints = false
@@ -838,7 +841,9 @@ final class PickedImageCell: UICollectionViewCell {
         didSet {
             thumbBadge.isHidden = !isThumbnail
             layer.borderWidth = isThumbnail ? 2 : 0
-            layer.borderColor = UIColor.systemBlue.cgColor
+            // VISUAL PARITY 2026-05-01: thumbnail outline color uses
+            // AppColor.primary (#0058BD) instead of iOS dynamic systemBlue.
+            layer.borderColor = (AppColor.primary?.cgColor ?? UIColor.systemBlue.cgColor)
             layer.cornerRadius = 8
         }
     }
