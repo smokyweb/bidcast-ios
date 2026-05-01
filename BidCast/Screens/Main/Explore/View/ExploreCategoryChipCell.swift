@@ -68,8 +68,11 @@ final class ExploreCategoryChipCell: UICollectionViewCell {
         nameLabel.font = isSelected
             ? .boldSystemFont(ofSize: 12)
             : .systemFont(ofSize: 12, weight: .medium)
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+        // chip-selected state uses `@color/primary` (#0058BD) for the
+        // border / tint. Match that here.
         iconImageView.layer.borderColor = isSelected
-            ? UIColor.systemBlue.cgColor
+            ? (AppColor.primary?.cgColor ?? UIColor.systemBlue.cgColor)
             : UIColor.clear.cgColor
 
         if let urlStr = imageURL, let url = URL(string: urlStr) {
@@ -78,7 +81,7 @@ final class ExploreCategoryChipCell: UICollectionViewCell {
                                       options: [.transition(.fade(0.2))])
         } else {
             iconImageView.image = UIImage(systemName: "square.grid.2x2")
-            iconImageView.tintColor = .systemBlue
+            iconImageView.tintColor = AppColor.primary
         }
     }
 

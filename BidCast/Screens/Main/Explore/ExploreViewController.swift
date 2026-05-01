@@ -44,10 +44,21 @@ final class ExploreViewController: UIViewController {
 
     private lazy var searchBar: UISearchBar = {
         let sb = UISearchBar()
-        sb.placeholder = "Search products"
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+        // `fragment_explore.xml` search hint is
+        // `@string/what_are_you_looking_for`.
+        sb.placeholder = "What are you looking for?"
         sb.searchBarStyle = .minimal
         sb.delegate = self
         sb.translatesAutoresizingMaskIntoConstraints = false
+        // Android wraps the search inside an `inputBoxStyle` TextInputLayout
+        // with a 2dp stroke + light fill. Approximate with a soft tint.
+        if let textField = sb.value(forKey: "searchField") as? UITextField {
+            textField.backgroundColor = AppColor.lightGray
+            textField.layer.cornerRadius = 12
+            textField.layer.masksToBounds = true
+            textField.font = .systemFont(ofSize: 14)
+        }
         return sb
     }()
 
@@ -96,7 +107,10 @@ final class ExploreViewController: UIViewController {
         b.tintColor = .white
         b.setTitleColor(.white, for: .normal)
         b.titleLabel?.font = .boldSystemFont(ofSize: 14)
-        b.backgroundColor = .systemBlue
+        // VISUAL PARITY 2026-05-01: Android `appBtn` style is brand blue
+        // (#0058BD), white text. Replace the iOS `.systemBlue` placeholder
+        // with AppColor.primary so it reads as the same CTA.
+        b.backgroundColor = AppColor.primary
         b.layer.cornerRadius = 8
         b.contentEdgeInsets = UIEdgeInsets(top: 8, left: 14, bottom: 8, right: 14)
         b.translatesAutoresizingMaskIntoConstraints = false
