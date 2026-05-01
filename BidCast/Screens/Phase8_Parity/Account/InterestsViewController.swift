@@ -73,9 +73,16 @@ final class InterestsViewController: UIViewController {
         return s
     }()
 
+    // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): Android
+    // `fragment_category.xml` shows a top "Header" with the screen title,
+    // a centered body subheader, then a 3-column grid of category cards,
+    // then a brand-blue `appBtn` Continue button at the bottom. iOS now
+    // mirrors that visual hierarchy.
     private let header: UILabel = {
         let l = UILabel()
+        // Android Header uses a 18sp bold semantic title. We mirror that.
         l.font = .systemFont(ofSize: 18, weight: .semibold)
+        l.textColor = AppColor.darkGray
         l.numberOfLines = 0
         l.textAlignment = .center
         return l
@@ -83,8 +90,10 @@ final class InterestsViewController: UIViewController {
 
     private let subHeader: UILabel = {
         let l = UILabel()
-        l.font = .systemFont(ofSize: 13)
-        l.textColor = .secondaryLabel
+        // Matches Android `BodyLarge` underneath the Header (16sp, ~70%
+        // gray).
+        l.font = .systemFont(ofSize: 14)
+        l.textColor = AppColor.mediumDarkGray
         l.numberOfLines = 0
         l.textAlignment = .center
         return l
@@ -94,7 +103,16 @@ final class InterestsViewController: UIViewController {
         let b = UIButton(type: .system)
         var cfg = UIButton.Configuration.filled()
         cfg.title = "Continue"
+        // Android `appBtn` style is solid `@color/primary` (#0058BD) with
+        // white text and ~14dp corner radius. AppColor.primary is pinned
+        // to that hex in commit f640595.
+        cfg.baseBackgroundColor = AppColor.primary
+        cfg.baseForegroundColor = .white
         cfg.cornerStyle = .medium
+        var titleAttr = AttributedString("Continue")
+        titleAttr.font = .systemFont(ofSize: 16, weight: .semibold)
+        cfg.attributedTitle = titleAttr
+        cfg.contentInsets = .init(top: 14, leading: 16, bottom: 14, trailing: 16)
         b.configuration = cfg
         b.addTarget(self, action: #selector(primaryTap), for: .touchUpInside)
         return b
@@ -111,8 +129,9 @@ final class InterestsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Interests"
-        view.backgroundColor = .systemBackground
+        // Android `headerTitle` is "Select Your Favourite Category".
+        title = "Select Your Favourite Category"
+        view.backgroundColor = .white
         navigationItem.largeTitleDisplayMode = .never
         buildLayout()
         renderForPhase()
@@ -248,17 +267,27 @@ final class InterestsViewController: UIViewController {
         stack.addArrangedSubview(subHeader)
         stack.setCustomSpacing(20, after: subHeader)
 
+        // VISUAL PARITY 2026-05-01: copy now mirrors Android
+        // `@string/select_your_favourite_category` /
+        // `@string/choose_the_categories_you_re_interested_in_to_watch_related_shows`
+        // and the sub-step equivalents.
         switch phase {
         case .pickParents:
-            header.text = "Pick categories you care about"
-            subHeader.text = "Tap any number of categories. We'll use these to tailor your feed."
-            primaryButton.configuration?.title = "Continue"
+            header.text = "Select Your Favourite Category"
+            subHeader.text = "Choose the categories you're interested in to watch related shows."
+            self.title = "Select Your Favourite Category"
+            var titleAttr = AttributedString("Continue")
+            titleAttr.font = .systemFont(ofSize: 16, weight: .semibold)
+            primaryButton.configuration?.attributedTitle = titleAttr
             renderParentChips()
 
         case .pickSubs:
-            header.text = "Narrow it down"
-            subHeader.text = "Pick sub-categories so we can fine-tune your recommendations."
-            primaryButton.configuration?.title = "Save"
+            header.text = "Select Your Favourite Sub-Category"
+            subHeader.text = "Pick sub-categories under your selected categories so we can fine-tune your recommendations."
+            self.title = "Select Your Favourite Sub-Category"
+            var titleAttr = AttributedString("Save")
+            titleAttr.font = .systemFont(ofSize: 16, weight: .semibold)
+            primaryButton.configuration?.attributedTitle = titleAttr
             renderSubcategoryGroups()
         }
 
@@ -288,7 +317,9 @@ final class InterestsViewController: UIViewController {
             stack.addArrangedSubview(lbl)
             return
         }
-        // Two-column wrapping grid built from row-stacks.
+        // VISUAL PARITY 2026-05-01: Android uses a 3-column grid
+        // (`spanCount="3"` in fragment_category.xml). Match that.
+        let columns = 3
         var row: UIStackView?
         var rowCount = 0
         for cat in parents {
@@ -297,20 +328,23 @@ final class InterestsViewController: UIViewController {
                 row?.axis = .horizontal
                 row?.spacing = 10
                 row?.distribution = .fillEqually
+                row?.alignment = .fill
                 stack.addArrangedSubview(row!)
             }
-            let chip = makeChip(
+            let card = makeCategoryCard(
                 id: cat.id ?? -1,
                 title: cat.name ?? "Category",
                 isSelected: selectedParentIds.contains(cat.id ?? -1),
-                fontSize: 14,
                 onTap: { [weak self] in self?.toggleParent(cat) }
             )
-            row?.addArrangedSubview(chip)
-            rowCount = (rowCount + 1) % 2
+            row?.addArrangedSubview(card)
+            rowCount = (rowCount + 1) % columns
         }
-        if let r = row, r.arrangedSubviews.count == 1 {
-            r.addArrangedSubview(UIView()) // pad odd row
+        // Pad short final row so .fillEqually keeps consistent widths.
+        if let r = row {
+            while r.arrangedSubviews.count < columns {
+                r.addArrangedSubview(UIView())
+            }
         }
     }
 
@@ -360,28 +394,74 @@ final class InterestsViewController: UIViewController {
         }
     }
 
+    /// VISUAL PARITY 2026-05-01: Android `category_item.xml` is a
+    /// MaterialCardView wrapping a vertical LinearLayout (image-on-top,
+    /// title-below) with `cardCornerRadius=8dp`. The selected state lifts
+    /// the card to brand-blue with white text. iOS reproduces that with a
+    /// UIView container so we keep the chip's tap target.
+    private func makeCategoryCard(id: Int,
+                                  title: String,
+                                  isSelected: Bool,
+                                  onTap: @escaping () -> Void) -> UIView {
+        let card = UIControl()
+        card.translatesAutoresizingMaskIntoConstraints = false
+        card.layer.cornerRadius = 8
+        card.layer.masksToBounds = true
+        card.backgroundColor = isSelected
+            ? AppColor.primary
+            : AppColor.lightBlue
+        card.layer.borderWidth = isSelected ? 0 : 1
+        card.layer.borderColor = AppColor.bgColor?.cgColor
+
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = title
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
+        label.textColor = isSelected ? .white : AppColor.darkGray
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
+        card.addSubview(label)
+        NSLayoutConstraint.activate([
+            card.heightAnchor.constraint(equalToConstant: 96),
+            label.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 8),
+            label.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -8),
+            label.centerYAnchor.constraint(equalTo: card.centerYAnchor),
+        ])
+
+        card.addAction(UIAction { _ in onTap() }, for: .touchUpInside)
+        return card
+    }
+
+    /// Sub-category chip — kept compact and pill-shaped per Android Chip
+    /// styling (`chip_bg_state` toggles between primary blue and
+    /// inverseOnSurface). Returns a UIControl so it remains tappable
+    /// inside a stack view.
     private func makeChip(id: Int,
                           title: String,
                           isSelected: Bool,
                           fontSize: CGFloat,
                           onTap: @escaping () -> Void) -> UIView {
         let btn = UIButton(type: .system)
-        var cfg = UIButton.Configuration.bordered()
+        var cfg = UIButton.Configuration.filled()
         var titleAttr = AttributedString(title)
         titleAttr.font = .systemFont(ofSize: fontSize, weight: .medium)
         cfg.attributedTitle = titleAttr
-        cfg.baseBackgroundColor = isSelected ? .systemBlue.withAlphaComponent(0.18) : .secondarySystemBackground
-        cfg.baseForegroundColor = isSelected ? .systemBlue : .label
-        cfg.cornerStyle = .medium
-        cfg.contentInsets = .init(top: 10, leading: 12, bottom: 10, trailing: 12)
+        // VISUAL PARITY 2026-05-01: selected chip uses brand blue +
+        // white text (`@color/primary` / `@color/onPrimary`). Unselected
+        // uses the surface gray with dark text (`@color/inverseOnSurface`
+        // ≈ #F1F0F7 + `@color/scrim` text).
+        cfg.baseBackgroundColor = isSelected
+            ? AppColor.primary
+            : AppColor.lightGray
+        cfg.baseForegroundColor = isSelected
+            ? .white
+            : AppColor.darkGray
+        cfg.cornerStyle = .capsule
+        cfg.contentInsets = .init(top: 10, leading: 14, bottom: 10, trailing: 14)
         btn.configuration = cfg
         btn.titleLabel?.numberOfLines = 0
         btn.titleLabel?.textAlignment = .center
-        if isSelected {
-            btn.layer.borderWidth = 1.5
-            btn.layer.borderColor = UIColor.systemBlue.cgColor
-            btn.layer.cornerRadius = 8
-        }
         btn.addAction(UIAction { _ in onTap() }, for: .touchUpInside)
         return btn
     }
