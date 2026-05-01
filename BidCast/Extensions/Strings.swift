@@ -72,7 +72,9 @@ enum AppString{
     }
     
     enum Title{
-        static let password = "PASSWORD"
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match Android
+        // sign-in field labels (`@string/email` = "Email", `@string/password` = "Password").
+        static let password = "Password"
         static let oldPassword = "OLD PASSWORD"
         static let code = "ENTER CODE"
         static let confirmPassword = "CONFIRM PASSWORD"
@@ -80,7 +82,7 @@ enum AppString{
         static let alarmTitle = "Alarm Title"
         static let firstName = "FIRST NAME"
         static let lastName = "LAST NAME"
-        static let email = "EMAIL ADDRESS"
+        static let email = "Email"
         static let zipCode = "ZIP CODE"
         static let confirmPass = "CONFIRM PASSWORD"
         static let phoneNumber = "PHONE NUMBER"
@@ -107,9 +109,12 @@ enum AppString{
     }
     
     enum Placeholder{
-        static let emailAddress = "Enter Email Address"
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match Android
+        // sign-in placeholders. Android uses `Enter Your Email` for the email
+        // field and `***********` for the password field.
+        static let emailAddress = "Enter Your Email"
         static let enterCode = "Enter Code"
-        static let password = "Enter Password"
+        static let password = "***********"
         static let oldpassword = "Enter Old Password"
         static let confirmPassword = "Confirm New Password"
         static let firstName = "Enter First Name"
@@ -147,7 +152,9 @@ enum AppString{
     enum BtnTitle{
         //NEW
         static let sendCode = "Send Code"
-        static let signIn = "SIGN IN"
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match Android
+        // CTA copy (`@string/login` = "Login").
+        static let signIn = "Login"
         static let resendCode = "RESEND CODE"
         static let continues = "CONTINUE"
         static let home = "HOME"

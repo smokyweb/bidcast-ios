@@ -9,8 +9,11 @@ import UIKit
 
 struct AppColor{
     
-    static let primary = UIColor(named: "primary") ?? UIColor(hex: "#2B537F") //#2B537F
-    static let secondary = UIColor(named: "secondary") ?? UIColor(hex: "#689CFF") //#689CFF
+    // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): primary/secondary
+    // brand colors are now Android's #0058BD (`@color/primary`) so the sign-in
+    // CTA, brand accents and active-state ticks all match android_signin.jpg.
+    static let primary = UIColor(named: "primary") ?? UIColor(hex: "#0058BD") //#0058BD
+    static let secondary = UIColor(named: "secondary") ?? UIColor(hex: "#0058BD") //#0058BD
     static let black = UIColor(named: "black") ?? UIColor(hex: "#000000") //#000000
     static let white = UIColor(named: "white") ?? UIColor(hex: "#FFFFFF") //#FFFFFF
     static let ultraLightGray = UIColor(named: "ultraLightGray") ?? UIColor(hex: "#F5F8FC") //#F5F8FC

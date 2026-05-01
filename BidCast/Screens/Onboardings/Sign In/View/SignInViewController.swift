@@ -136,7 +136,9 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         case .emailField:
             let cell = signTblView.dequeueCell(with: TextFieldCell.self)
-            cell.imgIconOlt.image = UIImage(named: "ic_mail")
+            // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match
+            // Android `app:startIconDrawable="@drawable/ic_user_outline"`.
+            cell.imgIconOlt.image = UIImage(named: "ic_user")
             cell.textFieldOlt.text = nil
             if self.SignInEmail != "" {
                 cell.textFieldOlt.text = SignInEmail
@@ -214,7 +216,17 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             cell.didTapSignUpClosure = {  [weak self] sender in
                 guard let self = self else { return }
                 self.pushVC(with: SignUpViewController.self, storyboardName: .onboardings)
-                
+            }
+            // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): wire the
+            // Privacy Policy / Terms of Service links added below the bottom
+            // prompt to the existing in-app web views (matches Android).
+            cell.didTapPrivacyClosure = { [weak self] _ in
+                guard let self = self else { return }
+                self.pushVC(with: PrivacyAndPolicyViewController.self, storyboardName: .more)
+            }
+            cell.didTapTermsClosure = { [weak self] _ in
+                guard let self = self else { return }
+                self.pushVC(with: TermAndConditionViewController.self, storyboardName: .more)
             }
             return cell
         }

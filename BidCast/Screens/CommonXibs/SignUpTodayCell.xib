@@ -28,7 +28,7 @@
                                 </constraints>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="New to BidCast?">
+                                <state key="normal" title="New User?">
                                     <color key="titleColor" name="darkGray"/>
                                 </state>
                             </button>
@@ -38,8 +38,8 @@
                                     <constraint firstAttribute="height" constant="35" id="mge-h5-Hph"/>
                                 </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="SIGN UP NOW">
-                                    <color key="titleColor" name="secondary"/>
+                                <state key="normal" title="Create Account">
+                                    <color key="titleColor" name="darkGray"/>
                                 </state>
                                 <connections>
                                     <action selector="didTapSignUP:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="kJm-VF-LPG"/>

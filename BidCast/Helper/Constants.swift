@@ -71,11 +71,17 @@ public let Height_30 = 30.0
 
 struct Const {
     struct Height {
-        static let banner = 413.0
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): tighter sign-in
+        // banner so the page fits the smaller centered logo on iPhones, matching
+        // android_signin.jpg (logo + spacing ~ 260pt instead of 413pt full-bleed).
+        static let banner = 260.0
         static let segment = 70.0
         static let rememberMe = 60.0
         static let sliderImg = 380.0
-        static let signUpNow = 70.0
+        // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): row now hosts both
+        // the Privacy Policy | Terms of Service link row AND the New User? Create
+        // Account prompt (matches android_signin.jpg).
+        static let signUpNow = 110.0
         static let submitBtn = 85.0
         static let twoButton = 64.0
         static let signInBtnWithLabel = 120.0
