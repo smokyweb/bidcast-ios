@@ -193,6 +193,30 @@ class HomeViewController: UIViewController {
             self.collectionViewOlt.reloadData()
         } catch {
             debugLog("[Home] getLiveShow failed -> \(error.localizedDescription)")
+            // HOTFIX (MC task cmomwykyp00253r1hroxmppfn): if the default
+            // personalized feed request errors entirely (not just returns an
+            // empty array), don't surface an alert on first sign-in. Retry once
+            // with category=all so the user still lands on a usable home feed.
+            if reset, page == 1, selectedCategoryId == nil {
+                debugLog("[Home] For-You request failed -> retrying with all shows")
+                var fallbackFields = fields
+                fallbackFields["category"] = "all"
+                do {
+                    let resp2: GetMyShowResponse = try await APIManager.shared.postMultipartForm(
+                        type: .getLiveShow(param: [:]),
+                        fields: fallbackFields,
+                        header: true
+                    )
+                    self.shows = resp2.data ?? []
+                    self.currentPage = resp2.currentPage ?? 1
+                    self.totalPages = resp2.totalPage ?? self.currentPage
+                    self.collectionViewOlt.reloadData()
+                    await MainActor.run { SVProgressHUD.dismiss() }
+                    return
+                } catch {
+                    debugLog("[Home] all-shows fallback after request failure also failed -> \(error.localizedDescription)")
+                }
+            }
             if reset {
                 let msg = (error as? DataError)?.getErrorMessage() ?? error.localizedDescription
                 let alert = UIAlertController(title: "Couldn't load feed", message: msg, preferredStyle: .alert)
