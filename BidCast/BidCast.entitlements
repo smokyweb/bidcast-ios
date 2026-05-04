@@ -15,8 +15,14 @@
         - com.apple.developer.in-app-payments     if Apple Pay is routed
           through StripePaymentSheet
     -->
+    <!-- 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg): TestFlight uses the
+         production APNs servers, so a `development` aps-environment
+         silently fails to deliver push to TestFlight builds. Flipped to
+         `production`; debug builds run via Xcode will still talk to APNs
+         in development because Xcode auto-overrides this entitlement
+         based on the provisioning profile / signing style. -->
     <key>aps-environment</key>
-    <string>development</string>
+    <string>production</string>
 
     <!--
       iOS parity phase 4m (2026-04-22): Universal Links entitlement.

@@ -204,11 +204,15 @@ class HomeViewController: UIViewController {
         if let cid = selectedCategoryId {
             fields["category"] = "\(cid)"
         } else {
-            // HOTFIX (MC task cmomwykyp00253r1hroxmppfn): Android sends for_you,
-            // but the iOS path is erroring even with a fallback to `all`.
-            // For now, hard-code to `all` to stabilize the home feed while
-            // the `for_you` endpoint is investigated.
-            fields["category"] = "all"
+            // 2026-05-04 (MC task cmordzx1s00cuf3hgkwnkkplg): restore Android
+            // parity — default tab sends `category=for_you` for personalized
+            // ranking. The empty-result fallback to `category=all` below
+            // stays in place for the case where the personalized feed has
+            // no matches yet. The original `for_you` failure was a Codable
+            // mismatch on the paginated envelope, fixed in build 234
+            // (`APIPaginatedResponse` now reads `current_page`/`per_page`/
+            // `total_page`).
+            fields["category"] = "for_you"
         }
 
         do {

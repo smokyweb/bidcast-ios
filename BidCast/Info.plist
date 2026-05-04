@@ -194,5 +194,18 @@
 		<key>UIImageName</key>
 		<string>logo1</string>
 	</dict>
+	<!-- 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg): declare the background
+	     modes we actually use so iOS will let APNs wake the app for
+	     silent / data-only pushes ("show is starting" prompts), let
+	     Agora keep the audio session alive while the user has the live
+	     show backgrounded, and let HTTP keepalives finish in the
+	     background. Mirrors what Android already does via
+	     RECORD_AUDIO + foreground-service. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>audio</string>
+		<string>fetch</string>
+	</array>
 </dict>
 </plist>
