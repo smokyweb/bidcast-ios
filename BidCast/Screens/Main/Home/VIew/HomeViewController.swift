@@ -204,15 +204,15 @@ class HomeViewController: UIViewController {
         if let cid = selectedCategoryId {
             fields["category"] = "\(cid)"
         } else {
-            // 2026-05-04 (MC task cmordzx1s00cuf3hgkwnkkplg): restore Android
-            // parity — default tab sends `category=for_you` for personalized
-            // ranking. The empty-result fallback to `category=all` below
-            // stays in place for the case where the personalized feed has
-            // no matches yet. The original `for_you` failure was a Codable
-            // mismatch on the paginated envelope, fixed in build 234
-            // (`APIPaginatedResponse` now reads `current_page`/`per_page`/
-            // `total_page`).
-            fields["category"] = "for_you"
+            // 2026-05-04 v2 (MC task cmordzx1s00cuf3hgkwnkkplg): re-flipped
+            // back to `all` because `for_you` is still surfacing
+            // "Couldn't load feed" on builds 236+ even after the
+            // pagination-envelope fix in build 234. Real root cause is
+            // server-side: the `for_you` response shape diverges from
+            // `all` in a way iOS Codable can't read. Need backend to
+            // confirm the response is identical to `all`. Until then,
+            // hard-code to `all` to keep the home feed loading.
+            fields["category"] = "all"
         }
 
         do {
