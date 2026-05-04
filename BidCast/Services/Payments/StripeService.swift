@@ -40,9 +40,11 @@ final class StripeService {
 
     /// Reads the publishable key from Info.plist.
     ///
-    /// TODO-TREY: flip `STRIPE_PUBLISHABLE_KEY` from the `pk_test_TODO_TREY_REPLACE`
-    /// placeholder in `BidCast/Info.plist` to a real test / live key from the
-    /// Stripe dashboard before any real charge flow is exercised.
+    /// 2026-05-04 (MC cmordzx1s00cuf3hgkwnkkplg): the placeholder TODO has been
+    /// resolved — `STRIPE_PUBLISHABLE_KEY` in Info.plist is the real Stripe
+    /// test publishable key, matching what Android ships in BuildConfig.
+    /// Live charges still require flipping to a `pk_live_*` key from the Stripe
+    /// dashboard before any production payment flow.
     var publishableKey: String {
         (Bundle.main.infoDictionary?["STRIPE_PUBLISHABLE_KEY"] as? String) ?? ""
     }
