@@ -8,6 +8,7 @@
 import UIKit
 import FittedSheets
 import SVProgressHUD
+import Kingfisher
 
 //MARK: Account section
 enum AccountSection : Int, CaseIterable {
@@ -231,9 +232,32 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
             case .profile:
                 let cell = tableViewOlt.dequeueCell(with: MyAccountCell.self)
                 cell.contentView.backgroundColor = .white
-                cell.userNameOlt.text = "Devin Jhonson"
-                cell.descriptionOlt.text = "Seller Since 2003"
-                cell.profileImage.image = UIImage(named: "defaultUser")
+                // VISUAL PARITY 2026-05-04 (MC cmomx4f1k002c3r1hggx47mks):
+                // Replace the hardcoded 'Devin Jhonson / Seller Since 2003'
+                // placeholder — Android's AccountFragment binds the real
+                // signed-in user's name + profile image from prefs. Use the
+                // same UserDefaults the rest of the app already populates at
+                // login (`firstName`, `lastName`, `profileImage`).
+                let first = UserDefaults.firstName
+                let last  = UserDefaults.lastName
+                let displayName: String = {
+                    let combined = "\(first) \(last)".trimmingCharacters(in: .whitespaces)
+                    if !combined.isEmpty { return combined }
+                    let uname = UserDefaults.userName
+                    if !uname.isEmpty { return uname }
+                    return "BidCast User"
+                }()
+                cell.userNameOlt.text = displayName
+                cell.descriptionOlt.text = UserDefaults.userEmail
+                if let raw = Optional(UserDefaults.profileImage), !raw.isEmpty,
+                   let url = URL(string: raw) {
+                    cell.profileImage.kf.setImage(
+                        with: url,
+                        placeholder: UIImage(named: "defaultUser")
+                    )
+                } else {
+                    cell.profileImage.image = UIImage(named: "defaultUser")
+                }
                 cell.didTapEdit = { sender in
                     self.pushVC(with:  ProfileViewController.self, storyboardName: .account)
                 }
