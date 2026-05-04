@@ -77,7 +77,8 @@ class SignInViewController: UIViewController {
     private func configureTableView(){
         self.signTblView.delegate = self
         self.signTblView.dataSource = self
-        self.signTblView.configTblView(bgColor: .white)
+        self.signTblView.configTblView(bgColor: .ultraLightGray)
+        self.view.backgroundColor = .ultraLightGray
         
         //register cells
         let cellIds = [AppBannerCell.identifier,
@@ -133,28 +134,29 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
         switch rowType {
         case .banner:
             let cell = signTblView.dequeueCell(with: AppBannerCell.self)
+            cell.contentView.backgroundColor = .ultraLightGray
+            cell.backgroundColor = .ultraLightGray
+            cell.bannerImg.backgroundColor = .ultraLightGray
             return cell
         case .emailField:
             let cell = signTblView.dequeueCell(with: TextFieldCell.self)
-            // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): match
-            // Android `app:startIconDrawable="@drawable/ic_user_outline"`.
-            cell.imgIconOlt.image = UIImage(named: "ic_user")
+            cell.imgIconOlt.image = UIImage(systemName: "person")?.withRenderingMode(.alwaysTemplate)
+            cell.imgIconOlt.tintColor = .mediumGray
             cell.textFieldOlt.text = nil
             if self.SignInEmail != "" {
                 cell.textFieldOlt.text = SignInEmail
             }
             else  {
-                cell.textFieldOlt.placeholder = AppString.Placeholder.emailAddress
+                cell.textFieldOlt.placeholder = "Enter Your Email"
             }
-            //                cell.textFieldOlt.text = ""
             cell.textFieldOlt.isSecureTextEntry = false
-            cell.titleLblOlt.text = AppString.Title.email
+            cell.titleLblOlt.text = "Email"
             cell.textFieldOlt.keyboardType = .emailAddress
             cell.eyeBtnOlt.isHidden = true
             if self.rememberMeSwitch ?? false{
                 cell.textFieldOlt.text = self.SignInEmail
             }else{
-                cell.textFieldOlt.placeholder = AppString.Placeholder.emailAddress
+                cell.textFieldOlt.placeholder = "Enter Your Email"
             }
             cell.entertext = {  [weak self] text in
                 self?.SignInEmail = text.text ?? ""
@@ -169,16 +171,15 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.textFieldOlt.text = SignInpassword
             }
             else  {
-                cell.textFieldOlt.placeholder = AppString.Placeholder.password
+                cell.textFieldOlt.placeholder = "************"
             }
-            //                cell.textFieldOlt.text = ""
-            cell.titleLblOlt.text = AppString.Title.password
+            cell.titleLblOlt.text = "Password"
             cell.eyeBtnOlt.isHidden = false
             cell.textFieldOlt.isSecureTextEntry = true
             if self.rememberMeSwitch ?? false{
                 cell.textFieldOlt.text = self.SignInpassword
             }else{
-                cell.textFieldOlt.placeholder = AppString.Placeholder.password
+                cell.textFieldOlt.placeholder = "************"
             }
             cell.didTapForgotPassClosure = { [weak self] sender in
                 guard let self = self else { return }
@@ -190,6 +191,7 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         case .rememberMe:
             let cell = signTblView.dequeueCell(with: RemberMeCell.self)
+            cell.forgotPaswordOlt.text = "Forgot Password"
             // QA-FIX (MC task cmolwmp0i00f64315lqq37lv3): always reflect the
             // current rememberMe state on the cell (default ON for first launch).
             cell.isRemembered = self.rememberMeSwitch ?? true
@@ -204,8 +206,9 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             
         case .SignInBtn:
             let cell = signTblView.dequeueCell(with: SubmitCell.self)
-            cell.contentOuterViewoLt.backgroundColor = .white
-            cell.submitBtnOlt.setupButton(title: AppString.BtnTitle.signIn)
+            cell.contentOuterViewoLt.backgroundColor = .ultraLightGray
+            cell.submitBtnOlt.setupButton(title: "Login", backgroundColor: .primary)
+            cell.submitBtnOlt.makeCornerRounded(ofSize: 26)
             cell.didTapSum = { [weak self] sender in
                 guard let self = self else { return }
                 self.submit()
@@ -238,7 +241,7 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             }
             switch rowType {
             case .banner:
-                return Const.Height.banner
+                return 240
             case .rememberMe:
                 return Const.Height.rememberMe
             case .emailField:
@@ -248,7 +251,7 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             case .SignInBtn:
                 return Const.Height.submitBtn
             case .createAccTemOfService:
-                return Const.Height.signUpNow
+                return 128
             }
         }
     }
