@@ -368,14 +368,33 @@ extension HomeViewController: UICollectionViewDelegate,
         switch rowType {
         case .category:
             let cell = collectionView.dequeueCell(ofType: CategoryCollectionCell.self, for: indexPath)
-            // Feed real category names into the existing xib-based rail.
-            // Keep "For You" as the first chip (selectedIndex == 0).
-            var titles = ["For You"]
-            titles.append(contentsOf: categories.compactMap { $0.name })
-            cell.title = titles
+            // VISUAL PARITY 2026-05-04 (MC cmomx4f1k002c3r1hggx47mks): build
+            // typed tile array mirroring Android's HomeFragment —
+            //   [For You, …categories, See All Categories]
+            var tiles: [HomeCategoryTile] = [
+                HomeCategoryTile(type: .forYou, title: "For You", imageURL: nil)
+            ]
+            tiles.append(contentsOf: categories.map { cat in
+                HomeCategoryTile(
+                    type: .category,
+                    title: cat.name ?? "",
+                    imageURL: cat.image
+                )
+            })
+            tiles.append(
+                HomeCategoryTile(type: .seeAll, title: "See All\nCategories", imageURL: nil)
+            )
+            cell.tiles = tiles
             cell.selectedIndex = self.currentCategoryIndex
             cell.didTapBtn = { [weak self, weak cell] tappedIndex in
                 guard let self = self, let cell = cell else { return }
+                guard tappedIndex < tiles.count else { return }
+                let tappedTile = tiles[tappedIndex]
+                if tappedTile.type == .seeAll {
+                    // Mirror Android's `findNavController().navigate(R.id.goToExploreFragment)`.
+                    self.tabBarController?.selectedIndex = 1
+                    return
+                }
                 cell.selectedIndex = tappedIndex
                 cell.collectionViewOlt.reloadData()
                 if tappedIndex == 0 {
@@ -455,7 +474,9 @@ extension HomeViewController: UICollectionViewDelegate,
         }
         switch rowType {
         case .category:
-            return CGSize(width: self.collectionViewOlt.frame.width - 10, height: 90)
+            // Cell hosts the horizontal rail; height = tile height + a
+            // little vertical breathing room.
+            return CGSize(width: self.collectionViewOlt.frame.width, height: 100)
         case .label:
             return CGSize(width: self.collectionViewOlt.frame.width - 10, height: 60)
         case .data:
