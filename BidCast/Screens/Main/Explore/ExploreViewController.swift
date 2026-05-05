@@ -264,6 +264,17 @@ final class ExploreViewController: UIViewController {
         present(vc, animated: true)
     }
 
+    /// Home "See All Categories" should always land the user on Explore's
+    /// unfiltered All state, even if the tab was previously left on
+    /// Recommended/Popular or a drilled-in category.
+    func showAllCategoriesFromHome() {
+        searchBar.text = ""
+        exploreTypeControl.selectedSegmentIndex = 0
+        viewModel.resetFilter()
+        categoryCollectionView.reloadData()
+        productsCollectionView.setContentOffset(.zero, animated: false)
+    }
+
     // MARK: - Helpers
 
     private func updateResultsLabel() {
