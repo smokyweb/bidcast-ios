@@ -383,11 +383,20 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                         // tap was a no-op. Same TipsViewController routing as
                         // Affiliate Program until a dedicated tutorials flow ships.
                         self.pushVC(with: TipsViewController.self, storyboardName: .account)
+                    case 9:
+                        // 2026-05-05 (MC cmossz7o700irf3hge7fzidk9): Premier Shop
+                        // tile. Mirrors Android `case 9 -> PremierShopFragment`.
+                        // PremierShopViewController is purely programmatic
+                        // (no storyboard scene), so push it directly the
+                        // same way the Sell tab does at
+                        // P3SellHomeViewController.swift via `p3Push`.
+                        self.navigationController?.pushViewController(
+                            PremierShopViewController(), animated: true)
                     case 10:
                         self.pushVC(with: SellerStatusViewController.self, storyboardName: .account)
                     default:
-                        // Indices 9 (Premier Shop) and 11 (Seller Analytics)
-                        // remain unwired — track separately.
+                        // Index 11 (Seller Analytics) remains unwired —
+                        // track separately.
                         break
                     }
                 }
