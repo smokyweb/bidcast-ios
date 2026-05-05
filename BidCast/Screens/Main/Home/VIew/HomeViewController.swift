@@ -55,9 +55,18 @@ class HomeViewController: UIViewController {
     // host so storyboard constraints stay valid.
     private let homeSearchField = UISearchTextField()
     private let homeBellButton = UIButton(type: .system)
-    /// Selected filter tab index (0=Live Now, 1=Popular, 2=Coming Soon). Cosmetic
-    /// only for now; actual filtering wiring is out of this visual port's scope.
+    /// Selected filter tab index (0=Live Now, 1=Popular, 2=Coming Soon).
+    /// Android wires these to real feed types (`live`, `popular`, `upcoming`),
+    /// so keep the visual state and the API request in sync.
     private var selectedFilterTabIndex: Int = 0
+
+    private var selectedFeedType: String {
+        switch selectedFilterTabIndex {
+        case 1: return "popular"
+        case 2: return "upcoming"
+        default: return "live"
+        }
+    }
 
     // MARK: View Life Cycle
     override func viewDidLoad() {
@@ -197,7 +206,7 @@ class HomeViewController: UIViewController {
         }
 
         var fields: [String: String] = [
-            "type": "all",
+            "type": selectedFeedType,
             "page": "\(page)",
             "search": ""
         ]
@@ -391,7 +400,13 @@ extension HomeViewController: UICollectionViewDelegate,
                 guard tappedIndex < tiles.count else { return }
                 let tappedTile = tiles[tappedIndex]
                 if tappedTile.type == .seeAll {
-                    // Mirror Android's `findNavController().navigate(R.id.goToExploreFragment)`.
+                    // Reset Explore back to its unfiltered "All Categories"
+                    // state before switching tabs so this action does not
+                    // preserve a stale Recommended/Popular selection.
+                    if let exploreVC = self.tabBarController?.viewControllers?[1] as? ExploreViewController {
+                        exploreVC.loadViewIfNeeded()
+                        exploreVC.showAllCategoriesFromHome()
+                    }
                     self.tabBarController?.selectedIndex = 1
                     return
                 }
@@ -413,14 +428,15 @@ extension HomeViewController: UICollectionViewDelegate,
 
         case .label:
             let cell = collectionView.dequeueCell(ofType: LabelCollectionCell.self, for: indexPath)
-            // VISUAL PARITY 2026-05-01 (MC cmomwykts00233r1hcw317di3): cell now
-            // renders 3 discrete filter tabs. Persist selection visually so
-            // taps stick across reloads.
+            // Android home tabs are not cosmetic — they switch the feed between
+            // live / popular / upcoming. Mirror that here.
             cell.selectedIndex = self.selectedFilterTabIndex
             cell.didTapTab = { [weak self, weak cell] tabIdx in
                 guard let self = self, let cell = cell else { return }
+                guard self.selectedFilterTabIndex != tabIdx else { return }
                 self.selectedFilterTabIndex = tabIdx
                 cell.selectedIndex = tabIdx
+                Task { await self.fetchShows(page: 1, reset: true) }
             }
             return cell
 
