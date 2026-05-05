@@ -46,12 +46,19 @@ class HeaderWithAppName: UIView {
         midLbl.lineBreakMode = .byWordWrapping
         midLbl.numberOfLines = 0
         midLbl.font = OutFitFont.defaultBold(size: 18.0).value
-        
+
+        // 2026-05-05 (MC cmot1w4t8016hf3hgvd3i6f9m): Trey wants the red
+        // 'BidCast' wordmark removed from the left navigation slot on every
+        // screen. The XIB still ships an `appButton` with the AppName image
+        // (legacy callers expected it visible), so hide the button + collapse
+        // its width here so the slot doesn't reserve space.
+        appButton.isHidden = true
+        widthConstraint.constant = 0
     }
     
     //MARK: - Setup header view
     func headerViewSetup(
-        appButtonHidden : Bool = false,
+        appButtonHidden : Bool = true,
         rightButtonHidden: Bool = true,
         leftButtonHidden: Bool = false,
         headerName: String,
@@ -62,6 +69,10 @@ class HeaderWithAppName: UIView {
         rightButtonAction: (() -> Void)? = nil,
         leftButtonAction: (() -> Void)? = nil
     ) {
+        // 2026-05-05 (MC cmot1w4t8016hf3hgvd3i6f9m): default `appButtonHidden`
+        // flipped from false -> true so the BidCast wordmark stays hidden
+        // unless a caller opts in. commonInit() also hides it; this keeps
+        // legacy callers passing explicit values working.
         // Hide or show buttons
         appButton.isHidden = appButtonHidden
         rightButton.isHidden = rightButtonHidden
