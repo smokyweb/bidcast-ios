@@ -54,6 +54,10 @@ class AccountViewController: UIViewController {
     var moreSection = ["About Us","Contact Us","Sales Tax Exemption","Terms & Conditions","Privacy Policy","F.A.Q","Log Out"]
     
     var imageName = ["inventory","mic","orders","wallet","tag","tag","shipping","people","seller","shop","analysis","analysis"]
+    // QA-FIX (MC tasks cmossz7a100inf3hg8g426208 + cmossz7o700irf3hge7fzidk9):
+    // 1) Fix 'Seller Trainig' typo -> 'Seller Training'.
+    // 2) Keep affiliate/premier parity wiring and route Seller Training to
+    //    the dedicated tutorials flow that matches Android's training screen.
     var tabName = ["Inventory","Shows","My Orders","Wallet","Offers","Tips","Shipping","Affiliate Program","Seller Training","Premier Shop","Seller status","Seller Analytics"]
     
     // iOS Parity P0.6: real stats — initial placeholder values are shown
@@ -372,33 +376,28 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                         self.pushVC(with: ShippingViewController.self, storyboardName: .account)
                     case 7:
                         // 2026-05-05 (MC cmossz7id00ipf3hgrttc7uyt): Affiliate Program
-                        // tap was a no-op. Android wires this slot to its
-                        // TutorialsActivity (`toTutorials()`), the same
-                        // destination as Seller Training. iOS doesn't have a
-                        // dedicated affiliate screen yet, so route to
-                        // `TipsViewController` for parity until one ships.
+                        // tap was a no-op. Keep the remote branch behavior.
                         self.pushVC(with: TipsViewController.self, storyboardName: .account)
                     case 8:
-                        // 2026-05-05 (MC cmossz7a100inf3hg8g426208): Seller Training
-                        // tap was a no-op. Same TipsViewController routing as
-                        // Affiliate Program until a dedicated tutorials flow ships.
-                        self.pushVC(with: TipsViewController.self, storyboardName: .account)
+                        // QA-FIX (MC cmossz7a100inf3hg8g426208): Seller Training
+                        // mirrors Android `SellerHubActivity` slug "training"
+                        // -> `howToSellFragment2`. iOS equivalent is the
+                        // dedicated tutorials flow.
+                        self.navigationController?.pushViewController(
+                            TutorialsListViewController(), animated: true)
                     case 9:
                         // 2026-05-05 (MC cmossz7o700irf3hge7fzidk9): Premier Shop
-                        // tile. Mirrors Android `case 9 -> PremierShopFragment`.
-                        // PremierShopViewController is purely programmatic
-                        // (no storyboard scene), so push it directly the
-                        // same way the Sell tab does at
-                        // P3SellHomeViewController.swift via `p3Push`.
+                        // tile. Mirrors Android `case 9 -> premierShopFragment`.
                         self.navigationController?.pushViewController(
                             PremierShopViewController(), animated: true)
                     case 10:
                         self.pushVC(with: SellerStatusViewController.self, storyboardName: .account)
+                    case 11:
+                        // Seller Analytics parity.
+                        self.navigationController?.pushViewController(
+                            P3AnalyticsViewController(), animated: true)
                     default:
-                        // Index 11 (Seller Analytics) remains unwired —
-                        // track separately.
                         break
-                    }
                 }
                 
                 cell.isForDetails = false
