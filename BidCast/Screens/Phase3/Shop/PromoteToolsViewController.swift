@@ -23,6 +23,7 @@ final class PromoteToolsViewController: UIViewController {
         return s
     }()
     private var tools: PromoteToolsData?
+    private var rawToolsPayload: [String: Any]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,10 +52,20 @@ final class PromoteToolsViewController: UIViewController {
         Task { @MainActor in
             defer { SVProgressHUD.dismiss() }
             do {
+                if let resp: APIResponse<AnyCodable> = try? await APIManager.shared.request(
+                    type: .getPromoteTools, header: true
+                ) {
+                    self.rawToolsPayload = resp.data?.value as? [String: Any]
+                    self.tools = Self.parsePromoteTools(from: self.rawToolsPayload)
+                    self.render()
+                    return
+                }
+
                 let resp: GetPromoteToolsResponse = try await APIManager.shared.request(
                     type: .getPromoteTools, header: true
                 )
                 self.tools = resp.data
+                self.rawToolsPayload = nil
                 self.render()
             } catch {
                 self.p3Alert(message: (error as? DataError)?.getErrorMessage() ?? error.localizedDescription)
@@ -66,21 +77,22 @@ final class PromoteToolsViewController: UIViewController {
         stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         guard let d = tools else { return }
 
-        if let t = d.promoteTitle { stack.addArrangedSubview(headline(t)) }
-        if let p = d.promoteDetails { stack.addArrangedSubview(para(p)) }
+        if let t = displayPromoteTitle(from: d) { stack.addArrangedSubview(headline(t)) }
+        if let p = displayPromoteDetails(from: d) { stack.addArrangedSubview(para(p)) }
 
-        if let features = d.features?.compactMap({ $0 }), !features.isEmpty {
+        if let features = displayFeatures(from: d), !features.isEmpty {
             stack.addArrangedSubview(sectionLabel("Features"))
             for f in features {
                 stack.addArrangedSubview(featureCard(title: f.title ?? "",
                                                      description: f.description ?? ""))
             }
         }
-        stack.addArrangedSubview(sectionLabel("Promote a show"))
-        if let opts = d.showOptions {
-            stack.addArrangedSubview(para(
-                "Reach: \(opts.followers ?? 0) followers · \(opts.shows ?? 0) shows · \(opts.views ?? 0) views"
-            ))
+        stack.addArrangedSubview(sectionLabel(displayShowTitle(from: d) ?? "Promote a show"))
+        if let reach = displayReachSummary(from: d) {
+            stack.addArrangedSubview(para(reach))
+        }
+        if let details = displayShowDetails(from: d) {
+            stack.addArrangedSubview(para(details))
         }
 
         // iOS parity phase 4h (2026-04-22): real Buy flow.
@@ -99,6 +111,111 @@ final class PromoteToolsViewController: UIViewController {
 
         stack.addArrangedSubview(para(
             "Your default saved card is charged when the promotion is applied to a scheduled show."))
+    }
+
+
+    private func displayPromoteTitle(from data: PromoteToolsData) -> String? {
+        data.promoteTitle ?? stringValue(rawToolsPayload?["promote_title"]) ?? stringValue(rawToolsPayload?["promoteTitle"])
+    }
+
+    private func displayPromoteDetails(from data: PromoteToolsData) -> String? {
+        data.promoteDetails ?? stringValue(rawToolsPayload?["promote_details"]) ?? stringValue(rawToolsPayload?["promoteDetails"])
+    }
+
+    private func displayShowTitle(from data: PromoteToolsData) -> String? {
+        data.showTitle ?? stringValue(rawToolsPayload?["show_title"]) ?? stringValue(rawToolsPayload?["showTitle"])
+    }
+
+    private func displayShowDetails(from data: PromoteToolsData) -> String? {
+        data.showDetails ?? stringValue(rawToolsPayload?["show_details"]) ?? stringValue(rawToolsPayload?["showDetails"])
+    }
+
+    private func displayFeatures(from data: PromoteToolsData) -> [PremierShopFeature]? {
+        if let features = data.features?.compactMap({ $0 }), !features.isEmpty {
+            return features
+        }
+        guard let raw = rawToolsPayload?["features"] as? [Any] else { return nil }
+        return raw.compactMap { item in
+            guard let dict = item as? [String: Any] else { return nil }
+            return PremierShopFeature(
+                title: stringValue(dict["title"]),
+                description: stringValue(dict["description"]),
+                icon: stringValue(dict["icon"])
+            )
+        }
+    }
+
+    private func displayReachSummary(from data: PromoteToolsData) -> String? {
+        let followers = data.showOptions?.followers ?? nestedInt(rawToolsPayload, key: "show_options", nestedKeys: ["Followers", "followers"])
+        let shows = data.showOptions?.shows ?? nestedInt(rawToolsPayload, key: "show_options", nestedKeys: ["Shows", "shows"])
+        let views = data.showOptions?.views ?? nestedInt(rawToolsPayload, key: "show_options", nestedKeys: ["Views", "views"])
+        guard followers != nil || shows != nil || views != nil else { return nil }
+        return "Reach: \(followers ?? 0) followers · \(shows ?? 0) shows · \(views ?? 0) views"
+    }
+
+    private func stringValue(_ any: Any?) -> String? {
+        if let s = any as? String, !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return s }
+        if let n = any as? NSNumber { return n.stringValue }
+        return nil
+    }
+
+    private func nestedInt(_ dict: [String: Any]?, key: String, nestedKeys: [String]) -> Int? {
+        guard let raw = dict?[key] as? [String: Any] else { return nil }
+        for nestedKey in nestedKeys {
+            if let v = intValue(raw[nestedKey]) { return v }
+        }
+        return nil
+    }
+
+    private func intValue(_ any: Any?) -> Int? {
+        if let i = any as? Int { return i }
+        if let s = any as? String { return Int(s) }
+        if let n = any as? NSNumber { return n.intValue }
+        return nil
+    }
+
+    private static func parsePromoteTools(from raw: [String: Any]?) -> PromoteToolsData? {
+        guard let raw else { return nil }
+
+        let features: [PremierShopFeature?]? = (raw["features"] as? [Any])?.map { item in
+            guard let dict = item as? [String: Any] else { return nil }
+            return PremierShopFeature(
+                title: stringValueStatic(dict["title"]),
+                description: stringValueStatic(dict["description"]),
+                icon: stringValueStatic(dict["icon"])
+            )
+        }
+
+        let showOptionsDict = raw["show_options"] as? [String: Any]
+        let showOptions = PromoteShowOptions(
+            followers: intValueStatic(showOptionsDict?["Followers"] ?? showOptionsDict?["followers"]),
+            shows: intValueStatic(showOptionsDict?["Shows"] ?? showOptionsDict?["shows"]),
+            views: intValueStatic(showOptionsDict?["Views"] ?? showOptionsDict?["views"])
+        )
+
+        return PromoteToolsData(
+            id: intValueStatic(raw["id"]),
+            promoteTitle: stringValueStatic(raw["promote_title"] ?? raw["promoteTitle"]),
+            promoteDetails: stringValueStatic(raw["promote_details"] ?? raw["promoteDetails"]),
+            showTitle: stringValueStatic(raw["show_title"] ?? raw["showTitle"]),
+            showIcon: stringValueStatic(raw["show_icon"] ?? raw["showIcon"]),
+            showDetails: stringValueStatic(raw["show_details"] ?? raw["showDetails"]),
+            features: features,
+            showOptions: showOptions
+        )
+    }
+
+    private static func stringValueStatic(_ any: Any?) -> String? {
+        if let s = any as? String, !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return s }
+        if let n = any as? NSNumber { return n.stringValue }
+        return nil
+    }
+
+    private static func intValueStatic(_ any: Any?) -> Int? {
+        if let i = any as? Int { return i }
+        if let s = any as? String { return Int(s) }
+        if let n = any as? NSNumber { return n.intValue }
+        return nil
     }
 
     // MARK: - Apply flow (phase 4h)
