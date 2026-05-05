@@ -370,20 +370,24 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                         self.pushVC(with: TipsViewController.self, storyboardName: .account)
                     case 6:
                         self.pushVC(with: ShippingViewController.self, storyboardName: .account)
+                    case 7:
+                        // 2026-05-05 (MC cmossz7id00ipf3hgrttc7uyt): Affiliate Program
+                        // tap was a no-op. Android wires this slot to its
+                        // TutorialsActivity (`toTutorials()`), the same
+                        // destination as Seller Training. iOS doesn't have a
+                        // dedicated affiliate screen yet, so route to
+                        // `TipsViewController` for parity until one ships.
+                        self.pushVC(with: TipsViewController.self, storyboardName: .account)
                     case 8:
                         // 2026-05-05 (MC cmossz7a100inf3hg8g426208): Seller Training
-                        // tap was a no-op. Android opens its multi-page
-                        // TutorialsActivity here; iOS doesn't have an exact
-                        // counterpart yet, but `TipsViewController` is the
-                        // existing training-content screen so route to it
-                        // until a dedicated tutorials flow ships.
+                        // tap was a no-op. Same TipsViewController routing as
+                        // Affiliate Program until a dedicated tutorials flow ships.
                         self.pushVC(with: TipsViewController.self, storyboardName: .account)
                     case 10:
                         self.pushVC(with: SellerStatusViewController.self, storyboardName: .account)
                     default:
-                        // Indices 7 (Affiliate Program), 9 (Premier Shop), and
-                        // 11 (Seller Analytics) are also unwired today. They're
-                        // out of scope for this task; track separately.
+                        // Indices 9 (Premier Shop) and 11 (Seller Analytics)
+                        // remain unwired — track separately.
                         break
                     }
                 }
