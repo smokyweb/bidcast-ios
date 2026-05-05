@@ -398,6 +398,7 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                             P3AnalyticsViewController(), animated: true)
                     default:
                         break
+                    }
                 }
                 
                 cell.isForDetails = false
