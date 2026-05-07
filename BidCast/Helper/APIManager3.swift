@@ -33,17 +33,29 @@ extension DataError {
                     return "Invalid Response"
                 }
             }
+            return "Invalid Response"
         case .invalidCode(let message):
             return message ?? ""
         case .invalidURL:
             return "Not a Valid URL"
         case .invalidData:
             return "Response Data is not valid"
-        default:
-            return "Unknown Error"
+        case .network(let underlying):
+            return underlying?.localizedDescription ?? "Network Error"
+        case .networkError:
+            return "Network Error"
+        case .failedToDecode:
+            return "Failed to Decode Response"
         }
-        return "Error found"
     }
+}
+
+// Conform to LocalizedError so that `error.localizedDescription` (used widely in
+// ViewModels, e.g. `self.errorMessage = error.localizedDescription`) returns the
+// real message we packed into the case rather than Swift's generic
+// "The operation couldn't be completed. (BidCast.DataError error N.)" fallback.
+extension DataError: LocalizedError {
+    var errorDescription: String? { getErrorMessage() }
 }
 
 // MARK: - Protocol
@@ -89,7 +101,54 @@ private lazy var optimizedSession: URLSession = {
         encoder.dateEncodingStrategy = .iso8601
         return encoder
     }()
-    
+
+    // MARK: - Response Envelope (for fallback decoding when typed decode fails)
+    /// Mirrors the common server envelope (`status`, `message`, `error_type`) so we can
+    /// recover a useful error message even when the inner `data` payload doesn't match
+    /// the Swift model expected by the caller.
+    private struct ResponseEnvelope: Decodable {
+        var status: String?
+        var message: String?
+        var error_type: String?
+    }
+
+    /// Centralized decoder used by every request function.
+    /// On success, returns the typed `T`.
+    /// On failure, logs the full JSON + DecodingError, falls back to decoding the response
+    /// envelope so the thrown `DataError.invalidCode` message is something humans can act on
+    /// (server's own message, or a precise "Decoding mismatch at <path>: expected X, found Y"
+    /// when the server returned `success` but the local model is out of date).
+    private func decodeResponse<T: Decodable>(_ data: Data, as type: T.Type) throws -> T {
+        do {
+            return try jsonDecoder.decode(type, from: data)
+        } catch let decodingError as DecodingError {
+            // Always print so the dev can see the broken field even outside #if DEBUG.
+            print("👉 Decoding failed for \(T.self):\n\(decodingError)")
+            print("👉 Raw JSON was:\n\(data.prettyPrintedJSONString ?? "<non-JSON or empty>")")
+
+            let decodingMessage = handleDecodingError(decodingError)
+
+            // Try to recover the server's envelope so we can surface the *real* status/message
+            // instead of a confusing "Decoding Error" string.
+            if let envelope = try? jsonDecoder.decode(ResponseEnvelope.self, from: data) {
+                if envelope.status?.lowercased() == "success" {
+                    // Server said the call succeeded; the local model is out of sync with the API.
+                    let msg = "Model out of sync with server. \(decodingMessage)"
+                    print("👉 \(msg)")
+                    throw DataError.invalidCode(msg)
+                } else if let serverMessage = envelope.message, !serverMessage.isEmpty {
+                    print("👉 Server reported error: \(serverMessage)")
+                    throw DataError.invalidCode(serverMessage)
+                }
+            }
+
+            throw DataError.invalidCode(decodingMessage)
+        } catch {
+            print("👉 Non-decoding error during response parse: \(error.localizedDescription)")
+            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
+        }
+    }
+
     // MARK: - Main Request Function
     func request<T: Decodable>(type: EndPointType, header: Bool) async throws -> T {
         
@@ -157,17 +216,7 @@ private lazy var optimizedSession: URLSession = {
             }
         }
         
-        do {
-            return try jsonDecoder.decode(T.self, from: data)
-        } catch let error as DecodingError {
-#if DEBUG
-print("👉 Error >>> \n\(error)")
-#endif
-            let errorMessage = handleDecodingError(error)
-            throw DataError.invalidCode(errorMessage)
-        } catch {
-            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
-        }
+        return try decodeResponse(data, as: T.self)
     }
     
     // MARK: - Request with JSON Body
@@ -239,14 +288,7 @@ print("👉 Error >>> \n\(error)")
             }
         }
         
-        do {
-            return try jsonDecoder.decode(T.self, from: data)
-        } catch let error as DecodingError {
-            let errorMessage = handleDecodingError(error)
-            throw DataError.invalidCode(errorMessage)
-        } catch {
-            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
-        }
+        return try decodeResponse(data, as: T.self)
     }
     
     // MARK: - Upload Image
@@ -310,14 +352,7 @@ print("👉 Error >>> \n\(error)")
             throw DataError.invalidCode(dataObj.message ?? "Upload failed")
         }
         
-        do {
-            return try jsonDecoder.decode(modalType, from: data)
-        } catch let error as DecodingError {
-            let errorMessage = handleDecodingError(error)
-            throw DataError.invalidCode(errorMessage)
-        } catch {
-            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
-        }
+        return try decodeResponse(data, as: modalType)
     }
     
     // MARK: - Upload Image 1
@@ -377,14 +412,7 @@ print("👉 Error >>> \n\(error)")
             }
         }
         
-        do {
-            return try jsonDecoder.decode(T.self, from: data)
-        } catch let error as DecodingError {
-            let errorMessage = handleDecodingError(error)
-            throw DataError.invalidCode(errorMessage)
-        } catch {
-            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
-        }
+        return try decodeResponse(data, as: T.self)
     }
     
     // MARK: - Upload Image with Multiple Keys
@@ -462,14 +490,7 @@ print("👉 Error >>> \n\(error)")
             }
         }
         
-        do {
-            return try jsonDecoder.decode(T.self, from: data)
-        } catch let error as DecodingError {
-            let errorMessage = handleDecodingError(error)
-            throw DataError.invalidCode(errorMessage)
-        } catch {
-            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
-        }
+        return try decodeResponse(data, as: T.self)
     }
     
     // MARK: - Upload Image with Multiple Keys 1
@@ -538,14 +559,7 @@ print("👉 Error >>> \n\(error)")
             }
         }
         
-        do {
-            return try jsonDecoder.decode(T.self, from: data)
-        } catch let error as DecodingError {
-            let errorMessage = handleDecodingError(error)
-            throw DataError.invalidCode(errorMessage)
-        } catch {
-            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
-        }
+        return try decodeResponse(data, as: T.self)
     }
     
     // MARK: - Helper: Handle Unauthorized
@@ -596,16 +610,36 @@ print("👉 Error >>> \n\(error)")
     
     // MARK: - Helper: Handle Decoding Error
     private func handleDecodingError(_ error: DecodingError) -> String {
+        let kind: String
+        let expected: String
+        let context: DecodingError.Context
+
         switch error {
-        case .typeMismatch(_, let context),
-             .valueNotFound(_, let context),
-             .keyNotFound(_, let context),
-             .dataCorrupted(let context):
-            let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
-            return "Decoding Error: \(context.debugDescription), Path: \(codingKeys)"
+        case .typeMismatch(let type, let ctx):
+            kind = "typeMismatch"
+            expected = "\(type)"
+            context = ctx
+        case .valueNotFound(let type, let ctx):
+            kind = "valueNotFound"
+            expected = "\(type)"
+            context = ctx
+        case .keyNotFound(let key, let ctx):
+            kind = "keyNotFound"
+            expected = "key `\(key.stringValue)`"
+            context = ctx
+        case .dataCorrupted(let ctx):
+            kind = "dataCorrupted"
+            expected = "valid JSON"
+            context = ctx
         @unknown default:
             return "Unknown Decoding Error: \(error)"
         }
+
+        let path = context.codingPath
+            .map { $0.intValue.map { "[\($0)]" } ?? $0.stringValue }
+            .joined(separator: " -> ")
+        let pathOut = path.isEmpty ? "<root>" : path
+        return "Decoding \(kind) at \(pathOut) (expected \(expected)): \(context.debugDescription)"
     }
     
     // MARK: - Helper: Create Data Body

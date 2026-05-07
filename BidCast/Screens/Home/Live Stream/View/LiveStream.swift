@@ -538,17 +538,17 @@ struct LiveStream: View {
     //MARK: Profile section
     @ViewBuilder
     private var profileSection: some View {
-        if let sellerInfo = viewModel.sellerInfo.data {
+        if self.sellerInfo != nil {
             HStack(spacing: 12) {
                 CustomProfileImage(
-                    url: sellerInfo.seller_details?.profile_image ?? "",
+                    url: sellerInfo?.seller_details?.profile_image ?? "",
                     isCircular: true,
                     size: 40
                 ) {
                     showSellerProfileSheet = true
                 }
                 
-                sellerInfoColumn(sellerInfo: sellerInfo)
+                sellerInfoColumn(sellerInfo: sellerInfo ?? SellerInfoResponse())
             }
         } else {
             shimmerProfileSection
@@ -1433,7 +1433,10 @@ struct LiveStream: View {
                 height: screenHeight / 2.8,
                 topBarCornerRadius: 25,
                 showTopIndicator: false,
-                onDismiss: { showError = true }
+                onDismiss: {
+                    print("Erorrrrrr3")
+                    showError = true
+                }
             ) {
                 errorSheetContent
             }
@@ -1968,7 +1971,8 @@ struct LiveStream: View {
             paymentMethods: [
                 PaymentMethod(creditCard: CreditCard(
                     cardNumber: data?.default_card?.card_id,
-                    expirationDate: data?.default_card?.exp_date,
+                    exp_year: data?.default_card?.exp_year,
+                    exp_month: data?.default_card?.exp_month,
                     cardType: data?.default_card?.cardType
                 ))
             ],
@@ -2018,11 +2022,13 @@ extension LiveStream {
             
             do {
                 await homeViewModel.getProfile()
-                
                 await SVProgressHUD.dismiss()
+                if homeViewModel.errorMessage == "" || homeViewModel.errorMessage == nil {
+                    getProfileSuccess()
+                }
                 
-                 getProfileSuccess()
                 joinChatRoom(roomId: currentRoomID)
+                
                 self.getPromoteShows()
             } catch {
                 await SVProgressHUD.dismiss()
@@ -2035,6 +2041,7 @@ extension LiveStream {
                     primaryBtnText: "",
                     secondaryBtnText: AppString.ok.localized
                 )
+                print("Erorrrrrr5")
                 showError = true
             }
         }
@@ -2106,6 +2113,7 @@ extension LiveStream {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            print("Erorrrrrr6")
             showError = true
         }
     }
@@ -2159,12 +2167,14 @@ extension LiveStream {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            print("Erorrrrrr7")
             showError = true
         }
     }
 
     private func presentError(title: String, message: String) {
         showError = true
+        print("Erorrrrrr8")
         alertType = .sheetType(
             icon: .alert,
             title: title,
@@ -2626,13 +2636,27 @@ extension LiveStream {
         Task { @MainActor in
             do {
                 async let sellerTask: Void = fetchSellerIfAvailable()
-                async let profileTask: Void = getProfileData()
-                
-                _ = await (sellerTask, profileTask)
-                
+//                async let profileTask: Void = getProfileData()
+
+                do {
+                    try await sellerTask
+                    print("✅ Seller fetched")
+                } catch {
+                    print("❌ Seller error:", error.localizedDescription)
+                    throw error
+                }
+
+//                do {
+//                    try await profileTask
+//                    print("✅ Profile fetched")
+//                } catch {
+//                    print("❌ Profile error:", error.localizedDescription)
+//                    throw error
+//                }
+
             } catch {
                 print("❌ loadInitialData Error:", error.localizedDescription)
-                
+
                 alertType = .sheetType(
                     icon: .alert,
                     title: "Error",
@@ -2640,6 +2664,7 @@ extension LiveStream {
                     primaryBtnText: "",
                     secondaryBtnText: AppString.ok.localized
                 )
+                print("Erorrrrrr9")
                 showError = true
             }
         }
@@ -2890,7 +2915,7 @@ extension LiveStream {
                 primaryBtnText: "",
                 secondaryBtnText: "OK"
             )
-            
+            print("Erorrrrrr1")
             showError = true
         }
     }
@@ -3018,6 +3043,7 @@ extension LiveStream {
                 }
             }
         } else {
+            print("Erorrrrrr2")
             showError = true
             alertType = .sheetType(
                 icon: .alert,
@@ -3039,6 +3065,7 @@ extension LiveStream {
             isFollowing = true
 //            socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId: sellerId, showId: showId)
         } else {
+            print("Erorrrrrr3")
             showError = true
             alertType = .sheetType(
                 icon: .alert,

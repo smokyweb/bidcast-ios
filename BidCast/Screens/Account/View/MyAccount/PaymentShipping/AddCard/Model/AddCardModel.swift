@@ -40,6 +40,8 @@ struct PaymentMethod: Codable {
 
 struct CreditCard: Codable {
     var cardNumber: String?
-    var expirationDate: String?
+//    var expirationDate: String?
+    var exp_year : Int?
+    var exp_month : Int?
     var cardType: String?
 }

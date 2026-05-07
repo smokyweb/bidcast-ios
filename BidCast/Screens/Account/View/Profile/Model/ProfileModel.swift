@@ -33,9 +33,11 @@ struct ProfileModel : Codable{
 }
 
 struct DefaultCardModel : Codable {
-    var card_id ,exp_date: String?
+    var card_id : String?
     var last4 : String?
     var cardType : String?
+    var exp_year : Int?
+    var exp_month : Int?
 }
 
 struct RoleModel : Codable {

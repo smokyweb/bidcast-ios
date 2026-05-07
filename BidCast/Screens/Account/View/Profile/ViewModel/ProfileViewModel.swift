@@ -56,11 +56,12 @@ final class ProfileViewModel: ObservableObject {
         errorMessage?.removeAll()
         do {
             self.requestType = "get"
-            let response: ResponseModel<ProfileModel> = try await APIManager.shared.request(
+           if  let response: ResponseModel<ProfileModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getProfileById(param: param),
                 header: true
-            )
-            self.getProfileDict = response
+           ){
+               self.getProfileDict = response
+           }
         } catch {
             handle(error: error)
         }

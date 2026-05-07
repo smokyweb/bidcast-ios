@@ -72,7 +72,7 @@ struct HighestBid: Codable {
     var product_id: String?
     var placed_at: String?
     
-    var product_set_id: Int?
+    var product_set_id: String?
         var product_set_item_id: Int?
         var product_set_item_unit_id: Int?
 }

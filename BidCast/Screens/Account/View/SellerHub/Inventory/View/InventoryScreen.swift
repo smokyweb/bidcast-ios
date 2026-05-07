@@ -399,7 +399,7 @@ struct InventoryScreen: View {
                 ) {
                     clearFilter()
                     request.search = searchText
-                    selectedCategoryId = navigatedFrom == .account ? [] : selectedCategoryId
+                    selectedCategoryId = navigatedFrom == .account ? [] : []
                     async let inventoryTask: () = fetchInventory(for: segment, page: currentPage)
                     // 👇 These run in parallel
                     async let categoryTask: () = categoryViewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
