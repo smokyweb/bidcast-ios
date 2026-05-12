@@ -49,7 +49,7 @@
                     </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="ntq-wr-PjF" secondAttribute="bottom" constant="16" id="bXI-3j-Nxk"/>
+                    <constraint firstAttribute="bottom" secondItem="ntq-wr-PjF" secondAttribute="bottom" constant="40" id="bXI-3j-Nxk"/>
                     <constraint firstItem="ntq-wr-PjF" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="vNG-te-p12"/>
                 </constraints>
             </tableViewCellContentView>

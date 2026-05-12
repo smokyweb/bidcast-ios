@@ -251,7 +251,9 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             case .SignInBtn:
                 return Const.Height.submitBtn
             case .createAccTemOfService:
-                return 128
+                // Keep the bottom CTA comfortably above the iOS home indicator
+                // so "Create Account" isn't fighting the system exit/gesture area.
+                return 152
             }
         }
     }
