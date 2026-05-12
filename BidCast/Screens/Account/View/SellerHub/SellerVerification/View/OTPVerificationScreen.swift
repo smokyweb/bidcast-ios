@@ -141,7 +141,19 @@ struct OTPVerificationScreen: View {
         }
         
         SVProgressHUD.show()
-        let req = StorePhoneNumberRequest(phone_number: phoneNumber)
+        // Normalize to E.164 before sending. Backend SignalWire OTP send and
+        // the Laravel validator (`/^\+?[0-9]{10,15}$/`) both expect the leading
+        // `+`; otherwise the SMS never reaches the device.
+        let digits = phoneNumber.filter(\.isNumber)
+        let normalized: String
+        if phoneNumber.hasPrefix("+") {
+            normalized = "+" + digits
+        } else if digits.hasPrefix("1") && digits.count == 11 {
+            normalized = "+" + digits
+        } else {
+            normalized = "+1" + digits
+        }
+        let req = StorePhoneNumberRequest(phone_number: normalized)
         await viewModel.storePhoneNumber(parameters: req)
         await SVProgressHUD.dismiss()
         sendOTPSuccess()
