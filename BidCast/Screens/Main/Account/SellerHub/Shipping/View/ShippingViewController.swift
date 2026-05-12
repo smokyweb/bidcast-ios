@@ -66,9 +66,19 @@ class ShippingViewController: UIViewController {
     
     //MARK: - configureHeaderView.
     func configureHeaderView(){
-        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: true,headerName: AppString.VCName.shipping,setRightImage: UIImage(named: "ic_back"),leftButtonAction: didTabBack)
+        // Previously: leftButtonHidden: true with the back icon mistakenly placed
+        // on the right button (setRightImage) while leftButtonAction was wired to
+        // the hidden left button — so tapping the visible arrow did nothing.
+        // Fix: show the left button, put ic_back on it, wire leftButtonAction.
+        self.headerView.headerViewSetup(
+            rightButtonHidden: true,
+            leftButtonHidden: false,
+            headerName: AppString.VCName.shipping,
+            setAppBtnImage: UIImage(named: "ic_back"),
+            appButtonAction: didTabBack
+        )
     }
-    
+
     //MARK: didTabBack.
     @objc private func didTabBack(){
         self.goToBack()
