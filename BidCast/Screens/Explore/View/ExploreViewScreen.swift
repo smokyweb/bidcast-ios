@@ -113,26 +113,27 @@ struct ExploreViewScreen: View {
                                     let key = "\(categoryId)"
                                     let categoryName = categoryList[expandedIndex].name ?? ""
                                     if let subCache = subCategoryCache[key], !subCache.isEmpty {
-                                        SubCategoryListView(
-                                            isLoading: loadingSubCategoryId == key,
-                                            subCategories: subCategoryCache[key] ?? [],
-                                            parentCategory: categoryName,
-                                            viewersCount: 0,
-                                            onSubCategoryTap: { subCat in
-//                                                category = categoryName
-//                                                subCategory = subCat.name ?? ""
-//                                                navigateToCategoryDetailScreen = true
-                                                category = categoryName
-
+                                        // FIX cmp424ztk00sm4axyuk9psh8q: wrap subcategory list
+                                        // in a fixed-height ScrollView so it never grows too
+                                        // large and overwhelms the Explore grid.
+                                        ScrollView(showsIndicators: false) {
+                                            SubCategoryListView(
+                                                isLoading: loadingSubCategoryId == key,
+                                                subCategories: subCategoryCache[key] ?? [],
+                                                parentCategory: categoryName,
+                                                viewersCount: 0,
+                                                onSubCategoryTap: { subCat in
+                                                    category = categoryName
                                                     if subCat.id == -1 {
                                                         subCategory = ""   // 🔥 All selected
                                                     } else {
                                                         subCategory = subCat.name ?? ""
                                                     }
-
                                                     navigateToCategoryDetailScreen = true
-                                            }
-                                        )
+                                                }
+                                            )
+                                        }
+                                        .frame(maxHeight: 240)
                                         .transition(.asymmetric(
                                             insertion: .opacity.combined(with: .move(edge: .top)),
                                             removal: .opacity
@@ -395,7 +396,8 @@ struct SubCategoryRow: View {
     private var rowContent: some View {
         HStack(alignment: .top, spacing: 12) {
             // Image
-            CustomProfileImage(url: subCategory.image ?? "",isCircular: false,cornerRadius: 12,size: 50,defaultImage: "photo")
+            // FIX cmp424ztk: reduced thumbnail from 50→36 to keep rows compact
+            CustomProfileImage(url: subCategory.image ?? "",isCircular: false,cornerRadius: 8,size: 36,defaultImage: "photo")
 //            AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
 //                switch phase {
 //                case .empty:
@@ -414,23 +416,20 @@ struct SubCategoryRow: View {
 //            .clipShape(RoundedRectangle(cornerRadius: 12))
 
             // Name
+            // FIX cmp424ztk00sm4axyuk9psh8q: reduced font + height so rows are compact
             Text(subCategory.name ?? "Unknown")
-                .font(.custom(poppinsSemiBold, size: 15))
+                .font(.custom(poppinsSemiBold, size: 13))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.leading)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, minHeight: 40, alignment: .topLeading)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .layoutPriority(1)
 
             Spacer()
-
-            // Viewer Badge
-            viewersBadge
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(minHeight: 74, alignment: .top)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(minHeight: 52, alignment: .center)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.white)

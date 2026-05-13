@@ -133,15 +133,20 @@ struct OTPVerificationScreen: View {
             showhud = true
             return
         }
-        
-        guard !phoneNumber.isEmpty else {
-            hudMsg = "Please Enter Phone Number"
+
+        // FIX cmp41i95100rm4axy5gwqz0jp: strip non-digit characters
+        // (spaces, dashes, parentheses, leading +) so the backend
+        // regex /^[0-9]{10,12}$/ passes validation.
+        let digitsOnly = phoneNumber.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+
+        guard digitsOnly.count >= 10 && digitsOnly.count <= 12 else {
+            hudMsg = "Enter a valid phone number (10–12 digits, no + or spaces)"
             showhud = true
             return
         }
-        
+
         SVProgressHUD.show()
-        let req = StorePhoneNumberRequest(phone_number: phoneNumber)
+        let req = StorePhoneNumberRequest(phone_number: digitsOnly)
         await viewModel.storePhoneNumber(parameters: req)
         await SVProgressHUD.dismiss()
         sendOTPSuccess()
@@ -177,15 +182,18 @@ struct OTPVerificationScreen: View {
     }
     
     private func verifyOTPSuccess() {
-        let response = viewModel.storePhoneNumberDict
+        // FIX cmp41i95100rm4axy5gwqz0jp: was incorrectly reading storePhoneNumberDict
+        // (the send-OTP response) instead of otpVerifyDict (the verify-OTP response),
+        // so success was never detected after entering the correct code.
+        let response = viewModel.otpVerifyDict
         if response.status == "success" {
-            hudMsg = "Verification successfull"
+            hudMsg = "Verification successful"
             showhud = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 onSuccess()
             }
         } else {
-            hudMsg = "Invalid OTP"
+            hudMsg = response.message ?? "Invalid OTP"
             showhud = true
         }
     }
