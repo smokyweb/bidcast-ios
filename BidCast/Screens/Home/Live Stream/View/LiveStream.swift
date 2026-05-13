@@ -1313,13 +1313,25 @@ struct LiveStream: View {
             if isAuctionStartedForCurrentRoom {
                 let currentProducts = auctionedProductData ?? ProductDataModel1()
                 let product = currentProducts
-                if product != nil{
-                 
-                    if let img = product.images?.first {
-                        StackedImageView(imageURL: img, totalCount: productCount) {
-                            print("productStackTapped")
-                            navigateToProductList = true
+                if product != nil {
+                    // FIX cmp41hieh00rj4axy15wpcmqz: resolve product image URL.
+                    // Android sends images[] as relative paths (e.g.
+                    // "uploads/products/img.jpg"). iOS sends full URLs in
+                    // thumbnail[]. Check both and prepend the backend base
+                    // URL for relative paths so AsyncImage can load them.
+                    let rawImg = product.images?.first(where: { !$0.isEmpty })
+                        ?? product.thumbnail?.first(where: { !$0.isEmpty })
+                        ?? ""
+                    let resolvedImg: String = {
+                        guard !rawImg.isEmpty else { return "" }
+                        if rawImg.hasPrefix("http://") || rawImg.hasPrefix("https://") {
+                            return rawImg
                         }
+                        return "https://backend.bidcast.betaplanets.com/" + rawImg
+                    }()
+                    StackedImageView(imageURL: resolvedImg, totalCount: productCount) {
+                        print("productStackTapped")
+                        navigateToProductList = true
                     }
                 }
             }else{

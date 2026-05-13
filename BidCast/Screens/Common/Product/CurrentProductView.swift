@@ -74,8 +74,18 @@ struct CurrentProductView: View {
                 }
             }
                 HStack(spacing: 8) {
+                    // FIX cmp41hieh00rj4axy15wpcmqz: resolve relative image paths
+                    // Android sends images[] as relative paths; prepend base URL.
+                    let rawProductImg = product.images?.first(where: { !$0.isEmpty })
+                        ?? product.thumbnail?.first(where: { !$0.isEmpty })
+                        ?? ""
+                    let resolvedProductImg: String = {
+                        guard !rawProductImg.isEmpty else { return "" }
+                        if rawProductImg.hasPrefix("http") { return rawProductImg }
+                        return "https://backend.bidcast.betaplanets.com/" + rawProductImg
+                    }()
                     CustomProfileImage(
-                        url: product.images?.first,
+                        url: resolvedProductImg.isEmpty ? nil : resolvedProductImg,
                         isCircular: false,
                         cornerRadius: 8.0,
                         size: 80.0
