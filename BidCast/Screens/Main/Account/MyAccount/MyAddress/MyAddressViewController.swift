@@ -235,6 +235,10 @@ extension MyAddressViewController: UITableViewDelegate, UITableViewDataSource {
     /// Hydrate the existing `AddressCell` xib with real data.
     private func configureAddressCell(_ cell: AddressCell, with addr: ShippingAddress) {
         let line1 = addr.streetAddress ?? ""
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: append optional 2nd line
+        // onto the visible street row when present.
+        let line2 = addr.addressLine2?.trimmingCharacters(in: .whitespaces) ?? ""
+        let streetDisplay = line2.isEmpty ? line1 : "\(line1), \(line2)"
         let city = [addr.city, addr.state]
             .compactMap { $0 }.joined(separator: ", ")
         let zip = addr.pincode ?? ""
@@ -242,12 +246,12 @@ extension MyAddressViewController: UITableViewDelegate, UITableViewDataSource {
 
         cell.nameLblOlt?.text = addr.name ?? ""
         cell.addressTypeOlt?.text = addr.type ?? ""
-        cell.streetOlt?.text = line1
+        cell.streetOlt?.text = streetDisplay
         cell.stateOlt?.text = [city, zip].filter { !$0.isEmpty }.joined(separator: " ")
         cell.countryOlt?.text = city.isEmpty ? (addr.pincode ?? "") : city
         cell.phoneOlt?.text = phone
         cell.defaiultOlt?.isHidden = (addr.isDefault != true)
-        cell.accessibilityLabel = [addr.name, line1, city, zip, phone]
+        cell.accessibilityLabel = [addr.name, streetDisplay, city, zip, phone]
             .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", ")
         cell.accessibilityHint = (addr.isDefault == true) ? "Default address" : nil
     }

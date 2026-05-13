@@ -53,6 +53,10 @@ final class AddShippingAddressViewController: UIViewController {
         return tf
     }()
     private let streetField = AddShippingAddressViewController.makeField(placeholder: "Street address")
+    // MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd address line
+    // (apartment / unit / suite). The backend accepts it as nullable; an
+    // empty string is treated as NULL server-side.
+    private let addressLine2Field = AddShippingAddressViewController.makeField(placeholder: "e.g. Apt 4B")
     private let cityField = AddShippingAddressViewController.makeField(placeholder: "City")
     private let stateField = AddShippingAddressViewController.makeField(placeholder: "State")
     private let pincodeField: UITextField = {
@@ -107,6 +111,7 @@ final class AddShippingAddressViewController: UIViewController {
         stack.addArrangedSubview(labelled("Name", field: nameField))
         stack.addArrangedSubview(labelled("Phone", field: phoneField))
         stack.addArrangedSubview(labelled("Street address", field: streetField))
+        stack.addArrangedSubview(labelled("Apt / Suite / Unit (optional)", field: addressLine2Field))
         stack.addArrangedSubview(labelled("City", field: cityField))
         stack.addArrangedSubview(labelled("State", field: stateField))
         stack.addArrangedSubview(labelled("ZIP", field: pincodeField))
@@ -150,6 +155,7 @@ final class AddShippingAddressViewController: UIViewController {
         nameField.text = a.name
         phoneField.text = a.phoneNumber
         streetField.text = a.streetAddress
+        addressLine2Field.text = a.addressLine2
         cityField.text = a.city
         stateField.text = a.state
         pincodeField.text = a.pincode
@@ -178,6 +184,10 @@ final class AddShippingAddressViewController: UIViewController {
             }
         }()
 
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: include optional address_line_2.
+        // Trim and only send if non-empty; backend treats absent/empty as NULL.
+        let line2 = (addressLine2Field.text ?? "").trimmingCharacters(in: .whitespaces)
+
         var fields: [String: String] = [
             "type": typeValue,
             "name": name,
@@ -187,6 +197,7 @@ final class AddShippingAddressViewController: UIViewController {
             "city": city,
             "state": stateName
         ]
+        if !line2.isEmpty { fields["address_line_2"] = line2 }
         if let id = mode.addressId {
             // The backend upserts when address_id is present.
             fields["address_id"] = "\(id)"

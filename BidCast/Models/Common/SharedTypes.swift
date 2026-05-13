@@ -179,6 +179,10 @@ struct ShippingAddress: Codable, Identifiable, Hashable {
     let name: String?
     let phoneNumber: String?
     let streetAddress: String?
+    // MC sub-task cmp4932vk00l13mx1du6mmebo (Trey 2026-05-13): optional
+    // second street-address line (apartment / unit / suite). Backing
+    // column shipping_addresses.address_line_2 added the same session.
+    let addressLine2: String?
     let pincode: String?
     let city: String?
     let state: String?
@@ -190,6 +194,7 @@ struct ShippingAddress: Codable, Identifiable, Hashable {
         case id, name, pincode, city, state, type
         case phoneNumber = "phone_number"
         case streetAddress = "street_address"
+        case addressLine2 = "address_line_2"
         case userId = "user_id"
         case isDefault = "is_default"
     }

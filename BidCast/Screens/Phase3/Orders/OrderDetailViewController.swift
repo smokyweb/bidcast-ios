@@ -199,6 +199,10 @@ final class OrderDetailViewController: UIViewController {
         var lines: [String] = []
         if let name = addr.name { lines.append(name) }
         if let street = addr.streetAddress { lines.append(street) }
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: render optional line 2.
+        if let line2 = addr.addressLine2?.trimmingCharacters(in: .whitespaces), !line2.isEmpty {
+            lines.append(line2)
+        }
         let cityLine = [addr.city, addr.state, addr.pincode].compactMap { $0 }.joined(separator: ", ")
         if !cityLine.isEmpty { lines.append(cityLine) }
         s.addArrangedSubview(label(lines.joined(separator: "\n")))
