@@ -134,6 +134,17 @@ struct UserPublic: Codable, Identifiable, Hashable {
         case isFollowed = "is_followed"
     }
 
+}
+
+// BUILD FIX 2026-05-13 (parent MC cmp495j7i00md3mx1pjv9qjq1): the Codable
+// init(from:) below used to live inside the struct body, which suppressed
+// Swift's auto-synthesised memberwise initialiser. Multiple call sites
+// (ConversationListViewController.conversationUser(from:),
+// DeepLinkRouter.buildViewController chat case) construct `UserPublic(id:
+// ..., bio: nil, ...)` directly and started failing under Xcode 26.4 with
+// `'nil' requires a contextual type`. Moving the Codable init to an
+// extension preserves the auto-synthesised memberwise init.
+extension UserPublic {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decodeIfPresent(Int.self, forKey: .id)

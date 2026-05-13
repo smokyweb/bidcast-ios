@@ -122,13 +122,16 @@ struct Show: Codable, Identifiable, Hashable {
         case subCategory = "sub_category"
     }
 
-    // BUGFIX 2026-05-13 (MC cmp49331h00l33mx1cc9a8vqf): the auto-synthesised
-    // Codable decoder rejected Android-written `is_live: 0` (because the
-    // model declared it `Bool?` and Swift Codable refuses to coerce Int to
-    // Bool). Use a hand-rolled init(from:) that accepts both shapes via
-    // decodeBoolFlexible. Every other field uses decodeIfPresent so missing
-    // fields are simply left nil — same semantics as the auto-synthesised
-    // decoder, just without the strict Bool requirement.
+}
+
+// BUGFIX 2026-05-13 (MC cmp49331h00l33mx1cc9a8vqf + build-fix on parent
+// cmp495j7i00md3mx1pjv9qjq1): Swift will only synthesise the memberwise
+// init for a struct when no explicit init(_:) is declared INSIDE the struct
+// body. Putting our Codable init here in an extension preserves the
+// auto-synthesised memberwise initialiser used by call sites like
+// PromotedShowsViewController.watchableShow(from:), while still overriding
+// Decodable so Android-shape int/bool flags decode correctly.
+extension Show {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try c.decodeIfPresent(Int.self, forKey: .id)
