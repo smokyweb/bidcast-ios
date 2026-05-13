@@ -17,6 +17,29 @@
 
 import Foundation
 
+// MARK: - Bool-or-Int decoding helper
+//
+// BUGFIX 2026-05-13 (MC cmp49331h00l33mx1cc9a8vqf): Android-created scheduled
+// shows weren't appearing in the iOS "Coming Soon" feed because Android
+// writes the `is_live` / `is_explicit` / `is_repeat` flags as JSON integers
+// (0/1) while the iOS Codable decoder demanded Bool. When the response
+// included even one Android-written row, the array decode threw and the
+// whole page of shows was dropped (or, with our newer error surface, the
+// page rendered short — the Android rows missing). `decodeBoolFlexible`
+// accepts Bool, Int, or string forms and normalises to Swift Bool.
+private func decodeBoolFlexible<K: CodingKey>(_ container: KeyedDecodingContainer<K>, forKey key: K) throws -> Bool? {
+    if let b = try? container.decodeIfPresent(Bool.self, forKey: key) { return b }
+    if let i = try? container.decodeIfPresent(Int.self, forKey: key) { return i != 0 }
+    if let s = try? container.decodeIfPresent(String.self, forKey: key) {
+        switch s.lowercased() {
+        case "true", "1", "yes": return true
+        case "false", "0", "no", "": return false
+        default: return nil
+        }
+    }
+    return nil
+}
+
 // MARK: - Show (reused across MyShow / ShowDetails / Overview)
 
 struct Show: Codable, Identifiable, Hashable {
@@ -97,6 +120,52 @@ struct Show: Codable, Identifiable, Hashable {
         case productIds = "product_ids"
         case imgThumbnail = "img_thumbnail"
         case subCategory = "sub_category"
+    }
+
+    // BUGFIX 2026-05-13 (MC cmp49331h00l33mx1cc9a8vqf): the auto-synthesised
+    // Codable decoder rejected Android-written `is_live: 0` (because the
+    // model declared it `Bool?` and Swift Codable refuses to coerce Int to
+    // Bool). Use a hand-rolled init(from:) that accepts both shapes via
+    // decodeBoolFlexible. Every other field uses decodeIfPresent so missing
+    // fields are simply left nil — same semantics as the auto-synthesised
+    // decoder, just without the strict Bool requirement.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try c.decodeIfPresent(Int.self, forKey: .id)
+        self.userId = try c.decodeIfPresent(Int.self, forKey: .userId)
+        self.title = try c.decodeIfPresent(String.self, forKey: .title)
+        self.date = try c.decodeIfPresent(String.self, forKey: .date)
+        self.time = try c.decodeIfPresent(String.self, forKey: .time)
+        self.categoryId = try c.decodeIfPresent(Int.self, forKey: .categoryId)
+        self.subCategoryId = try c.decodeIfPresent(Int.self, forKey: .subCategoryId)
+        self.auctionTypeId = try c.decodeIfPresent(Int.self, forKey: .auctionTypeId)
+        self.isLive = try decodeBoolFlexible(c, forKey: .isLive)
+        self.isExplicit = try decodeBoolFlexible(c, forKey: .isExplicit)
+        self.isRepeat = try decodeBoolFlexible(c, forKey: .isRepeat)
+        self.isPromote = try c.decodeIfPresent(String.self, forKey: .isPromote)
+        self.language = try c.decodeIfPresent(String.self, forKey: .language)
+        self.repeatValue = try c.decodeIfPresent(String.self, forKey: .repeatValue)
+        self.rtcToken = try c.decodeIfPresent(String.self, forKey: .rtcToken)
+        self.roomId = try c.decodeIfPresent(String.self, forKey: .roomId)
+        self.showDiscoverability = try c.decodeIfPresent(String.self, forKey: .showDiscoverability)
+        self.startedAt = try c.decodeIfPresent(AnyCodable.self, forKey: .startedAt)
+        self.promoteShowId = try c.decodeIfPresent(AnyCodable.self, forKey: .promoteShowId)
+        self.promotedAt = try c.decodeIfPresent(AnyCodable.self, forKey: .promotedAt)
+        self.recordingResourceId = try c.decodeIfPresent(AnyCodable.self, forKey: .recordingResourceId)
+        self.recordingSid = try c.decodeIfPresent(AnyCodable.self, forKey: .recordingSid)
+        self.shareCount = try c.decodeIfPresent(Int.self, forKey: .shareCount)
+        self.viewerCount = try c.decodeIfPresent(Int.self, forKey: .viewerCount)
+        self.latestViewerCount = try c.decodeIfPresent(Int.self, forKey: .latestViewerCount)
+        self.totalOrders = try c.decodeIfPresent(Int.self, forKey: .totalOrders)
+        self.totalSalesAmount = try c.decodeIfPresent(Double.self, forKey: .totalSalesAmount)
+        self.productIds = try c.decodeIfPresent([String?].self, forKey: .productIds)
+        self.products = try c.decodeIfPresent([WireProduct?].self, forKey: .products)
+        self.thumbnail = try c.decodeIfPresent([String?].self, forKey: .thumbnail)
+        self.imgThumbnail = try c.decodeIfPresent([String?].self, forKey: .imgThumbnail)
+        self.category = try c.decodeIfPresent(Category.self, forKey: .category)
+        self.subCategory = try c.decodeIfPresent(SubCategory.self, forKey: .subCategory)
+        self.user = try c.decodeIfPresent(UserPublic.self, forKey: .user)
+        self.auction = try c.decodeIfPresent(ShowAuction.self, forKey: .auction)
     }
 }
 
