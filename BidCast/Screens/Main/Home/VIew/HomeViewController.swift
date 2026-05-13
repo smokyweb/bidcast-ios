@@ -129,6 +129,14 @@ class HomeViewController: UIViewController {
         )
         homeBellButton.tintColor = .black
 
+        // BUGFIX (MC cmp3q3ilb00814axyrxdg91de): wire the search field so
+        // tapping the Search key on the keyboard navigates to the Explore
+        // tab with the query pre-populated. Without this, pressing Return on
+        // the home search field had no effect (no delegate was connected),
+        // and on some iOS builds where IQKeyboardManager intercepts the
+        // Return key the combination caused a layout/section-index crash.
+        homeSearchField.delegate = self
+
         host.addSubview(homeSearchField)
         host.addSubview(homeBellButton)
 
@@ -371,8 +379,14 @@ extension HomeViewController: UICollectionViewDelegate,
 
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // BUGFIX (MC cmp3q3ilb00814axyrxdg91de): replaced fatalError with a
+        // safe fallback so an out-of-range section during a reload/search
+        // never crashes the app. UICollectionView can request a cell for an
+        // index that was valid when it started layout but stale by the time
+        // the delegate fires — crashing here is never correct.
         guard let rowType = HomeSection.allCases[safe: indexPath.section] else {
-            fatalError("Invalid index for HomeSection")
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionCardCell.identifier, for: indexPath)
+            return cell
         }
         switch rowType {
         case .category:
@@ -485,8 +499,10 @@ extension HomeViewController: UICollectionViewDelegate,
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
+        // BUGFIX (MC cmp3q3ilb00814axyrxdg91de): replaced fatalError with
+        // .zero so an out-of-range section during layout never crashes.
         guard let rowType = HomeSection.allCases[safe: indexPath.section] else {
-            fatalError("Invalid index for HomeSection")
+            return .zero
         }
         switch rowType {
         case .category:
@@ -528,5 +544,28 @@ extension HomeViewController: UICollectionViewDelegate,
             return idx + 1
         }
         return 0
+    }
+}
+
+// MARK: - UITextFieldDelegate (home search field)
+// BUGFIX (MC cmp3q3ilb00814axyrxdg91de): When the user presses Search on the
+// home screen keyboard, navigate to the Explore tab and pre-populate the
+// search query so they see matching results. Without this delegate the
+// Return key silently did nothing and left IQKeyboardManager in an
+// unpredictable state that could trigger the section-index out-of-bounds
+// crash in the collection-view layout delegates above.
+extension HomeViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        let query = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
+        guard !query.isEmpty else { return true }
+        // Switch to the Explore tab (index 1) and forward the search term.
+        guard let tabVC = tabBarController else { return true }
+        tabVC.selectedIndex = 1
+        if let exploreVC = tabVC.viewControllers?[1] as? ExploreViewController {
+            exploreVC.loadViewIfNeeded()
+            exploreVC.setSearchQuery(query)
+        }
+        return true
     }
 }

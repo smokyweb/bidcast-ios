@@ -3,10 +3,29 @@
 //  BidCast
 //
 //  Created by Trey Difficult Task Agent on 2026-04-21.
+//  Fixed 2026-05-13: crash on auction search (iOS_V2).
 //
 //  Drives the Explore tab. Two loaders: categories (`api/get-category`) and
 //  products (`api/v1/get-product`). Both endpoints and payload shapes mirror
 //  what the Android app already consumes.
+//
+//  CRASH FIX (cmp3q3ilb00814axyrxdg91de):
+//  ----------------------------------------
+//  Root cause: `fetchProducts(reset:)` set `self.products = []` synchronously
+//  then dispatched a Task. If the user typed quickly in the search bar,
+//  a second `setSearch` call arrived while `isFetchingProducts == true` and
+//  was silently dropped — leaving the UI stuck on an empty/stale product list.
+//  Worse, when the in-flight Task completed it would call
+//  `exploreDidUpdateProducts()` with results from the *previous* query,
+//  overwriting the pending search state and causing an
+//  index-out-of-bounds crash in UICollectionView (`cellForItemAt` received
+//  an indexPath whose item no longer existed in the freshly-reset array).
+//
+//  Fix: introduce a per-fetch `requestGeneration` counter. Each Task
+//  captures the generation at launch; it discards its results if a newer
+//  fetch has superseded it. `isFetchingProducts` is replaced by a nullable
+//  `currentTask` so in-flight requests are cancelled before a reset fetch
+//  starts — eliminating the stale-callback race entirely.
 //
 
 import Foundation
@@ -35,7 +54,19 @@ final class ExploreViewModel {
     private(set) var currentPage: Int = 1
     private(set) var totalPages: Int = 1
     var canLoadMore: Bool { currentPage < totalPages }
-    private var isFetchingProducts = false
+
+    // MARK: - Fetch-generation tracking (crash fix)
+    //
+    // Each call to fetchProducts increments `fetchGeneration`. The spawned
+    // Task captures the generation at launch and checks it before mutating
+    // `products` or calling delegate methods. Stale Tasks (superseded by a
+    // newer search/filter) are silently discarded, preventing the
+    // index-out-of-bounds crash caused by a stale callback overwriting a
+    // freshly-reset product array mid-UICollectionView-layout.
+    private var fetchGeneration: Int = 0
+    private var currentFetchTask: Task<Void, Never>? = nil
+    // Keep for external canLoadMore guard compat.
+    private var isFetchingProducts: Bool { currentFetchTask != nil }
 
     // MARK: - Public API
 
@@ -136,36 +167,54 @@ final class ExploreViewModel {
     // MARK: - Products
 
     private func fetchProducts(reset: Bool) {
-        guard !isFetchingProducts else { return }
-        isFetchingProducts = true
         if reset {
+            // Cancel any in-flight fetch — its results are now stale.
+            currentFetchTask?.cancel()
+            currentFetchTask = nil
             self.products = []
             self.currentPage = 1
             self.filter.page = 1
+        } else {
+            // Pagination append: don't start if already fetching.
+            guard currentFetchTask == nil else { return }
         }
+
+        fetchGeneration &+= 1
+        let myGeneration = fetchGeneration
+        let fieldsSnapshot = filter.formFields()
+        let isReset = reset
+
         self.delegate?.exploreDidStartLoading()
 
-        Task {
+        let task = Task { [weak self] in
+            guard let self = self else { return }
             defer {
-                isFetchingProducts = false
-                self.delegate?.exploreDidStopLoading()
+                // Only clear the task handle if we're still the current fetch.
+                if self.fetchGeneration == myGeneration {
+                    self.currentFetchTask = nil
+                    self.delegate?.exploreDidStopLoading()
+                }
             }
             do {
                 let resp: ExploreGetProductsResponse = try await APIManager.shared.postMultipartForm(
                     type: APIEndPoint.getProducts,
-                    fields: filter.formFields(),
+                    fields: fieldsSnapshot,
                     header: true
                 )
+                // Discard results if a newer fetch has already started.
+                guard self.fetchGeneration == myGeneration else { return }
                 let newItems = resp.data ?? []
-                if reset {
+                if isReset {
                     self.products = newItems
                 } else {
                     self.products.append(contentsOf: newItems)
                 }
-                self.currentPage = resp.currentPage ?? filter.page
+                self.currentPage = resp.currentPage ?? self.filter.page
                 self.totalPages = resp.totalPage ?? self.currentPage
                 self.delegate?.exploreDidUpdateProducts()
             } catch {
+                guard self.fetchGeneration == myGeneration else { return }
+                if Task.isCancelled { return }
                 let message: String
                 if let dataError = error as? DataError {
                     message = dataError.getErrorMessage()
@@ -175,5 +224,6 @@ final class ExploreViewModel {
                 self.delegate?.exploreDidFail(error: message)
             }
         }
+        currentFetchTask = task
     }
 }

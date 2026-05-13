@@ -28,6 +28,13 @@ final class ExploreViewController: UIViewController {
 
     private let viewModel = ExploreViewModel()
 
+    // MARK: - Search debounce (crash fix)
+    //
+    // Without debouncing, rapid keystrokes fire simultaneous `setSearch` calls
+    // which race against each other in `fetchProducts`. The timer coalesces
+    // input into a single fetch 400 ms after the user stops typing.
+    private var searchDebounceTimer: Timer?
+
     // MARK: - Layout constants
 
     private let searchBarHeight: CGFloat = 44
@@ -178,6 +185,12 @@ final class ExploreViewController: UIViewController {
         viewModel.loadInitial()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        searchDebounceTimer?.invalidate()
+        searchDebounceTimer = nil
+    }
+
     private func configureHeaderView() {
         self.headerViewOlt.headerViewSetup(
             rightButtonHidden: false,
@@ -272,6 +285,16 @@ final class ExploreViewController: UIViewController {
         exploreTypeControl.selectedSegmentIndex = 0
         viewModel.resetFilter()
         categoryCollectionView.reloadData()
+        productsCollectionView.setContentOffset(.zero, animated: false)
+    }
+
+    /// Called by HomeViewController when the user submits a search query from
+    /// the home screen search field. Pre-populates the search bar and fires
+    /// the product fetch so results are visible immediately.
+    func setSearchQuery(_ query: String) {
+        searchBar.text = query
+        exploreTypeControl.selectedSegmentIndex = 0
+        viewModel.setSearch(query)
         productsCollectionView.setContentOffset(.zero, animated: false)
     }
 
@@ -371,8 +394,11 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard collectionView.tag == 200 else { return }
+        let count = viewModel.products.count
         // Infinite scroll: trigger next page when within 4 cells of the end.
-        if indexPath.item >= viewModel.products.count - 4 {
+        // Guard against count < 4 producing a negative threshold (crash fix).
+        guard count > 4 else { return }
+        if indexPath.item >= count - 4 {
             viewModel.loadNextPageIfPossible()
         }
     }
@@ -381,15 +407,40 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
 // MARK: - UISearchBarDelegate
 
 extension ExploreViewController: UISearchBarDelegate {
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
+        // Cancel any pending debounce timer and search immediately.
+        searchDebounceTimer?.invalidate()
+        searchDebounceTimer = nil
         viewModel.setSearch(searchBar.text ?? "")
     }
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // Debounce-lite: if cleared, refetch immediately.
-        if searchText.isEmpty && viewModel.filter.search.isEmpty == false {
-            viewModel.setSearch("")
+        if searchText.isEmpty {
+            // Clear search immediately (no debounce needed for empty).
+            searchDebounceTimer?.invalidate()
+            searchDebounceTimer = nil
+            if viewModel.filter.search.isEmpty == false {
+                viewModel.setSearch("")
+            }
+            return
         }
+        // Debounce live-typing by 400 ms to avoid hammering the API on every
+        // keystroke and to prevent the race that caused the search crash.
+        searchDebounceTimer?.invalidate()
+        let query = searchText
+        searchDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false) { [weak self] _ in
+            self?.viewModel.setSearch(query)
+        }
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        searchDebounceTimer?.invalidate()
+        searchDebounceTimer = nil
+        viewModel.setSearch("")
     }
 }
 
