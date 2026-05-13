@@ -27,6 +27,7 @@ struct TrustedBuyerScreen: View {
     @State var navigateToCreateAddress = false
     @State var imageURL = ""
     @State var SavedImageURL = ""
+    @State private var isSubmitting = false
 
     @State private var isVerified = false
     @State private var showImageSourceActionSheet = false
@@ -193,15 +194,15 @@ struct TrustedBuyerScreen: View {
 
                     // MARK: - Submit Button
                     Button(action: handleSubmit) {
-                        Text("Submit for Review")
+                        Text(isSubmitting ? "Submitting..." : "Submit for Review")
                             .font(.custom(poppinsSemiBold, size: 13))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(isPhotoSelected ? Color.defaultTheme : Color.gray.opacity(0.4))
+                            .background((isPhotoSelected && !isSubmitting) ? Color.defaultTheme : Color.gray.opacity(0.4))
                             .foregroundColor(.white)
                             .cornerRadius(32)
                     }
-                    .disabled(!isPhotoSelected)
+                    .disabled(!isPhotoSelected || isSubmitting)
                     .padding(.horizontal, 12)
                     .padding(.bottom, 32)
                 }
@@ -225,10 +226,16 @@ struct TrustedBuyerScreen: View {
 
         .fullScreenCover(isPresented: $showImagePicker) {
             ImagePicker(sourceType: imagePickerSourceType) { image,url  in
-                if let image = image {
-                    uploadedImage = Image(uiImage: image)
-                    self.imageURL = url ?? ""
-                    isPhotoSelected = true
+                guard let image = image else { return }
+                uploadedImage = Image(uiImage: image)
+
+                let resolvedURL = resolveLocalImagePath(from: image, providedURL: url)
+                self.imageURL = resolvedURL ?? ""
+                isPhotoSelected = !(resolvedURL ?? "").isEmpty
+
+                if !isPhotoSelected {
+                    hudMsg = "We couldn’t prepare that image for upload. Please try again."
+                    showhud = true
                 }
             }
             .ignoresSafeArea()
@@ -288,30 +295,29 @@ struct TrustedBuyerScreen: View {
     // MARK: - Submit Handler
     func handleSubmit() {
 //        guard let selectedPhoto else { return }
-        guard  !imageURL.isEmpty else{
-            hudMsg = "Please select image"
+        guard !imageURL.isEmpty else {
+            hudMsg = "Please reselect your ID image before submitting."
             showhud = true
             return
         }
-        
+
         Task {
-    
-//                let imageData = try await selectedPhoto.loadTransferable(type: Data.self)
-//                guard let data = imageData, !data.isEmpty else { return }
-//
-//                let imageURL = compressAndSaveImage(data: data) ?? saveImageToTemporaryDirectory(data: data)
-//                guard let path = imageURL?.path else { return }
-           guard Reachability.isConnectedToNetwork() else {
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
             }
-                SVProgressHUD.show()
+
+            isSubmitting = true
+            viewModel.errorMessage = nil
+            SVProgressHUD.show()
             await viewModel.addTrustedBuyer(images: [imageURL], key: "image")
-                await SVProgressHUD.dismiss()
-            if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == ""{
+            await SVProgressHUD.dismiss()
+            isSubmitting = false
+
+            if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
                 handleSuccess()
-            }else{
+            } else {
                 alertType = .sheetType(
                     icon: .alert,
                     title: "Error",
@@ -321,9 +327,6 @@ struct TrustedBuyerScreen: View {
                 )
                 showError = true
             }
-//            } catch {
-//                print("❌ Failed to load image:", error)
-//            }
         }
     }
 
@@ -347,7 +350,7 @@ struct TrustedBuyerScreen: View {
             SavedImageURL = response.data?.image ?? ""
             let status = response.data?.status
             isVerified = (status == "pending" || status == "verified")
-        } else {
+        } else if !(response.message?.localizedCaseInsensitiveContains("no 'buyer identity' data found") ?? false) {
             alertType = .sheetType(
                 icon: .alert,
                 title: response.error_type?.capitalized ?? "",
@@ -356,6 +359,32 @@ struct TrustedBuyerScreen: View {
                 secondaryBtnText: AppString.ok.localized
             )
             showError = true
+        }
+    }
+
+    private func resolveLocalImagePath(from image: UIImage, providedURL: String?) -> String? {
+        if let providedURL, !providedURL.isEmpty {
+            let resolvedPath: String
+            if let fileURL = URL(string: providedURL), fileURL.isFileURL {
+                resolvedPath = fileURL.path
+            } else {
+                resolvedPath = providedURL
+            }
+
+            if FileManager.default.fileExists(atPath: resolvedPath) {
+                return resolvedPath
+            }
+        }
+
+        guard let imageData = image.jpegData(compressionQuality: 0.6) else { return nil }
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("trustedBuyer_\(UUID().uuidString).jpg")
+
+        do {
+            try imageData.write(to: tempURL, options: .atomic)
+            return tempURL.path
+        } catch {
+            print("❌ Failed to persist trusted buyer image: \(error.localizedDescription)")
+            return nil
         }
     }
 
