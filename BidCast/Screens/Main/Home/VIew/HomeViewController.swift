@@ -269,9 +269,19 @@ class HomeViewController: UIViewController {
         } catch {
             debugLog("[Home] getLiveShow failed -> \(error.localizedDescription)")
             if reset {
+                // BUGFIX 2026-05-13 (MC cmp4935yr00lz3mx130q4x1ku): when the
+                // home feed fetch fails right after sign-in (transient cell
+                // signal, transient backend hiccup, or stale token), users
+                // were stuck on an OK-only "Couldn't load feed" alert with
+                // no obvious recovery path. Add an explicit "Try Again"
+                // action so they can retry without backing out of the app.
                 let msg = (error as? DataError)?.getErrorMessage() ?? error.localizedDescription
                 let alert = UIAlertController(title: "Couldn't load feed", message: msg, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                alert.addAction(UIAlertAction(title: "Try Again", style: .default) { [weak self] _ in
+                    guard let self = self else { return }
+                    Task { await self.fetchShows(page: 1, reset: true) }
+                })
+                alert.addAction(UIAlertAction(title: "OK", style: .cancel))
                 self.present(alert, animated: true)
             }
         }
