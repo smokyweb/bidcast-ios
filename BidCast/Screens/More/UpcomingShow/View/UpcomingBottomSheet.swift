@@ -13,18 +13,42 @@ struct UpcomingBottomSheet: View {
     var showStartDate: String
     var onDismiss: () -> Void
     
-    // Format time
+    // FIX (cmp40t1q000px4axyerrn1bks): format time robustly — try multiple
+    // input formats the API may return (HH:mm:ss, HH:mm, h:mm a, etc.).
     private var formattedTime: String {
-        let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "HH:mm:ss"
-        
         let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "h:mm a"
-        
-        if let date = inputFormatter.date(from: showStartAt) {
-            return outputFormatter.string(from: date)
+        outputFormatter.locale = Locale(identifier: "en_US_POSIX")
+
+        let inputFormats = ["HH:mm:ss", "HH:mm", "h:mm a", "h:mm:ss a", "H:mm"]
+        for fmt in inputFormats {
+            let inputFormatter = DateFormatter()
+            inputFormatter.dateFormat = fmt
+            inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+            if let date = inputFormatter.date(from: showStartAt.trimmingCharacters(in: .whitespaces)) {
+                return outputFormatter.string(from: date)
+            }
         }
-        return showStartAt
+        return showStartAt.isEmpty ? "--:-- --" : showStartAt
+    }
+
+    // FIX (cmp40t1q000px4axyerrn1bks): format date — API returns yyyy-MM-dd;
+    // display as "MMM d, yyyy" (e.g. "Dec 25, 2025").
+    private var formattedDate: String {
+        let inputFormats = ["yyyy-MM-dd", "MM/dd/yyyy", "dd-MM-yyyy", "MM-dd-yyyy"]
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MMM d, yyyy"
+        outputFormatter.locale = Locale(identifier: "en_US_POSIX")
+
+        for fmt in inputFormats {
+            let inputFormatter = DateFormatter()
+            inputFormatter.dateFormat = fmt
+            inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+            if let date = inputFormatter.date(from: showStartDate.trimmingCharacters(in: .whitespaces)) {
+                return outputFormatter.string(from: date)
+            }
+        }
+        return showStartDate.isEmpty ? "TBD" : showStartDate
     }
     
     var body: some View {
@@ -70,7 +94,7 @@ struct UpcomingBottomSheet: View {
             }
             
             // ---------- MESSAGE ----------
-            Text("Show starts on \(showStartDate) at \(formattedTime)")
+            Text("Show starts on \(formattedDate) at \(formattedTime)")
                 .font(.custom("Poppins-Bold", size: 14))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
