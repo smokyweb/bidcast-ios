@@ -113,27 +113,22 @@ struct ExploreViewScreen: View {
                                     let key = "\(categoryId)"
                                     let categoryName = categoryList[expandedIndex].name ?? ""
                                     if let subCache = subCategoryCache[key], !subCache.isEmpty {
-                                        // FIX cmp424ztk00sm4axyuk9psh8q: wrap subcategory list
-                                        // in a fixed-height ScrollView so it never grows too
-                                        // large and overwhelms the Explore grid.
-                                        ScrollView(showsIndicators: false) {
-                                            SubCategoryListView(
-                                                isLoading: loadingSubCategoryId == key,
-                                                subCategories: subCategoryCache[key] ?? [],
-                                                parentCategory: categoryName,
-                                                viewersCount: 0,
-                                                onSubCategoryTap: { subCat in
-                                                    category = categoryName
-                                                    if subCat.id == -1 {
-                                                        subCategory = ""   // 🔥 All selected
-                                                    } else {
-                                                        subCategory = subCat.name ?? ""
-                                                    }
-                                                    navigateToCategoryDetailScreen = true
+                                        // FIX cmp424ztk00sm4axyuk9psh8q: horizontal chip row
+                                        SubCategoryListView(
+                                            isLoading: loadingSubCategoryId == key,
+                                            subCategories: subCategoryCache[key] ?? [],
+                                            parentCategory: categoryName,
+                                            viewersCount: 0,
+                                            onSubCategoryTap: { subCat in
+                                                category = categoryName
+                                                if subCat.id == -1 {
+                                                    subCategory = ""   // 🔥 All selected
+                                                } else {
+                                                    subCategory = subCat.name ?? ""
                                                 }
-                                            )
-                                        }
-                                        .frame(maxHeight: 280)
+                                                navigateToCategoryDetailScreen = true
+                                            }
+                                        )
                                         .transition(.asymmetric(
                                             insertion: .opacity.combined(with: .move(edge: .top)),
                                             removal: .opacity
@@ -325,43 +320,37 @@ struct ExploreViewScreen: View {
 }
 
 // MARK: - SubCategory List View
+// FIX cmp424ztk00sm4axyuk9psh8q: horizontal scrolling chip row.
+// PM wants subcategories displayed as a single horizontal row of
+// chips that scroll left-to-right — not a vertical list.
 struct SubCategoryListView: View {
     let isLoading: Bool
     let subCategories: [SelectedSubCategoryDataModel]
     let parentCategory: String
-    let viewersCount : Int
+    let viewersCount: Int
     let onSubCategoryTap: ((SelectedSubCategoryDataModel) -> Void)?
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            if isLoading {
-                loadingView
-            } else if !subCategories.isEmpty {
-                subCategoryList
 
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                if isLoading {
+                    ForEach(0..<4) { _ in
+                        SubCategoryShimmerRow()
+                    }
+                } else {
+                    ForEach(subCategories, id: \.id) { subCategory in
+                        SubCategoryRow(
+                            viewersCount: viewersCount,
+                            subCategory: subCategory,
+                            onSubCategoryTap: {
+                                onSubCategoryTap?(subCategory)
+                            }
+                        )
+                    }
+                }
             }
-        }
-        .padding(.vertical, 8)
-    }
-    
-    // MARK: - Loading View
-    private var loadingView: some View {
-        VStack(spacing: 8) {
-            ForEach(0..<2) { _ in
-                SubCategoryShimmerRow()
-            }
-        }
-    }
-    
-    // MARK: - SubCategory List
-    private var subCategoryList: some View {
-        VStack(spacing: 8) {
-            ForEach(subCategories, id: \.id) { subCategory in
-                SubCategoryRow(viewersCount: viewersCount, subCategory: subCategory, onSubCategoryTap: {
-                    print("SubCategory clicked")
-                    onSubCategoryTap?(subCategory)
-                })
-            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
         }
     }
 }
@@ -390,38 +379,36 @@ struct SubCategoryRow: View {
         )
     }
 
-    // FIX cmp424ztk00sm4axyuk9psh8q: horizontal row — image on left,
-    // name centered (vertically + horizontally) on right.
-    // Font 15, multiline, as per PM feedback.
+    // FIX cmp424ztk00sm4axyuk9psh8q: compact chip for horizontal scroll row.
+    // Image on top, name centered below — fixed 90pt wide chip.
     private var rowContent: some View {
-        HStack(alignment: .center, spacing: 12) {
-            // Thumbnail — fixed 50×50
+        VStack(spacing: 6) {
             CustomProfileImage(
                 url: subCategory.image ?? "",
                 isCircular: false,
-                cornerRadius: 10,
-                size: 50,
+                cornerRadius: 8,
+                size: 56,
                 defaultImage: "photo"
             )
-            .frame(width: 50, height: 50)
+            .frame(width: 56, height: 56)
 
-            // Name — centered in remaining space, multiline, size 15
             Text(subCategory.name ?? "Unknown")
-                .font(.custom(poppinsSemiBold, size: 15))
+                .font(.custom(poppinsSemiBold, size: 12))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
-                .lineLimit(3)
-                .frame(maxWidth: .infinity, alignment: .center)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(width: 80)
         }
-        .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .frame(minHeight: 70)
+        .padding(.horizontal, 5)
+        .frame(width: 90)
         .background(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray.opacity(0.15), lineWidth: 1)
         )
     }
@@ -455,20 +442,20 @@ struct SubCategoryRow: View {
 // MARK: - SubCategory Shimmer Row
 struct SubCategoryShimmerRow: View {
     var body: some View {
-        // Shimmer matches horizontal row layout
-        HStack(spacing: 12) {
+        // Shimmer chip — matches horizontal chip layout
+        VStack(spacing: 6) {
             ShimmerView()
-                .frame(width: 50, height: 50)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .frame(width: 56, height: 56)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
             ShimmerView()
-                .frame(maxWidth: .infinity, height: 18)
+                .frame(width: 60, height: 14)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         }
-        .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .frame(minHeight: 70)
+        .padding(.horizontal, 5)
+        .frame(width: 90)
         .background(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white)
         )
     }
