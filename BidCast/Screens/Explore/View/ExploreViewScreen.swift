@@ -157,10 +157,19 @@ struct ExploreViewScreen: View {
             .background(.backGround)
             
             // Navigation Links
+            //
+            // MC sub-task cmp49377u00mb3mx117bl0r4x (Trey 2026-05-13):
+            // when the user drilled into an Explore category, SwiftUI's
+            // default push behaviour was hiding the bottom tab bar because
+            // the destination didn't explicitly opt-in to keep the tab bar
+            // visible. .toolbar(.visible, for: .tabBar) on the destination
+            // restores the tab bar during category drill-in without
+            // affecting other CusNavLink sites elsewhere in the app.
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen,
                        destination: HomeViewScreen(showCategory: $category,
                                                    showSubCategory: $subCategory,
-                                                   comeFromExploreScreen: $navigateToCategoryDetailScreen))
+                                                   comeFromExploreScreen: $navigateToCategoryDetailScreen)
+                        .toolbar(.visible, for: .tabBar))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         .background(.backGround)
