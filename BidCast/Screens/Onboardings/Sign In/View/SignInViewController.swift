@@ -251,7 +251,12 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             case .SignInBtn:
                 return Const.Height.submitBtn
             case .createAccTemOfService:
-                return 128
+                // UX FIX 2026-05-13 (MC cmp4934g400lj3mx1tidbedt1): bumped from 128 -> 168
+                // to make room for the increased bottom inset on the "Create Account" stack
+                // (SignUpTodayCell.xib), keeping the Privacy/Terms top row in place while
+                // moving the Create Account button higher in the viewport so it clears the
+                // bottom safe area / home indicator.
+                return 168
             }
         }
     }

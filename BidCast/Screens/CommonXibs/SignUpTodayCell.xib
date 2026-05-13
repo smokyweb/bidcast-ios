@@ -49,7 +49,8 @@
                     </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="ntq-wr-PjF" secondAttribute="bottom" constant="16" id="bXI-3j-Nxk"/>
+                    <!-- UX FIX 2026-05-13 (MC cmp4934g400lj3mx1tidbedt1): bumped from 16 -> 56 so the "New User? Create Account" stack clears the bottom safe area / home indicator. Previously the Create Account button sat too close to the nav-bar / exit-button area and was hard to tap accurately. -->
+                    <constraint firstAttribute="bottom" secondItem="ntq-wr-PjF" secondAttribute="bottom" constant="56" id="bXI-3j-Nxk"/>
                     <constraint firstItem="ntq-wr-PjF" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="vNG-te-p12"/>
                 </constraints>
             </tableViewCellContentView>

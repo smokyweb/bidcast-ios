@@ -24,7 +24,8 @@
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="82r-yD-RDD" secondAttribute="bottom" id="Lhs-zf-0Og"/>
+                            <!-- UX FIX 2026-05-13 (MC cmp4934g400lj3mx1tidbedt1): pin signTblView bottom to safe-area bottom (was view bottom) so the "Create Account" CTA row clears the home indicator / system gesture area. -->
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="82r-yD-RDD" secondAttribute="bottom" id="Lhs-zf-0Og"/>
                             <constraint firstItem="82r-yD-RDD" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" constant="-80" id="MG5-Ve-pq4"/>
                             <constraint firstItem="82r-yD-RDD" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="V3R-Ew-NcF"/>
                             <constraint firstItem="82r-yD-RDD" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="tKv-GM-INs"/>
