@@ -53,7 +53,15 @@ final class ConversationListViewController: P3ListViewController {
 
     private func openConversation(withUserId otherId: Int, otherUser: UserPublic?) {
         let mine = UserDefaults.loggedInUserId
-        let convId = [mine, otherId].sorted().map(String.init).joined(separator: "_")
+        // BUG FIX 2026-05-13 (MC cmp49e0vx00nk3mx1tb6rc6wl): Android writes
+        // chats at Firebase path `chats/<max>_chats_<min>` (see
+        // ChatActivity.kt:246 and SearchUsers.kt:181). The previous iOS shape
+        // `<lo>_<hi>` (no "chats" infix) was a different Firebase path, so
+        // messages the seller (Android) wrote never showed up for the buyer
+        // (iOS) and vice versa.
+        let hi = max(mine, otherId)
+        let lo = min(mine, otherId)
+        let convId = "\(hi)_chats_\(lo)"
         let conv = Conversation(id: convId,
                                 participants: [mine, otherId],
                                 lastMessage: nil, lastMessageAt: nil,
@@ -97,13 +105,29 @@ final class ConversationListViewController: P3ListViewController {
 extension UserDefaults {
     /// Best-effort fetch of the logged-in user id so chat can build a
     /// deterministic conversationId. Android uses the same pattern.
+    ///
+    /// BUG FIX 2026-05-13 (MC cmp49e0vx00nk3mx1tb6rc6wl): the previous
+    /// implementation only checked the `loggedInUserId` key, which is never
+    /// set anywhere in the app — it always returned 0. With senderId=0 the
+    /// chat code wrote messages with `users.senderId == "0"` and used 0 as
+    /// "me" everywhere downstream, so even when the chatKey shape was right
+    /// the messages were attributed to the wrong user. Now we read from the
+    /// canonical keys the rest of the app actually writes to (Sign-In stores
+    /// the id under `"id"` as a String; older code paths use `userId`,
+    /// `user_id`, `userID`, `CURRENT_USER_ID`). Mirrors
+    /// `DeepLinkRouter.currentUserIdString()` for consistency.
     static var loggedInUserId: Int {
-        if let id = UserDefaults.standard.value(forKey: "loggedInUserId") as? Int {
+        if let id = UserDefaults.standard.value(forKey: "loggedInUserId") as? Int, id > 0 {
             return id
         }
-        // Try pulling from the stored profile JSON; fall back to 0 so chat
-        // still renders with a "self" id. Real wiring lands once
-        // EditProfileViewModel stores it.
+        for key in ["id", "userId", "user_id", "userID", "CURRENT_USER_ID"] {
+            if let s = UserDefaults.standard.string(forKey: key),
+               let n = Int(s), n > 0 {
+                return n
+            }
+            let n = UserDefaults.standard.integer(forKey: key)
+            if n > 0 { return n }
+        }
         return 0
     }
 }
