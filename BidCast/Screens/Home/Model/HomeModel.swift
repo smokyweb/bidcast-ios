@@ -64,3 +64,45 @@ struct ClipModel: Codable {
         case showID = "show_id"
     }
 }
+
+extension HomeModel {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        title = try c.decodeIfPresent(String.self, forKey: .title)
+        date = try c.decodeIfPresent(String.self, forKey: .date)
+        time = try c.decodeIfPresent(String.self, forKey: .time)
+        language = try c.decodeIfPresent(String.self, forKey: .language)
+        repeat_value = try c.decodeIfPresent(String.self, forKey: .repeat_value)
+        is_repeat = try decodeBoolFlexible(c, forKey: .is_repeat)
+        is_explicit = try decodeBoolFlexible(c, forKey: .is_explicit)
+        user_id = try c.decodeIfPresent(Int.self, forKey: .user_id)
+        show_discoverability = try c.decodeIfPresent(String.self, forKey: .show_discoverability)
+        category_id = try c.decodeIfPresent(Int.self, forKey: .category_id)
+        product_ids = try c.decodeIfPresent([String].self, forKey: .product_ids)
+        auction_type_id = try c.decodeIfPresent(Int.self, forKey: .auction_type_id)
+        thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
+        products = try c.decodeIfPresent([ProductDataModel1].self, forKey: .products)
+        img_thumbnail = try c.decodeIfPresent([String].self, forKey: .img_thumbnail)
+        is_live = try decodeBoolFlexible(c, forKey: .is_live)
+        viewer_count = try c.decodeIfPresent(Int.self, forKey: .viewer_count)
+        latest_viewer_count = try c.decodeIfPresent(Int.self, forKey: .latest_viewer_count)
+        promoted_at = try c.decodeIfPresent(String.self, forKey: .promoted_at)
+        rtc_token = try c.decodeIfPresent(String.self, forKey: .rtc_token)
+        promote_show_id = try c.decodeIfPresent(Int.self, forKey: .promote_show_id)
+        started_at = try c.decodeIfPresent(String.self, forKey: .started_at)
+        share_count = try c.decodeIfPresent(Int.self, forKey: .share_count)
+        recording_resource_id = try c.decodeIfPresent(String.self, forKey: .recording_resource_id)
+        recording_sid = try c.decodeIfPresent(String.self, forKey: .recording_sid)
+        room_id = try c.decodeIfPresent(String.self, forKey: .room_id)
+        category = try c.decodeIfPresent(Category.self, forKey: .category)
+        user = try c.decodeIfPresent(User.self, forKey: .user)
+        auction = try c.decodeIfPresent(AuctionData.self, forKey: .auction)
+        sub_category_id = try c.decodeIfPresent(Int.self, forKey: .sub_category_id)
+        is_promote = try c.decodeIfPresent(String.self, forKey: .is_promote)
+        is_promoted = try decodeBoolFlexible(c, forKey: .is_promoted)
+        promotion_start_at = try c.decodeIfPresent(String.self, forKey: .promotion_start_at)
+        promotion_end_at = try c.decodeIfPresent(String.self, forKey: .promotion_end_at)
+        sub_category = try c.decodeIfPresent(SubCategoryDataModel.self, forKey: .sub_category)
+    }
+}
