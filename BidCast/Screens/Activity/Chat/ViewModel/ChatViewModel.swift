@@ -38,10 +38,31 @@ class ChatViewModel: ObservableObject {
     var otherUserImage: String
 
     // Clean sorted chat id
+    //
+    // MC sub-task cmp4933fr00l73mx1z1pgess1 / cmp49e0vx00nk3mx1tb6rc6wl /
+    // cmp49e0vu00nj3mx1whp13mja (Trey 2026-05-13): the chat path was being
+    // derived as a sorted pair of user ids. iOS used STRING (lexicographic)
+    // min/max while Android sorts the ids as INTEGERS. For ids of different
+    // digit count (e.g. buyer=45, seller=123) the two orderings diverged:
+    //   Android (integer sort): [45, 123]  -> '123_chats_45'
+    //   iOS    (lex sort):      ['123','45'] (since '1' < '4') -> '45_chats_123'
+    // So each side wrote/read from a different Firebase node and messages
+    // never round-tripped. Sort numerically so both clients agree on the path.
     var sortedChatId: String {
-        let first = min(currentUserId, otherUserId)
-        let second = max(currentUserId, otherUserId)
-        return "\(first)_chats_\(second)"
+        let aId = Int(currentUserId) ?? Int.max
+        let bId = Int(otherUserId) ?? Int.max
+        let lowerStr: String
+        let higherStr: String
+        if aId <= bId {
+            lowerStr = currentUserId
+            higherStr = otherUserId
+        } else {
+            lowerStr = otherUserId
+            higherStr = currentUserId
+        }
+        // Match Android's ChatActivity.kt: "${users[1]}_chats_${users[0]}"
+        // where users is the integer-sorted list, i.e. <higher>_chats_<lower>.
+        return "\(higherStr)_chats_\(lowerStr)"
     }
 
     // FINAL computed chat path
