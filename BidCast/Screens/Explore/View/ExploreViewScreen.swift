@@ -133,7 +133,7 @@ struct ExploreViewScreen: View {
                                                 }
                                             )
                                         }
-                                        .frame(maxHeight: 240)
+                                        .frame(maxHeight: 280)
                                         .transition(.asymmetric(
                                             insertion: .opacity.combined(with: .move(edge: .top)),
                                             removal: .opacity
@@ -354,18 +354,18 @@ struct SubCategoryListView: View {
     }
     
     // MARK: - SubCategory List
+    // FIX cmp424ztk00sm4axyuk9psh8q: use 2-column grid so cards sit side-by-side
     private var subCategoryList: some View {
-        VStack(spacing: 8) {
+        let columns = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
+        return LazyVGrid(columns: columns, spacing: 8) {
             ForEach(subCategories, id: \.id) { subCategory in
-                SubCategoryRow(viewersCount:viewersCount,subCategory: subCategory,onSubCategoryTap: {
-                   print("SubCategory clicked")
+                SubCategoryRow(viewersCount: viewersCount, subCategory: subCategory, onSubCategoryTap: {
+                    print("SubCategory clicked")
                     onSubCategoryTap?(subCategory)
                 })
-                
-                    
             }
         }
-       
+        .padding(.horizontal, 4)
     }
 }
 
@@ -393,49 +393,47 @@ struct SubCategoryRow: View {
         )
     }
 
+    // FIX cmp424ztk00sm4axyuk9psh8q (PM feedback): image card with name
+    // centered over the image, font size 15, multiline supported.
     private var rowContent: some View {
-        HStack(alignment: .top, spacing: 12) {
-            // Image
-            // FIX cmp424ztk: reduced thumbnail from 50→36 to keep rows compact
-            CustomProfileImage(url: subCategory.image ?? "",isCircular: false,cornerRadius: 8,size: 36,defaultImage: "photo")
-//            AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
-//                switch phase {
-//                case .empty:
-//                    ShimmerView()
-//                        .frame(width: 50, height: 50)
-//                case .success(let image):
-//                    image
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fill)
-//                        .frame(width: 50, height: 50)
-//                        .clipped()
-//                default:
-//                    placeholder
-//                }
-//            }
-//            .clipShape(RoundedRectangle(cornerRadius: 12))
+        ZStack(alignment: .bottom) {
+            // Background image fills the card
+            CustomProfileImage(
+                url: subCategory.image ?? "",
+                isCircular: false,
+                cornerRadius: 12,
+                size: 110,
+                defaultImage: "photo"
+            )
+            .frame(maxWidth: .infinity)
+            .frame(height: 110)
+            .clipped()
 
-            // Name
-            // FIX cmp424ztk00sm4axyuk9psh8q: reduced font + height so rows are compact
-            Text(subCategory.name ?? "Unknown")
-                .font(.custom(poppinsSemiBold, size: 13))
-                .foregroundColor(.primary)
-                .multilineTextAlignment(.leading)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .layoutPriority(1)
-
-            Spacer()
+            // Semi-transparent overlay at bottom with centered name
+            VStack {
+                Spacer()
+                Text(subCategory.name ?? "Unknown")
+                    .font(.custom(poppinsSemiBold, size: 15))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 6)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.black.opacity(0.0), Color.black.opacity(0.65)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+            }
+            .frame(maxWidth: .infinity, maxHeight: 110)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .frame(minHeight: 52, alignment: .center)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white)
-        )
+        .frame(height: 110)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray.opacity(0.15), lineWidth: 1)
         )
     }
@@ -469,38 +467,11 @@ struct SubCategoryRow: View {
 // MARK: - SubCategory Shimmer Row
 struct SubCategoryShimmerRow: View {
     var body: some View {
-        HStack(spacing: 12) {
-            // Icon Shimmer
-            
-            ShimmerView()
-                .frame(width: 50, height: 50)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            // Name Shimmer
-            VStack(alignment: .leading, spacing: 4) {
-                ShimmerView()
-                    .frame(width: 120, height: 16)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-            }
-            
-            Spacer()
-            
-            // Badge Shimmer
-            ShimmerView()
-                .frame(width: 80, height: 28)
-                .clipShape(Capsule())
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
-        )
-        .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+        // FIX cmp424ztk: shimmer matches new card-style layout
+        ShimmerView()
+            .frame(maxWidth: .infinity)
+            .frame(height: 110)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
