@@ -164,14 +164,16 @@ private lazy var optimizedSession: URLSession = {
             request.httpBody = try? jsonEncoder.encode(parameters)
         }
         
+        // CRASH FIX (cmp3z7e4400k54axyxucdv6qm): preserve Content-Type when adding
+        // auth headers. The previous code replaced allHTTPHeaderFields entirely,
+        // dropping "Content-Type: application/json" — causing Laravel to ignore
+        // the JSON body (type/page params), returning unfiltered or empty data.
         request.allHTTPHeaderFields = type.headers
         
         if header {
-            request.allHTTPHeaderFields = [
-                "Authorization": "Bearer \(UserDefaults.accessToken)",
-                "timezone": "\(deviceTimeZone)",
-                "time_zone": "\(deviceTimeZone)"
-            ]
+            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            request.setValue(deviceTimeZone, forHTTPHeaderField: "timezone")
+            request.setValue(deviceTimeZone, forHTTPHeaderField: "time_zone")
         }
         
         #if DEBUG

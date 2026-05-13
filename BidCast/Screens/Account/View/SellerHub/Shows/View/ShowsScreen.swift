@@ -58,11 +58,8 @@ struct ShowsScreen: View {
         language: "english"
     )
 
-    // Sample data
-    let shows = [
-        Show(title: "MTG Cards Sale", date: "Feb 15, 2025", time: "8:00 PM EST", rsvps: 156),
-        Show(title: "Show Name", date: "Feb 15, 2025", time: "8:00 PM EST", rsvps: 156)
-    ]
+    // Sample data removed — ShowsScreen now uses real API data via showsData.
+    // (cmp3z7e4400k54axyxucdv6qm: replaced hardcoded placeholder shows)
     @State private var currentPage: Int = 1
     @State private var isLastPage: Bool = false
     @State private var isPaginating: Bool = false
