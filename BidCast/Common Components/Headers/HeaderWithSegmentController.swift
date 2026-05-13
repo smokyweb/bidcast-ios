@@ -116,12 +116,11 @@ struct HeaderWithSegmentController: View {
                 .frame(height: 50)
                 .overlay(alignment: .center, content: {
                     if showAppIcon {
-                        Image(.appName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
+                        // BidCast app-name logo removed per Trey task cmot1w4t8016hf3hgvd3i6f9m (2026-05-13).
+                        // When `showAppIcon` is true we now render an empty placeholder so callers that
+                        // still pass the flag keep their existing layout but no logo is shown.
+                        Color.clear
                             .frame(height: 25)
-//                            .padding(.leading, CGFloat(trailingImgArr.count) * 38)
-//                            .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
                     } else {
                         Text(title)
                             .font(.custom(nunitoBlack, fixedSize: 18))
