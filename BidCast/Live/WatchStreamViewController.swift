@@ -403,6 +403,39 @@ public final class WatchStreamViewController: UIViewController {
     private func bindSocketListeners() {
         let socket = BidcastSocketManager.shared
 
+        // FIX cmp41hieh00rj4axy15wpcmqz — handle room_create_get so viewers
+        // who join a mid-stream show (e.g. from the home screen feed) see the
+        // current product image immediately without waiting for the next
+        // auction_started / product_pinned socket event.
+        // The room_create_get payload is sent by the server in response to
+        // join_room and contains the current room state including the active
+        // product with its images[] / thumbnail[] fields.
+        socket.onRoomCreated { [weak self] payload in
+            guard let self = self else { return }
+            // Extract current product title from the room state
+            let product = (payload["product"] as? [String: Any])
+                ?? ((payload["products"] as? [[String: Any]])?.first)
+            if let title = product?["title"] as? String, !title.isEmpty {
+                self.currentProductTitle = title
+                self.pinnedCard.updateTitle(title)
+            }
+            // Extract product id
+            if let pid = (product?["id"] as? String)
+                ?? (product?["id"] as? Int).map({ String($0) })
+                ?? (payload["product_id"] as? String) {
+                self.currentProductId = pid
+            }
+            // FIX: load product image from room state on join
+            self.pinnedCard.updateProductImage(self.productImageURL(from: payload))
+            // Restore starting bid amount if an auction is in progress
+            if let starting = self.stringValue(from: payload["starting_bid_amount"]
+                ?? payload["bid_amount"]),
+               let dv = Double(starting), dv > 0 {
+                self.currentHighestBidAmount = dv
+                self.pinnedCard.updateHighestBid(dv)
+            }
+        }
+
         socket.onViewerCount { [weak self] payload in
             guard let self = self else { return }
             guard self.roomMatches(payload) else { return }
