@@ -61,13 +61,23 @@ final class DeepLinkRouter {
     }
 
     /// Push-notification tap routing.
+    ///
+    /// BUG FIX 2026-05-13 (MC cmp49e0vu00nj3mx1whp13mja): for chat / message
+    /// pushes the Android backend sends `{ type: "message", sender_id: "<n>",
+    /// sender_name, sender_image }` — NOT `{ type: "chat", id: "<chatKey>" }`.
+    /// The previous router only looked at `id`/`show_id`/`order_id`, so chat
+    /// pushes resolved to `.chat("")` → empty Firebase path → blank chat
+    /// screen. We now compute the Firebase chat key from `(me, sender_id)`
+    /// the same way Android does in `ChatActivity` (`"<max>_chats_<min>"`).
     @discardableResult
     func routeFromPushPayload(_ userInfo: [AnyHashable: Any]) -> DeepLinkTarget {
         // Two shapes:
         //   1) { "url": "bidcast://..." }  — preferred, backend can send
         //      straight into the router.
-        //   2) { "type": "order"|"chat"|"stream"|"profile"|"product", "id": "..." }
-        //      — legacy Android payload (see MyFirebaseMessagingService.kt).
+        //   2) { "type": "order"|"chat"|"message"|..., "id": "..." }
+        //      OR for chat specifically:
+        //      { "type": "message", "sender_id": "<n>", "sender_name", "sender_image" }
+        //      — Android shape, see MyFirebaseMessagingService.kt.
         if let raw = userInfo["url"] as? String, let url = URL(string: raw) {
             let target = parse(url: url)
             dispatch(target)
@@ -83,7 +93,7 @@ final class DeepLinkRouter {
         case "order":
             target = .order(Int(idStr) ?? 0)
         case "chat", "message":
-            target = .chat(idStr)
+            target = .chat(DeepLinkRouter.resolveChatKey(from: userInfo, fallbackId: idStr))
         case "profile", "user", "seller":
             target = .profile(Int(idStr) ?? 0)
         case "product", "buy":
@@ -93,6 +103,35 @@ final class DeepLinkRouter {
         }
         dispatch(target)
         return target
+    }
+
+    /// Resolve the Firebase chat key (`"<max>_chats_<min>"`) from a push
+    /// payload. The Android FCM service ships `sender_id` (the other party);
+    /// we combine it with the locally-stored logged-in user id and follow the
+    /// same max/min ordering Android uses in `ChatActivity.chatKey` and
+    /// `SearchUsers.kt`. If the payload already contains a pre-built chat key
+    /// (e.g. `id = "42_chats_17"`) we just pass it through.
+    private static func resolveChatKey(from userInfo: [AnyHashable: Any], fallbackId: String) -> String {
+        // 1) Pre-built chatKey on `id` — pass through.
+        if fallbackId.contains("_chats_") { return fallbackId }
+
+        // 2) Compute from sender_id + me (Android shape).
+        let senderRaw =
+            (userInfo["sender_id"] as? String)
+            ?? (userInfo["sender_id"] as? Int).map { "\($0)" }
+            ?? (userInfo["senderId"] as? String)
+            ?? (userInfo["senderId"] as? Int).map { "\($0)" }
+            ?? fallbackId
+        let me = currentUserIdString()
+        guard let senderId = Int(senderRaw), let meId = Int(me), senderId > 0, meId > 0 else {
+            // Last-ditch: don't make up a chatKey; surface whatever we have so the
+            // existing buildViewController can fall through to an empty conversation
+            // (the prior behaviour) rather than silently picking a wrong chat.
+            return fallbackId
+        }
+        let hi = max(senderId, meId)
+        let lo = min(senderId, meId)
+        return "\(hi)_chats_\(lo)"
     }
 
     // MARK: - Parse
