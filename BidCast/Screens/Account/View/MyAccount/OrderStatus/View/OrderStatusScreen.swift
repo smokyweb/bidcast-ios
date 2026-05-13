@@ -250,16 +250,33 @@ struct OrderStatusScreen: View {
         SVProgressHUD.dismiss()
         let response = viewModel.recieptResponse
         if response.status == "success" {
-            recieptUrl = response.data
-            downloadRecieptData(with: recieptUrl)
+            // MC sub-task cmp49339f00l53mx17c5alnjo (Trey 2026-05-13):
+            // a successful response with an empty/missing data URL used to
+            // silently no-op, leaving the user with a blank screen. Surface a
+            // clear message so they know the receipt isn't available yet.
+            if let url = response.data, !url.isEmpty {
+                recieptUrl = url
+                downloadRecieptData(with: url)
+            } else {
+                hudMsg = "Receipt isn't available yet for this order."
+                showhud = true
+            }
         } else {
-            
+            // Same ticket: was a silent failure. Now surface server error or
+            // a generic fallback.
+            let serverMsg = (response.message ?? "").trimmingCharacters(in: .whitespaces)
+            hudMsg = serverMsg.isEmpty ? "Couldn't load the receipt. Please try again." : serverMsg
+            showhud = true
         }
     }
     
     func downloadRecieptData(with urlString: String?) {
         guard let url = urlString, !url.isEmpty else {
             print("Invalid URL String")
+            // MC sub-task cmp49339f00l53mx17c5alnjo: also surface here for the
+            // off-chance someone calls downloadRecieptData directly with nil.
+            hudMsg = "Receipt isn't available yet for this order."
+            showhud = true
             return
         }
         let timeStamp = getCurrentTimestamp()
