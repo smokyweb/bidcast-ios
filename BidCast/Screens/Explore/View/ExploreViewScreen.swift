@@ -354,10 +354,8 @@ struct SubCategoryListView: View {
     }
     
     // MARK: - SubCategory List
-    // FIX cmp424ztk00sm4axyuk9psh8q: use 2-column grid so cards sit side-by-side
     private var subCategoryList: some View {
-        let columns = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
-        return LazyVGrid(columns: columns, spacing: 8) {
+        VStack(spacing: 8) {
             ForEach(subCategories, id: \.id) { subCategory in
                 SubCategoryRow(viewersCount: viewersCount, subCategory: subCategory, onSubCategoryTap: {
                     print("SubCategory clicked")
@@ -365,7 +363,6 @@ struct SubCategoryListView: View {
                 })
             }
         }
-        .padding(.horizontal, 4)
     }
 }
 
@@ -393,47 +390,38 @@ struct SubCategoryRow: View {
         )
     }
 
-    // FIX cmp424ztk00sm4axyuk9psh8q (PM feedback): image card with name
-    // centered over the image, font size 15, multiline supported.
+    // FIX cmp424ztk00sm4axyuk9psh8q: horizontal row — image on left,
+    // name centered (vertically + horizontally) on right.
+    // Font 15, multiline, as per PM feedback.
     private var rowContent: some View {
-        ZStack(alignment: .bottom) {
-            // Background image fills the card
+        HStack(alignment: .center, spacing: 12) {
+            // Thumbnail — fixed 50×50
             CustomProfileImage(
                 url: subCategory.image ?? "",
                 isCircular: false,
-                cornerRadius: 12,
-                size: 110,
+                cornerRadius: 10,
+                size: 50,
                 defaultImage: "photo"
             )
-            .frame(maxWidth: .infinity)
-            .frame(height: 110)
-            .clipped()
+            .frame(width: 50, height: 50)
 
-            // Semi-transparent overlay at bottom with centered name
-            VStack {
-                Spacer()
-                Text(subCategory.name ?? "Unknown")
-                    .font(.custom(poppinsSemiBold, size: 15))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(3)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 6)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.black.opacity(0.0), Color.black.opacity(0.65)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-            }
-            .frame(maxWidth: .infinity, maxHeight: 110)
+            // Name — centered in remaining space, multiline, size 15
+            Text(subCategory.name ?? "Unknown")
+                .font(.custom(poppinsSemiBold, size: 15))
+                .foregroundColor(.primary)
+                .multilineTextAlignment(.center)
+                .lineLimit(3)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
-        .frame(height: 110)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .frame(minHeight: 70)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.white)
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 14)
                 .stroke(Color.gray.opacity(0.15), lineWidth: 1)
         )
     }
@@ -467,11 +455,22 @@ struct SubCategoryRow: View {
 // MARK: - SubCategory Shimmer Row
 struct SubCategoryShimmerRow: View {
     var body: some View {
-        // FIX cmp424ztk: shimmer matches new card-style layout
-        ShimmerView()
-            .frame(maxWidth: .infinity)
-            .frame(height: 110)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+        // Shimmer matches horizontal row layout
+        HStack(spacing: 12) {
+            ShimmerView()
+                .frame(width: 50, height: 50)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            ShimmerView()
+                .frame(maxWidth: .infinity, height: 18)
+                .clipShape(RoundedRectangle(cornerRadius: 4))
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .frame(minHeight: 70)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.white)
+        )
     }
 }
 
