@@ -67,7 +67,7 @@ extension UIViewController {
     }
     
     func setTabBarHidden(_ isHidden : Bool){
-        self.tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.isHidden = isHidden
     }
     
     // Generic method to instantiate and push a view controller from a storyboard
