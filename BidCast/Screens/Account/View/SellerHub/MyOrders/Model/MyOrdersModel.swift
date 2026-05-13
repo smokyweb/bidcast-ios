@@ -258,6 +258,53 @@ extension MyOrderModel {
 }
 
 
+// MC sub-task cmp49349500lh3mx146ck78co + cmp4935la00lv3mx1uoosj9qj
+// (Trey 2026-05-13): Android serialises tinyint(1) bool flags as 0/1 ints.
+// Swift's synthesised Codable init rejects that shape and the whole order /
+// product / show payload fails to decode — user sees a generic API error.
+// Decode bools flexibly so both shapes work.
+private func decodeBoolFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) throws -> Bool? {
+    if let b = try? c.decodeIfPresent(Bool.self, forKey: key) { return b }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i != 0 }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let v = s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if ["1", "true", "yes"].contains(v) { return true }
+        if ["0", "false", "no"].contains(v) { return false }
+    }
+    return nil
+}
+
+extension MyOrderModel {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        orderID = try c.decodeIfPresent(String.self, forKey: .orderID)
+        orderSource = try c.decodeIfPresent(String.self, forKey: .orderSource)
+        userID = try c.decodeIfPresent(Int.self, forKey: .userID)
+        productID = try c.decodeIfPresent(Int.self, forKey: .productID)
+        shippingAddress = try c.decodeIfPresent(String.self, forKey: .shippingAddress)
+        cardID = try c.decodeIfPresent(Int.self, forKey: .cardID)
+        customerPaymentProfileID = try c.decodeIfPresent(Int.self, forKey: .customerPaymentProfileID)
+        promoCode = try c.decodeIfPresent(String.self, forKey: .promoCode)
+        sendAsGift = try decodeBoolFlexible(c, forKey: .sendAsGift)
+        giftUserID = try c.decodeIfPresent(Int.self, forKey: .giftUserID)
+        giftMsg = try c.decodeIfPresent(String.self, forKey: .giftMsg)
+        status = try c.decodeIfPresent(String.self, forKey: .status)
+        paymentStatus = try c.decodeIfPresent(String.self, forKey: .paymentStatus)
+        createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt)
+        product = try c.decodeIfPresent(ProductDetails.self, forKey: .product)
+        shippingTracking = try c.decodeIfPresent([ShippingTrackingModel].self, forKey: .shippingTracking)
+        user = try c.decodeIfPresent(UserShortModel.self, forKey: .user)
+        productSetID = try? c.decodeIfPresent(Int.self, forKey: .productSet)
+        productSetItemID = try? c.decodeIfPresent(Int.self, forKey: .productSetItem)
+        productSetItemUnitID = try? c.decodeIfPresent(Int.self, forKey: .productSetItemUnit)
+        transaction = try c.decodeIfPresent([TransactionModel].self, forKey: .transaction)
+        productSet = try c.decodeIfPresent(ProductSetModel.self, forKey: .productSet)
+        productSetItem = try c.decodeIfPresent(ProductSetItemModel.self, forKey: .productSetItem)
+        productSetItemUnit = try c.decodeIfPresent(ProductSetItemUnitModel.self, forKey: .productSetItemUnit)
+    }
+}
+
 // MARK: - ProductDetails
 struct ProductDetails: Codable {
     var id, userID, categoryID, subCategoryID: Int?
@@ -297,6 +344,38 @@ struct ProductDetails: Codable {
         case images, thumbnail
         case createdAt = "created_at"
         case category
+    }
+}
+
+extension ProductDetails {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        userID = try c.decodeIfPresent(Int.self, forKey: .userID)
+        categoryID = try c.decodeIfPresent(Int.self, forKey: .categoryID)
+        subCategoryID = try c.decodeIfPresent(Int.self, forKey: .subCategoryID)
+        title = try c.decodeIfPresent(String.self, forKey: .title)
+        variant = try c.decodeIfPresent([ProductVariant].self, forKey: .variant)
+        weight = try c.decodeIfPresent(Double.self, forKey: .weight)
+        width = try c.decodeIfPresent(Int.self, forKey: .width)
+        length = try c.decodeIfPresent(Int.self, forKey: .length)
+        height = try c.decodeIfPresent(Int.self, forKey: .height)
+        mailClass = try c.decodeIfPresent(String.self, forKey: .mailClass)
+        processingCategory = try c.decodeIfPresent(String.self, forKey: .processingCategory)
+        description = try c.decodeIfPresent(String.self, forKey: .description)
+        quantity = try c.decodeIfPresent(String.self, forKey: .quantity)
+        purchasedQuantity = try c.decodeIfPresent(String.self, forKey: .purchasedQuantity)
+        pricing = try c.decodeIfPresent(String.self, forKey: .pricing)
+        flashSale = try decodeBoolFlexible(c, forKey: .flashSale)
+        acceptOffers = try decodeBoolFlexible(c, forKey: .acceptOffers)
+        reserveForLive = try decodeBoolFlexible(c, forKey: .reserveForLive)
+        shippingProfileID = try c.decodeIfPresent(Int.self, forKey: .shippingProfileID)
+        status = try c.decodeIfPresent(String.self, forKey: .status)
+        productShow = try c.decodeIfPresent(String.self, forKey: .productShow)
+        images = try c.decodeIfPresent([String].self, forKey: .images)
+        thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
+        createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt)
+        category = try c.decodeIfPresent(Category.self, forKey: .category)
     }
 }
 
