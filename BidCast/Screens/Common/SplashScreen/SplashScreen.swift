@@ -27,12 +27,8 @@ struct SplashScreen: View {
     }
     
     var body: some View {
-        VStack {
-            Image(.mainLogo)
-                .resizable()
-                .scaledToFill()
-                .frame(width: screenWidth, height: screenHeight)
-                .padding(.leading,-20)
+        ZStack {
+            Color.white
                 .ignoresSafeArea(.all)
         }
         .onAppear(perform: {

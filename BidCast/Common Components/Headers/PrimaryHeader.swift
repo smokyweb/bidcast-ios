@@ -237,11 +237,9 @@ struct PrimaryHeader: View {
                             }
                         }
                     } else if isForLogo {
-                        Image(.appName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 100, height: 40)
-                            .clipped()
+                        Color.clear
+                            .frame(width: 36, height: 36)
+                            .contentShape(Rectangle())
                             .onTapGesture { onClickLeading?(0) }
                     } else {
                         ForEach(leadingImgArr.indices, id: \.self) { ind in
