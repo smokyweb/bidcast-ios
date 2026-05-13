@@ -11,8 +11,10 @@ workflows:
         TEAM_ID: YQGQU3RV34
       xcode: "26.4"
     scripts:
-      - name: Install CocoaPods dependencies
-        script: pod install --repo-update
+      - name: Inspect Xcode project layout
+        script: |
+          ls -la
+          find . -maxdepth 2 \( -name '*.xcodeproj' -o -name '*.xcworkspace' -o -name 'Podfile' \) | sort
       - name: Set up code signing
         script: |
           keychain initialize
@@ -25,11 +27,8 @@ workflows:
           xcode-project use-profiles --project BidCast.xcodeproj
       - name: Build iOS
         script: |
-          # xcode-project use-profiles (run in signing step) already wrote per-target
-          # provisioning profile settings. Don't override with manual PROVISIONING_PROFILE
-          # or the Pods targets will fail with "does not support provisioning profiles".
           xcodebuild \
-            -workspace BidCast.xcworkspace \
+            -project BidCast.xcodeproj \
             -scheme BidCast \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
