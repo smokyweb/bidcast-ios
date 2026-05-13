@@ -457,6 +457,7 @@ struct HomeViewScreen: View {
     }
     
     func goToExplore() {
+        tabBarRouter.exploreInitialTab = 2
         tabBarRouter.selectedTab = 1
     }
     

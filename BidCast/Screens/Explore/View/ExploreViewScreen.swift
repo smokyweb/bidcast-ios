@@ -12,6 +12,7 @@ struct ExploreViewScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
+    @EnvironmentObject var tabBarRouter: TabBarRouter
     
     // CRASH FIX: was a plain `var` — re-created on every SwiftUI re-render,
     // so in-flight async responses could land on a discarded instance.
@@ -165,7 +166,20 @@ struct ExploreViewScreen: View {
         .background(.backGround)
         .padding(.bottom, -27)
         .onFirstAppear {
-            Task { await fetchCategory(for: "Recommended") }
+            let initialTab = tabBarRouter.exploreInitialTab
+            if initialTab != 0 {
+                selectedCategoryIndex = initialTab
+                tabBarRouter.exploreInitialTab = 0
+            }
+            let selectedCategory = categoryTitles[selectedCategoryIndex]
+            Task { await fetchCategory(for: selectedCategory) }
+        }
+        .onChange(of: tabBarRouter.exploreInitialTab) { _, newVal in
+            guard newVal != 0 else { return }
+            selectedCategoryIndex = newVal
+            tabBarRouter.exploreInitialTab = 0
+            let selectedCategory = categoryTitles[selectedCategoryIndex]
+            Task { await fetchCategory(for: selectedCategory) }
         }
     }
     

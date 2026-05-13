@@ -10,6 +10,7 @@ import SwiftUI
 final class TabBarRouter: ObservableObject {
     @Published var selectedTab: Int = 0
     @Published var previousTab: Int = 0
+    @Published var exploreInitialTab: Int = 0
 }
 
 struct TabbarScreen: View {
