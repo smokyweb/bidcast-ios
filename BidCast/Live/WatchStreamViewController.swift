@@ -536,6 +536,8 @@ public final class WatchStreamViewController: UIViewController {
                 ?? payload["product_id"] as? String {
                 self.currentProductId = pid
             }
+            // FIX cmp41hieh00rj4axy15wpcmqz: show product image in pinned card
+            self.pinnedCard.updateProductImage(self.productImageURL(from: payload))
             self.auctionClosed = false
             self.refreshBidControlsVisibility()
             self.appendSystemChat("Auction started.")
@@ -702,6 +704,8 @@ public final class WatchStreamViewController: UIViewController {
                     ?? payload["product_id"] as? String {
                     self.currentProductId = pid
                 }
+                // FIX cmp41hieh00rj4axy15wpcmqz: update product image on rotation
+                self.pinnedCard.updateProductImage(self.productImageURL(from: payload))
                 self.currentHighestBidAmount = 0
                 self.updateBidButtonAmount()
                 self.pinnedCard.updateHighestBid(0)
@@ -719,6 +723,8 @@ public final class WatchStreamViewController: UIViewController {
                 ?? payload["product_id"] as? String {
                 self.currentProductId = pid
             }
+            // FIX cmp41hieh00rj4axy15wpcmqz: update product image on pin
+            self.pinnedCard.updateProductImage(self.productImageURL(from: payload))
         }
 
         socket.onProductUnpinned { [weak self] _ in
@@ -726,6 +732,7 @@ public final class WatchStreamViewController: UIViewController {
             self?.pinnedCard.updateTitle(nil)
             self?.pinnedCard.updateHighestBid(0)
             self?.pinnedCard.updateTimer(seconds: -1)
+            self?.pinnedCard.updateProductImage(nil)  // FIX cmp41hieh: clear image on unpin
             self?.resetPerItemBidState()
         }
 
@@ -995,6 +1002,30 @@ public final class WatchStreamViewController: UIViewController {
         if let s = any as? String { return s }
         if let i = any as? Int { return String(i) }
         if let d = any as? Double { return String(d) }
+        return nil
+    }
+
+    /// FIX cmp41hieh00rj4axy15wpcmqz — extract a product image URL from any
+    /// socket payload dict. Android streamers put relative paths in
+    /// product.images[], while iOS streamers use full URLs in
+    /// product.thumbnail[]. We check both and return the first non-empty hit.
+    private func productImageURL(from payload: [String: Any]) -> String? {
+        let product = (payload["product"] as? [String: Any]) ?? payload
+        // thumbnail[] — full URLs (iOS-streamed shows)
+        if let thumbs = product["thumbnail"] as? [Any],
+           let first = thumbs.compactMap({ $0 as? String }).first(where: { !$0.isEmpty }) {
+            return first
+        }
+        // images[] — relative paths (Android-streamed shows)
+        if let imgs = product["images"] as? [Any],
+           let first = imgs.compactMap({ $0 as? String }).first(where: { !$0.isEmpty }) {
+            return first  // PinnedProductCard.updateProductImage() handles relative→absolute
+        }
+        // img_thumbnail[] — pre-generated thumbnails (either platform)
+        if let imgThumbs = product["img_thumbnail"] as? [Any],
+           let first = imgThumbs.compactMap({ $0 as? String }).first(where: { !$0.isEmpty }) {
+            return first
+        }
         return nil
     }
 
