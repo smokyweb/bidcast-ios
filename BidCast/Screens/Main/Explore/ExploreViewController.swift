@@ -353,15 +353,12 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
     /// P2.15 — present the sub-category sheet for a given top-level
     /// category id.
     ///
-    /// BUGFIX 2026-05-13 (MC cmp49377u00mb3mx117bl0r4x): users reported that
-    /// tapping a category on the Explore page made the bottom tab bar
-    /// disappear. Root cause: the sub-category picker was presented as a
-    /// `.pageSheet` with both `.medium` and `.large` detents — when the
-    /// user dragged the sheet up to `.large`, iOS 15+ covers the entire
-    /// screen (including the tab bar), and on dismiss the underlying view
-    /// briefly retains the dimmed state. We don't need a large detent here:
-    /// the sub-category list is short (10-25 chips), and a medium-height
-    /// sheet keeps the bottom tab bar visible the entire time. Drop `.large`.
+    /// BUGFIX 2026-05-13 (MC cmp49377u00mb3mx117bl0r4x): Trey clarified the
+    /// disappearing element is the bottom tab bar. The re-tap sub-category UI
+    /// was being presented as a native `.pageSheet`, which sits above the tab
+    /// bar and makes it look gone during category drill-in. Present the picker
+    /// as an in-context overlay card instead so Explore stays visibly inside
+    /// the tab shell while the user picks a sub-category.
     fileprivate func presentSubcategoryPicker(for categoryID: Int) {
         let sheet = ExploreSubcategoryPickerSheet(
             categoryID: categoryID,
@@ -371,11 +368,7 @@ extension ExploreViewController: UICollectionViewDataSource, UICollectionViewDel
         sheet.onPicked = { [weak self] subcategoryID in
             self?.viewModel.setSelectedSubcategory(subcategoryID)
         }
-        sheet.modalPresentationStyle = .pageSheet
-        if let pc = sheet.sheetPresentationController {
-            pc.detents = [.medium()]
-            pc.prefersGrabberVisible = true
-        }
+        definesPresentationContext = true
         present(sheet, animated: true)
     }
 

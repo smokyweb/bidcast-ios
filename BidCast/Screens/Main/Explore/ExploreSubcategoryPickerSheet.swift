@@ -76,6 +76,8 @@ final class ExploreSubcategoryPickerSheet: UIViewController,
         self.currentSubcategoryID = currentSubcategoryID
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        modalPresentationStyle = .overCurrentContext
+        modalTransitionStyle = .crossDissolve
     }
 
     @available(*, unavailable)
@@ -85,31 +87,57 @@ final class ExploreSubcategoryPickerSheet: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.15)
 
-        view.addSubview(titleLabel)
-        view.addSubview(tableView)
-        view.addSubview(spinner)
+        let card = UIView()
+        card.translatesAutoresizingMaskIntoConstraints = false
+        card.backgroundColor = .systemBackground
+        card.layer.cornerRadius = 18
+        card.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        if #available(iOS 13.0, *) {
+            card.layer.cornerCurve = .continuous
+        }
+        view.addSubview(card)
+        card.addSubview(titleLabel)
+        card.addSubview(tableView)
+        card.addSubview(spinner)
 
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.dataSource = self
         tableView.delegate = self
 
+        let dismissTap = UITapGestureRecognizer(target: self, action: #selector(handleBackdropTap))
+        dismissTap.cancelsTouchesInView = false
+        view.addGestureRecognizer(dismissTap)
+
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            card.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            card.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            card.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            card.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.48),
+
+            titleLabel.topAnchor.constraint(equalTo: card.topAnchor, constant: 16),
+            titleLabel.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
 
             tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: card.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: card.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: card.safeAreaLayoutGuide.bottomAnchor),
 
-            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            spinner.centerXAnchor.constraint(equalTo: card.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: card.centerYAnchor)
         ])
 
         loadSubcategories()
+    }
+
+    @objc private func handleBackdropTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: view)
+        // Dismiss only when tapping above the card area.
+        if location.y < view.bounds.height * 0.52 {
+            dismiss(animated: true)
+        }
     }
 
     // MARK: - Networking
