@@ -320,9 +320,8 @@ struct ExploreViewScreen: View {
 }
 
 // MARK: - SubCategory List View
-// FIX cmp424ztk00sm4axyuk9psh8q: horizontal scrolling chip row.
-// PM wants subcategories displayed as a single horizontal row of
-// chips that scroll left-to-right — not a vertical list.
+// FIX cmp424ztk00sm4axyuk9psh8q: vertical list where each row is
+// [image] [name] side-by-side — compact rows, no extra height.
 struct SubCategoryListView: View {
     let isLoading: Bool
     let subCategories: [SelectedSubCategoryDataModel]
@@ -331,27 +330,29 @@ struct SubCategoryListView: View {
     let onSubCategoryTap: ((SelectedSubCategoryDataModel) -> Void)?
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                if isLoading {
-                    ForEach(0..<4) { _ in
-                        SubCategoryShimmerRow()
-                    }
-                } else {
-                    ForEach(subCategories, id: \.id) { subCategory in
-                        SubCategoryRow(
-                            viewersCount: viewersCount,
-                            subCategory: subCategory,
-                            onSubCategoryTap: {
-                                onSubCategoryTap?(subCategory)
-                            }
-                        )
+        VStack(spacing: 0) {
+            if isLoading {
+                ForEach(0..<3) { _ in
+                    SubCategoryShimmerRow()
+                    Divider().padding(.leading, 56)
+                }
+            } else {
+                ForEach(Array(subCategories.enumerated()), id: \.element.id) { index, subCategory in
+                    SubCategoryRow(
+                        viewersCount: viewersCount,
+                        subCategory: subCategory,
+                        onSubCategoryTap: { onSubCategoryTap?(subCategory) }
+                    )
+                    if index < subCategories.count - 1 {
+                        Divider().padding(.leading, 56)
                     }
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
         }
+        .background(Color.white)
+        .cornerRadius(12)
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.12), lineWidth: 1))
+        .padding(.horizontal, 4)
     }
 }
 
@@ -379,38 +380,29 @@ struct SubCategoryRow: View {
         )
     }
 
-    // FIX cmp424ztk00sm4axyuk9psh8q: compact chip for horizontal scroll row.
-    // Image on top, name centered below — fixed 90pt wide chip.
+    // FIX cmp424ztk00sm4axyuk9psh8q: compact row — [image] [name] side by side.
+    // Vertical list, each row is one line: small image left, name right.
     private var rowContent: some View {
-        VStack(spacing: 6) {
+        HStack(spacing: 10) {
             CustomProfileImage(
                 url: subCategory.image ?? "",
                 isCircular: false,
-                cornerRadius: 8,
-                size: 56,
+                cornerRadius: 6,
+                size: 36,
                 defaultImage: "photo"
             )
-            .frame(width: 56, height: 56)
+            .frame(width: 36, height: 36)
 
             Text(subCategory.name ?? "Unknown")
-                .font(.custom(poppinsSemiBold, size: 12))
+                .font(.custom(poppinsSemiBold, size: 15))
                 .foregroundColor(.primary)
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(.leading)
                 .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(width: 80)
+
+            Spacer()
         }
+        .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .padding(.horizontal, 5)
-        .frame(width: 90)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
-        )
     }
 
     private var viewersBadge: some View {
@@ -442,22 +434,18 @@ struct SubCategoryRow: View {
 // MARK: - SubCategory Shimmer Row
 struct SubCategoryShimmerRow: View {
     var body: some View {
-        // Shimmer chip — matches horizontal chip layout
-        VStack(spacing: 6) {
+        // Shimmer row: [image placeholder] [text placeholder]
+        HStack(spacing: 10) {
             ShimmerView()
-                .frame(width: 56, height: 56)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .frame(width: 36, height: 36)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
             ShimmerView()
-                .frame(width: 60, height: 14)
+                .frame(width: 120, height: 16)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
+            Spacer()
         }
+        .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .padding(.horizontal, 5)
-        .frame(width: 90)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white)
-        )
     }
 }
 
