@@ -15,6 +15,11 @@
 import Foundation
 
 // MARK: - Category / SubCategory (shared across Product, Show, Order, Offer, ...)
+// BUGFIX 2026-05-13 (MC cmp4936yl00m93mx1pjyhcegi): Android-originated live-show
+// payloads can carry mixed-shape nested fields (notably category extra_fields and
+// user bio). Keep the public Swift surface area stable, but decode those fields
+// leniently so the live-show viewer does not fail with “The data couldn’t be read
+// because it isn’t in the correct format.” when iOS joins an Android seller show.
 
 struct Category: Codable, Identifiable, Hashable {
     let id: Int?
@@ -33,6 +38,25 @@ struct Category: Codable, Identifiable, Hashable {
         case deletedAt = "deleted_at"
         case isSelected = "is_selected"
         case liveCount
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        name = try c.decodeIfPresent(String.self, forKey: .name)
+        image = try c.decodeIfPresent(String.self, forKey: .image)
+        thumbnail = try c.decodeIfPresent(AnyCodable.self, forKey: .thumbnail)
+        color = try c.decodeIfPresent(String.self, forKey: .color)
+        deletedAt = try c.decodeIfPresent(AnyCodable.self, forKey: .deletedAt)
+        isSelected = try c.decodeIfPresent(Bool.self, forKey: .isSelected)
+        liveCount = try c.decodeIfPresent(Int.self, forKey: .liveCount)
+
+        if let decoded = try c.decodeIfPresent([CategoryExtraField].self, forKey: .extraFields) {
+            extraFields = decoded
+        } else {
+            extraFields = nil
+            _ = try? c.decodeIfPresent([AnyCodable].self, forKey: .extraFields)
+        }
     }
 }
 
@@ -57,6 +81,24 @@ struct SubCategory: Codable, Identifiable, Hashable {
         case categoryId = "category_id"
         case extraFields = "extra_fields"
         case deletedAt = "deleted_at"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        name = try c.decodeIfPresent(String.self, forKey: .name)
+        image = try c.decodeIfPresent(String.self, forKey: .image)
+        thumbnail = try c.decodeIfPresent(String.self, forKey: .thumbnail)
+        color = try c.decodeIfPresent(String.self, forKey: .color)
+        categoryId = try c.decodeIfPresent(Int.self, forKey: .categoryId)
+        deletedAt = try c.decodeIfPresent(AnyCodable.self, forKey: .deletedAt)
+
+        if let decoded = try c.decodeIfPresent([CategoryExtraField].self, forKey: .extraFields) {
+            extraFields = decoded
+        } else {
+            extraFields = nil
+            _ = try? c.decodeIfPresent([AnyCodable].self, forKey: .extraFields)
+        }
     }
 }
 
@@ -90,6 +132,28 @@ struct UserPublic: Codable, Identifiable, Hashable {
         case roleId = "role_id"
         case isActive = "is_active"
         case isFollowed = "is_followed"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        bio = (try? c.decodeIfPresent(String.self, forKey: .bio)) ?? nil
+        email = try c.decodeIfPresent(String.self, forKey: .email)
+        firstName = try c.decodeIfPresent(String.self, forKey: .firstName)
+        lastName = try c.decodeIfPresent(String.self, forKey: .lastName)
+        name = try c.decodeIfPresent(String.self, forKey: .name)
+        username = try c.decodeIfPresent(String.self, forKey: .username)
+        profileImage = try c.decodeIfPresent(String.self, forKey: .profileImage)
+        thumbnail = try c.decodeIfPresent(AnyCodable.self, forKey: .thumbnail)
+        referralCode = try c.decodeIfPresent(String.self, forKey: .referralCode)
+        roleId = try c.decodeIfPresent(Int.self, forKey: .roleId)
+        isActive = try c.decodeIfPresent(Bool.self, forKey: .isActive)
+        rating = try c.decodeIfPresent(String.self, forKey: .rating)
+        isFollowed = try c.decodeIfPresent(Bool.self, forKey: .isFollowed)
+
+        if bio == nil {
+            _ = try? c.decodeIfPresent(AnyCodable.self, forKey: .bio)
+        }
     }
 }
 
