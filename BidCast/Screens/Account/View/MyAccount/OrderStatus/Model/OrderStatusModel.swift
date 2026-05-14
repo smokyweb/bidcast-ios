@@ -55,6 +55,8 @@ struct ProductPurchaseDetail: Codable {
 struct ShippingAddress: Codable {
     var id, userID: Int?
     var type, name, phoneNumber, streetAddress: String?
+    // MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd line.
+    var addressLine2: String?
     var pincode: String?
     var isDefault: Bool?
 
@@ -64,6 +66,8 @@ struct ShippingAddress: Codable {
         case type, name
         case phoneNumber = "phone_number"
         case streetAddress = "street_address"
+        // MC sub-task cmp4932vk00l13mx1du6mmebo: decode address_line_2.
+        case addressLine2 = "address_line_2"
         case pincode
         case isDefault = "is_default"
     }

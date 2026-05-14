@@ -152,6 +152,11 @@ struct LoginScreen: View {
                     }, btnTextColor: .white)
                     
                     
+                    // MC sub-task cmp4934g400lj3mx1tidbedt1 (Trey 2026-05-13):
+                    // lift the Create Account CTA above the iOS home indicator
+                    // so users don't have to thumb-walk between the link and
+                    // the system gesture area. Extra .bottom padding keeps the
+                    // privacy/terms footer below it but inside the safe area.
                     HStack(spacing: 6) {
                         Spacer()
                         Text(AppString.newUser.localized)
@@ -167,7 +172,9 @@ struct LoginScreen: View {
                                 .foregroundStyle(.defaultTheme)
                         })
                         Spacer()
-                    }.padding([.top, .bottom], 12)
+                    }
+                    .padding(.top, 12)
+                    .padding(.bottom, 24)
                     Spacer()
                     HStack{
                         Spacer()

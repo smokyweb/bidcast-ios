@@ -95,6 +95,20 @@ struct CreateAddress: View {
                                 request.street_address = $0
                             }
                         )
+                        // MC sub-task cmp4932vk00l13mx1du6mmebo: optional 2nd line.
+                        AuthTextField(
+                            floatingLabel: "Apt / Suite / Unit (optional)",
+                            placeholder: "e.g. Apt 4B",
+                            icon: .icMail,
+                            text: Binding(
+                                get: { request.address_line_2 ?? "" },
+                                set: { request.address_line_2 = $0 }
+                            ),
+                            isIconDisplay : false,
+                            enteredText: {
+                                request.address_line_2 = $0
+                            }
+                        )
                         AuthTextField(
                             floatingLabel: "City",
                             placeholder: "Enter city",

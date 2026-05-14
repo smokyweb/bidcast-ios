@@ -295,6 +295,29 @@ struct HomeViewScreen: View {
                 }
             )
         }
+        // MC sub-task cmp4935yr00lz3mx130q4x1ku (Trey 2026-05-13): the home
+        // feed previously set showError=true on load failure but never
+        // presented the alert anywhere — users saw a silent stuck feed.
+        // Wire a CommonBottomSheet here with a retry action on the primary
+        // button so the user can try again without backgrounding the app.
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.8,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: { showError = false }
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    showError = false
+                    Task { await fetchLiveShow() }
+                },
+                onSecondaryClick: {
+                    showError = false
+                }
+            )
+        }
         .onChange(of: deepLinkShowId) { showId in
             guard let showId else { return }
             tabBarRouter.selectedTab = 0
@@ -457,6 +480,7 @@ struct HomeViewScreen: View {
     }
     
     func goToExplore() {
+        tabBarRouter.exploreInitialTab = 2
         tabBarRouter.selectedTab = 1
     }
     
@@ -623,14 +647,18 @@ struct HomeViewScreen: View {
         
         guard response.status == "success", let newShows = response.data else {
             print("❌ API Error: \(response.message ?? "Unknown error")")
-            showError = true
+            // MC sub-task cmp4935yr00lz3mx130q4x1ku: surface a real error sheet
+            // with a Try Again action instead of failing silently.
+            let errTitle = (response.error_type?.capitalized).flatMap { $0.isEmpty ? nil : $0 } ?? "Couldn't load feed"
+            let errMsg = (response.message?.capitalized).flatMap { $0.isEmpty ? nil : $0 } ?? "We couldn't load the feed right now. Please try again."
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
+                title: errTitle,
+                message: errMsg,
+                primaryBtnText: "Try Again",
                 secondaryBtnText: AppString.ok.localized
             )
+            showError = true
             isLoadingShowAPI = false
             isLoadingMore = false
             return

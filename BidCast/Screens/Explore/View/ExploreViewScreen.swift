@@ -12,8 +12,12 @@ struct ExploreViewScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
+    @EnvironmentObject var tabBarRouter: TabBarRouter
     
-    var viewModel = SelectCategoryViewModel()
+    // CRASH FIX: was a plain `var` — re-created on every SwiftUI re-render,
+    // so in-flight async responses could land on a discarded instance.
+    // `@StateObject` ensures one stable instance for the view's lifetime.
+    @StateObject var viewModel = SelectCategoryViewModel()
     
     @State var selectedCategoryIndex = 0
     var categoryTitles = ["Recommended", "Popular", "All"]
@@ -106,7 +110,11 @@ struct ExploreViewScreen: View {
                                 }
                                 
                                 // INLINE SUBCATEGORY VIEW
+                                // CRASH FIX: guard expandedIndex is still
+                                // within bounds (it may lag behind a search
+                                // that just cleared categoryList).
                                 if let expandedIndex = expandedCategoryIndex,
+                                   expandedIndex < categoryList.count,
                                    expandedIndex / 3 == rowIndex {
                                     
                                     let categoryId = categoryList[expandedIndex].id ?? 0
@@ -145,16 +153,38 @@ struct ExploreViewScreen: View {
             .background(.backGround)
             
             // Navigation Links
+            //
+            // MC sub-task cmp49377u00mb3mx117bl0r4x (Trey 2026-05-13):
+            // when the user drilled into an Explore category, SwiftUI's
+            // default push behaviour was hiding the bottom tab bar because
+            // the destination didn't explicitly opt-in to keep the tab bar
+            // visible. .toolbar(.visible, for: .tabBar) on the destination
+            // restores the tab bar during category drill-in without
+            // affecting other CusNavLink sites elsewhere in the app.
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen,
                        destination: HomeViewScreen(showCategory: $category,
                                                    showSubCategory: $subCategory,
-                                                   comeFromExploreScreen: $navigateToCategoryDetailScreen))
+                                                   comeFromExploreScreen: $navigateToCategoryDetailScreen)
+                        .toolbar(.visible, for: .tabBar))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         .background(.backGround)
         .padding(.bottom, -27)
         .onFirstAppear {
-            Task { await fetchCategory(for: "Recommended") }
+            let initialTab = tabBarRouter.exploreInitialTab
+            if initialTab != 0 {
+                selectedCategoryIndex = initialTab
+                tabBarRouter.exploreInitialTab = 0
+            }
+            let selectedCategory = categoryTitles[selectedCategoryIndex]
+            Task { await fetchCategory(for: selectedCategory) }
+        }
+        .onChange(of: tabBarRouter.exploreInitialTab) { _, newVal in
+            guard newVal != 0 else { return }
+            selectedCategoryIndex = newVal
+            tabBarRouter.exploreInitialTab = 0
+            let selectedCategory = categoryTitles[selectedCategoryIndex]
+            Task { await fetchCategory(for: selectedCategory) }
         }
     }
     
@@ -167,6 +197,13 @@ struct ExploreViewScreen: View {
             return
         }
         isLoadingAPI = true
+        // CRASH FIX (cmp3q3ilb00814axyrxdg91de): reset expandedCategoryIndex
+        // before clearing categoryList. The inline subcategory view accesses
+        // categoryList[expandedCategoryIndex!] during re-render; if the index
+        // is not cleared before removeAll(), SwiftUI renders with the stale
+        // index into an empty array → fatal index-out-of-bounds crash on search.
+        expandedCategoryIndex = nil
+        subCategoryCache.removeAll()
         categoryList.removeAll()
         
         await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: tab.lowercased(), search: searchText))

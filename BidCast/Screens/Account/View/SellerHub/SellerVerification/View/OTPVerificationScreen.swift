@@ -133,6 +133,30 @@ struct OTPVerificationScreen: View {
     }
     
     // MARK: - sendOTP
+    //
+    // MC sub-tasks cmp4934lz00ll3mx1lw2qfq1r / cmp4935rh00lx3mx14etxsz0v /
+    // cmp49365h00m13mx1vhyu727e / cmp4936fi00m33mx1oaygms9x (Trey 2026-05-13):
+    // OTP never arrives on iOS seller verification because the user types a
+    // raw US number ("5551234567") and the backend's Twilio dispatch requires
+    // E.164 ("+15551234567"). Normalise to E.164 before sending. Strips all
+    // non-digits, defaults to US (+1) when 10 digits are provided, and leaves
+    // any user-typed leading "+" intact so international numbers still work.
+    private func toE164(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespaces)
+        // Preserve a user-supplied + (international) prefix.
+        let hasPlus = trimmed.hasPrefix("+")
+        let digits = trimmed.unicodeScalars
+            .filter { CharacterSet.decimalDigits.contains($0) }
+            .map(String.init)
+            .joined()
+        if hasPlus { return "+" + digits }
+        // No prefix: assume US when the user gave 10 digits, otherwise pass as-is
+        // and let the backend reject if invalid.
+        if digits.count == 10 { return "+1" + digits }
+        if digits.count == 11 && digits.hasPrefix("1") { return "+" + digits }
+        return digits
+    }
+
     private func sendOTP() async {
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
@@ -159,8 +183,18 @@ struct OTPVerificationScreen: View {
         }
 
         // Backend normalizePhone() adds +1 for 10-digit numbers automatically
+//        SVProgressHUD.show()
+//        let req = StorePhoneNumberRequest(phone_number: digits)
+        
+        let normalized = toE164(phoneNumber)
+        guard normalized.hasPrefix("+") else {
+            hudMsg = "Please enter a valid phone number (10 digits or include country code)."
+            showhud = true
+            return
+        }
+
         SVProgressHUD.show()
-        let req = StorePhoneNumberRequest(phone_number: digits)
+        let req = StorePhoneNumberRequest(phone_number: normalized)
         await viewModel.storePhoneNumber(parameters: req)
         await SVProgressHUD.dismiss()
         sendOTPSuccess()

@@ -71,6 +71,12 @@ struct AddressListCell: View {
             Text(address.street_address?.capitalizingFirstLetter() ?? "")
                 .font(.custom(poppinsRegular, size: 13.0))
 
+            // MC sub-task cmp4932vk00l13mx1du6mmebo: render optional 2nd line.
+            if let line2 = address.address_line_2?.trimmingCharacters(in: .whitespaces), !line2.isEmpty {
+                Text(line2.capitalizingFirstLetter())
+                    .font(.custom(poppinsRegular, size: 13.0))
+            }
+
             Text(address.pincode ?? "")
                 .font(.custom(poppinsRegular, size: 13.0))
 

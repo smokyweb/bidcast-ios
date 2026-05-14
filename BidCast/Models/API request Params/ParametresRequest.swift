@@ -444,6 +444,9 @@ struct AddressRequest : Encodable {
     var type : String
     var name : String
     var phone_number,street_address,pincode,city,state : String
+    // MC sub-task cmp4932vk00l13mx1du6mmebo (Trey 2026-05-13): optional
+    // 2nd address line. Empty string is treated as NULL server-side.
+    var address_line_2 : String? = nil
 }
 
 struct checkScheduleRequest : Encodable{

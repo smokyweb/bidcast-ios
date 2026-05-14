@@ -7,6 +7,21 @@
 
 import Foundation
 
+// MC sub-task cmp49331h00l33mx1cc9a8vqf / cmp4936yl00m93mx1pjyhcegi:
+// Android-side payloads sometimes serialise bool flags as 0/1 ints instead of
+// JSON booleans. Swift's synthesised Codable init rejects that shape. Decode
+// both representations so coming-soon / live-show payloads from Android sellers
+// don't fail the entire response on iOS_Staging_V1.
+private func decodeBoolFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) throws -> Bool? {
+    if let b = try? c.decodeIfPresent(Bool.self, forKey: key) { return b }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i != 0 }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let v = s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if ["1", "true", "yes"].contains(v) { return true }
+        if ["0", "false", "no"].contains(v) { return false }
+    }
+    return nil
+}
 
 struct LiveShowsModel: Codable,Identifiable {
     var id: Int?
@@ -226,4 +241,89 @@ struct ShowOverviewModel: Codable {
 
 struct SavedModel : Codable{
     var is_saved : Bool?
+}
+
+extension LiveShowsModel {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        title = try c.decodeIfPresent(String.self, forKey: .title)
+        date = try c.decodeIfPresent(String.self, forKey: .date)
+        time = try c.decodeIfPresent(String.self, forKey: .time)
+        user_id = try c.decodeIfPresent(Int.self, forKey: .user_id)
+        category_id = try c.decodeIfPresent(Int.self, forKey: .category_id)
+        product_ids = try c.decodeIfPresent([String].self, forKey: .product_ids)
+        room_id = try c.decodeIfPresent(String.self, forKey: .room_id)
+        auction_type_id = try c.decodeIfPresent(Int.self, forKey: .auction_type_id)
+        thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
+        img_thumbnail = try c.decodeIfPresent([String].self, forKey: .img_thumbnail)
+        is_live = try decodeBoolFlexible(c, forKey: .is_live)
+        category = try c.decodeIfPresent(Category.self, forKey: .category)
+        user = try c.decodeIfPresent(User.self, forKey: .user)
+        viewer_count = try c.decodeIfPresent(Int.self, forKey: .viewer_count)
+        product = try c.decodeIfPresent(ProductData.self, forKey: .product)
+        seller = try c.decodeIfPresent(SellerModel.self, forKey: .seller)
+    }
+}
+
+extension BiddingModel {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        title = try c.decodeIfPresent(String.self, forKey: .title)
+        date = try c.decodeIfPresent(String.self, forKey: .date)
+        time = try c.decodeIfPresent(String.self, forKey: .time)
+        user_id = try c.decodeIfPresent(Int.self, forKey: .user_id)
+        category_id = try c.decodeIfPresent(Int.self, forKey: .category_id)
+        room_id = try c.decodeIfPresent(String.self, forKey: .room_id)
+        auction_type_id = try c.decodeIfPresent(Int.self, forKey: .auction_type_id)
+        is_live = try decodeBoolFlexible(c, forKey: .is_live)
+        category = try c.decodeIfPresent(Category.self, forKey: .category)
+        user = try c.decodeIfPresent(User.self, forKey: .user)
+        viewer_count = try c.decodeIfPresent(Int.self, forKey: .viewer_count)
+        products = try c.decodeIfPresent([ProductData].self, forKey: .products)
+        seller = try c.decodeIfPresent(SellerModel.self, forKey: .seller)
+    }
+}
+
+extension StorePromoteShowModel {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        title = try c.decodeIfPresent(String.self, forKey: .title)
+        date = try c.decodeIfPresent(String.self, forKey: .date)
+        time = try c.decodeIfPresent(String.self, forKey: .time)
+        userID = try c.decodeIfPresent(Int.self, forKey: .userID)
+        categoryID = try c.decodeIfPresent(Int.self, forKey: .categoryID)
+        productIDS = try c.decodeIfPresent([String].self, forKey: .productIDS)
+        auctionTypeID = try c.decodeIfPresent(Int.self, forKey: .auctionTypeID)
+        thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
+        imgThumbnail = try c.decodeIfPresent([String].self, forKey: .imgThumbnail)
+        isLive = try decodeBoolFlexible(c, forKey: .isLive)
+        promoteShowID = try c.decodeIfPresent(Int.self, forKey: .promoteShowID)
+        viewerCount = try c.decodeIfPresent(Int.self, forKey: .viewerCount)
+        latestViewerCount = try c.decodeIfPresent(Int.self, forKey: .latestViewerCount)
+        promotedAt = try c.decodeIfPresent(String.self, forKey: .promotedAt)
+        startedAt = try c.decodeIfPresent(String.self, forKey: .startedAt)
+    }
+}
+
+extension User {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        role_id = try c.decodeIfPresent(Int.self, forKey: .role_id)
+        first_name = try c.decodeIfPresent(String.self, forKey: .first_name)
+        last_name = try c.decodeIfPresent(String.self, forKey: .last_name)
+        name = try c.decodeIfPresent(String.self, forKey: .name)
+        username = try c.decodeIfPresent(String.self, forKey: .username)
+        email = try c.decodeIfPresent(String.self, forKey: .email)
+        profile_image = try c.decodeIfPresent(String.self, forKey: .profile_image)
+        thumbnail = try c.decodeIfPresent(String.self, forKey: .thumbnail)
+        bio = try c.decodeIfPresent(String.self, forKey: .bio)
+        is_active = try decodeBoolFlexible(c, forKey: .is_active)
+        referral_code = try c.decodeIfPresent(String.self, forKey: .referral_code)
+        rating = try c.decodeIfPresent(String.self, forKey: .rating)
+        is_followed = try decodeBoolFlexible(c, forKey: .is_followed)
+    }
 }
