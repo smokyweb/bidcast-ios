@@ -2675,8 +2675,23 @@ extension LiveStream {
             return
         }
         let currentRoomData = socketRooms[matchingRoomIndex]
-        categoryId = currentRoomData.products?.first?.category?.id ?? 0
-        sellerId = "\(currentRoomData.products?.first?.user?.id ?? 0)"
+        // MC cmp5g5h0k00qs56kd2etclc2a (Ankit 2026-05-14): the first product's
+        // category can be nil (auctioned-and-cleared, or the product hasn't
+        // pinned yet for a fresh viewer). Walk the products array and pick
+        // the first non-zero category id. If none of the products have a
+        // category, leave categoryId at 0 — ProductShopListScreen now
+        // interprets that as "no category filter" and fetches the seller's
+        // full inventory instead of returning an empty list.
+        categoryId = currentRoomData.products?
+            .compactMap { $0.category?.id }
+            .first(where: { $0 > 0 }) ?? 0
+        // Same fall-through for sellerId: the first product may be missing
+        // user info on a fresh join — walk the list until we find one with
+        // a real user id. Falls back to 0 if nothing matches (caller checks).
+        let resolvedSellerId = currentRoomData.products?
+            .compactMap { $0.user?.id }
+            .first(where: { $0 > 0 }) ?? 0
+        sellerId = "\(resolvedSellerId)"
         auctionTypeId = currentRoomData.auction_type_id ?? 0
         self.agoraToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
         if !agoraToken.isEmpty && !roomId.isEmpty {
