@@ -521,14 +521,30 @@ struct HomeViewScreen: View {
             apiCategory = (selectedButton == "For You") ? "" : selectedButton
         }
         
-        await viewModel.getLiveShows(param: GetLiveShowsRequest(
+        let params = GetLiveShowsRequest(
             type: selectedTab,
             category: apiCategory,
             sub_category: subCategory,
             search: searchText,
             page: "\(currentPage)"
-        ))
-    
+        )
+        await viewModel.getLiveShows(param: params)
+
+        // MC cmp5crrg600j556kdjykbdaza (Ankit 2026-05-14): after sign-in the
+        // first feed call sometimes fails with a transient error (network
+        // not yet ready, server returning an unexpected shape, or a brief
+        // 401 before the auth token fully propagates). When the ViewModel
+        // sets errorMessage (meaning the request itself threw) on the first
+        // page, retry once after 1.5 s before surfacing the error sheet.
+        // If the retry also fails, success() shows the error normally.
+        if currentPage == 1,
+           let err = viewModel.errorMessage, !err.isEmpty {
+            print("⚠️ Initial feed load failed (\(err)) — retrying in 1.5 s")
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            viewModel.errorMessage = nil
+            await viewModel.getLiveShows(param: params)
+        }
+
         success()
     }
 
