@@ -128,13 +128,27 @@ struct ExploreViewScreen: View {
                                             parentCategory: categoryName,
                                             viewersCount: 0,
                                             onSubCategoryTap: { subCat in
+                                                // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14):
+                                                // Don't push HomeViewScreen inside the Explore
+                                                // tab's NavigationView — that triggers iOS's
+                                                // default hidesBottomBarWhenPushed and the
+                                                // tab bar disappears. Instead, hand the filter
+                                                // off to TabBarRouter and switch to the Home
+                                                // tab. The Home tab keeps its own NavigationView
+                                                // stack and the bottom tab bar stays visible.
                                                 category = categoryName
                                                 if subCat.id == -1 {
                                                     subCategory = ""   // 🔥 All selected
                                                 } else {
                                                     subCategory = subCat.name ?? ""
                                                 }
-                                                navigateToCategoryDetailScreen = true
+                                                tabBarRouter.pendingHomeCategory = category
+                                                tabBarRouter.pendingHomeSubCategory = subCategory
+                                                tabBarRouter.pendingHomeFilterFromExplore = true
+                                                // Collapse the inline subcategory drawer so we
+                                                // don't reopen it on return.
+                                                expandedCategoryIndex = nil
+                                                tabBarRouter.selectedTab = 0
                                             }
                                         )
                                         .transition(.asymmetric(
@@ -353,21 +367,30 @@ struct ExploreViewScreen: View {
                 subCategoryCache[categoryId] = finalList
 
             } else {
-                // No subcategories → direct navigation
+                // No subcategories → hand off to Home tab via TabBarRouter.
+                // (MC cmp5czpw900jo56kdn739kkjp — see onSubCategoryTap closure
+                // for the rationale on tab-switch vs push.)
                 subCategoryCache[categoryId] = []
                 expandedCategoryIndex = nil
                 category = categoryName
                 subCategory = ""
-                navigateToCategoryDetailScreen = true
+                tabBarRouter.pendingHomeCategory = category
+                tabBarRouter.pendingHomeSubCategory = subCategory
+                tabBarRouter.pendingHomeFilterFromExplore = true
+                tabBarRouter.selectedTab = 0
             }
 
         } else {
-            // No subcategory key → direct navigation
+            // No subcategory key → hand off to Home tab via TabBarRouter.
+            // (MC cmp5czpw900jo56kdn739kkjp)
             subCategoryCache[categoryId] = []
             expandedCategoryIndex = nil
             category = categoryName
             subCategory = ""
-            navigateToCategoryDetailScreen = true
+            tabBarRouter.pendingHomeCategory = category
+            tabBarRouter.pendingHomeSubCategory = subCategory
+            tabBarRouter.pendingHomeFilterFromExplore = true
+            tabBarRouter.selectedTab = 0
         }
 
         loadingSubCategoryId = nil

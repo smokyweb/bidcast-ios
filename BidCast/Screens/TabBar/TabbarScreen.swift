@@ -11,6 +11,18 @@ final class TabBarRouter: ObservableObject {
     @Published var selectedTab: Int = 0
     @Published var previousTab: Int = 0
     @Published var exploreInitialTab: Int = 0
+    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): when the user taps
+    // a sub-category on the Explore tab we now switch to the Home tab and
+    // pass the chosen filter via these properties instead of pushing
+    // HomeViewScreen inside the Explore tab's NavigationView. The push
+    // path was being hidden by iOS's default hidesBottomBarWhenPushed
+    // behaviour, which was making the bottom tab bar disappear on the
+    // pushed Home screen. Switching tabs (vs pushing) keeps the tab bar
+    // visible and is the semantically-correct behaviour anyway: the user
+    // is moving between top-level surfaces, not drilling into a detail.
+    @Published var pendingHomeCategory: String = ""
+    @Published var pendingHomeSubCategory: String = ""
+    @Published var pendingHomeFilterFromExplore: Bool = false
 }
 
 struct TabbarScreen: View {
@@ -27,6 +39,13 @@ struct TabbarScreen: View {
     @ObservedObject var languageManager = LanguageManager.shared
     
     @State private var homeNavigationPath = NavigationPath()
+    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): mutable filter state
+    // for the Home tab so Explore can hand off a category filter via
+    // tabBarRouter and switch tabs (vs pushing inside Explore's nav stack,
+    // which used to hide the bottom tab bar).
+    @State private var homeShowCategory: String = ""
+    @State private var homeShowSubCategory: String = ""
+    @State private var homeComeFromExplore: Bool = false
     @State private var exploreNavigationPath = NavigationPath()
     @State private var activityNavigationPath = NavigationPath()
     @State private var accountNavigationPath = NavigationPath()
@@ -66,7 +85,11 @@ struct TabbarScreen: View {
             TabView(selection: $tabBarRouter.selectedTab) {
                 
                 NavigationContainer(navigationPath: $homeNavigationPath) {
-                    HomeViewScreen(deepLinkShowId:selectedShowId,showCategory: .constant(""), showSubCategory: .constant(""), comeFromExploreScreen: .constant(false), isNavFrom: "Login")
+                    HomeViewScreen(deepLinkShowId:selectedShowId,
+                                   showCategory: $homeShowCategory,
+                                   showSubCategory: $homeShowSubCategory,
+                                   comeFromExploreScreen: $homeComeFromExplore,
+                                   isNavFrom: "Login")
                 }
                 .id(homeViewID)
                 .disabled(showSellSheet) // Disable interaction when sheet is open
@@ -151,6 +174,26 @@ struct TabbarScreen: View {
                     resetNavigation(for: previousTab)
                     resetNavigation(for: newTab)
                     previousTab = newTab
+                    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): when we
+                    // land on the Home tab and Explore has handed off a filter
+                    // via tabBarRouter, apply it to the Home tab's binding
+                    // state. Then clear the pending flag so the filter sticks
+                    // for the current visit but doesn't auto-re-apply later.
+                    if newTab == 0 && tabBarRouter.pendingHomeFilterFromExplore {
+                        homeShowCategory = tabBarRouter.pendingHomeCategory
+                        homeShowSubCategory = tabBarRouter.pendingHomeSubCategory
+                        homeComeFromExplore = true
+                        tabBarRouter.pendingHomeFilterFromExplore = false
+                        tabBarRouter.pendingHomeCategory = ""
+                        tabBarRouter.pendingHomeSubCategory = ""
+                    } else if newTab == 0 {
+                        // User landed on Home without a hand-off — reset the
+                        // explore-derived filter so the regular Home view
+                        // shows again.
+                        homeComeFromExplore = false
+                        homeShowCategory = ""
+                        homeShowSubCategory = ""
+                    }
                 }
             }
             
