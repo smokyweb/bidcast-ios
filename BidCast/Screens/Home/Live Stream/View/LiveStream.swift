@@ -235,6 +235,30 @@ struct LiveStream: View {
     var isAuctionStartedForCurrentRoom: Bool {
         auctionStartedRooms.contains(currentRoomID)
     }
+
+    // MARK: - Bid Timer Expiry Guard (Mission Control: cmp55p2y8007b56kdfowbf5wr)
+    /// True when the auction bid countdown has elapsed for the current product / surprise set
+    /// and the server has not yet emitted `bid_finalized`. Used to lock the bid UI and the
+    /// bid action sites so no more bids are accepted after the timer reaches 00:00.
+    private var isBidTimerExpired: Bool {
+        guard isAuctionStartedForCurrentRoom else { return false }
+        // Don't lock between auction-start and the first bid_timer_update tick:
+        // gate by hasWon == false (winner not yet announced) AND a product is loaded.
+        if isSurpriseSetAuctionActive {
+            // Surprise-set countdown is an Int; 0 means timer is up.
+            return currentSurpriseSetData != nil
+                && surpriseSetBidTime == 0
+                && socketManagerChat.hasWon == false
+        } else {
+            // Regular product countdown comes through socketManagerChat.bidTime as "MM:SS".
+            // We only treat "00:00" as expired when we already have product data AND the
+            // product status isn't already "sold" (sold case is handled elsewhere).
+            guard let product = auctionedProductData else { return false }
+            if product.status == "sold" { return false }
+            return socketManagerChat.bidTime == "00:00"
+                && socketManagerChat.hasWon == false
+        }
+    }
     @State var auctionedProductData: ProductDataModel1? = nil
     @State  var  boosts = [BoostModel]()
     @StateObject private var viewModelFreebie = FreebieViewModel()
@@ -896,8 +920,11 @@ struct LiveStream: View {
             if isSurpriseSetAuctionActive, let surpriseSet = currentSurpriseSetData {
                 VStack(alignment: .leading, spacing: 12) {
                     surpriseSetProductCard(surpriseSet: surpriseSet)
-                    
-                    biddingControls
+                    if isBidTimerExpired {
+                        biddingClosedView
+                    } else {
+                        biddingControls
+                    }
                 }
             }
             // Regular product auction
@@ -905,7 +932,11 @@ struct LiveStream: View {
                 VStack(alignment: .leading, spacing: 12) {
                     currentProductCard(product: product)
                     if product.status != "sold" {
-                        biddingControls
+                        if isBidTimerExpired {
+                            biddingClosedView
+                        } else {
+                            biddingControls
+                        }
                     } else {
                         waitingForProductView
                     }
@@ -914,6 +945,28 @@ struct LiveStream: View {
                 waitingForProductView
             }
         }
+    }
+
+    // MARK: - Bidding Closed View
+    /// Replaces the bid controls when the auction countdown has elapsed but the server
+    /// has not yet finalized the bid. Prevents the user from sliding-to-bid or tapping
+    /// Buy Now / Custom after the timer reaches 00:00. (MC: cmp55p2y8007b56kdfowbf5wr)
+    @ViewBuilder
+    private var biddingClosedView: some View {
+        Text("Bidding Closed")
+            .font(.custom(poppinsBold, size: 14.0))
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 42)
+            .background(
+                Capsule()
+                    .fill(Color.white.opacity(0.12))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+            )
+            .padding(.horizontal)
     }
     
     //MARK: Current product section
@@ -1077,6 +1130,8 @@ struct LiveStream: View {
             title: "Buy Now",
             isOutLine: false
         ) {
+            // Hard-stop: timer expired => no more bids (MC: cmp55p2y8007b56kdfowbf5wr)
+            if isBidTimerExpired { return }
             if UserDefaults.allowBidForAllUser || handleBidding() {
                 sendBid(
                     roomId: currentRoomID,
@@ -1107,6 +1162,8 @@ struct LiveStream: View {
     }
     //MARK: Cusotm bid section action
     private func handleCustomBidTap() {
+        // Hard-stop: timer expired => no more bids (MC: cmp55p2y8007b56kdfowbf5wr)
+        if isBidTimerExpired { return }
         if handleBidding(){
 //            if UserDefaults.allowBidForAllUser {
 //                self.maxBidAmountSheet = true
@@ -1192,7 +1249,11 @@ struct LiveStream: View {
     private func handleBidDragEnd(value: DragGesture.Value) {
         if value.translation.width > totalSwipeWidth * 0.25 {
             dragOffset = .zero
-            
+            // Hard-stop: timer expired => no more bids (MC: cmp55p2y8007b56kdfowbf5wr)
+            if isBidTimerExpired {
+                swipeConfirmed = false
+                return
+            }
             if UserDefaults.allowBidForAllUser {
                 swipeConfirmed = true
                 incrementPrice()
@@ -2725,6 +2786,12 @@ extension LiveStream {
 //    }
     
     func sendBid(roomId: String, bidAmount: String, productId: String, auctionTypeId: Int) {
+        // Defense-in-depth: refuse to emit any bid socket event once the auction
+        // countdown timer has elapsed. (MC: cmp55p2y8007b56kdfowbf5wr)
+        if isBidTimerExpired {
+            print("⛔ sendBid blocked — bid timer expired for room \(roomId), product \(productId)")
+            return
+        }
         // Check if this is a surprise set auction
         if isSurpriseSetAuctionActive{
            let components = productId.split(separator: "_").map(String.init)
