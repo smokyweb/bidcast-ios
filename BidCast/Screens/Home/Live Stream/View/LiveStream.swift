@@ -236,28 +236,50 @@ struct LiveStream: View {
         auctionStartedRooms.contains(currentRoomID)
     }
 
+    // MARK: - Auction-Type Helpers (Mission Control: cmp55p2y8007b56kdfowbf5wr)
+    // auctionTypeId taxonomy (per PM Ankit Verma, 2026-05-14):
+    //   == 5  -> Buy Now Auction       (Buy Now button only, no timer, no swipe-to-bid)
+    //   == 9  -> Sports Break / Surprise Set (handled separately, existing flow preserved)
+    //   other -> Live Auction          (swipe-to-bid + countdown timer + "Bidding Closed")
+    private var isBuyNowOnlyAuction: Bool {
+        // Sports break (9) is handled via shouldShowBuyNow above; Buy Now only is 5.
+        return auctionTypeId == 5
+    }
+    private var isSportsBreakAuction: Bool {
+        return auctionTypeId == 9 || isSurpriseSetAuctionActive
+    }
+    private var isLiveAuction: Bool {
+        return !isBuyNowOnlyAuction && !isSportsBreakAuction
+    }
+
+    // Flips true once we've seen at least one non-"00:00" tick from `bid_timer_update`
+    // for the current product/auction. Reset on auction or product change. Without this
+    // gate we'd briefly show "Bidding Closed" between product switch and the first
+    // server tick (when bidTime is still the previous auction's "00:00").
+    @State private var hasObservedBidTimerThisAuction: Bool = false
+
     // MARK: - Bid Timer Expiry Guard (Mission Control: cmp55p2y8007b56kdfowbf5wr)
-    /// True when the auction bid countdown has elapsed for the current product / surprise set
-    /// and the server has not yet emitted `bid_finalized`. Used to lock the bid UI and the
-    /// bid action sites so no more bids are accepted after the timer reaches 00:00.
+    /// True when the auction bid countdown has elapsed for the current product and the
+    /// server has not yet emitted `bid_finalized`. Used to lock the swipe-to-bid UI and
+    /// the bid action sites so no more bids are accepted after the timer reaches 00:00.
+    ///
+    /// Buy Now Auction (auctionTypeId == 5) has no timer, so this is always false there.
+    /// Sports Break / Surprise Set (auctionTypeId == 9) keeps its existing flow.
     private var isBidTimerExpired: Bool {
         guard isAuctionStartedForCurrentRoom else { return false }
-        // Don't lock between auction-start and the first bid_timer_update tick:
-        // gate by hasWon == false (winner not yet announced) AND a product is loaded.
-        if isSurpriseSetAuctionActive {
-            // Surprise-set countdown is an Int; 0 means timer is up.
-            return currentSurpriseSetData != nil
-                && surpriseSetBidTime == 0
-                && socketManagerChat.hasWon == false
-        } else {
-            // Regular product countdown comes through socketManagerChat.bidTime as "MM:SS".
-            // We only treat "00:00" as expired when we already have product data AND the
-            // product status isn't already "sold" (sold case is handled elsewhere).
-            guard let product = auctionedProductData else { return false }
-            if product.status == "sold" { return false }
-            return socketManagerChat.bidTime == "00:00"
-                && socketManagerChat.hasWon == false
-        }
+        // Buy Now has no countdown timer at all -> never expired.
+        if isBuyNowOnlyAuction { return false }
+        // Sports break keeps its current behavior -- the surprise-set Int countdown still
+        // gates the existing UI elsewhere; we don't lock bidding from this path.
+        if isSportsBreakAuction { return false }
+        // Live Auction: lock bids once the server-driven countdown hits 00:00 AND we know
+        // the countdown was actually running for this auction (avoids false-positive at
+        // auction-start before the first bid_timer_update tick, and at product switch).
+        guard hasObservedBidTimerThisAuction else { return false }
+        guard let product = auctionedProductData else { return false }
+        if product.status == "sold" { return false }
+        return socketManagerChat.bidTime == "00:00"
+            && socketManagerChat.hasWon == false
     }
     @State var auctionedProductData: ProductDataModel1? = nil
     @State  var  boosts = [BoostModel]()
@@ -916,23 +938,21 @@ struct LiveStream: View {
     @ViewBuilder
     private var productDetailsView: some View {
         if isAuctionStartedForCurrentRoom {
-            // Check if it's a surprise set auction
+            // Check if it's a surprise set / sports break auction (auctionTypeId == 9 path).
+            // Existing flow is preserved per PM spec; no "Bidding Closed" injected here.
             if isSurpriseSetAuctionActive, let surpriseSet = currentSurpriseSetData {
                 VStack(alignment: .leading, spacing: 12) {
                     surpriseSetProductCard(surpriseSet: surpriseSet)
-                    if isBidTimerExpired {
-                        biddingClosedView
-                    } else {
-                        biddingControls
-                    }
+                    biddingControls
                 }
             }
-            // Regular product auction
+            // Regular product auction (Buy Now == 5 OR Live Auction otherwise)
             else if let product = auctionedProductData {
                 VStack(alignment: .leading, spacing: 12) {
                     currentProductCard(product: product)
                     if product.status != "sold" {
-                        if isBidTimerExpired {
+                        // Only Live Auction shows "Bidding Closed" — Buy Now has no timer.
+                        if isLiveAuction && isBidTimerExpired {
                             biddingClosedView
                         } else {
                             biddingControls
@@ -940,6 +960,21 @@ struct LiveStream: View {
                     } else {
                         waitingForProductView
                     }
+                }
+                // Track that we've seen at least one non-zero tick for this auction so a
+                // momentary "00:00" between product switch and first server tick doesn't
+                // flip the UI to "Bidding Closed" prematurely. Reset whenever we move to
+                // a new product (currentProductID) or the auction stops/starts.
+                .onChange(of: socketManagerChat.bidTime) { _, newValue in
+                    if newValue != "00:00" {
+                        hasObservedBidTimerThisAuction = true
+                    }
+                }
+                .onChange(of: currentProductID) { _, _ in
+                    hasObservedBidTimerThisAuction = false
+                }
+                .onChange(of: isAuctionStartedForCurrentRoom) { _, started in
+                    if !started { hasObservedBidTimerThisAuction = false }
                 }
             } else {
                 waitingForProductView
@@ -1130,8 +1165,10 @@ struct LiveStream: View {
             title: "Buy Now",
             isOutLine: false
         ) {
-            // Hard-stop: timer expired => no more bids (MC: cmp55p2y8007b56kdfowbf5wr)
-            if isBidTimerExpired { return }
+            // Buy Now Auction (auctionTypeId == 5) has no timer, so this guard is a
+            // Live-Auction-only safeguard for Buy-It-Now-within-live-auction edge cases.
+            // (MC: cmp55p2y8007b56kdfowbf5wr)
+            if isLiveAuction && isBidTimerExpired { return }
             if UserDefaults.allowBidForAllUser || handleBidding() {
                 sendBid(
                     roomId: currentRoomID,
@@ -1162,8 +1199,9 @@ struct LiveStream: View {
     }
     //MARK: Cusotm bid section action
     private func handleCustomBidTap() {
-        // Hard-stop: timer expired => no more bids (MC: cmp55p2y8007b56kdfowbf5wr)
-        if isBidTimerExpired { return }
+        // Live Auction only: stop custom bids once countdown hits 00:00.
+        // (MC: cmp55p2y8007b56kdfowbf5wr)
+        if isLiveAuction && isBidTimerExpired { return }
         if handleBidding(){
 //            if UserDefaults.allowBidForAllUser {
 //                self.maxBidAmountSheet = true
@@ -1249,8 +1287,10 @@ struct LiveStream: View {
     private func handleBidDragEnd(value: DragGesture.Value) {
         if value.translation.width > totalSwipeWidth * 0.25 {
             dragOffset = .zero
-            // Hard-stop: timer expired => no more bids (MC: cmp55p2y8007b56kdfowbf5wr)
-            if isBidTimerExpired {
+            // Live Auction only: stop swipe-to-bid once countdown hits 00:00.
+            // (Swipe is only ever shown in Live Auction mode, but defense in depth.)
+            // (MC: cmp55p2y8007b56kdfowbf5wr)
+            if isLiveAuction && isBidTimerExpired {
                 swipeConfirmed = false
                 return
             }
@@ -2786,9 +2826,11 @@ extension LiveStream {
 //    }
     
     func sendBid(roomId: String, bidAmount: String, productId: String, auctionTypeId: Int) {
-        // Defense-in-depth: refuse to emit any bid socket event once the auction
-        // countdown timer has elapsed. (MC: cmp55p2y8007b56kdfowbf5wr)
-        if isBidTimerExpired {
+        // Defense-in-depth: refuse to emit any bid socket event once a Live Auction
+        // countdown has elapsed. Buy Now (5) has no timer; Sports Break (9) uses its
+        // own surprise-set flow so we don't gate it from here.
+        // (MC: cmp55p2y8007b56kdfowbf5wr)
+        if isLiveAuction && isBidTimerExpired {
             print("⛔ sendBid blocked — bid timer expired for room \(roomId), product \(productId)")
             return
         }
