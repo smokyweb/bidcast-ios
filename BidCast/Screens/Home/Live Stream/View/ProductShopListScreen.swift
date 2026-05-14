@@ -237,8 +237,16 @@ extension ProductShopListScreen {
         ) { index, _ in
             switch index {
             case 0:
+                // MC cmp5g5h0k00qs56kd2etclc2a (Ankit 2026-05-14): the Sort
+                // pill was assigning `selectedOptions = "newest"`. That
+                // variable is the `sale_type` filter (valid values:
+                // buy_now / auction / accept_offers) — putting "newest"
+                // there made every subsequent fetchProduct() send
+                // sale_type=newest, which the server rejects as an invalid
+                // filter and returns zero rows. The Sort pill should ONLY
+                // open the sort sheet; the actual sort value is handled by
+                // selectedSort + .onChange below.
                 showSortSheet = true
-                selectedOptions = "newest"
             case 1:
                 resetData()
                 selectedOptions = "auction"
