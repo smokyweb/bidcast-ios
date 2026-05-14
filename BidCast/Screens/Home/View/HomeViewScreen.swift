@@ -84,8 +84,20 @@ struct HomeViewScreen: View {
             HStack(spacing: 12) {
                 if comeFromExploreScreen {
                     //back button
+                    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14):
+                    // Filtered Home was previously reached via a
+                    // NavigationView push from the Explore tab, so the
+                    // back button just called presentationMode.dismiss().
+                    // The new flow is a tab-switch (Explore -> Home tab
+                    // with filter applied via TabBarRouter) — there is no
+                    // push to pop. Back now switches the tab selection
+                    // back to Explore (tag 1) and clears the Explore
+                    // filter so re-entering Home shows the plain feed.
                     Button {
-                        presentationMode.wrappedValue.dismiss()
+                        comeFromExploreScreen = false
+                        showCategory = ""
+                        showSubCategory = ""
+                        tabBarRouter.selectedTab = 1
                     } label: {
                         Image(systemName:"chevron.left")
                             .font(.custom(poppinsBold, size: 16))

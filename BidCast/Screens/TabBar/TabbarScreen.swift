@@ -79,10 +79,35 @@ struct TabbarScreen: View {
         case shipping
     }
 
+    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): TabView only fires its
+    // selection binding's setter when the selected value actually changes.
+    // We need to also catch the case where the user is already on the Home
+    // tab with an Explore filter applied and they tap the Home tab icon
+    // again — PM wants that to clear the filter and show plain Home.
+    // Wrapping the selection in a custom Binding lets us detect every tap
+    // (including same-tab re-taps) and clear the filter before forwarding
+    // the value to the underlying router.
+    private var tabSelectionBinding: Binding<Int> {
+        Binding<Int>(
+            get: { tabBarRouter.selectedTab },
+            set: { newTab in
+                if newTab == 0
+                    && tabBarRouter.selectedTab == 0
+                    && homeComeFromExplore {
+                    // Re-tap on Home while filtered → clear filter (plain Home).
+                    homeComeFromExplore = false
+                    homeShowCategory = ""
+                    homeShowSubCategory = ""
+                }
+                tabBarRouter.selectedTab = newTab
+            }
+        )
+    }
+
     var body: some View {
         // Wrap everything in NavigationStack
         NavigationStack {
-            TabView(selection: $tabBarRouter.selectedTab) {
+            TabView(selection: tabSelectionBinding) {
                 
                 NavigationContainer(navigationPath: $homeNavigationPath) {
                     HomeViewScreen(deepLinkShowId:selectedShowId,
