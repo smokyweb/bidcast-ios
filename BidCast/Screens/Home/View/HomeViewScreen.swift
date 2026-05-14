@@ -129,7 +129,14 @@ struct HomeViewScreen: View {
                 categoryScrollView
             }
             
-            if comeFromExploreScreen && categoryList.count != 0 && showSubCategory == "" {
+            // FIX cmp5czpw900jo56kdn739kkjp: removed `&& showSubCategory == ""`
+            // guard — the home row (subcategory filter strip) must stay visible
+            // after the user taps any category on the Explore page, whether or
+            // not a specific subcategory was pre-selected. The old condition hid
+            // the row the moment showSubCategory was non-empty, making the
+            // filter strip disappear and leaving users stuck on one subcategory
+            // with no way to switch. Now it shows whenever data is ready.
+            if comeFromExploreScreen && categoryList.count != 0 {
                 categoryScrollView
             }
           
