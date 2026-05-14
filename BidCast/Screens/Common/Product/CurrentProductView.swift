@@ -22,8 +22,28 @@ struct CurrentProductView: View {
     @State var lastBid: Double = 0
     @State var showBidAmount = true
     @State private var animate = true
+    // Flips true the first time we observe a non-"00:00" bidTime for the current
+    // product. Resets when the product (or auction) changes. Lets us distinguish
+    // "timer hasn't started yet" (initial "00:00") from "timer ran and elapsed"
+    // ("00:00" again, after one or more ticks). (MC: cmp55p2y8007b56kdfowbf5wr)
+    @State private var hasObservedTimerTick: Bool = false
     var onTap: (() -> Void)?
     var onTapRunNext: (() -> Void)?
+
+    // True when the auction bid timer has just elapsed. Used to surface the
+    // host-side "Run Next" button even when no buyer ever placed a bid, so the
+    // host isn't stuck staring at "00:00". (MC: cmp55p2y8007b56kdfowbf5wr)
+    private var isBidTimerEnded: Bool {
+        return auctionTypeId != 5
+            && hasObservedTimerTick
+            && timeToSeconds(bidTime) == 0
+    }
+    // Show the host-side "Run Next" CTA either when a winner is locked in
+    // (existing behaviour) or when the timer ran out with no winner.
+    private var shouldShowRunNext: Bool {
+        let isHost = sellerId == "\(UserDefaults.userId)"
+        return isHost && (hasWon || isBidTimerEnded)
+    }
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -146,7 +166,7 @@ struct CurrentProductView: View {
                     
                     
                 }
-            if hasWon && (sellerId == "\(UserDefaults.userId)"){
+            if shouldShowRunNext {
                 Button(action: {
                     print("Run next tapped")
                     onTapRunNext?()
@@ -173,6 +193,18 @@ struct CurrentProductView: View {
         .onTapGesture {
             print("Whole product card tapped!")
             onTap?()                  
+        }
+        // Track the per-product timer lifecycle so the Run Next CTA can fire on
+        // "timer elapsed with no winner" without firing during the initial
+        // "00:00" before the server sends the first bid_timer_update tick.
+        // (MC: cmp55p2y8007b56kdfowbf5wr)
+        .onChange(of: bidTime) { newValue in
+            if timeToSeconds(newValue) > 0 {
+                hasObservedTimerTick = true
+            }
+        }
+        .onChange(of: product.id) { _ in
+            hasObservedTimerTick = false
         }
     }
     @ViewBuilder
