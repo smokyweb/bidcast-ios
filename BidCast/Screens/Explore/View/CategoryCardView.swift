@@ -60,7 +60,13 @@ struct CategoryCardView: View {
             .padding(.horizontal, 8)
             .padding(.bottom, 8)
         }
-        .frame(width: 110, height: 170, alignment: .top)
+        // MC cmp5d1iss00jv56kda1midacm (Ankit 2026-05-14): the card was
+        // hard-coded to width: 110, which on iPad / Plus / Pro / landscape
+        // left visible gutters inside the 3-column LazyVGrid because the
+        // grid item is wider than 110 on those size classes. Switching to
+        // maxWidth: .infinity lets each card fill its grid column so the
+        // row is gap-free and the layout is true auto-layout.
+        .frame(maxWidth: .infinity, minHeight: 170, alignment: .top)
 //        .background(Color.white)
 //        .cornerRadius(14)
 //        .shadow(color: Color.black.opacity(0.32),
