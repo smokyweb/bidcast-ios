@@ -7,6 +7,21 @@
 
 import Foundation
 
+// MC build-fix (parent cmp495j7i00md3mx1pjv9qjq1): the HomeModel extension
+// below uses decodeBoolFlexible. Codemagic build 249 failed because the
+// helper was declared `private` in LiveShowsModel.swift only, so it wasn't
+// visible across files. Each consumer file declares its own private copy.
+private func decodeBoolFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) throws -> Bool? {
+    if let b = try? c.decodeIfPresent(Bool.self, forKey: key) { return b }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i != 0 }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let v = s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if ["1", "true", "yes"].contains(v) { return true }
+        if ["0", "false", "no"].contains(v) { return false }
+    }
+    return nil
+}
+
 struct HomeModel: Codable, Identifiable {
     var id: Int?
     var title: String?
