@@ -107,6 +107,14 @@ struct AccountScreen: View {
                     hasLoadedData = true
                 }
             }
+            .onAppear {
+                // Re-fetch seller hub info (including upcoming shows) each time the
+                // view re-appears — e.g. after returning from the show-scheduling flow.
+                // onFirstAppear already handles the very first load, so we skip it here.
+                if hasLoadedData {
+                    getSellerHubInfo()
+                }
+            }
             .refreshable {
                    await refreshData()
                }
