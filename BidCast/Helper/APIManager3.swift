@@ -335,10 +335,21 @@ private lazy var optimizedSession: URLSession = {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
+        #if DEBUG
+        print("✅ URL: ====>\(url)")
+        print("✅ METHOD: =====> \(type.method)")
+        print("✅ BODY: =====> \(type.body ?? "")")
+        print("✅ \(request.allHTTPHeaderFields as Any)")
+        #endif
+        
         let dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = dataBody
         
         let (data, response) = try await optimizedSession.data(for: request)
+                
+        #if DEBUG
+        print("👉 API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+        #endif
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw DataError.invalidResponse(data)
