@@ -229,8 +229,118 @@ struct ProductDataModel1: Codable, Identifiable {
 //    }
 }
 
-extension ProductDataModel1 {
+// MARK: - Flexible decoders (MC cmp5ehs9b00o656kd3otm7w1m)
+//
+// Cross-platform decoding: the Android client sends some product fields as
+// `Any?` via Gson — specifically `height`, `length`, `width`, `weight`,
+// `type`, `videos`, `variant`, and `category.liveCount`. Android may put a
+// Double, Int, String, or null into those slots depending on how the product
+// was created (iOS sends Doubles, Android sometimes serialises a manually-
+// entered string as a String, the server occasionally normalises to Int).
+//
+// The iOS `ProductDataModel1` declared these as strict `Double?` / `String?`,
+// so Swift's automatic `Codable` decoder threw `DecodingError.typeMismatch`
+// whenever the iOS viewer joined an Android-hosted live show — the viewer
+// saw the iOS standard "the data couldn’t be read" message and never made
+// it onto the auction screen.
+//
+// The helpers below decode the most common runtime representations safely,
+// returning `nil` instead of throwing when the value is present but the wrong
+// type. The companion `init(from:)` further down wraps every property in `try?`
+// so a single bad field can't poison decoding for the entire product.
+private func decodeFlexibleDouble<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> Double? {
+    if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return d }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return Double(i) }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let t = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        if t.isEmpty || t.lowercased() == "null" { return nil }
+        return Double(t)
+    }
+    return nil
+}
 
+private func decodeFlexibleInt<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> Int? {
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i }
+    if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return Int(d) }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let t = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        if t.isEmpty || t.lowercased() == "null" { return nil }
+        return Int(t)
+    }
+    return nil
+}
+
+private func decodeFlexibleString<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> String? {
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) { return s.isEmpty ? nil : s }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return String(i) }
+    if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return String(d) }
+    if let b = try? c.decodeIfPresent(Bool.self, forKey: key) { return b ? "true" : "false" }
+    return nil
+}
+
+private func decodeFlexibleBool<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> Bool? {
+    if let b = try? c.decodeIfPresent(Bool.self, forKey: key) { return b }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i != 0 }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let v = s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if ["1", "true", "yes"].contains(v) { return true }
+        if ["0", "false", "no"].contains(v) { return false }
+    }
+    return nil
+}
+
+extension ProductDataModel1 {
+    // Local CodingKeys for the custom init.
+    private enum FlexCodingKeys: String, CodingKey {
+        case id, title, description, pricing, quantity, purchasedQuantity, sku, status, type
+        case variant, productCondition, productShow, acceptOffers, auction, flashSale
+        case reserveForLive, hazardousMaterial, bidCount, bid_count
+        case height, length, width, weight
+        case mailClass, processingCategory, shippingProfileId, subCategoryId, userId
+        case images, thumbnail, videos, createdAt, category, user
+    }
+
+    init(from decoder: Decoder) throws {
+        // Single keyed container; every field is wrapped in try? so a mismatched
+        // type for any one field just defaults to nil instead of throwing
+        // "the data couldn't be read" for the whole product. (MC cmp5ehs9b00o656kd3otm7w1m)
+        let c = try decoder.container(keyedBy: FlexCodingKeys.self)
+
+        self.id = decodeFlexibleInt(c, forKey: .id)
+        self.title = decodeFlexibleString(c, forKey: .title)
+        self.description = decodeFlexibleString(c, forKey: .description)
+        self.pricing = decodeFlexibleString(c, forKey: .pricing)
+        self.quantity = decodeFlexibleString(c, forKey: .quantity)
+        self.purchasedQuantity = decodeFlexibleString(c, forKey: .purchasedQuantity)
+        self.sku = decodeFlexibleString(c, forKey: .sku)
+        self.status = decodeFlexibleString(c, forKey: .status)
+        self.type = decodeFlexibleString(c, forKey: .type)
+        self.variant = try? c.decodeIfPresent([ProductVariant].self, forKey: .variant)
+        self.productCondition = decodeFlexibleString(c, forKey: .productCondition)
+        self.productShow = decodeFlexibleString(c, forKey: .productShow)
+        self.acceptOffers = decodeFlexibleBool(c, forKey: .acceptOffers)
+        self.auction = decodeFlexibleBool(c, forKey: .auction)
+        self.flashSale = decodeFlexibleBool(c, forKey: .flashSale)
+        self.reserveForLive = decodeFlexibleBool(c, forKey: .reserveForLive)
+        self.hazardousMaterial = decodeFlexibleBool(c, forKey: .hazardousMaterial)
+        // bid_count from server, bidCount from iOS-emitted payloads; accept either.
+        self.bidCount = decodeFlexibleInt(c, forKey: .bidCount) ?? decodeFlexibleInt(c, forKey: .bid_count)
+        self.height = decodeFlexibleDouble(c, forKey: .height)
+        self.length = decodeFlexibleDouble(c, forKey: .length)
+        self.width = decodeFlexibleDouble(c, forKey: .width)
+        self.weight = decodeFlexibleDouble(c, forKey: .weight)
+        self.mailClass = decodeFlexibleString(c, forKey: .mailClass)
+        self.processingCategory = decodeFlexibleString(c, forKey: .processingCategory)
+        self.shippingProfileId = decodeFlexibleInt(c, forKey: .shippingProfileId)
+        self.subCategoryId = decodeFlexibleInt(c, forKey: .subCategoryId)
+        self.userId = decodeFlexibleInt(c, forKey: .userId)
+        self.images = try? c.decodeIfPresent([String].self, forKey: .images)
+        self.thumbnail = try? c.decodeIfPresent([String].self, forKey: .thumbnail)
+        self.videos = try? c.decodeIfPresent([String].self, forKey: .videos)
+        self.createdAt = decodeFlexibleString(c, forKey: .createdAt)
+        self.category = try? c.decodeIfPresent(ProductCategory.self, forKey: .category)
+        self.user = try? c.decodeIfPresent(ProductUser.self, forKey: .user)
+    }
 }
 
 extension ProductDataModel1 {
