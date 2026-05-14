@@ -321,11 +321,6 @@ extension ProductShopListScreen {
                     productSuccess()
                 }
             ) {
-                // Only pass a category filter when the caller supplied a real
-                // category id (> 0). Sending "0" or a single category id
-                // restricts the seller's shop to one category (or returns
-                // nothing), which is not what the shop list is supposed to do.
-                let categoryFilter: String? = (categoryIds > 0) ? "\(categoryIds)" : nil
                 let request = ProductRequest(
                     user_id: sellerId,
                     search: searchText,
