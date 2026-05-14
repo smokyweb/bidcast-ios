@@ -193,6 +193,20 @@ struct ExploreViewScreen: View {
             let selectedCategory = categoryTitles[selectedCategoryIndex]
             Task { await fetchCategory(for: selectedCategory) }
         }
+        // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): also consume a
+        // pending exploreInitialTab on every .onAppear (not just
+        // .onFirstAppear). The Explore view stays alive across tab
+        // switches, so .onFirstAppear only fires once — the second time
+        // the user taps 'See All Categories' on Home we need to re-apply
+        // the requested segment (All = index 2) here too.
+        .onAppear {
+            let initialTab = tabBarRouter.exploreInitialTab
+            guard initialTab != 0 else { return }
+            selectedCategoryIndex = initialTab
+            tabBarRouter.exploreInitialTab = 0
+            let selectedCategory = categoryTitles[selectedCategoryIndex]
+            Task { await fetchCategory(for: selectedCategory) }
+        }
         .onChange(of: tabBarRouter.exploreInitialTab) { _, newVal in
             guard newVal != 0 else { return }
             selectedCategoryIndex = newVal
