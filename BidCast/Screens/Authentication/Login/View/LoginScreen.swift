@@ -152,13 +152,11 @@ struct LoginScreen: View {
                     }, btnTextColor: .white)
                     
                     
-                    // MC sub-task cmp4934g400lj3mx1tidbedt1 (Trey 2026-05-13)
-                    // + MC cmp5cqhmr00ix56kdkw2fqw3q (Ankit 2026-05-14):
-                    // lift the Create Account CTA away from both the system
-                    // gesture area at the bottom AND the Privacy / Terms footer
-                    // so users don't accidentally tap a near-bottom system
-                    // control or open the wrong link. Increased bottom padding
-                    // gives a clear, large hit zone separated from the footer.
+                    // MC sub-task cmp4934g400lj3mx1tidbedt1 (Trey 2026-05-13):
+                    // lift the Create Account CTA above the iOS home indicator
+                    // so users don't have to thumb-walk between the link and
+                    // the system gesture area. Extra .bottom padding keeps the
+                    // privacy/terms footer below it but inside the safe area.
                     HStack(spacing: 6) {
                         Spacer()
                         Text(AppString.newUser.localized)
@@ -175,8 +173,8 @@ struct LoginScreen: View {
                         })
                         Spacer()
                     }
-                    .padding(.top, 20)
-                    .padding(.bottom, 48)
+                    .padding(.top, 12)
+                    .padding(.bottom, 24)
                     Spacer()
                     HStack{
                         Spacer()
@@ -200,13 +198,7 @@ struct LoginScreen: View {
                     }
                 }
                 .padding([.leading, .trailing])
-                // MC cmp5cqhmr00ix56kdkw2fqw3q (Ankit 2026-05-14): the previous
-                // screenHeight/3 top padding pushed the entire form so far
-                // down that the Create Account CTA ended up adjacent to the
-                // bottom nav / system gesture area on smaller iPhones. Cut to
-                // ~screenHeight/8 so the form (and the Create Account link
-                // below it) sits higher in the viewport.
-                .padding(.top, screenHeight/8)
+                .padding(.top, screenHeight/3)
                 
                 .toast(isPresenting: $showhud) {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
