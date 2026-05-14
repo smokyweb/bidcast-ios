@@ -186,6 +186,25 @@ struct ExploreViewScreen: View {
             let selectedCategory = categoryTitles[selectedCategoryIndex]
             Task { await fetchCategory(for: selectedCategory) }
         }
+        // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): When the user
+        // drills into a category from the Explore tab the destination
+        // HomeViewScreen is pushed via NavigationLink(isActive:) inside the
+        // Explore tab's NavigationView. If the user then switches to the
+        // Home tab while that push is active, iOS leaks the pushed view's
+        // toolbar state (which includes the .toolbar(.visible, for: .tabBar)
+        // modifier we added in an earlier fix) into sibling tabs, causing
+        // the bottom tab bar to stop rendering on the Home tab. Dismiss the
+        // Explore drill-in push the moment the user leaves the Explore tab
+        // so the NavigationView state is clean when they return.
+        .onChange(of: tabBarRouter.selectedTab) { _, newTab in
+            if newTab != 1 {
+                // User navigated away from Explore — collapse the drill-in
+                // push so the Explore NavigationView stack is clean and its
+                // toolbar state does not bleed into the new tab.
+                navigateToCategoryDetailScreen = false
+                expandedCategoryIndex = nil
+            }
+        }
     }
     
     // MARK: - API Calls
