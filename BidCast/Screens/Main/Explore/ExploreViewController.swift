@@ -17,6 +17,20 @@
 import UIKit
 import Kingfisher
 
+private enum ExploreSearchSection: Int, CaseIterable {
+    case shows
+    case products
+    case users
+
+    var title: String {
+        switch self {
+        case .shows: return "Shows"
+        case .products: return "Products"
+        case .users: return "Users"
+        }
+    }
+}
+
 final class ExploreViewController: UIViewController {
 
     // MARK: - Storyboard outlets
@@ -126,6 +140,16 @@ final class ExploreViewController: UIViewController {
         return l
     }()
 
+    private lazy var searchResultsTableView: UITableView = {
+        let tv = UITableView(frame: .zero, style: .insetGrouped)
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.dataSource = self
+        tv.delegate = self
+        tv.register(UITableViewCell.self, forCellReuseIdentifier: "searchResult")
+        tv.isHidden = true
+        return tv
+    }()
+
     private lazy var productsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -196,6 +220,7 @@ final class ExploreViewController: UIViewController {
         filterBar.addSubview(resultsLabel)
         filterBar.addSubview(filterButton)
         view.addSubview(productsCollectionView)
+        view.addSubview(searchResultsTableView)
         view.addSubview(emptyStateLabel)
         view.addSubview(spinner)
 
@@ -231,6 +256,11 @@ final class ExploreViewController: UIViewController {
             productsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             productsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             productsCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+            searchResultsTableView.topAnchor.constraint(equalTo: filterBar.bottomAnchor),
+            searchResultsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchResultsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchResultsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             emptyStateLabel.centerXAnchor.constraint(equalTo: productsCollectionView.centerXAnchor),
             emptyStateLabel.centerYAnchor.constraint(equalTo: productsCollectionView.centerYAnchor),
@@ -278,8 +308,20 @@ final class ExploreViewController: UIViewController {
     // MARK: - Helpers
 
     private func updateResultsLabel() {
-        let count = viewModel.products.count
-        resultsLabel.text = count == 0 ? "" : "\(count) product\(count == 1 ? "" : "s")"
+        if viewModel.isShowingUnifiedSearchResults {
+            let total = viewModel.searchShows.count + viewModel.searchProducts.count + viewModel.searchUsers.count
+            resultsLabel.text = total == 0 ? "" : "\(total) result\(total == 1 ? "" : "s")"
+        } else {
+            let count = viewModel.products.count
+            resultsLabel.text = count == 0 ? "" : "\(count) product\(count == 1 ? "" : "s")"
+        }
+    }
+
+    private func updateSearchModeUI() {
+        let searching = viewModel.isShowingUnifiedSearchResults
+        searchResultsTableView.isHidden = !searching
+        productsCollectionView.isHidden = searching
+        emptyStateLabel.text = searching ? "No matches for that search." : "No products match the current filter."
     }
 }
 
@@ -390,13 +432,100 @@ extension ExploreViewController: UISearchBarDelegate {
     }
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // Debounce-lite: if cleared, refetch immediately.
-        if searchText.isEmpty && viewModel.filter.search.isEmpty == false {
+        let trimmed = searchText.trimmingCharacters(in: .whitespaces)
+        if trimmed.count >= 2 {
+            viewModel.setSearch(searchText)
+        } else if searchText.isEmpty && viewModel.filter.search.isEmpty == false {
             viewModel.setSearch("")
         }
     }
 }
 
 // MARK: - ExploreViewModelDelegate
+
+extension ExploreViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        ExploreSearchSection.allCases.filter { section in
+            switch section {
+            case .shows: return !viewModel.searchShows.isEmpty
+            case .products: return !viewModel.searchProducts.isEmpty
+            case .users: return !viewModel.searchUsers.isEmpty
+            }
+        }.count
+    }
+
+    private func visibleSearchSections() -> [ExploreSearchSection] {
+        ExploreSearchSection.allCases.filter { section in
+            switch section {
+            case .shows: return !viewModel.searchShows.isEmpty
+            case .products: return !viewModel.searchProducts.isEmpty
+            case .users: return !viewModel.searchUsers.isEmpty
+            }
+        }
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        visibleSearchSections()[section].title
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch visibleSearchSections()[section] {
+        case .shows: return viewModel.searchShows.count
+        case .products: return viewModel.searchProducts.count
+        case .users: return viewModel.searchUsers.count
+        }
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "searchResult", for: indexPath)
+        var cfg = cell.defaultContentConfiguration()
+        switch visibleSearchSections()[indexPath.section] {
+        case .shows:
+            let show = viewModel.searchShows[indexPath.row]
+            cfg.text = show.title ?? "Show"
+            cfg.secondaryText = show.user?.username.map { "@\($0)" } ?? show.user?.name
+            cfg.image = UIImage(systemName: "dot.radiowaves.left.and.right")
+            cell.accessoryType = .disclosureIndicator
+        case .products:
+            let product = viewModel.searchProducts[indexPath.row]
+            cfg.text = product.name ?? "Product"
+            let seller = product.user?.name ?? ""
+            let price = product.price ?? ""
+            cfg.secondaryText = [price, seller].filter { !$0.isEmpty }.joined(separator: " • ")
+            cfg.image = UIImage(systemName: "bag")
+            cell.accessoryType = .disclosureIndicator
+        case .users:
+            let user = viewModel.searchUsers[indexPath.row]
+            cfg.text = user.name ?? user.username ?? "User"
+            cfg.secondaryText = user.username.map { "@\($0)" }
+            cfg.image = UIImage(systemName: "person.crop.circle")
+            cell.accessoryType = .disclosureIndicator
+        }
+        cell.contentConfiguration = cfg
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        switch visibleSearchSections()[indexPath.section] {
+        case .shows:
+            let show = viewModel.searchShows[indexPath.row]
+            if show.isActuallyLive {
+                LiveShowLauncher.launchViewer(from: self, show: show)
+            } else if let firstProductId = (show.products?.compactMap { $0?.id }.first) {
+                p3Push(ProductDetailsViewController(productId: firstProductId))
+            } else if let pidStr = show.productIds?.compactMap({ $0 }).first, let pid = Int(pidStr) {
+                p3Push(ProductDetailsViewController(productId: pid))
+            }
+        case .products:
+            guard let pid = viewModel.searchProducts[indexPath.row].id else { return }
+            p3Push(ProductDetailsViewController(productId: pid))
+        case .users:
+            guard let uid = viewModel.searchUsers[indexPath.row].id else { return }
+            p3Push(SellerPublicProfileViewController(userId: uid))
+        }
+    }
+}
 
 extension ExploreViewController: ExploreViewModelDelegate {
 
@@ -405,14 +534,26 @@ extension ExploreViewController: ExploreViewModelDelegate {
     }
 
     func exploreDidUpdateProducts() {
+        updateSearchModeUI()
         productsCollectionView.reloadData()
         emptyStateLabel.isHidden = !viewModel.products.isEmpty
         updateResultsLabel()
     }
 
+    func exploreDidUpdateSearchResults() {
+        updateSearchModeUI()
+        searchResultsTableView.reloadData()
+        let hasResults = !(viewModel.searchShows.isEmpty && viewModel.searchProducts.isEmpty && viewModel.searchUsers.isEmpty)
+        emptyStateLabel.isHidden = hasResults == true
+        updateResultsLabel()
+    }
+
     func exploreDidFail(error: String) {
-        emptyStateLabel.text = "Couldn't load products.\n\(error)"
-        emptyStateLabel.isHidden = !viewModel.products.isEmpty
+        emptyStateLabel.text = viewModel.isShowingUnifiedSearchResults ? "Couldn't load search results.\n\(error)" : "Couldn't load products.\n\(error)"
+        let hasResults = viewModel.isShowingUnifiedSearchResults
+            ? !(viewModel.searchShows.isEmpty && viewModel.searchProducts.isEmpty && viewModel.searchUsers.isEmpty)
+            : !viewModel.products.isEmpty
+        emptyStateLabel.isHidden = hasResults
     }
 
     func exploreDidStartLoading() {

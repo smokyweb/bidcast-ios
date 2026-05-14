@@ -68,6 +68,7 @@ enum APIEndPoint {
 
     //MARK: - PRODUCTS
     case getProducts                                  // POST api/v1/get-product (multipart)
+    case exploreSearch(param: SearchRequest)          // POST api/explore-search (multipart)
     case getUserProducts(param: [String: Any])        // POST api/get-user-product
     case getProductsByStatus(param: [String: Any])    // POST api/v1/get-my-purchases-orders
     case getProductDetails(param: [String: Any])      // POST api/v1/get-product-details
@@ -261,6 +262,7 @@ extension APIEndPoint: EndPointType {
 
         //MARK: - PRODUCTS
         case .getProducts:              return "v1/get-product"
+        case .exploreSearch:            return "explore-search"
         case .getUserProducts:          return "get-user-product"
         case .getProductsByStatus:      return "v1/get-my-purchases-orders"
         case .getProductDetails:        return "v1/get-product-details"
@@ -435,6 +437,7 @@ extension APIEndPoint: EndPointType {
              .forgotPassword, .upsertDeviceDetails,
              .getProducts, .getUserProducts, .getProductsByStatus,
              .getProductDetails, .storeProduct, .storeProductMeta,
+             .exploreSearch,
              .updateProductStatus, .saveSellerProduct,
              .storeScheduleShow, .updateScheduleShow, .getMyScheduledShow,
              .getLiveShow, .notifyLiveUser, .checkScheduleShow, .updateLiveStatus,
@@ -479,6 +482,7 @@ extension APIEndPoint: EndPointType {
         //MARK: - PROFILE (mostly dict-based legacy; TODO-PHASE3 migrate to typed)
         case .deleteAccountRequest(let param):  return param
         case .userSearching(let param):         return param
+        case .exploreSearch(let param):         return param
 
         //MARK: - STATIC PAGES
         case .contact(let param):               return param

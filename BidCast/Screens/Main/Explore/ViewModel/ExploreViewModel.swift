@@ -14,6 +14,7 @@ import Foundation
 protocol ExploreViewModelDelegate: AnyObject {
     func exploreDidUpdateCategories()
     func exploreDidUpdateProducts()
+    func exploreDidUpdateSearchResults()
     func exploreDidFail(error: String)
     func exploreDidStartLoading()
     func exploreDidStopLoading()
@@ -26,6 +27,9 @@ final class ExploreViewModel {
 
     private(set) var categories: [CategoryModel] = []
     private(set) var products: [ProductModel] = []
+    private(set) var searchShows: [Show] = []
+    private(set) var searchProducts: [ExploreSearchProduct] = []
+    private(set) var searchUsers: [SearchUserEntry] = []
 
     /// Current filter. Mutated by the filter sheet, then `applyFilter(_:)` is
     /// called to trigger a fresh product fetch.
@@ -101,10 +105,22 @@ final class ExploreViewModel {
         }
     }
 
+    var isShowingUnifiedSearchResults: Bool {
+        !filter.search.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
     func setSearch(_ query: String) {
         self.filter.search = query
         self.filter.page = 1
-        fetchProducts(reset: true)
+        if isShowingUnifiedSearchResults {
+            fetchUnifiedSearch()
+        } else {
+            searchShows = []
+            searchProducts = []
+            searchUsers = []
+            delegate?.exploreDidUpdateSearchResults()
+            fetchProducts(reset: true)
+        }
     }
 
     func loadNextPageIfPossible() {
@@ -134,6 +150,35 @@ final class ExploreViewModel {
     }
 
     // MARK: - Products
+
+    private func fetchUnifiedSearch() {
+        delegate?.exploreDidStartLoading()
+        Task {
+            defer { self.delegate?.exploreDidStopLoading() }
+            do {
+                let trimmed = filter.search.trimmingCharacters(in: .whitespaces)
+                let req = SearchRequest(search: trimmed, page: 1)
+                let resp: ExploreSearchResponse = try await APIManager.shared.postMultipartForm(
+                    type: .exploreSearch(param: req),
+                    fields: ["search": trimmed],
+                    header: true
+                )
+                let data = resp.data
+                self.searchShows = data?.shows?.compactMap { $0 } ?? []
+                self.searchProducts = data?.products?.compactMap { $0 } ?? []
+                self.searchUsers = data?.users?.compactMap { $0 } ?? []
+                self.delegate?.exploreDidUpdateSearchResults()
+            } catch {
+                let message: String
+                if let dataError = error as? DataError {
+                    message = dataError.getErrorMessage()
+                } else {
+                    message = error.localizedDescription
+                }
+                self.delegate?.exploreDidFail(error: message)
+            }
+        }
+    }
 
     private func fetchProducts(reset: Bool) {
         guard !isFetchingProducts else { return }

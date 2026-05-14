@@ -489,6 +489,7 @@
 		D85C45368636F8314C03DC36 /* ChatThreadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF34FDDBD24932B292BD0F9 /* ChatThreadViewController.swift */; };
 		D8BB4455A93116E6EFA6AC47 /* TutorialsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9B41C38C8EF3CD46A3BB8D /* TutorialsListViewController.swift */; };
 		DBDB44C2B06B005A37B55482 /* P3AnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61F47668E697F9F062CE82F /* P3AnalyticsViewController.swift */; };
+		DC044911A128077EBDECC584 /* ExploreSearchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD54DBE98879A06623E8EED /* ExploreSearchModels.swift */; };
 		E04B44E1B255BB26CAE5CACB /* SocialModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39540DFB5C1CD59F4148F5B /* SocialModels.swift */; };
 		E4694F49A6EDF19408B0CB15 /* BidcastAgoraEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC094AEF9EE06EE5D8B2E0D6 /* BidcastAgoraEngine.swift */; };
 		E5724080B462CF539B146BC0 /* SubscriptionPlansViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC04063BB71F679C6C53627 /* SubscriptionPlansViewController.swift */; };
@@ -1016,6 +1017,7 @@
 		E8984987AB8B37690C621F04 /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesViewController.swift; path = BidCast/Screens/Phase3/HelpSettings/PreferencesViewController.swift; sourceTree = SOURCE_ROOT; };
 		E8A94A11A20A677F05E3ACEA /* SellerOffersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SellerOffersViewController.swift; path = BidCast/Screens/Phase3/SellerHub/SellerOffersViewController.swift; sourceTree = SOURCE_ROOT; };
 		E8F949A18166AFFB3A195A95 /* DebugLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DebugLogger.swift; path = BidCast/Helper/DebugLogger.swift; sourceTree = SOURCE_ROOT; };
+		EAD54DBE98879A06623E8EED /* ExploreSearchModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExploreSearchModels.swift; path = BidCast/Screens/Main/Explore/Model/ExploreSearchModels.swift; sourceTree = SOURCE_ROOT; };
 		EC7D4CCF8E67AA4E0BBD612E /* PushRegistrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PushRegistrationService.swift; path = BidCast/Services/Push/PushRegistrationService.swift; sourceTree = SOURCE_ROOT; };
 		EC8940A4A0DE899C92C5A2AE /* ProductDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProductDetailsViewController.swift; path = BidCast/Screens/Phase8_Parity/Product/ProductDetailsViewController.swift; sourceTree = SOURCE_ROOT; };
 		F1F54B929412273E39092D83 /* ScheduledShowsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScheduledShowsViewController.swift; path = BidCast/Screens/Phase3/ShowScheduling/ScheduledShowsViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -1289,6 +1291,7 @@
 				F3747CF7340D3361CFAED524 /* SellerPhoneOTPViewController.swift */,
 				1977982BBD59D47497099258 /* CreateShippingProfileViewController.swift */,
 				132E418087FAEE061E0A9DE8 /* HomeCategoryTileCell.swift */,
+				EAD54DBE98879A06623E8EED /* ExploreSearchModels.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3416,6 +3419,7 @@
 				3A3019A80F3B7D74C18B8C5E /* SellerPhoneOTPViewController.swift in Sources */,
 				8C983C7644762D866464DDA7 /* CreateShippingProfileViewController.swift in Sources */,
 				6B024239B840B8F336439FA8 /* HomeCategoryTileCell.swift in Sources */,
+				DC044911A128077EBDECC584 /* ExploreSearchModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
