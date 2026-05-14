@@ -13,6 +13,13 @@ let columns = [
     GridItem(.flexible())
 ]
 
+// Computed per-screen explore category card width.
+// Outer LazyVStack uses .padding(.horizontal, 12) so usable width is
+// `screenWidth - 24`. Three cards per row with 12pt spacing between
+// neighbours gives `(usable - 24) / 3` -> `(screenWidth - 48) / 3`.
+// (MC cmp5d1iss00jv56kda1midacm)
+let exploreCategoryCardWidth: CGFloat = (screenWidth - 48) / 3
+
 struct CategoryCardView: View {
     let title: String
     let imageURL: String
@@ -60,13 +67,16 @@ struct CategoryCardView: View {
             .padding(.horizontal, 8)
             .padding(.bottom, 8)
         }
-        // MC cmp5d1iss00jv56kda1midacm (Ankit 2026-05-14): the card was
-        // hard-coded to width: 110, which on iPad / Plus / Pro / landscape
-        // left visible gutters inside the 3-column LazyVGrid because the
-        // grid item is wider than 110 on those size classes. Switching to
-        // maxWidth: .infinity lets each card fill its grid column so the
-        // row is gap-free and the layout is true auto-layout.
-        .frame(maxWidth: .infinity, minHeight: 170, alignment: .top)
+        // MC cmp5d1iss00jv56kda1midacm (Ankit 2026-05-14, v2):
+        // Card width is computed per screen instead of hard-coded to 110pt.
+        //   exploreCategoryCardWidth = (screenWidth - 2*12 outer .padding.horizontal
+        //                              - 2*12 inter-card HStack spacing) / 3
+        // This keeps every card identical on every screen size, including the
+        // partial last row (1 or 2 categories). The previous v1 fix used
+        // .frame(maxWidth: .infinity) which made the single card on the last
+        // row stretch across the row — the PM wants the card to stay the
+        // same width as the full-row cards regardless of how many siblings.
+        .frame(width: exploreCategoryCardWidth, height: 170, alignment: .top)
 //        .background(Color.white)
 //        .cornerRadius(14)
 //        .shadow(color: Color.black.opacity(0.32),
