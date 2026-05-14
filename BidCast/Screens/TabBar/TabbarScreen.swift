@@ -135,6 +135,20 @@ struct TabbarScreen: View {
                     showSellSheet = true
                     tabBarRouter.selectedTab = previousTab
                 } else {
+                    // MC cmp5czpw900jo56kdn739kkjp (2026-05-14): Reset the
+                    // tab we are LEAVING as well as the tab we are entering.
+                    // When the user drills into a category from the Explore
+                    // tab, HomeViewScreen is pushed inside Explore's
+                    // NavigationView with .toolbar(.visible, for: .tabBar).
+                    // If that pushed view is still active when the user
+                    // switches to another tab, iOS leaks the toolbar modifier
+                    // state into the incoming tab — the bottom tab bar
+                    // disappears on the newly selected tab. Resetting the
+                    // previous tab's NavigationView ID here (same onChange,
+                    // same run-loop turn as the tab switch) tears down the
+                    // pushed stack before the new tab renders, eliminating
+                    // the toolbar bleed.
+                    resetNavigation(for: previousTab)
                     resetNavigation(for: newTab)
                     previousTab = newTab
                 }
