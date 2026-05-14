@@ -297,6 +297,36 @@ struct HomeViewScreen: View {
                 }
             }
         }
+        // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): refresh categories
+        // and the live-shows feed whenever the Explore-derived filter flag
+        // toggles. Two cases:
+        //   * false -> true: user just landed on Home from an Explore tap.
+        //     Re-fetch so the filtered feed for the chosen category loads.
+        //   * true -> false: user re-tapped the Home tab from filtered Home
+        //     (or pressed Back). Reset to the regular For-You feed and
+        //     re-fetch so the home row + live shows are repopulated
+        //     instead of leaving the previous filtered state on screen.
+        .onChange(of: comeFromExploreScreen) { _, nowFromExplore in
+            resetPagination()
+            if !nowFromExplore {
+                selectedButton = "For You"
+            }
+            Task {
+                await fetchCategory(for: "for_you")
+                await fetchLiveShow()
+            }
+        }
+        // Also refresh when the actual category/subCategory binding changes
+        // (defensive — covers an Explore -> different category re-tap that
+        // keeps comeFromExploreScreen at true but rotates the filter).
+        .onChange(of: showCategory) { _, _ in
+            resetPagination()
+            Task { await fetchLiveShow() }
+        }
+        .onChange(of: showSubCategory) { _, _ in
+            resetPagination()
+            Task { await fetchLiveShow() }
+        }
         .onDisappear {
             isActiveOnHomeScreen = false
         }
