@@ -1249,7 +1249,7 @@ struct LiveStream: View {
         HStack(spacing: 6) {
             Text("Bid: $\(Int(nextBid))")
                 .font(.custom(poppinsSemiBold, size: 14))
-                .foregroundColor(.black)
+                .foregroundColor(.white)
            
                 chevronAnimation(offset: 3)
                 chevronAnimation(offset: 6)
@@ -1266,7 +1266,7 @@ struct LiveStream: View {
     private func chevronAnimation(offset: CGFloat) -> some View {
         Image(systemName: "chevron.right")
             .font(.system(size: 13, weight: .bold))
-            .foregroundColor(.black)
+            .foregroundColor(.white)
             .opacity(animate ? 1 : 0.2)
             .offset(x: animate ? offset : 0)
     }
