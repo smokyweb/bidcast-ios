@@ -50,12 +50,29 @@ struct StackedImageView: View {
             ZStack(alignment: .topTrailing) {
                 
                 Group {
-                    if imageURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    // MC cmp7dvr4r00fa4fwp18lg3efa: socket-delivered product image
+                    // URLs are sometimes relative paths ("storage/..."). Mirror the
+                    // Android logic (Const.BASE_URL prepend) so AsyncImage actually
+                    // resolves the URL instead of falling back to the BidSwipe logo.
+                    let trimmedURL = imageURL.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let normalizedURL: String = {
+                        guard !trimmedURL.isEmpty else { return "" }
+                        let lower = trimmedURL.lowercased()
+                        if lower.hasPrefix("http://") || lower.hasPrefix("https://") || lower.hasPrefix("data:") {
+                            return trimmedURL
+                        }
+                        let base = "https://backend.bidcast.betaplanets.com"
+                        if trimmedURL.hasPrefix("/") {
+                            return base + trimmedURL
+                        }
+                        return base + "/" + trimmedURL
+                    }()
+                    if normalizedURL.isEmpty {
                         defaultImage
                             .resizable()
                             .scaledToFill()
                     } else {
-                        AsyncImage(url: URL(string: imageURL)) { phase in
+                        AsyncImage(url: URL(string: normalizedURL)) { phase in
                             switch phase {
                             case .success(let image):
                                 image

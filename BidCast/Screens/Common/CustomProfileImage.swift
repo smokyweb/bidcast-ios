@@ -7,6 +7,30 @@
 import SwiftUI
 import Foundation
 
+// MC sub-task cmp7dvr4r00fa4fwp18lg3efa — iOS live-show product images.
+// The Node socket server emits auction_started.product.images as raw DB values,
+// which are sometimes relative paths (e.g. "storage/products/abc.jpg") rather than
+// fully-qualified URLs. Android handles this by prepending Const.BASE_URL when the
+// path doesn't already contain it (see AgoraPublisherActivity.updateProductUI and
+// WatchStreamFragment). Without that fix iOS feeds the relative path into
+// URL(string:) — which builds a schemeless URL that AsyncImage/CachedAsyncImage
+// can't load, so we fall back to the `defaultUser` asset (the BidSwipe logo).
+// Normalize once at the top of CustomProfileImage so every caller benefits.
+private let bidcastImageBaseURL = "https://backend.bidcast.betaplanets.com"
+
+private func bidcastNormalizedImageURLString(_ raw: String) -> String {
+    let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty else { return trimmed }
+    let lower = trimmed.lowercased()
+    if lower.hasPrefix("http://") || lower.hasPrefix("https://") || lower.hasPrefix("data:") {
+        return trimmed
+    }
+    if trimmed.hasPrefix("/") {
+        return bidcastImageBaseURL + trimmed
+    }
+    return bidcastImageBaseURL + "/" + trimmed
+}
+
 struct CustomProfileImage: View {
     let url: String?
     var isCircular: Bool = true
@@ -18,7 +42,11 @@ struct CustomProfileImage: View {
     var profileIconTapped: (() -> Void) = { }
     
     var body: some View {
-        if let url = url, !url.isEmpty, let imageURL = URL(string: url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+        if let url = url, !url.isEmpty,
+           case let normalizedRaw = bidcastNormalizedImageURLString(url),
+           !normalizedRaw.isEmpty,
+           let imageURL = URL(string: normalizedRaw.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""),
+           imageURL.scheme != nil
  {
             CachedAsyncImage(
                 url: imageURL,
