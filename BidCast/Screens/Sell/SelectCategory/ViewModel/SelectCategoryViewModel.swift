@@ -17,6 +17,9 @@ final class SelectCategoryViewModel: ObservableObject {
     @Published var subCategoryResponse: ResponseModal<[SubCategoryDataModel]>?
     @Published var auctionResponse = ResponseModel<[AuctionDataModel]>()
     @Published var storeFavCategoryResponse: ResponseModal<[FavCategoryDataModel]>?
+    // MC task cmp5w1v7i019qm61hhld1uiul (2026-05-15): unified explore-search
+    // response (shows + products + users) for the Explore screen search bar.
+    @Published var exploreSearchResponse: ResponseModel<ExploreSearchData>?
     @Published var errorMessage: String? = nil
     @Published var request: String = ""
 
@@ -84,6 +87,20 @@ final class SelectCategoryViewModel: ObservableObject {
 //            DispatchQueue.main.async {
                 self.errorMessage = error.localizedDescription
 //            }
+        }
+    }
+
+    // MARK: - Unified explore search (MC cmp5w1v7i019qm61hhld1uiul)
+    func exploreSearch(query: String) async {
+        do {
+            let response: ResponseModel<ExploreSearchData> = try await APIManager.shared.request(
+                type: APIEndPoint.exploreSearch(param: SearchingRequest(search: query)),
+                header: true
+            )
+            self.exploreSearchResponse = response
+            self.request = "ExploreSearch"
+        } catch {
+            self.handle(error: error)
         }
     }
 

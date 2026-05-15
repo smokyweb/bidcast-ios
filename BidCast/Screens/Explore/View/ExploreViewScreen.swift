@@ -30,7 +30,17 @@ struct ExploreViewScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var searchText: String = ""
-    
+
+    // MC task cmp5w1v7i019qm61hhld1uiul: state for search result navigation
+    @State private var navigateToProfile = false
+    @State private var navigateToProductDetail = false
+    @State private var selectedUserId: String = ""
+    @State private var selectedProductId: Int = 0
+    @State private var selectedSellerInfo: SellerInfoResponse? = nil
+    @State private var selectedUsername: String = ""
+    @State private var selectedUserImage: String = ""
+
+
     @State var categoryList = [CategoryDataModel]()
     @State var navigateToNoti: Bool = false
     @State var isLoadingAPI: Bool = true
@@ -46,7 +56,15 @@ struct ExploreViewScreen: View {
 //                    if debouncedText == "" { return }
                     self.searchText = debouncedText
                     let selectedCategory = categoryTitles[selectedCategoryIndex]
-                    Task { await fetchCategory(for: selectedCategory) }
+                    // MC task cmp5w1v7i019qm61hhld1uiul: when the search box
+                    // has text, hit the unified explore-search endpoint;
+                    // when empty, fall back to category list refresh.
+                    if debouncedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        viewModel.exploreSearchResponse = nil
+                        Task { await fetchCategory(for: selectedCategory) }
+                    } else {
+                        Task { await viewModel.exploreSearch(query: debouncedText) }
+                    }
                 }
                 HeaderMenuIconView(didTapMenuButton: {
                     print("Menu Button Tapped")
@@ -56,7 +74,38 @@ struct ExploreViewScreen: View {
             .padding(.horizontal)
             .padding(.vertical, 4)
             .background(.white)
-            
+
+            // MC task cmp5w1v7i019qm61hhld1uiul: when the search bar has
+            // text, swap the category browser for the unified explore-search
+            // results.
+            if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                ExploreSearchResultsView(
+                    shows: viewModel.exploreSearchResponse?.data?.shows ?? [],
+                    products: viewModel.exploreSearchResponse?.data?.products ?? [],
+                    users: viewModel.exploreSearchResponse?.data?.users ?? [],
+                    onShowTap: { show in
+                        // MC task cmp5w1v7i019qm61hhld1uiul: a tap on a show
+                        // result card navigates to the show owner's profile.
+                        if let user = show.user {
+                            self.selectedUserId = "\(user.id ?? 0)"
+                            self.selectedUsername = user.username ?? ""
+                            self.selectedUserImage = user.profile_image ?? ""
+                            self.navigateToProfile = true
+                        }
+                    },
+                    onProductTap: { product in
+                        self.selectedProductId = product.id ?? 0
+                        self.selectedSellerInfo = nil // Not available in this API response
+                        self.navigateToProductDetail = true
+                    },
+                    onUserTap: { user in
+                        self.selectedUserId = "\(user.id ?? 0)"
+                        self.selectedUsername = user.username ?? ""
+                        self.selectedUserImage = user.profile_image ?? ""
+                        self.navigateToProfile = true
+                    }
+                )
+            } else {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 12) {
                     
@@ -155,6 +204,7 @@ struct ExploreViewScreen: View {
             .padding(.top, 12)
             .padding(.horizontal, 12)
             .background(.backGround)
+            } // end else (MC cmp5w1v7i019qm61hhld1uiul)
             
             // Navigation Links
             //
@@ -171,6 +221,16 @@ struct ExploreViewScreen: View {
                                                    comeFromExploreScreen: $navigateToCategoryDetailScreen)
                         .toolbar(.visible, for: .tabBar))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
+
+            // MC task cmp5w1v7i019qm61hhld1uiul: navigation for search results
+            CusNavLink(doNavigate: $navigateToProfile,
+                       destination: ProfileScreen(id: $selectedUserId,
+                                                  isComeFrom: .constant("Home"),
+                                                  userName: $selectedUsername,
+                                                  userImage: $selectedUserImage))
+            CusNavLink(doNavigate: $navigateToProductDetail,
+                       destination: ProductDetailView(productID: $selectedProductId,
+                                                      sellerInfo: $selectedSellerInfo))
         }
         .background(.backGround)
         .padding(.bottom, -27)
