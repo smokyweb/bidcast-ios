@@ -10,7 +10,18 @@ import AlertToast
 
 struct ChatScreen: View {
 
-    @ObservedObject var viewModel: ChatViewModel
+    // MC task cmp7dvsuh00fu4fwpkdhcv1dv (2026-05-15): incoming messages were
+    // never appearing on iOS even though Android could see them and the iOS
+    // device could send. Root cause: `@ObservedObject` combined with a VM
+    // constructed inside `init(viewModel:)` meant SwiftUI rebuilt the entire
+    // ChatViewModel on every parent re-render of ChatScreen (NavigationLink
+    // / ActivityScreen). The prior VM got deinit'd (which detached the RTDB
+    // listener), and the brand-new VM had an empty messages array with no
+    // listener attached — `.onAppear` already fired on first appear so it
+    // never re-fired to call `fetchMessages()` again. Switching to
+    // `@StateObject` makes SwiftUI own the VM's lifetime against the view
+    // identity, so it survives parent rebuilds and the listener stays alive.
+    @StateObject var viewModel: ChatViewModel
 
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
@@ -27,7 +38,9 @@ struct ChatScreen: View {
             otherUserName: viewModel.otherUserName,
             otherUserImage: viewModel.otherUserImage
         )
-        self.viewModel = model
+        // IMPORTANT: assign via the StateObject wrapper, not `self.viewModel`,
+        // so the wrappedValue closure only fires once for this view identity.
+        _viewModel = StateObject(wrappedValue: model)
     }
     
     var body: some View {
