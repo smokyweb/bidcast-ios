@@ -31,6 +31,16 @@ struct ExploreViewScreen: View {
     @State var showError: Bool = false
     @State var searchText: String = ""
 
+    // MC task cmp5w1v7i019qm61hhld1uiul: state for search result navigation
+    @State private var navigateToProfile = false
+    @State private var navigateToProductDetail = false
+    @State private var selectedUserId: String = ""
+    @State private var selectedProductId: Int = 0
+    @State private var selectedSellerInfo: SellerInfoResponse? = nil
+    @State private var selectedUsername: String = ""
+    @State private var selectedUserImage: String = ""
+
+
     @State var categoryList = [CategoryDataModel]()
     @State var navigateToNoti: Bool = false
     @State var isLoadingAPI: Bool = true
@@ -74,17 +84,25 @@ struct ExploreViewScreen: View {
                     products: viewModel.exploreSearchResponse?.data?.products ?? [],
                     users: viewModel.exploreSearchResponse?.data?.users ?? [],
                     onShowTap: { show in
-                        // MC task cmp5w1v7i019qm61hhld1uiul: navigation to
-                        // ShowDetails/ProductDetails/SellerProfile will be
-                        // wired in a follow-up. For now, tapping a result is
-                        // a no-op so the result list itself can be reviewed.
-                        _ = show.id
+                        // MC task cmp5w1v7i019qm61hhld1uiul: a tap on a show
+                        // result card navigates to the show owner's profile.
+                        if let user = show.user {
+                            self.selectedUserId = "\(user.id ?? 0)"
+                            self.selectedUsername = user.username ?? ""
+                            self.selectedUserImage = user.profile_image ?? ""
+                            self.navigateToProfile = true
+                        }
                     },
                     onProductTap: { product in
-                        _ = product.id
+                        self.selectedProductId = product.id ?? 0
+                        self.selectedSellerInfo = nil // Not available in this API response
+                        self.navigateToProductDetail = true
                     },
                     onUserTap: { user in
-                        _ = user.id
+                        self.selectedUserId = "\(user.id ?? 0)"
+                        self.selectedUsername = user.username ?? ""
+                        self.selectedUserImage = user.profile_image ?? ""
+                        self.navigateToProfile = true
                     }
                 )
             } else {
@@ -203,6 +221,16 @@ struct ExploreViewScreen: View {
                                                    comeFromExploreScreen: $navigateToCategoryDetailScreen)
                         .toolbar(.visible, for: .tabBar))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
+
+            // MC task cmp5w1v7i019qm61hhld1uiul: navigation for search results
+            CusNavLink(doNavigate: $navigateToProfile,
+                       destination: ProfileScreen(id: $selectedUserId,
+                                                  isComeFrom: .constant("Home"),
+                                                  userName: $selectedUsername,
+                                                  userImage: $selectedUserImage))
+            CusNavLink(doNavigate: $navigateToProductDetail,
+                       destination: ProductDetailView(productID: $selectedProductId,
+                                                      sellerInfo: $selectedSellerInfo))
         }
         .background(.backGround)
         .padding(.bottom, -27)
