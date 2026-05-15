@@ -51,7 +51,8 @@
 		355AE96E2DD1DE3100CD3D17 /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */; };
 		355AE9712DD1F94E00CD3D17 /* TabbarScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE9702DD1F94E00CD3D17 /* TabbarScreen.swift */; };
 		355AE9752DD1F98C00CD3D17 /* HomeViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE9742DD1F98C00CD3D17 /* HomeViewScreen.swift */; };
-		355AE9772DD1F99C00CD3D17 /* ExploreViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */; };
+		355AE9772DD1F99C00CD3D17 /* ExploreViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */; };		88FAC525B845FDE178E41C99 /* ExploreSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE88FB1D9C04E07E191224 /* ExploreSearchResultsView.swift */; };
+
 		355AE97C2DD1FC3900CD3D17 /* AccountScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */; };
 		355AE97E2DD1FC4900CD3D17 /* SellScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE97D2DD1FC4900CD3D17 /* SellScreen.swift */; };
 		355AE9802DD1FC5600CD3D17 /* ActivityScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */; };
@@ -243,7 +244,8 @@
 		99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C22DC8CDDC0054620B /* UserJobModal.swift */; };
 		99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909D32DC8CDDC0054620B /* CreateCompanyRequest.swift */; };
 		99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C02DC8CDDC0054620B /* LoginResponseModel.swift */; };
-		99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */; };
+		99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */; };		4EC9EAE62C0215BEA311269C /* ExploreSearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BED765013CDDDFF297528A8 /* ExploreSearchModel.swift */; };
+
 		99C909E92DC8CDDC0054620B /* EmployerProfileJobsModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CD2DC8CDDC0054620B /* EmployerProfileJobsModal.swift */; };
 		99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C82DC8CDDC0054620B /* QualificationResponse.swift */; };
 		99C909ED2DC8CDF90054620B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 99C909EB2DC8CDF90054620B /* Preview Assets.xcassets */; };
@@ -658,7 +660,8 @@
 		355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
 		355AE9702DD1F94E00CD3D17 /* TabbarScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbarScreen.swift; sourceTree = "<group>"; };
 		355AE9742DD1F98C00CD3D17 /* HomeViewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewScreen.swift; sourceTree = "<group>"; };
-		355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewScreen.swift; sourceTree = "<group>"; };
+		355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewScreen.swift; sourceTree = "<group>"; };		2DBE88FB1D9C04E07E191224 /* ExploreSearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreSearchResultsView.swift; sourceTree = "<group>"; };
+
 		355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountScreen.swift; sourceTree = "<group>"; };
 		355AE97D2DD1FC4900CD3D17 /* SellScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellScreen.swift; sourceTree = "<group>"; };
 		355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityScreen.swift; sourceTree = "<group>"; };
@@ -837,7 +840,8 @@
 		99C909C42DC8CDDC0054620B /* AboutUsResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsResponseModel.swift; sourceTree = "<group>"; };
 		99C909C52DC8CDDC0054620B /* NewsResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsResponseModel.swift; sourceTree = "<group>"; };
 		99C909C62DC8CDDC0054620B /* JobCategoriesListModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCategoriesListModal.swift; sourceTree = "<group>"; };
-		99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailResponse.swift; sourceTree = "<group>"; };
+		99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailResponse.swift; sourceTree = "<group>"; };		6BED765013CDDDFF297528A8 /* ExploreSearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreSearchModel.swift; sourceTree = "<group>"; };
+
 		99C909C82DC8CDDC0054620B /* QualificationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualificationResponse.swift; sourceTree = "<group>"; };
 		99C909C92DC8CDDC0054620B /* MenuOptionsModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuOptionsModal.swift; sourceTree = "<group>"; };
 		99C909CA2DC8CDDC0054620B /* JobActionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobActionResponse.swift; sourceTree = "<group>"; };
@@ -1520,7 +1524,8 @@
 		35A1C2902DE07B08007466B6 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */,
+				355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */,				2DBE88FB1D9C04E07E191224 /* ExploreSearchResultsView.swift */,
+
 				D678E3492EC86E78005283BF /* SearchBarView.swift */,
 				D678E34D2EC86F1A005283BF /* CategoryCardView.swift */,
 				D678E34F2EC86F88005283BF /* ShimmerEffectView.swift */,
@@ -2524,7 +2529,8 @@
 				99C909C42DC8CDDC0054620B /* AboutUsResponseModel.swift */,
 				99C909C52DC8CDDC0054620B /* NewsResponseModel.swift */,
 				99C909C62DC8CDDC0054620B /* JobCategoriesListModal.swift */,
-				99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */,
+				99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */,				6BED765013CDDDFF297528A8 /* ExploreSearchModel.swift */,
+
 				99C909C82DC8CDDC0054620B /* QualificationResponse.swift */,
 				99C909C92DC8CDDC0054620B /* MenuOptionsModal.swift */,
 				99C909CA2DC8CDDC0054620B /* JobActionResponse.swift */,
@@ -4825,7 +4831,8 @@
 				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,
 				D68127572F07A9C8000A4EF2 /* BottomSheetHelper.swift in Sources */,
 				D4BB99EB2DE5890D00C1BCBC /* OffersScreen.swift in Sources */,
-				99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */,
+				99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */,				4EC9EAE62C0215BEA311269C /* ExploreSearchModel.swift in Sources */,
+
 				354262672E7BEF2B0023CA32 /* SocketManager.swift in Sources */,
 				D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */,
 				D4CAEC922DE7200300705CD7 /* BoostCardView.swift in Sources */,
@@ -4856,7 +4863,8 @@
 				99C9092E2DC8CD790054620B /* VerifyOtpScreen.swift in Sources */,
 				99C9093C2DC8CD790054620B /* LoginViewModel.swift in Sources */,
 				D4CAEC582DE6F11F00705CD7 /* AffiliateProgramScreen.swift in Sources */,
-				355AE9772DD1F99C00CD3D17 /* ExploreViewScreen.swift in Sources */,
+				355AE9772DD1F99C00CD3D17 /* ExploreViewScreen.swift in Sources */,				88FAC525B845FDE178E41C99 /* ExploreSearchResultsView.swift in Sources */,
+
 				D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */,
 				99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */,
 				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,

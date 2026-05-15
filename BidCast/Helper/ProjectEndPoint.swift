@@ -77,6 +77,10 @@ enum APIEndPoint{
     case makeOfferList(param: PageRequest)
     case offerUpdateStatus(param : OfferUpdateStatusRequest)
     case searching(param : SearchingRequest)
+    // MC task cmp5w1v7i019qm61hhld1uiul (2026-05-15): unified explore search
+    // across show titles, product titles, and usernames. Reuses the existing
+    // SearchingRequest payload shape (just { "search": String }).
+    case exploreSearch(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
     case getReferralCode
     case getclip(param : clipRequest)
@@ -318,8 +322,11 @@ extension APIEndPoint: EndPointType {
             return "offer/update-status=\(param.offer_id)&page=\(param.page)"
         case .searching:
             return "user/searching"
+        case .exploreSearch:
+            return "explore-search"
         case .promo:
             return "promo/verify-code"
+
         case .getReferralCode:
             return "referral-code/fetch"
         case .getPurchasedOrderDetails:
@@ -652,6 +659,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .searching:
             return .post
+        case .exploreSearch:
+            return .post
         case .promo:
             return .post
         case .getReferralCode:
@@ -965,6 +974,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .searching(param: let param):
             return param
+        case .exploreSearch(param: let param):
+            return param
         case .promo(param: let param):
             return param
         case .getReferralCode:
@@ -1271,6 +1282,8 @@ extension APIEndPoint: EndPointType {
         case .offerUpdateStatus:
             return nil
         case .searching:
+            return nil
+        case .exploreSearch:
             return nil
         case .promo:
             return nil
