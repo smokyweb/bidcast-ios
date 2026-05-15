@@ -207,6 +207,11 @@ struct OrderStatusScreen: View {
             let param = getOrderReceiptRequest(order_id: orderId)
             await viewModel.getReceipt(parameters: param)
             await SVProgressHUD.dismiss()
+            if let errorMsg = viewModel.errorMessage {
+                hudMsg = errorMsg
+                showhud = true
+                return
+            }
             getRecieptSuccess()
         }
     }

@@ -43,6 +43,7 @@ final class OrderStatusViewModel: ObservableObject {
     
     // MARK: - getReceipt.
     func getReceipt(parameters: getOrderReceiptRequest) async {
+        self.errorMessage = nil // Clear previous error
         do {
             let response: ResponseModel<String> = try await APIManager.shared.request(
                 type: APIEndPoint.orderReceipt(param: parameters),
