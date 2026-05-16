@@ -10,7 +10,12 @@ import AlertToast
 
 struct ChatScreen: View {
 
-    @ObservedObject var viewModel: ChatViewModel
+    // 2026-05-15 (MC task cmp7dwoz900fw4fwpiqckd2zx): switch from @ObservedObject to
+    // @StateObject so SwiftUI owns the ViewModel's lifetime. With @ObservedObject the
+    // ViewModel was being recreated on every parent re-render — losing Firestore message
+    // listeners and resetting state. Symptom: chat opened but messages would not load /
+    // chat appeared blank.
+    @StateObject var viewModel: ChatViewModel
 
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
@@ -19,15 +24,16 @@ struct ChatScreen: View {
     var notiViewModel = NotificationViewModel()
 
     init(viewModel: ChatModel) {
-        let model = ChatViewModel(
+        // @StateObject requires construction through its underscore-prefixed projected
+        // value with StateObject(wrappedValue:). Cannot use plain assignment.
+        self._viewModel = StateObject(wrappedValue: ChatViewModel(
             currentUserId: viewModel.currentUserId,
             currentUserName: viewModel.currentUserName,
             currentUserImage: viewModel.currentUserImage,
             otherUserId: viewModel.otherUserId,
             otherUserName: viewModel.otherUserName,
             otherUserImage: viewModel.otherUserImage
-        )
-        self.viewModel = model
+        ))
     }
     
     var body: some View {
