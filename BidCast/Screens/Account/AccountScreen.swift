@@ -677,6 +677,9 @@ struct SellerHubSection: View {
     @State private var payouts = "$199.00"
     @State private var totalOrders = "22 Items"
     @State private var vacationToggle = false
+    // MC: cmpbefoac00003ghgmjc4msqo — #35 Vacation Mode confirmation dialog
+    @State private var showVacationConfirm = false
+    @State private var pendingVacationValue: Bool = false
     @State private var navigateToInventory = false
     @State private var navigateToPayouts = false
     @State private var navigateToUserProfile = false
@@ -1025,13 +1028,31 @@ struct SellerHubSection: View {
             
             Spacer()
             
+            // #35: Show confirmation dialog before toggling vacation mode
             Toggle("", isOn: $vacationToggle)
                 .labelsHidden()
                 .tint(.defaultTheme)
                 .onChange(of: vacationToggle) { _, newValue in
-                    print("Vacation Mode:", newValue)
-                   vacationData(valueData: newValue)
+                    pendingVacationValue = newValue
+                    // Revert toggle immediately; apply only if user confirms
+                    vacationToggle = !newValue
+                    showVacationConfirm = true
                 }
+            .alert(
+                pendingVacationValue ? "Enable Vacation Mode?" : "Disable Vacation Mode?",
+                isPresented: $showVacationConfirm
+            ) {
+                Button(pendingVacationValue ? "Enable" : "Disable", role: .destructive) {
+                    vacationToggle = pendingVacationValue
+                    vacationData(valueData: pendingVacationValue)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(pendingVacationValue
+                    ? "Enabling Vacation Mode pauses your shop and hides your listings until you return."
+                    : "Disabling Vacation Mode will make your shop and listings visible again."
+                )
+            }
         }
         .padding(16)
         .background(

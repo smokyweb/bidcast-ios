@@ -102,6 +102,11 @@ struct ProfileScreen: View {
     @State private var totalClipsCount = 0
 
     
+    // MC: cmpbefoac00003ghgmjc4msqo — #15/#18/#19/#20/#21 own-profile guard
+    private var isOwnProfile: Bool {
+        String(UserDefaults.userId) == id
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
@@ -121,8 +126,13 @@ struct ProfileScreen: View {
                         },
                                           onTapMore: {
                             showReportSheet = true
-                        },sellerID : $id)
+                        },
+                                          isOwnProfile: isOwnProfile,
+                                          showBackButton: false,
+                                          sellerID : $id)
                         
+                        // #15/#18: Hide Follow/Message/Tip on own profile
+                        if !isOwnProfile {
                         ProfileActionsView(isFollowing: $isFollowing ,
                                            onTapFollow: {
                             isForFollow = true
@@ -156,6 +166,7 @@ struct ProfileScreen: View {
                             self.isTipAmountButtoClicked = true
                         })
                         .padding(.top, -50)
+                        } // end !isOwnProfile — #15/#18
                         
                         ProfileTabsView(selectedTab: $selectedTab) { tab in
                             print("Selected Tab: \(tab)")
@@ -504,6 +515,25 @@ struct ProfileScreen: View {
         }
         
        
+        // #22: Pinned back button overlay — stays fixed above the scroll view,
+        // clear of the status-bar / clock regardless of scroll offset.
+        .overlay(alignment: .topLeading) {
+            Button(action: { dismiss() }) {
+                Image(systemName: "chevron.left")
+                    .font(.custom(poppinsBold, size: 16))
+                    .foregroundColor(.black)
+                    .frame(width: 20, height: 20)
+                    .padding(12)
+                    .background(Color.white.opacity(0.6))
+                    .clipShape(Circle())
+                    .shadow(radius: 4)
+            }
+            .buttonStyle(.plain)
+            .contentShape(Circle())
+            .padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top ?? 44)
+            .padding(.leading, 16)
+            .zIndex(100)
+        }
         .padding(.bottom,12)
         .background(.backGround)
         .edgesIgnoringSafeArea(.bottom)
@@ -779,6 +809,12 @@ struct ProfileHeaderView: View {
     var onTapBack: () -> () = {}
     var onTapNotify: () -> () = {}
     var onTapMore: () -> () = {}
+    /// When false the back button inside ProfileHeaderView is hidden so the parent
+    /// ProfileScreen can render it as a pinned overlay instead (MC: cmpbefoac00003ghgmjc4msqo #22)
+    var showBackButton: Bool = true
+    /// When true the viewer is looking at their own profile — hide Follow/Message/Tip,
+    /// bell notification icon, and Rate/Block/Report menu. Keep Share. (MC: cmpbefoac00003ghgmjc4msqo #15/#18/#19/#20/#21)
+    var isOwnProfile: Bool = false
     
     @Binding var sellerID : String
     @State var viewModel = ProfileViewModel()
@@ -799,24 +835,26 @@ struct ProfileHeaderView: View {
             }
             .allowsHitTesting(false)
             
-            // Back Button
-            Button(action: {
-                onTapBack()
-            }) {
-                Image(systemName: "chevron.left")
-                    .font(.custom(poppinsBold, size: 16))
-                    .foregroundColor(.black)
-                    .frame(width: 20, height: 20)
-                    .padding(12)
-                    .background(Color.white.opacity(0.6))
-                    .clipShape(Circle())
-                    .shadow(radius: 4)
+            // Back Button — #22: hidden here when parent renders it as a pinned overlay
+            if showBackButton {
+                Button(action: {
+                    onTapBack()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.custom(poppinsBold, size: 16))
+                        .foregroundColor(.black)
+                        .frame(width: 20, height: 20)
+                        .padding(12)
+                        .background(Color.white.opacity(0.6))
+                        .clipShape(Circle())
+                        .shadow(radius: 4)
+                }
+                .buttonStyle(.plain)
+                .contentShape(Circle())
+                .padding(.top, 30)
+                .padding(.leading, 16)
+                .zIndex(10)
             }
-            .buttonStyle(.plain)
-            .contentShape(Circle())
-            .padding(.top, 30)
-            .padding(.leading, 16)
-            .zIndex(10)
             
             // Profile Image
             VStack(alignment: .leading, spacing: 4) {
@@ -873,18 +911,22 @@ struct ProfileHeaderView: View {
                 HStack(spacing: 12) {
                     let buttonSize: CGFloat = 44 // Adjust size as needed
                     
-                    Button(action: {
-                        onTapNotify()
-                    }) {
-                        Image(systemName: "bell")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(.black)
-                            .padding(12)
-                            .frame(width: buttonSize, height: buttonSize)
-                            .fontWeight(.semibold)
+                    // #20: Hide bell notification icon on own profile
+                    if !isOwnProfile {
+                        Button(action: {
+                            onTapNotify()
+                        }) {
+                            Image(systemName: "bell")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(.black)
+                                .padding(12)
+                                .frame(width: buttonSize, height: buttonSize)
+                                .fontWeight(.semibold)
+                        }
                     }
                     
+                    // #21: Share button always visible (own and others)
                     Button(action: {
                         // Share action
                     }) {
@@ -897,37 +939,40 @@ struct ProfileHeaderView: View {
                             .fontWeight(.semibold)
                     }
                     
-                    Menu {
-                        Button("Rate Seller") {
-                            navigateToRating = true
-                        }
-
-                        Button("Block Seller") {
-                            Task {
-                                guard Reachability.isConnectedToNetwork() else {
-                                    hudMsg = "No Internet Connection"
-                                    showhud = true
-                                    return
-                                }
-                                SVProgressHUD.show()
-                                let param = BlockUserRequest(blocked_id: Int(sellerID) ?? 0)
-                                await viewModel.blockUser(param: param)
-                                await SVProgressHUD.dismiss()
-                                blockSuccess()
+                    // #19: Hide Rate/Block/Report menu on own profile
+                    if !isOwnProfile {
+                        Menu {
+                            Button("Rate Seller") {
+                                navigateToRating = true
                             }
-                        }
 
-                        Button("Report", role: .destructive) {
-                            onTapMore()
+                            Button("Block Seller") {
+                                Task {
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    SVProgressHUD.show()
+                                    let param = BlockUserRequest(blocked_id: Int(sellerID) ?? 0)
+                                    await viewModel.blockUser(param: param)
+                                    await SVProgressHUD.dismiss()
+                                    blockSuccess()
+                                }
+                            }
+
+                            Button("Report", role: .destructive) {
+                                onTapMore()
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(.black)
+                                .padding(12)
+                                .frame(width: buttonSize, height: buttonSize)
+                                .fontWeight(.semibold)
                         }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(.black)
-                            .padding(12)
-                            .frame(width: buttonSize, height: buttonSize)
-                            .fontWeight(.semibold)
                     }
                 }
                 

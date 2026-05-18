@@ -460,9 +460,16 @@ extension ProductDetailView {
                     .foregroundColor(.darkGray)
             }
             
-            Text("Starting at \(productPrice.compactCurrency()) + Shipping + taxes")
-                .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.darkGray)
+            // MC: cmpbefoac00003ghgmjc4msqo — #7 Buy Now items show fixed price, not "Starting at"
+            if productDetail?.acceptOffers == true {
+                Text("\(productPrice.compactCurrency()) + Shipping + taxes")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            } else {
+                Text("Starting at \(productPrice.compactCurrency()) + Shipping + taxes")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            }
         }
     }
 }
