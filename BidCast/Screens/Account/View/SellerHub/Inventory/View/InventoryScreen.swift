@@ -646,10 +646,13 @@ struct InventoryScreen: View {
                 isConcurrent: false,
                 showLoader: true,
                 onError: { error in
+                    // cmpbefoal00043ghgyp9byme4 #12: was reading productViewModel.errorMessage
+                    // (wrong VM) — error came from viewModel (InventoryViewModel), so
+                    // the popup showed empty string. Fixed to use viewModel.errorMessage.
                     config = BottomSheetConfig(
                         icon: "exclamationmark.circle",
                         title: "Error",
-                        message: productViewModel.errorMessage ?? "",
+                        message: viewModel.errorMessage ?? "",
                         primaryButtonTitle: AppString.ok.localized,
                         secondaryButtonTitle: nil
                     )
@@ -1009,6 +1012,10 @@ enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     case inactive = "Inactive"
     // MC wave-2 #10: Orders sub-section
     case orders = "Orders"
+    // cmpbefoal00043ghgyp9byme4 #45: sold items (status=sold after live-show
+    // auction) were not visible anywhere in the seller inventory.  Adding a
+    // dedicated segment passes status=sold to the API automatically.
+    case sold = "Sold"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")

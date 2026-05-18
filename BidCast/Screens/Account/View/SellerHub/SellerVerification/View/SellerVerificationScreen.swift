@@ -495,7 +495,13 @@ struct SellerVerificationScreen: View {
                 }
             }
         } else if status.lowercased() == "pending" {
-            kycVerificationComplete = false
+            // cmpbefoal00043ghgyp9byme4 #43: Stripe Identity doesn't immediately
+            // return "active" after the user completes the KYC flow — it returns
+            // "pending" first.  Keeping kycVerificationComplete=false causes the
+            // "Verify" button to re-appear, misleading the user into thinking they
+            // haven't submitted yet.  "pending" means the user DID submit; show the
+            // checkmark and let the status message explain it's under review.
+            kycVerificationComplete = true
             if !forVerified {
                 hudMsg = "KYC verification is pending. Please wait for approval."
                 showhud = true
