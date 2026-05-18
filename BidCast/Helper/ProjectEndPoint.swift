@@ -156,6 +156,9 @@ enum APIEndPoint{
     case deleteProductSuppriseSet(param:DeleteProductSetRequest)
     case SaveShippingCosts(param:SaveShippingCostsRequest)
 
+    case unifiedSearch(param: SearchRequest)
+
+
 }
 
 extension APIEndPoint: EndPointType {
@@ -179,7 +182,8 @@ extension APIEndPoint: EndPointType {
                 .getPurchasedOrderDetails,
                 .getMyPurchasedOrder,
                 .fetchProduct,
-                .getScheduleShow:
+                .getScheduleShow,
+                .unifiedSearch:
             return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         default :
             return URL(string: "\(baseURL)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
@@ -524,6 +528,8 @@ extension APIEndPoint: EndPointType {
             return "save-shipping-costs"
         case .getShippinDetails:
             return "get-shipping-details"
+        case .unifiedSearch:
+            return "search"
         }
     }
     
@@ -832,6 +838,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getShippinDetails:
             return .get
+        case .unifiedSearch:
+            return .post
         }
     }
     
@@ -1146,6 +1154,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .getShippinDetails:
             return nil
+        case .unifiedSearch(let param):
+            return param
         }
     }
     
