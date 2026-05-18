@@ -357,7 +357,7 @@ struct ShippingDetailsSheet: View {
             guard let label = child.label?.lowercased() else { continue }
             if label.contains("tracking") || label.contains("awb") || label.contains("track_number") || label.contains("shipment") {
                 if let s = child.value as? String, !s.isEmpty { return s }
-                if let s = child.value as? String? ?? nil, let v = s, !v.isEmpty { return v }
+                if let s = child.value as? String?, let v = s, !v.isEmpty { return v }
             }
         }
         return nil
