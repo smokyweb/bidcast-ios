@@ -283,7 +283,11 @@ extension MyOrderModel {
         userID = try c.decodeIfPresent(Int.self, forKey: .userID)
         productID = try c.decodeIfPresent(Int.self, forKey: .productID)
         shippingAddress = try c.decodeIfPresent(String.self, forKey: .shippingAddress)
-        cardID = try c.decodeIfPresent(Int.self, forKey: .cardID)
+        // cmpbefoal00043ghgyp9byme4 #3: old orders store card_id as a Stripe string
+        // (e.g. "card_XXXX"); new orders have card_id: null.  Using plain `try`
+        // throws DecodingError.typeMismatch on old orders, breaking the entire
+        // decode.  Use try? so old-order strings are silently skipped.
+        cardID = try? c.decodeIfPresent(Int.self, forKey: .cardID)
         customerPaymentProfileID = try c.decodeIfPresent(Int.self, forKey: .customerPaymentProfileID)
         promoCode = try c.decodeIfPresent(String.self, forKey: .promoCode)
         sendAsGift = try decodeBoolFlexible(c, forKey: .sendAsGift)
