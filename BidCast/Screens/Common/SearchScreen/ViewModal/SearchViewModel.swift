@@ -10,9 +10,9 @@ import Combine
 
 final class SearchViewModel: ObservableObject {
     
-    @Published var shows: [Show] = []
-    @Published var products: [Product] = []
-    @Published var users: [User] = []
+    @Published var shows: [SearchResultShow] = []
+    @Published var products: [SearchResultProduct] = []
+    @Published var users: [SearchResultUser] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
@@ -20,7 +20,6 @@ final class SearchViewModel: ObservableObject {
     
     func search(query: String, page: Int = 1) {
         guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            // Clear results if query is empty
             self.shows = []
             self.products = []
             self.users = []
@@ -45,9 +44,9 @@ final class SearchViewModel: ObservableObject {
                 break
             }
         } receiveValue: { response in
-            self.shows = response.data.shows
-            self.products = response.data.products
-            self.users = response.data.users
+            self.shows = response.data?.shows ?? []
+            self.products = response.data?.products ?? []
+            self.users = response.data?.users ?? []
         }
         .store(in: &cancellables)
     }

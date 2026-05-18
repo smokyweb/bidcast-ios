@@ -11,9 +11,9 @@ struct SearchResultsView: View {
     @StateObject private var viewModel = SearchViewModel()
     
     // State for navigation
-    @State private var navigateToProduct: Product?
-    @State private var navigateToUser: User?
-    @State private var navigateToShow: Show?
+    @State private var navigateToProduct: SearchResultProduct?
+    @State private var navigateToUser: SearchResultUser?
+    @State private var navigateToShow: SearchResultShow?
     
     // The initial query passed from Home or Explore
     let initialQuery: String
@@ -99,7 +99,7 @@ struct SearchResultsView: View {
 
 // MARK: - Simple Card Views
 private struct ShowCard: View {
-    let show: Show
+    let show: SearchResultShow
     var body: some View {
         HStack {
             // Using a placeholder icon as image URLs can be complex
@@ -120,7 +120,7 @@ private struct ShowCard: View {
 }
 
 private struct ProductCard: View {
-    let product: Product
+    let product: SearchResultProduct
     var body: some View {
         HStack {
             Image(systemName: "tag.fill")
@@ -140,7 +140,7 @@ private struct ProductCard: View {
 }
 
 private struct UserCard: View {
-    let user: User
+    let user: SearchResultUser
     var body: some View {
         HStack {
             Image(systemName: "person.fill")
@@ -161,7 +161,7 @@ private struct UserCard: View {
 
 
 extension Product: Hashable {
-    static func == (lhs: Product, rhs: Product) -> Bool {
+    static func == (lhs: SearchResultProduct, rhs: Product) -> Bool {
         return lhs.id == rhs.id
     }
     
@@ -171,7 +171,7 @@ extension Product: Hashable {
 }
 
 extension User: Hashable {
-    static func == (lhs: User, rhs: User) -> Bool {
+    static func == (lhs: SearchResultUser, rhs: User) -> Bool {
         return lhs.id == rhs.id
     }
 
@@ -181,7 +181,7 @@ extension User: Hashable {
 }
 
 extension Show: Hashable {
-    static func == (lhs: Show, rhs: Show) -> Bool {
+    static func == (lhs: SearchResultShow, rhs: Show) -> Bool {
         return lhs.id == rhs.id
     }
 

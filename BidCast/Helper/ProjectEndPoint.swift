@@ -1453,6 +1453,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getUspsShippingPrice:
             return nil
+        case .unifiedSearch:
+            return nil
         }
     }
     
