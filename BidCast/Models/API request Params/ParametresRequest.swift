@@ -959,3 +959,9 @@ struct AgoraTokenRequest : Encodable{
     var uid: Int
 }
 
+// MARK: - UnifiedSearchRequest
+struct UnifiedSearchRequest: Encodable {
+    var search: String
+    var page: String
+}
+

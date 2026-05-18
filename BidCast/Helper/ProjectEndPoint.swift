@@ -156,7 +156,7 @@ enum APIEndPoint{
     case deleteProductSuppriseSet(param:DeleteProductSetRequest)
     case SaveShippingCosts(param:SaveShippingCostsRequest)
 
-    case unifiedSearch(param: SearchRequest)
+    case unifiedSearch(param: UnifiedSearchRequest)
 
 
 }
