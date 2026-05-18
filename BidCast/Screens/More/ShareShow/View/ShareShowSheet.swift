@@ -25,8 +25,28 @@ struct DynamicShareBottomSheetView: View {
     @State private var chatMessages: [ChatMessage] = []
     @State private var isLoadingMessages = false
 
+    // #50 cmpbdhpmn004g34hglsd8jpns: confirmation toast on Copy Link
+    @State private var showCopiedToast = false
+
     var body: some View {
         ZStack {
+
+            // #50 cmpbdhpmn004g34hglsd8jpns: floating "Copied!" toast overlay
+            VStack {
+                Spacer()
+                if showCopiedToast {
+                    Text("Copied!")
+                        .font(.custom(poppinsSemiBold, size: 13))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.8))
+                        .cornerRadius(20)
+                        .padding(.bottom, 60)
+                        .transition(.opacity)
+                        .zIndex(10)
+                }
+            }
 
             VStack(spacing: 0) {
                 header
@@ -344,6 +364,11 @@ struct DynamicShareBottomSheetView: View {
 
     private func copyLink() {
             UIPasteboard.general.string = generateShareLink()
+            // #50 cmpbdhpmn004g34hglsd8jpns: confirmation toast
+            withAnimation { showCopiedToast = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation { showCopiedToast = false }
+            }
         }
 
         private func shareToFacebook() {

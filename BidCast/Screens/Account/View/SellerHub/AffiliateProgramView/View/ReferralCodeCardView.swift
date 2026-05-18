@@ -11,6 +11,9 @@ struct ReferralCodeCardView: View {
     var code: String
     var onShare: () -> Void
 
+    // #50 cmpbdhpmn004g34hglsd8jpns: confirmation toast on copy
+    @State private var showCopied = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
@@ -35,9 +38,14 @@ struct ReferralCodeCardView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Button(action: {
                     UIPasteboard.general.string = code
+                    // #50 cmpbdhpmn004g34hglsd8jpns: confirmation toast
+                    withAnimation { showCopied = true }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation { showCopied = false }
+                    }
                 }) {
-                    Image(systemName: "doc.on.doc")
-                        .foregroundColor(.gray)
+                    Image(systemName: showCopied ? "checkmark" : "doc.on.doc")
+                        .foregroundColor(showCopied ? .green : .gray)
                 }
                 .padding(.trailing)
             }
