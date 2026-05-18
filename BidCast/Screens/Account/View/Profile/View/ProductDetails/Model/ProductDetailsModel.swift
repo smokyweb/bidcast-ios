@@ -15,7 +15,7 @@ struct ProductDetailsModel: Codable {
     var width, length, weight, height: Double?
     var mailClass, processingCategory: String?
     var description, quantity, purchasedQuantity, pricing: String?
-    var flashSale, acceptOffers, reserveForLive: Bool?
+    var flashSale, acceptOffers, reserveForLive, auction: Bool?
     var shippingProfileID: Int?
     var status, productShow: String?
     var images: [String]?
@@ -43,6 +43,7 @@ struct ProductDetailsModel: Codable {
         case flashSale = "flash_sale"
         case acceptOffers = "accept_offers"
         case reserveForLive = "reserve_for_live"
+        case auction
         case shippingProfileID = "shipping_profile_id"
         case status
         case productShow = "product_show"

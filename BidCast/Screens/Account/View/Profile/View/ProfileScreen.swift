@@ -67,6 +67,12 @@ struct ProfileScreen: View {
     @StateObject var showViewModel = LiveShowsViewModel()
     //    @State var profileImage: String
     
+    // QA #15/#18/#19/#20/#21 — own-profile guard. True when viewing the logged-in user's own profile.
+    private var isOwnProfile: Bool {
+        // UserDefaults.userId is the logged-in user id; `id` is the profile being viewed.
+        return String(UserDefaults.userId) == id
+    }
+
     var options:[String] = ["Sort", "Auction", "Buy Now"]
     @State private var selectedIndex: Int = 0
     @State private var showSortSheet = false
@@ -113,6 +119,7 @@ struct ProfileScreen: View {
                                           followers: "\(profileData.follower_count ?? 0)",
                                           following: "\(profileData.following_count ?? 0)" ,
                                           bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
+                                          isOwnProfile: isOwnProfile,
                                           onTapBack: {
                             dismiss()
                         },
@@ -123,6 +130,7 @@ struct ProfileScreen: View {
                             showReportSheet = true
                         },sellerID : $id)
                         
+                        if !isOwnProfile {
                         ProfileActionsView(isFollowing: $isFollowing ,
                                            onTapFollow: {
                             isForFollow = true
@@ -156,6 +164,7 @@ struct ProfileScreen: View {
                             self.isTipAmountButtoClicked = true
                         })
                         .padding(.top, -50)
+                        }
                         
                         ProfileTabsView(selectedTab: $selectedTab) { tab in
                             print("Selected Tab: \(tab)")
@@ -775,6 +784,7 @@ struct ProfileHeaderView: View {
     var followers : String
     var following : String
     var bio : String
+    var isOwnProfile: Bool = false
     
     var onTapBack: () -> () = {}
     var onTapNotify: () -> () = {}
@@ -873,6 +883,8 @@ struct ProfileHeaderView: View {
                 HStack(spacing: 12) {
                     let buttonSize: CGFloat = 44 // Adjust size as needed
                     
+                    // QA #20 — hide notification bell on own profile
+                    if !isOwnProfile {
                     Button(action: {
                         onTapNotify()
                     }) {
@@ -884,7 +896,9 @@ struct ProfileHeaderView: View {
                             .frame(width: buttonSize, height: buttonSize)
                             .fontWeight(.semibold)
                     }
+                    }
                     
+                    // QA #21 — share button stays for everyone (including own profile)
                     Button(action: {
                         // Share action
                     }) {
@@ -897,6 +911,8 @@ struct ProfileHeaderView: View {
                             .fontWeight(.semibold)
                     }
                     
+                    // QA #19 — hide Rate/Block/Report menu on own profile
+                    if !isOwnProfile {
                     Menu {
                         Button("Rate Seller") {
                             navigateToRating = true
@@ -928,6 +944,7 @@ struct ProfileHeaderView: View {
                             .padding(12)
                             .frame(width: buttonSize, height: buttonSize)
                             .fontWeight(.semibold)
+                    } // end Menu label closure
                     }
                 }
                 
