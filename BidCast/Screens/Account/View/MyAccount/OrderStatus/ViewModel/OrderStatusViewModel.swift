@@ -55,6 +55,20 @@ final class OrderStatusViewModel: ObservableObject {
         }
     }
 
+    // MARK: - changeOrderStatus (MC Wave 4 #31/#34 cmpbefoaj00033ghgs38av42u)
+    func changeOrderStatus(parameters: ChangeOrderStatusRequest) async {
+        self.errorMessage = nil
+        do {
+            let response: ResponseModel<MyOrderModel> = try await APIManager.shared.request(
+                type: APIEndPoint.changeOrderStatus(param: parameters),
+                header: true
+            )
+            self.myOrderResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+
     // MARK: - Error Handling
     private func handle(error: Error) {
         if let dataError = error as? DataError {

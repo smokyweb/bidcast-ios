@@ -21,6 +21,10 @@ struct OrderStatusScreen: View {
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
     @State private var hudMsg = ""
+    // MC Wave 4 cmpbefoaj00033ghgs38av42u — #31/#34 seller status actions
+    @State private var showStatusConfirm = false
+    @State private var pendingStatus: String = ""
+    @State private var isChangingStatus = false
     var comeFrom: String = ""
     @Binding var orderId : Int
     
@@ -29,7 +33,7 @@ struct OrderStatusScreen: View {
         VStack(spacing: 0) {
             // ✅ Custom Header
             PrimaryHeader(
-                title: "Order Status",
+                title: comeFrom == "myOrder" ? "Order Management" : "Order Status",
                 isForLogo: false,
                 leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
@@ -86,6 +90,12 @@ struct OrderStatusScreen: View {
                             .frame(height: 44)
                         }
                         .padding(.vertical, 8)
+
+                        // 🏪 MC Wave 4 #31/#34 — Seller order progression actions
+                        // comeFrom == "myOrder" means the seller is viewing this from MyOrdersScreen
+                        if comeFrom == "myOrder" {
+                            sellerActionButtons(order: order)
+                        }
                         
                     }
                     
@@ -302,6 +312,121 @@ struct OrderStatusScreen: View {
     func getCurrentTimestamp() -> String {
         let now = Date()
         return String(Int(now.timeIntervalSince1970))
+    }
+
+    // MARK: - MC Wave 4 #31/#34 cmpbefoaj00033ghgs38av42u — Seller action buttons
+    @ViewBuilder
+    func sellerActionButtons(order: MyOrderModel) -> some View {
+        let status = order.status?.lowercased() ?? ""
+        VStack(spacing: 12) {
+            // #31: New/Pending order → seller can mark as Processing
+            if status == "pending" || status == "new_order" {
+                Button(action: {
+                    pendingStatus = "processing"
+                    showStatusConfirm = true
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                        Text("Mark as Processing")
+                            .font(.custom(poppinsSemiBold, size: 15))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color.defaultTheme)
+                    .cornerRadius(28)
+                    .padding(.horizontal)
+                }
+                .disabled(isChangingStatus)
+            }
+
+            // #31: Processing order → seller can mark as Shipped (out_for_delivery)
+            if status == "processing" {
+                Button(action: {
+                    pendingStatus = "out_for_delivery"
+                    showStatusConfirm = true
+                }) {
+                    HStack {
+                        Image(systemName: "shippingbox")
+                        Text("Mark as Shipped")
+                            .font(.custom(poppinsSemiBold, size: 15))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color.orange)
+                    .cornerRadius(28)
+                    .padding(.horizontal)
+                }
+                .disabled(isChangingStatus)
+            }
+
+            // #34: Out-for-delivery → seller can mark as Delivered (triggers Stripe capture)
+            if status == "out_for_delivery" {
+                Button(action: {
+                    pendingStatus = "delivered"
+                    showStatusConfirm = true
+                }) {
+                    HStack {
+                        Image(systemName: "checkmark.seal.fill")
+                        Text("Mark as Delivered")
+                            .font(.custom(poppinsSemiBold, size: 15))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color.green)
+                    .cornerRadius(28)
+                    .padding(.horizontal)
+                }
+                .disabled(isChangingStatus)
+            }
+        }
+        .padding(.vertical, 8)
+        .alert(isPresented: $showStatusConfirm) {
+            let statusLabel = pendingStatus == "processing" ? "Processing"
+                : pendingStatus == "out_for_delivery" ? "Shipped"
+                : "Delivered"
+            let warningNote = pendingStatus == "delivered"
+                ? " This will capture the buyer's payment and cannot be undone."
+                : ""
+            return Alert(
+                title: Text("Mark as \(statusLabel)?"),
+                message: Text("Confirm you want to update this order to \(statusLabel).\(warningNote)"),
+                primaryButton: .default(Text("Confirm")) {
+                    changeOrderStatus(to: pendingStatus)
+                },
+                secondaryButton: .cancel()
+            )
+        }
+    }
+
+    func changeOrderStatus(to newStatus: String) {
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            isChangingStatus = true
+            SVProgressHUD.show()
+            let param = ChangeOrderStatusRequest(order_id: orderId, status: newStatus)
+            await viewModel.changeOrderStatus(parameters: param)
+            await SVProgressHUD.dismiss()
+            isChangingStatus = false
+            if let err = viewModel.errorMessage, !err.isEmpty {
+                hudMsg = err
+                showhud = true
+                return
+            }
+            // Refresh the order detail
+            fetchOrderDetail()
+            let statusLabel = newStatus == "processing" ? "Processing"
+                : newStatus == "out_for_delivery" ? "Shipped"
+                : "Delivered"
+            hudMsg = "Order marked as \(statusLabel) ✔️"
+            showhud = true
+        }
     }
 }
 

@@ -959,3 +959,9 @@ struct AgoraTokenRequest : Encodable{
     var uid: Int
 }
 
+
+// MARK: - MC Wave 4 cmpbefoaj00033ghgs38av42u — #31/#34 Order Status
+struct ChangeOrderStatusRequest: Encodable {
+    var order_id: Int
+    var status: String  // "processing" | "out_for_delivery" | "delivered"
+}
