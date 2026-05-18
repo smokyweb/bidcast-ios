@@ -269,7 +269,7 @@ struct HomeViewScreen: View {
             ))
             
             // Link to Search Results
-            NavigationLink(destination: SearchResultsView(initialQuery: searchText, onShowTap: { showId in self.deepLinkShowId = String(showId) }), isActive: $navigateToSearchResults) {
+            NavigationLink(destination: SearchResultsView(initialQuery: searchText), isActive: $navigateToSearchResults) {
                 EmptyView()
             }
         }
