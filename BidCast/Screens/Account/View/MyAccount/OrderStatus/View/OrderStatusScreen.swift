@@ -8,6 +8,22 @@
 import SwiftUI
 import SVProgressHUD
 import AlertToast
+import SafariServices
+
+// MARK: - SafariView — in-app PDF/receipt viewer (MC wave-2 #8)
+private struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        SFSafariViewController(url: url)
+    }
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+}
+
+// Identifiable wrapper so URL can drive .fullScreenCover(item:)
+private struct IdentifiableURL: Identifiable {
+    let id = UUID()
+    let url: URL
+}
 
 struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -23,6 +39,9 @@ struct OrderStatusScreen: View {
     @State private var hudMsg = ""
     var comeFrom: String = ""
     @Binding var orderId : Int
+    // MC wave-2 #5/#8/#9: Shipping Details sheet + in-app receipt viewer
+    @State private var showShippingDetailsSheet = false
+    @State private var receiptURLToShow: IdentifiableURL? = nil
     
     
     var body: some View {
@@ -78,7 +97,8 @@ struct OrderStatusScreen: View {
                                     .frame(width: (geometry.size.width - 16) / 2)
                                     
                                     OutlinedButtonView(title: "Shipping Details", onTap: {
-                                        // Optionally handle this as well
+                                        // MC wave-2 #5/#9: was empty — now shows delivery address sheet
+                                        showShippingDetailsSheet = true
                                     })
                                     .frame(width: (geometry.size.width - 16) / 2)
                                 }
@@ -144,6 +164,33 @@ struct OrderStatusScreen: View {
                     withAnimation { showError = false }
                 }
             )
+        }
+        // MC wave-2 #5/#9: Shipping Details bottom sheet
+        .bottomSheet(
+            isPresented: $showShippingDetailsSheet,
+            height: screenHeight * 0.4,
+            topBarCornerRadius: 25,
+            showTopIndicator: true
+        ) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Shipping Details")
+                    .font(.custom(poppinsSemiBold, size: 18))
+                    .padding(.top, 8)
+                if let order = productDetail {
+                    DeliveryAddressView(order: order)
+                } else {
+                    Text("No shipping information available.")
+                        .font(.custom(poppinsRegular, size: 14))
+                        .foregroundColor(.gray)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+        }
+        // MC wave-2 #8: in-app receipt viewer via SFSafariViewController
+        .fullScreenCover(item: $receiptURLToShow) { wrapped in
+            SafariView(url: wrapped.url)
+                .ignoresSafeArea()
         }
     }
     
@@ -276,28 +323,15 @@ struct OrderStatusScreen: View {
     }
     
     func downloadRecieptData(with urlString: String?) {
-        guard let url = urlString, !url.isEmpty else {
+        guard let urlStr = urlString, !urlStr.isEmpty, let url = URL(string: urlStr) else {
             print("Invalid URL String")
-            // MC sub-task cmp49339f00l53mx17c5alnjo: also surface here for the
-            // off-chance someone calls downloadRecieptData directly with nil.
+            // MC sub-task cmp49339f00l53mx17c5alnjo: surface missing receipt.
             hudMsg = "Receipt isn't available yet for this order."
             showhud = true
             return
         }
-        let timeStamp = getCurrentTimestamp()
-        FileDownloader.shared.download(
-            from: url,
-            fileName: "receipt\(timeStamp).pdf"
-        ) { result in
-            switch result {
-            case .success(let url):
-                print("Saved in Files at:", url)
-            case .failure(let error):
-                print("Download failed:", error)
-            }
-        }
-
-//        FileDownloader.shared.startDownload(from: url)
+        // MC wave-2 #8: open receipt in-app via SFSafariViewController.
+        receiptURLToShow = IdentifiableURL(url: url)
     }
     func getCurrentTimestamp() -> String {
         let now = Date()

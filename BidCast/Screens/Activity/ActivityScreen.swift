@@ -790,35 +790,54 @@ struct MessageRow: View {
         blockedMe.contains { String($0.id ?? -1) == otherUserId }
     }
     
+    // MC wave-2 #37: unread when the last message is from the other user and not seen
+    private var isUnread: Bool { !message.isReply && !message.seen }
+    // Dim row when current user already replied (conversation is responded-to)
+    private var rowOpacity: Double { message.isReply ? 0.65 : 1.0 }
+
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            CustomProfileImage(url: otherUserImage, isCircular: true, size: 48)
-//            AsyncImage(url: URL(string: otherUserImage)) { image in
-//                image.resizable()
-//            } placeholder: {
-//                Color.gray
-//            }
-//            .frame(width: 48, height: 48)
-//            .clipShape(Circle())
+            ZStack(alignment: .topTrailing) {
+                CustomProfileImage(url: otherUserImage, isCircular: true, size: 48)
+                // MC wave-2 #37: unread badge
+                if isUnread {
+                    Circle()
+                        .fill(Color.defaultTheme)
+                        .frame(width: 12, height: 12)
+                        .offset(x: 2, y: -2)
+                }
+            }
             
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(otherUserName.capitalizingFirstLetter())
-                        .font(.system(size: 16, weight: .semibold))
+                        // MC wave-2 #37: bold name for unread messages
+                        .font(.system(size: 16, weight: isUnread ? .bold : .semibold))
                     Spacer()
-                    Text(timestampString)
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(timestampString)
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
+                        // MC wave-2 #37: show read receipt checkmarks
+                        if message.isReply {
+                            Text(message.seen ? "\u{2713}\u{2713}" : "\u{2713}")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(message.seen ? .defaultTheme : .gray)
+                        }
+                    }
                 }
                 Text(message.message)
-                    .font(.system(size: 15))
+                    .font(.system(size: 15, weight: isUnread ? .semibold : .regular))
                     .lineLimit(3)
+                    .foregroundColor(isUnread ? .primary : .secondary)
             }
         }
         .padding()
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        // MC wave-2 #37: dim when already responded
+        .opacity(rowOpacity)
         .onTapGesture {
             if isBlockedByMe {
                 onBlockedByMe()

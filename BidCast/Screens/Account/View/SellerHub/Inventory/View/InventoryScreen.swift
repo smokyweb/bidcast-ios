@@ -59,6 +59,8 @@ struct InventoryScreen: View {
     @State var showSellSheet = false
     @State var navigateToCreateProduct = false
     @State var navigateToEditProduct = false
+    // MC wave-2 #10: Orders sub-section navigation
+    @State private var navigateToOrders = false
     @State var searchText: String = ""
     @EnvironmentObject var productManager: ProductManager
     @State var sellerInfo : SellerInfoResponse? = nil
@@ -166,6 +168,15 @@ struct InventoryScreen: View {
             // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: InventorySegment.allCases)
                 .onChange(of: segment) { newSegment in
+                    // MC wave-2 #10: Orders segment navigates to MyOrdersScreen
+                    if newSegment == .orders {
+                        navigateToOrders = true
+                        // Reset segment so back-nav returns to Active tab
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                            segment = .active
+                        }
+                        return
+                    }
                     clearFilter()
                     Task {
                         await performAPICalls(
@@ -323,6 +334,8 @@ struct InventoryScreen: View {
                 .padding(.vertical, 16)
             }
             
+            // MC wave-2 #10: Orders sub-section
+            CusNavLink(doNavigate: $navigateToOrders, destination: MyOrdersScreen())
             CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen())
@@ -900,6 +913,8 @@ struct InventoryScreen: View {
     
     // MARK: - ✅ CORRECTED Fetch Inventory
     func fetchInventory(for segment: InventorySegment, page: Int) async throws {
+        // MC wave-2 #10: Orders segment is handled by navigation, not this endpoint
+        guard segment != .orders else { return }
         // Build request
         request.status = segment.rawValue.lowercased()
         request.page = page
@@ -992,6 +1007,8 @@ enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     case active = "Active"
     case draft = "Draft"
     case inactive = "Inactive"
+    // MC wave-2 #10: Orders sub-section
+    case orders = "Orders"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")

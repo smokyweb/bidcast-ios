@@ -30,10 +30,17 @@ struct ShowCardView: View {
                     .foregroundColor(.gray)
                 
                 HStack {
-                    Label(formatTo12HourTime(show?.time ?? ""), systemImage: "clock")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                    //                    Label("\(show?.viewer_count ?? 0) RSVPs", systemImage: "person.3")
-                    //                        .font(.custom(poppinsSemiBold, size: 13.0))
+                    if isPastShows {
+                        // MC wave-2 #26: show duration for past shows
+                        if let dur = show?.video_duration, !dur.isEmpty {
+                            Label(dur, systemImage: "clock")
+                                .font(.custom(poppinsSemiBold, size: 13.0))
+                                .foregroundColor(.gray)
+                        }
+                    } else {
+                        Label(formatTo12HourTime(show?.time ?? ""), systemImage: "clock")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                    }
                 }
             }
             Spacer()
