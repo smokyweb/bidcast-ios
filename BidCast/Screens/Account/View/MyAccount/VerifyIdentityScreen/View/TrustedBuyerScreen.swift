@@ -347,7 +347,15 @@ struct TrustedBuyerScreen: View {
         let response = viewModel.getBuyerVerificationStatusDict
 
         if response.status == "success" {
-            SavedImageURL = response.data?.image ?? ""
+            // cmpbefoal00043ghgyp9byme4 #42: backend storeBuyerIdentity saves
+            // images as relative paths (e.g. "assets/img/buyer_identity/x.jpg").
+            // getBuyerIdentity returns the raw relative path; CustomProfileImage
+            // can't resolve it without the base URL, so no image was shown.
+            // Same prepend pattern used in LiveStream.swift & CurrentProductView.swift.
+            let rawImage = response.data?.image ?? ""
+            SavedImageURL = rawImage.isEmpty ? "" :
+                (rawImage.hasPrefix("http") ? rawImage :
+                 "https://backend.bidcast.betaplanets.com/\(rawImage)")
             let status = response.data?.status
             isVerified = (status == "pending" || status == "verified")
         } else if !(response.message?.localizedCaseInsensitiveContains("no 'buyer identity' data found") ?? false) {
