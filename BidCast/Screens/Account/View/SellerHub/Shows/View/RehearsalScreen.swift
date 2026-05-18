@@ -2161,19 +2161,26 @@ struct RehearsalScreen: View {
         let amount = winner?.bid_amount ?? ""
         
         print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
-//        auctionedProductData = nil
-        winnerName = name
-        winnerProfileID = id
-        winnerProfileImage = image
-        winnerAmount = amount
-        currentPrice = Double(winnerAmount) ?? 0.0
-        if !winnerName.isEmpty{
+
+        // Only update winner state and show the winning overlay when a real bid
+        // was placed (non-empty name AND non-zero bid amount). When the timer
+        // expires with no bids the server may still emit bid_finalized with a
+        // null/empty winner — in that case we skip the winner sheet entirely so
+        // the host only sees the Run Next button. (MC: cmp55p2y8007b56kdfowbf5wr)
+        let hasRealWinner = !name.isEmpty && !(Double(amount) ?? 0.0).isZero
+
+        if hasRealWinner {
+            winnerName = name
+            winnerProfileID = id
+            winnerProfileImage = image
+            winnerAmount = amount
+            currentPrice = Double(winnerAmount) ?? 0.0
+
             showWinnerOnParent = true
             randomWinner = winnerName.capitalizingFirstLetter()
             randomWinnerImage = winnerProfileImage
-            
+
             let message = "We have a winner! \(winnerName)"
-            
             SocketManagerService.shared.sendChat(
                 roomId: roomId,
                 message: message,
@@ -2181,6 +2188,12 @@ struct RehearsalScreen: View {
                 userName: name,
                 userImage: image
             )
+        } else {
+            // No bids placed — clear any stale winner UI so only Run Next is shown.
+            winnerName = ""
+            winnerProfileImage = ""
+            winnerAmount = ""
+            print("🏁 Bid finalized with no winner — timer expired without bids.")
         }
     }
     

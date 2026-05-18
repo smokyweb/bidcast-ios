@@ -237,8 +237,16 @@ extension ProductShopListScreen {
         ) { index, _ in
             switch index {
             case 0:
+                // MC cmp5g5h0k00qs56kd2etclc2a (Ankit 2026-05-14): the Sort
+                // pill was assigning `selectedOptions = "newest"`. That
+                // variable is the `sale_type` filter (valid values:
+                // buy_now / auction / accept_offers) — putting "newest"
+                // there made every subsequent fetchProduct() send
+                // sale_type=newest, which the server rejects as an invalid
+                // filter and returns zero rows. The Sort pill should ONLY
+                // open the sort sheet; the actual sort value is handled by
+                // selectedSort + .onChange below.
                 showSortSheet = true
-                selectedOptions = "newest"
             case 1:
                 resetData()
                 selectedOptions = "auction"
@@ -299,6 +307,16 @@ extension ProductShopListScreen {
     private func fetchProduct(isLoaderShown: Bool = true) {
         guard sellerId != "-1" else { return }
 
+        // MC cmp5g5h0k00qs56kd2etclc2a (Ankit 2026-05-14): viewers joining a
+        // live show were seeing an empty product list. Root cause was the
+        // `categoryIds` binding flowing in here as `0` (the default for
+        // `LiveStream.categoryId` when the room's first product had no
+        // category or no products were loaded yet) — the server returns
+        // zero rows when filtered by category_ids = "0". When we don't
+        // have a real category (<= 0), send an empty string so the seller's
+        // full inventory comes back instead of a filtered-empty list.
+        let categoryFilter: String = categoryIds > 0 ? "\(categoryIds)" : ""
+
         Task {
             await performAPICalls(
                 isConcurrent: false,
@@ -314,7 +332,7 @@ extension ProductShopListScreen {
                 let request = ProductRequest(
                     user_id: sellerId,
                     search: searchText,
-                    category_ids: "\(categoryIds)",
+                    category_ids: categoryFilter,
                     page: currentPage,
                     sale_type: selectedOptions,
                     sort_by: selectedSort

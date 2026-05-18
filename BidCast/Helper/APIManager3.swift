@@ -164,14 +164,16 @@ private lazy var optimizedSession: URLSession = {
             request.httpBody = try? jsonEncoder.encode(parameters)
         }
         
+        // CRASH FIX (cmp3z7e4400k54axyxucdv6qm): preserve Content-Type when adding
+        // auth headers. The previous code replaced allHTTPHeaderFields entirely,
+        // dropping "Content-Type: application/json" — causing Laravel to ignore
+        // the JSON body (type/page params), returning unfiltered or empty data.
         request.allHTTPHeaderFields = type.headers
         
         if header {
-            request.allHTTPHeaderFields = [
-                "Authorization": "Bearer \(UserDefaults.accessToken)",
-                "timezone": "\(deviceTimeZone)",
-                "time_zone": "\(deviceTimeZone)"
-            ]
+            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            request.setValue(deviceTimeZone, forHTTPHeaderField: "timezone")
+            request.setValue(deviceTimeZone, forHTTPHeaderField: "time_zone")
         }
         
         #if DEBUG
@@ -333,10 +335,21 @@ private lazy var optimizedSession: URLSession = {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
+        #if DEBUG
+        print("✅ URL: ====>\(url)")
+        print("✅ METHOD: =====> \(type.method)")
+        print("✅ BODY: =====> \(type.body ?? "")")
+        print("✅ \(request.allHTTPHeaderFields as Any)")
+        #endif
+        
         let dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = dataBody
         
         let (data, response) = try await optimizedSession.data(for: request)
+                
+        #if DEBUG
+        print("👉 API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+        #endif
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw DataError.invalidResponse(data)

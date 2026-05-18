@@ -121,24 +121,34 @@ struct ExploreViewScreen: View {
                                     let key = "\(categoryId)"
                                     let categoryName = categoryList[expandedIndex].name ?? ""
                                     if let subCache = subCategoryCache[key], !subCache.isEmpty {
+                                        // FIX cmp424ztk00sm4axyuk9psh8q: horizontal chip row
                                         SubCategoryListView(
                                             isLoading: loadingSubCategoryId == key,
                                             subCategories: subCategoryCache[key] ?? [],
                                             parentCategory: categoryName,
                                             viewersCount: 0,
                                             onSubCategoryTap: { subCat in
-//                                                category = categoryName
-//                                                subCategory = subCat.name ?? ""
-//                                                navigateToCategoryDetailScreen = true
+                                                // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14):
+                                                // Don't push HomeViewScreen inside the Explore
+                                                // tab's NavigationView — that triggers iOS's
+                                                // default hidesBottomBarWhenPushed and the
+                                                // tab bar disappears. Instead, hand the filter
+                                                // off to TabBarRouter and switch to the Home
+                                                // tab. The Home tab keeps its own NavigationView
+                                                // stack and the bottom tab bar stays visible.
                                                 category = categoryName
-
-                                                    if subCat.id == -1 {
-                                                        subCategory = ""   // 🔥 All selected
-                                                    } else {
-                                                        subCategory = subCat.name ?? ""
-                                                    }
-
-                                                    navigateToCategoryDetailScreen = true
+                                                if subCat.id == -1 {
+                                                    subCategory = ""   // 🔥 All selected
+                                                } else {
+                                                    subCategory = subCat.name ?? ""
+                                                }
+                                                tabBarRouter.pendingHomeCategory = category
+                                                tabBarRouter.pendingHomeSubCategory = subCategory
+                                                tabBarRouter.pendingHomeFilterFromExplore = true
+                                                // Collapse the inline subcategory drawer so we
+                                                // don't reopen it on return.
+                                                expandedCategoryIndex = nil
+                                                tabBarRouter.selectedTab = 0
                                             }
                                         )
                                         .transition(.asymmetric(
@@ -183,12 +193,45 @@ struct ExploreViewScreen: View {
             let selectedCategory = categoryTitles[selectedCategoryIndex]
             Task { await fetchCategory(for: selectedCategory) }
         }
+        // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): also consume a
+        // pending exploreInitialTab on every .onAppear (not just
+        // .onFirstAppear). The Explore view stays alive across tab
+        // switches, so .onFirstAppear only fires once — the second time
+        // the user taps 'See All Categories' on Home we need to re-apply
+        // the requested segment (All = index 2) here too.
+        .onAppear {
+            let initialTab = tabBarRouter.exploreInitialTab
+            guard initialTab != 0 else { return }
+            selectedCategoryIndex = initialTab
+            tabBarRouter.exploreInitialTab = 0
+            let selectedCategory = categoryTitles[selectedCategoryIndex]
+            Task { await fetchCategory(for: selectedCategory) }
+        }
         .onChange(of: tabBarRouter.exploreInitialTab) { _, newVal in
             guard newVal != 0 else { return }
             selectedCategoryIndex = newVal
             tabBarRouter.exploreInitialTab = 0
             let selectedCategory = categoryTitles[selectedCategoryIndex]
             Task { await fetchCategory(for: selectedCategory) }
+        }
+        // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): When the user
+        // drills into a category from the Explore tab the destination
+        // HomeViewScreen is pushed via NavigationLink(isActive:) inside the
+        // Explore tab's NavigationView. If the user then switches to the
+        // Home tab while that push is active, iOS leaks the pushed view's
+        // toolbar state (which includes the .toolbar(.visible, for: .tabBar)
+        // modifier we added in an earlier fix) into sibling tabs, causing
+        // the bottom tab bar to stop rendering on the Home tab. Dismiss the
+        // Explore drill-in push the moment the user leaves the Explore tab
+        // so the NavigationView state is clean when they return.
+        .onChange(of: tabBarRouter.selectedTab) { _, newTab in
+            if newTab != 1 {
+                // User navigated away from Explore — collapse the drill-in
+                // push so the Explore NavigationView stack is clean and its
+                // toolbar state does not bleed into the new tab.
+                navigateToCategoryDetailScreen = false
+                expandedCategoryIndex = nil
+            }
         }
     }
     
@@ -338,21 +381,30 @@ struct ExploreViewScreen: View {
                 subCategoryCache[categoryId] = finalList
 
             } else {
-                // No subcategories → direct navigation
+                // No subcategories → hand off to Home tab via TabBarRouter.
+                // (MC cmp5czpw900jo56kdn739kkjp — see onSubCategoryTap closure
+                // for the rationale on tab-switch vs push.)
                 subCategoryCache[categoryId] = []
                 expandedCategoryIndex = nil
                 category = categoryName
                 subCategory = ""
-                navigateToCategoryDetailScreen = true
+                tabBarRouter.pendingHomeCategory = category
+                tabBarRouter.pendingHomeSubCategory = subCategory
+                tabBarRouter.pendingHomeFilterFromExplore = true
+                tabBarRouter.selectedTab = 0
             }
 
         } else {
-            // No subcategory key → direct navigation
+            // No subcategory key → hand off to Home tab via TabBarRouter.
+            // (MC cmp5czpw900jo56kdn739kkjp)
             subCategoryCache[categoryId] = []
             expandedCategoryIndex = nil
             category = categoryName
             subCategory = ""
-            navigateToCategoryDetailScreen = true
+            tabBarRouter.pendingHomeCategory = category
+            tabBarRouter.pendingHomeSubCategory = subCategory
+            tabBarRouter.pendingHomeFilterFromExplore = true
+            tabBarRouter.selectedTab = 0
         }
 
         loadingSubCategoryId = nil
@@ -361,47 +413,39 @@ struct ExploreViewScreen: View {
 }
 
 // MARK: - SubCategory List View
+// FIX cmp424ztk00sm4axyuk9psh8q: vertical list where each row is
+// [image] [name] side-by-side — compact rows, no extra height.
 struct SubCategoryListView: View {
     let isLoading: Bool
     let subCategories: [SelectedSubCategoryDataModel]
     let parentCategory: String
-    let viewersCount : Int
+    let viewersCount: Int
     let onSubCategoryTap: ((SelectedSubCategoryDataModel) -> Void)?
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            if isLoading {
-                loadingView
-            } else if !subCategories.isEmpty {
-                subCategoryList
 
+    var body: some View {
+        VStack(spacing: 0) {
+            if isLoading {
+                ForEach(0..<3) { _ in
+                    SubCategoryShimmerRow()
+                    Divider().padding(.leading, 56)
+                }
+            } else {
+                ForEach(Array(subCategories.enumerated()), id: \.element.id) { index, subCategory in
+                    SubCategoryRow(
+                        viewersCount: viewersCount,
+                        subCategory: subCategory,
+                        onSubCategoryTap: { onSubCategoryTap?(subCategory) }
+                    )
+                    if index < subCategories.count - 1 {
+                        Divider().padding(.leading, 56)
+                    }
+                }
             }
         }
-        .padding(.vertical, 8)
-    }
-    
-    // MARK: - Loading View
-    private var loadingView: some View {
-        VStack(spacing: 8) {
-            ForEach(0..<2) { _ in
-                SubCategoryShimmerRow()
-            }
-        }
-    }
-    
-    // MARK: - SubCategory List
-    private var subCategoryList: some View {
-        VStack(spacing: 8) {
-            ForEach(subCategories, id: \.id) { subCategory in
-                SubCategoryRow(viewersCount:viewersCount,subCategory: subCategory,onSubCategoryTap: {
-                   print("SubCategory clicked")
-                    onSubCategoryTap?(subCategory)
-                })
-                
-                    
-            }
-        }
-       
+        .background(Color.white)
+        .cornerRadius(12)
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.12), lineWidth: 1))
+        .padding(.horizontal, 4)
     }
 }
 
@@ -429,53 +473,29 @@ struct SubCategoryRow: View {
         )
     }
 
+    // FIX cmp424ztk00sm4axyuk9psh8q: compact row — [image] [name] side by side.
+    // Vertical list, each row is one line: small image left, name right.
     private var rowContent: some View {
-        HStack(alignment: .top, spacing: 12) {
-            // Image
-            CustomProfileImage(url: subCategory.image ?? "",isCircular: false,cornerRadius: 12,size: 50,defaultImage: "photo")
-//            AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
-//                switch phase {
-//                case .empty:
-//                    ShimmerView()
-//                        .frame(width: 50, height: 50)
-//                case .success(let image):
-//                    image
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fill)
-//                        .frame(width: 50, height: 50)
-//                        .clipped()
-//                default:
-//                    placeholder
-//                }
-//            }
-//            .clipShape(RoundedRectangle(cornerRadius: 12))
+        HStack(spacing: 10) {
+            CustomProfileImage(
+                url: subCategory.image ?? "",
+                isCircular: false,
+                cornerRadius: 6,
+                size: 36,
+                defaultImage: "photo"
+            )
+            .frame(width: 36, height: 36)
 
-            // Name
             Text(subCategory.name ?? "Unknown")
                 .font(.custom(poppinsSemiBold, size: 15))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.leading)
                 .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, minHeight: 40, alignment: .topLeading)
-                .layoutPriority(1)
 
             Spacer()
-
-            // Viewer Badge
-            viewersBadge
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(minHeight: 74, alignment: .top)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
-        )
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
     }
 
     private var viewersBadge: some View {
@@ -507,38 +527,18 @@ struct SubCategoryRow: View {
 // MARK: - SubCategory Shimmer Row
 struct SubCategoryShimmerRow: View {
     var body: some View {
-        HStack(spacing: 12) {
-            // Icon Shimmer
-            
+        // Shimmer row: [image placeholder] [text placeholder]
+        HStack(spacing: 10) {
             ShimmerView()
-                .frame(width: 50, height: 50)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            // Name Shimmer
-            VStack(alignment: .leading, spacing: 4) {
-                ShimmerView()
-                    .frame(width: 120, height: 16)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-            }
-            
+                .frame(width: 36, height: 36)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+            ShimmerView()
+                .frame(width: 120, height: 16)
+                .clipShape(RoundedRectangle(cornerRadius: 4))
             Spacer()
-            
-            // Badge Shimmer
-            ShimmerView()
-                .frame(width: 80, height: 28)
-                .clipShape(Capsule())
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
-        )
-        .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
     }
 }
 

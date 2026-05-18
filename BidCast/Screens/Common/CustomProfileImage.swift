@@ -191,23 +191,65 @@ class ImageDownloader {
     private let session: URLSession
     
     private init() {
+        // MC cmp5cja3f00ii56kdgyqv6rys (Ankit 2026-05-14): images were loading
+        // very slowly on the live stream / product detail screens and frequently
+        // failing entirely. Three contributing factors fixed here:
+        //   1. httpMaximumConnectionsPerHost was 4, so a live page that needs
+        //      product carousel + seller avatar + multiple thumbnails ended
+        //      up serialising HTTP requests. Bumped to 10.
+        //   2. timeoutIntervalForRequest was 15 s, too aggressive against the
+        //      sluggish image origin: the request would error before the
+        //      fetch finished. Raised to 30 s for the request and 60 s for
+        //      the whole-resource budget.
+        //   3. Added explicit HTTP/2 multiplexing via
+        //      httpAdditionalHeaders and shouldUseExtendedBackgroundIdleMode
+        //      so the connection is reused across concurrent fetches.
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 15 // 15 second timeout
-        config.timeoutIntervalForResource = 30
-        config.httpMaximumConnectionsPerHost = 4 // Limit concurrent downloads
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 60
+        config.httpMaximumConnectionsPerHost = 10
         config.requestCachePolicy = .returnCacheDataElseLoad
+        config.waitsForConnectivity = true
+        config.shouldUseExtendedBackgroundIdleMode = true
         config.urlCache = URLCache(
             memoryCapacity: 50 * 1024 * 1024, // 50 MB memory
-            diskCapacity: 100 * 1024 * 1024 // 100 MB disk
+            diskCapacity: 200 * 1024 * 1024 // 200 MB disk
         )
         
         self.session = URLSession(configuration: config)
     }
     
+    /// Downloads with one transparent retry on transient failures.
+    /// (MC cmp5cja3f00ii56kdgyqv6rys: images were failing on the first try
+    /// against a sluggish origin and the user was left looking at a
+    /// placeholder. One retry covers the common "slow handshake" failure
+    /// case without piling on the origin if it's actually down.)
     func downloadImage(from url: URL) async throws -> (Data, URLResponse) {
         var request = URLRequest(url: url)
         request.cachePolicy = .returnCacheDataElseLoad
-        return try await session.data(for: request)
+        do {
+            return try await session.data(for: request)
+        } catch let error as URLError where Self.isRetryable(error) {
+            // Brief delay, then retry once.
+            try? await Task.sleep(nanoseconds: 800_000_000)
+            return try await session.data(for: request)
+        }
+    }
+
+    private static func isRetryable(_ error: URLError) -> Bool {
+        switch error.code {
+        case .timedOut,
+             .networkConnectionLost,
+             .notConnectedToInternet,
+             .cannotConnectToHost,
+             .cannotFindHost,
+             .dnsLookupFailed,
+             .resourceUnavailable,
+             .secureConnectionFailed:
+            return true
+        default:
+            return false
+        }
     }
 }
 

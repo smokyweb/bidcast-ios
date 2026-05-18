@@ -235,6 +235,52 @@ struct LiveStream: View {
     var isAuctionStartedForCurrentRoom: Bool {
         auctionStartedRooms.contains(currentRoomID)
     }
+
+    // MARK: - Auction-Type Helpers (Mission Control: cmp55p2y8007b56kdfowbf5wr)
+    // auctionTypeId taxonomy (per PM Ankit Verma, 2026-05-14):
+    //   == 5  -> Buy Now Auction       (Buy Now button only, no timer, no swipe-to-bid)
+    //   == 9  -> Sports Break / Surprise Set (handled separately, existing flow preserved)
+    //   other -> Live Auction          (swipe-to-bid + countdown timer + "Bidding Closed")
+    private var isBuyNowOnlyAuction: Bool {
+        // Sports break (9) is handled via shouldShowBuyNow above; Buy Now only is 5.
+        return auctionTypeId == 5
+    }
+    private var isSportsBreakAuction: Bool {
+        return auctionTypeId == 9 || isSurpriseSetAuctionActive
+    }
+    private var isLiveAuction: Bool {
+        return !isBuyNowOnlyAuction && !isSportsBreakAuction
+    }
+
+    // Flips true once we've seen at least one non-"00:00" tick from `bid_timer_update`
+    // for the current product/auction. Reset on auction or product change. Without this
+    // gate we'd briefly show "Bidding Closed" between product switch and the first
+    // server tick (when bidTime is still the previous auction's "00:00").
+    @State private var hasObservedBidTimerThisAuction: Bool = false
+
+    // MARK: - Bid Timer Expiry Guard (Mission Control: cmp55p2y8007b56kdfowbf5wr)
+    /// True when the auction bid countdown has elapsed for the current product and the
+    /// server has not yet emitted `bid_finalized`. Used to lock the swipe-to-bid UI and
+    /// the bid action sites so no more bids are accepted after the timer reaches 00:00.
+    ///
+    /// Buy Now Auction (auctionTypeId == 5) has no timer, so this is always false there.
+    /// Sports Break / Surprise Set (auctionTypeId == 9) keeps its existing flow.
+    private var isBidTimerExpired: Bool {
+        guard isAuctionStartedForCurrentRoom else { return false }
+        // Buy Now has no countdown timer at all -> never expired.
+        if isBuyNowOnlyAuction { return false }
+        // Sports break keeps its current behavior -- the surprise-set Int countdown still
+        // gates the existing UI elsewhere; we don't lock bidding from this path.
+        if isSportsBreakAuction { return false }
+        // Live Auction: lock bids once the server-driven countdown hits 00:00 AND we know
+        // the countdown was actually running for this auction (avoids false-positive at
+        // auction-start before the first bid_timer_update tick, and at product switch).
+        guard hasObservedBidTimerThisAuction else { return false }
+        guard let product = auctionedProductData else { return false }
+        if product.status == "sold" { return false }
+        return socketManagerChat.bidTime == "00:00"
+            && socketManagerChat.hasWon == false
+    }
     @State var auctionedProductData: ProductDataModel1? = nil
     @State  var  boosts = [BoostModel]()
     @StateObject private var viewModelFreebie = FreebieViewModel()
@@ -892,28 +938,70 @@ struct LiveStream: View {
     @ViewBuilder
     private var productDetailsView: some View {
         if isAuctionStartedForCurrentRoom {
-            // Check if it's a surprise set auction
+            // Check if it's a surprise set / sports break auction (auctionTypeId == 9 path).
+            // Existing flow is preserved per PM spec; no "Bidding Closed" injected here.
             if isSurpriseSetAuctionActive, let surpriseSet = currentSurpriseSetData {
                 VStack(alignment: .leading, spacing: 12) {
                     surpriseSetProductCard(surpriseSet: surpriseSet)
-                    
                     biddingControls
                 }
             }
-            // Regular product auction
+            // Regular product auction (Buy Now == 5 OR Live Auction otherwise)
             else if let product = auctionedProductData {
                 VStack(alignment: .leading, spacing: 12) {
                     currentProductCard(product: product)
                     if product.status != "sold" {
-                        biddingControls
+                        // Only Live Auction shows "Bidding Closed" — Buy Now has no timer.
+                        if isLiveAuction && isBidTimerExpired {
+                            biddingClosedView
+                        } else {
+                            biddingControls
+                        }
                     } else {
                         waitingForProductView
                     }
+                }
+                // Track that we've seen at least one non-zero tick for this auction so a
+                // momentary "00:00" between product switch and first server tick doesn't
+                // flip the UI to "Bidding Closed" prematurely. Reset whenever we move to
+                // a new product (currentProductID) or the auction stops/starts.
+                .onChange(of: socketManagerChat.bidTime) { _, newValue in
+                    if newValue != "00:00" {
+                        hasObservedBidTimerThisAuction = true
+                    }
+                }
+                .onChange(of: currentProductID) { _, _ in
+                    hasObservedBidTimerThisAuction = false
+                }
+                .onChange(of: isAuctionStartedForCurrentRoom) { _, started in
+                    if !started { hasObservedBidTimerThisAuction = false }
                 }
             } else {
                 waitingForProductView
             }
         }
+    }
+
+    // MARK: - Bidding Closed View
+    /// Replaces the bid controls when the auction countdown has elapsed but the server
+    /// has not yet finalized the bid. Prevents the user from sliding-to-bid or tapping
+    /// Buy Now / Custom after the timer reaches 00:00. (MC: cmp55p2y8007b56kdfowbf5wr)
+    @ViewBuilder
+    private var biddingClosedView: some View {
+        Text("Bidding Closed")
+            .font(.custom(poppinsBold, size: 14.0))
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 42)
+            .background(
+                Capsule()
+                    .fill(Color.white.opacity(0.12))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+            )
+            .padding(.horizontal)
     }
     
     //MARK: Current product section
@@ -1077,6 +1165,10 @@ struct LiveStream: View {
             title: "Buy Now",
             isOutLine: false
         ) {
+            // Buy Now Auction (auctionTypeId == 5) has no timer, so this guard is a
+            // Live-Auction-only safeguard for Buy-It-Now-within-live-auction edge cases.
+            // (MC: cmp55p2y8007b56kdfowbf5wr)
+            if isLiveAuction && isBidTimerExpired { return }
             if UserDefaults.allowBidForAllUser || handleBidding() {
                 sendBid(
                     roomId: currentRoomID,
@@ -1107,6 +1199,9 @@ struct LiveStream: View {
     }
     //MARK: Cusotm bid section action
     private func handleCustomBidTap() {
+        // Live Auction only: stop custom bids once countdown hits 00:00.
+        // (MC: cmp55p2y8007b56kdfowbf5wr)
+        if isLiveAuction && isBidTimerExpired { return }
         if handleBidding(){
 //            if UserDefaults.allowBidForAllUser {
 //                self.maxBidAmountSheet = true
@@ -1154,7 +1249,7 @@ struct LiveStream: View {
         HStack(spacing: 6) {
             Text("Bid: $\(Int(nextBid))")
                 .font(.custom(poppinsSemiBold, size: 14))
-                .foregroundColor(.black)
+                .foregroundColor(.white)
            
                 chevronAnimation(offset: 3)
                 chevronAnimation(offset: 6)
@@ -1171,7 +1266,7 @@ struct LiveStream: View {
     private func chevronAnimation(offset: CGFloat) -> some View {
         Image(systemName: "chevron.right")
             .font(.system(size: 13, weight: .bold))
-            .foregroundColor(.black)
+            .foregroundColor(.white)
             .opacity(animate ? 1 : 0.2)
             .offset(x: animate ? offset : 0)
     }
@@ -1192,7 +1287,13 @@ struct LiveStream: View {
     private func handleBidDragEnd(value: DragGesture.Value) {
         if value.translation.width > totalSwipeWidth * 0.25 {
             dragOffset = .zero
-            
+            // Live Auction only: stop swipe-to-bid once countdown hits 00:00.
+            // (Swipe is only ever shown in Live Auction mode, but defense in depth.)
+            // (MC: cmp55p2y8007b56kdfowbf5wr)
+            if isLiveAuction && isBidTimerExpired {
+                swipeConfirmed = false
+                return
+            }
             if UserDefaults.allowBidForAllUser {
                 swipeConfirmed = true
                 incrementPrice()
@@ -1313,13 +1414,25 @@ struct LiveStream: View {
             if isAuctionStartedForCurrentRoom {
                 let currentProducts = auctionedProductData ?? ProductDataModel1()
                 let product = currentProducts
-                if product != nil{
-                 
-                    if let img = product.images?.first {
-                        StackedImageView(imageURL: img, totalCount: productCount) {
-                            print("productStackTapped")
-                            navigateToProductList = true
+                if product != nil {
+                    // FIX cmp41hieh00rj4axy15wpcmqz: resolve product image URL.
+                    // Android sends images[] as relative paths (e.g.
+                    // "uploads/products/img.jpg"). iOS sends full URLs in
+                    // thumbnail[]. Check both and prepend the backend base
+                    // URL for relative paths so AsyncImage can load them.
+                    let rawImg = product.images?.first(where: { !$0.isEmpty })
+                        ?? product.thumbnail?.first(where: { !$0.isEmpty })
+                        ?? ""
+                    let resolvedImg: String = {
+                        guard !rawImg.isEmpty else { return "" }
+                        if rawImg.hasPrefix("http://") || rawImg.hasPrefix("https://") {
+                            return rawImg
                         }
+                        return "https://backend.bidcast.betaplanets.com/" + rawImg
+                    }()
+                    StackedImageView(imageURL: resolvedImg, totalCount: productCount) {
+                        print("productStackTapped")
+                        navigateToProductList = true
                     }
                 }
             }else{
@@ -2562,8 +2675,23 @@ extension LiveStream {
             return
         }
         let currentRoomData = socketRooms[matchingRoomIndex]
-        categoryId = currentRoomData.products?.first?.category?.id ?? 0
-        sellerId = "\(currentRoomData.products?.first?.user?.id ?? 0)"
+        // MC cmp5g5h0k00qs56kd2etclc2a (Ankit 2026-05-14): the first product's
+        // category can be nil (auctioned-and-cleared, or the product hasn't
+        // pinned yet for a fresh viewer). Walk the products array and pick
+        // the first non-zero category id. If none of the products have a
+        // category, leave categoryId at 0 — ProductShopListScreen now
+        // interprets that as "no category filter" and fetches the seller's
+        // full inventory instead of returning an empty list.
+        categoryId = currentRoomData.products?
+            .compactMap { $0.category?.id }
+            .first(where: { $0 > 0 }) ?? 0
+        // Same fall-through for sellerId: the first product may be missing
+        // user info on a fresh join — walk the list until we find one with
+        // a real user id. Falls back to 0 if nothing matches (caller checks).
+        let resolvedSellerId = currentRoomData.products?
+            .compactMap { $0.user?.id }
+            .first(where: { $0 > 0 }) ?? 0
+        sellerId = "\(resolvedSellerId)"
         auctionTypeId = currentRoomData.auction_type_id ?? 0
         self.agoraToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
         if !agoraToken.isEmpty && !roomId.isEmpty {
@@ -2713,6 +2841,14 @@ extension LiveStream {
 //    }
     
     func sendBid(roomId: String, bidAmount: String, productId: String, auctionTypeId: Int) {
+        // Defense-in-depth: refuse to emit any bid socket event once a Live Auction
+        // countdown has elapsed. Buy Now (5) has no timer; Sports Break (9) uses its
+        // own surprise-set flow so we don't gate it from here.
+        // (MC: cmp55p2y8007b56kdfowbf5wr)
+        if isLiveAuction && isBidTimerExpired {
+            print("⛔ sendBid blocked — bid timer expired for room \(roomId), product \(productId)")
+            return
+        }
         // Check if this is a surprise set auction
         if isSurpriseSetAuctionActive{
            let components = productId.split(separator: "_").map(String.init)

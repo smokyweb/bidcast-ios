@@ -11,6 +11,18 @@ final class TabBarRouter: ObservableObject {
     @Published var selectedTab: Int = 0
     @Published var previousTab: Int = 0
     @Published var exploreInitialTab: Int = 0
+    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): when the user taps
+    // a sub-category on the Explore tab we now switch to the Home tab and
+    // pass the chosen filter via these properties instead of pushing
+    // HomeViewScreen inside the Explore tab's NavigationView. The push
+    // path was being hidden by iOS's default hidesBottomBarWhenPushed
+    // behaviour, which was making the bottom tab bar disappear on the
+    // pushed Home screen. Switching tabs (vs pushing) keeps the tab bar
+    // visible and is the semantically-correct behaviour anyway: the user
+    // is moving between top-level surfaces, not drilling into a detail.
+    @Published var pendingHomeCategory: String = ""
+    @Published var pendingHomeSubCategory: String = ""
+    @Published var pendingHomeFilterFromExplore: Bool = false
 }
 
 struct TabbarScreen: View {
@@ -27,6 +39,13 @@ struct TabbarScreen: View {
     @ObservedObject var languageManager = LanguageManager.shared
     
     @State private var homeNavigationPath = NavigationPath()
+    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): mutable filter state
+    // for the Home tab so Explore can hand off a category filter via
+    // tabBarRouter and switch tabs (vs pushing inside Explore's nav stack,
+    // which used to hide the bottom tab bar).
+    @State private var homeShowCategory: String = ""
+    @State private var homeShowSubCategory: String = ""
+    @State private var homeComeFromExplore: Bool = false
     @State private var exploreNavigationPath = NavigationPath()
     @State private var activityNavigationPath = NavigationPath()
     @State private var accountNavigationPath = NavigationPath()
@@ -60,13 +79,42 @@ struct TabbarScreen: View {
         case shipping
     }
 
+    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): TabView only fires its
+    // selection binding's setter when the selected value actually changes.
+    // We need to also catch the case where the user is already on the Home
+    // tab with an Explore filter applied and they tap the Home tab icon
+    // again — PM wants that to clear the filter and show plain Home.
+    // Wrapping the selection in a custom Binding lets us detect every tap
+    // (including same-tab re-taps) and clear the filter before forwarding
+    // the value to the underlying router.
+    private var tabSelectionBinding: Binding<Int> {
+        Binding<Int>(
+            get: { tabBarRouter.selectedTab },
+            set: { newTab in
+                if newTab == 0
+                    && tabBarRouter.selectedTab == 0
+                    && homeComeFromExplore {
+                    // Re-tap on Home while filtered → clear filter (plain Home).
+                    homeComeFromExplore = false
+                    homeShowCategory = ""
+                    homeShowSubCategory = ""
+                }
+                tabBarRouter.selectedTab = newTab
+            }
+        )
+    }
+
     var body: some View {
         // Wrap everything in NavigationStack
         NavigationStack {
-            TabView(selection: $tabBarRouter.selectedTab) {
+            TabView(selection: tabSelectionBinding) {
                 
                 NavigationContainer(navigationPath: $homeNavigationPath) {
-                    HomeViewScreen(deepLinkShowId:selectedShowId,showCategory: .constant(""), showSubCategory: .constant(""), comeFromExploreScreen: .constant(false), isNavFrom: "Login")
+                    HomeViewScreen(deepLinkShowId:selectedShowId,
+                                   showCategory: $homeShowCategory,
+                                   showSubCategory: $homeShowSubCategory,
+                                   comeFromExploreScreen: $homeComeFromExplore,
+                                   isNavFrom: "Login")
                 }
                 .id(homeViewID)
                 .disabled(showSellSheet) // Disable interaction when sheet is open
@@ -135,8 +183,42 @@ struct TabbarScreen: View {
                     showSellSheet = true
                     tabBarRouter.selectedTab = previousTab
                 } else {
+                    // MC cmp5czpw900jo56kdn739kkjp (2026-05-14): Reset the
+                    // tab we are LEAVING as well as the tab we are entering.
+                    // When the user drills into a category from the Explore
+                    // tab, HomeViewScreen is pushed inside Explore's
+                    // NavigationView with .toolbar(.visible, for: .tabBar).
+                    // If that pushed view is still active when the user
+                    // switches to another tab, iOS leaks the toolbar modifier
+                    // state into the incoming tab — the bottom tab bar
+                    // disappears on the newly selected tab. Resetting the
+                    // previous tab's NavigationView ID here (same onChange,
+                    // same run-loop turn as the tab switch) tears down the
+                    // pushed stack before the new tab renders, eliminating
+                    // the toolbar bleed.
+                    resetNavigation(for: previousTab)
                     resetNavigation(for: newTab)
                     previousTab = newTab
+                    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): when we
+                    // land on the Home tab and Explore has handed off a filter
+                    // via tabBarRouter, apply it to the Home tab's binding
+                    // state. Then clear the pending flag so the filter sticks
+                    // for the current visit but doesn't auto-re-apply later.
+                    if newTab == 0 && tabBarRouter.pendingHomeFilterFromExplore {
+                        homeShowCategory = tabBarRouter.pendingHomeCategory
+                        homeShowSubCategory = tabBarRouter.pendingHomeSubCategory
+                        homeComeFromExplore = true
+                        tabBarRouter.pendingHomeFilterFromExplore = false
+                        tabBarRouter.pendingHomeCategory = ""
+                        tabBarRouter.pendingHomeSubCategory = ""
+                    } else if newTab == 0 {
+                        // User landed on Home without a hand-off — reset the
+                        // explore-derived filter so the regular Home view
+                        // shows again.
+                        homeComeFromExplore = false
+                        homeShowCategory = ""
+                        homeShowSubCategory = ""
+                    }
                 }
             }
             

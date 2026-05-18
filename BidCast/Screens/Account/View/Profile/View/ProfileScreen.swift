@@ -790,10 +790,10 @@ struct ProfileHeaderView: View {
         ZStack(alignment: .topLeading) {
             // Background image
             VStack(spacing: 0) {
-                Image("IMG_2678")
+                Image("studio")
                     .resizable()
                     .scaledToFill()
-                    .frame(height: 220)
+                    .frame(width:screenWidth,height: 220)
                     .clipped()
                 Spacer()
             }
@@ -805,10 +805,10 @@ struct ProfileHeaderView: View {
             }) {
                 Image(systemName: "chevron.left")
                     .font(.custom(poppinsBold, size: 16))
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .frame(width: 20, height: 20)
                     .padding(12)
-                    .background(Color.black.opacity(0.6))
+                    .background(Color.white.opacity(0.6))
                     .clipShape(Circle())
                     .shadow(radius: 4)
             }
@@ -821,28 +821,31 @@ struct ProfileHeaderView: View {
             // Profile Image
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    AsyncImage(url: URL(string: profileImage)) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView().frame(width: 100, height: 100)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                                .frame(width: 100, height: 100)
-                                .offset(x: 16, y: 160)
-                        case .failure:
-                            Image(systemName: "person.crop.circle.fill")
-                                .resizable()
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                                .frame(width: 100, height: 100)
-                                .offset(x: 16, y: 160)
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
+                    CustomProfileImage(url: profileImage,isCircular: true,size: 100)
+                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                        .offset(x: 16, y: 170)
+//                    AsyncImage(url: URL(string: profileImage)) { phase in
+//                        switch phase {
+//                        case .empty:
+//                            ProgressView().frame(width: 100, height: 100)
+//                        case .success(let image):
+//                            image
+//                                .resizable()
+//                                .clipShape(Circle())
+//                                .overlay(Circle().stroke(Color.white, lineWidth: 2))
+//                                .frame(width: 100, height: 100)
+//                                .offset(x: 16, y: 160)
+//                        case .failure:
+//                            Image(systemName: "person.crop.circle.fill")
+//                                .resizable()
+//                                .clipShape(Circle())
+//                                .overlay(Circle().stroke(Color.white, lineWidth: 2))
+//                                .frame(width: 100, height: 100)
+//                                .offset(x: 16, y: 160)
+//                        @unknown default:
+//                            EmptyView()
+//                        }
+//                    }
                     Spacer()
                 }
             }

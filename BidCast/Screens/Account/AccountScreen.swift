@@ -17,6 +17,10 @@ struct AccountScreen: View {
     
     // MARK: - State Objects
     @StateObject private var menuViewModel = MenuOptionsViewModel()
+    // Profile fetcher — used to refresh UserDefaults.sellerVerafied on first appear
+    // so verified sellers don't see a stale "pending" gate when tapping Create
+    // Product. (MC: cmp583ppa00c456kdb7wjjsbl)
+    @StateObject private var accountViewModel = AccountViewModel()
     
     @EnvironmentObject var tabBarRouter: TabBarRouter
     
@@ -104,6 +108,9 @@ struct AccountScreen: View {
 //                getSellerHubInfo()
                 if !hasLoadedData {
                     getSellerHubInfo()
+                    // Refresh the verification flags from the profile API so the
+                    // Create Product gate below reads fresh state. (MC: cmp583ppa00c456kdb7wjjsbl)
+                    refreshProfileVerificationFlags()
                     hasLoadedData = true
                 }
             }
@@ -203,6 +210,34 @@ struct AccountScreen: View {
             }
         )
     }
+    /// Case-insensitive check for the canonical "verified" status. The local
+    /// `UserDefaults.sellerVerafied` cache mirrors `seller_identity_status` from
+    /// the profile API. Some downstream sources have been observed to surface
+    /// non-canonical casing (e.g. `"Verified"`) or whitespace, which would make
+    /// a strict `== "verified"` check fail for users who are actually verified.
+    /// (MC: cmp583ppa00c456kdb7wjjsbl)
+    private var isSellerVerified: Bool {
+        return UserDefaults.sellerVerafied
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased() == "verified"
+    }
+
+    /// Re-fetch the profile so `UserDefaults.sellerVerafied` reflects current
+    /// server state when this screen mounts. Avoids stale-cache cases where a
+    /// freshly verified seller still sees the "pending" gate.
+    /// (MC: cmp583ppa00c456kdb7wjjsbl)
+    private func refreshProfileVerificationFlags() {
+        Task {
+            await accountViewModel.getProfile()
+            let resp = accountViewModel.accountInfo
+            guard resp.status == "success", let data = resp.data else { return }
+            UserDefaults.buyerVerafied = data.buyer_identity_status ?? UserDefaults.buyerVerafied
+            UserDefaults.sellerVerafied = data.seller_identity_status ?? UserDefaults.sellerVerafied
+            UserDefaults.sellerAddress = data.has_shipping_address ?? UserDefaults.sellerAddress
+            UserDefaults.hasCardAdded = data.has_card_added ?? UserDefaults.hasCardAdded
+        }
+    }
+
     private func handleSellerVerification() {
         if UserDefaults.sellerVerafied == "pending" {
             alertType = .sheetType(
@@ -280,23 +315,30 @@ struct AccountScreen: View {
     // MARK: - Seller Hub Section
     private var sellerHubSection: some View {
         SellerHubSection(sellerInfo: $sellerInfo, isRefreshing: $isRefreshing) {
-            
+            // Create Show entry from the seller-stats block.
+            // Verification check uses isSellerVerified (case-insensitive +
+            // trimmed) instead of a strict == "verified". (MC: cmp583ppa00c456kdb7wjjsbl)
             if UserDefaults.isFirstShowCreated {
-                if UserDefaults.sellerVerafied == "verified" {
+                if isSellerVerified {
                     navigationState.navigateToTitle = true
                 } else {
                     handleSellerVerification()
                 }
             } else {
-                if UserDefaults.sellerVerafied == "verified" {
+                if isSellerVerified {
                     navigationState.navigateToGetStarted = true
                 } else {
                     handleSellerVerification()
                 }
             }
         } onCreateProduct: {
-           
-            if UserDefaults.sellerVerafied == "verified" {
+            // Bug (MC cmp583ppa00c456kdb7wjjsbl): verified sellers were seeing the
+            // "account verification pending" sheet when tapping Create Product.
+            // Root cause was either case-sensitive comparison or a stale
+            // UserDefaults cache. isSellerVerified normalizes the value; the
+            // .onFirstAppear hook above also refreshes the profile so the cache
+            // is current before this gate runs.
+            if isSellerVerified {
                 if UserDefaults.sellerAddress {
                     navigationState.navigateToCreateProduct = true
                 } else {

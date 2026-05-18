@@ -84,8 +84,20 @@ struct HomeViewScreen: View {
             HStack(spacing: 12) {
                 if comeFromExploreScreen {
                     //back button
+                    // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14):
+                    // Filtered Home was previously reached via a
+                    // NavigationView push from the Explore tab, so the
+                    // back button just called presentationMode.dismiss().
+                    // The new flow is a tab-switch (Explore -> Home tab
+                    // with filter applied via TabBarRouter) — there is no
+                    // push to pop. Back now switches the tab selection
+                    // back to Explore (tag 1) and clears the Explore
+                    // filter so re-entering Home shows the plain feed.
                     Button {
-                        presentationMode.wrappedValue.dismiss()
+                        comeFromExploreScreen = false
+                        showCategory = ""
+                        showSubCategory = ""
+                        tabBarRouter.selectedTab = 1
                     } label: {
                         Image(systemName:"chevron.left")
                             .font(.custom(poppinsBold, size: 16))
@@ -129,7 +141,14 @@ struct HomeViewScreen: View {
                 categoryScrollView
             }
             
-            if comeFromExploreScreen && categoryList.count != 0 && showSubCategory == "" {
+            // FIX cmp5czpw900jo56kdn739kkjp: removed `&& showSubCategory == ""`
+            // guard — the home row (subcategory filter strip) must stay visible
+            // after the user taps any category on the Explore page, whether or
+            // not a specific subcategory was pre-selected. The old condition hid
+            // the row the moment showSubCategory was non-empty, making the
+            // filter strip disappear and leaving users stuck on one subcategory
+            // with no way to switch. Now it shows whenever data is ready.
+            if comeFromExploreScreen && categoryList.count != 0 {
                 categoryScrollView
             }
           
@@ -277,6 +296,36 @@ struct HomeViewScreen: View {
                     }
                 }
             }
+        }
+        // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): refresh categories
+        // and the live-shows feed whenever the Explore-derived filter flag
+        // toggles. Two cases:
+        //   * false -> true: user just landed on Home from an Explore tap.
+        //     Re-fetch so the filtered feed for the chosen category loads.
+        //   * true -> false: user re-tapped the Home tab from filtered Home
+        //     (or pressed Back). Reset to the regular For-You feed and
+        //     re-fetch so the home row + live shows are repopulated
+        //     instead of leaving the previous filtered state on screen.
+        .onChange(of: comeFromExploreScreen) { _, nowFromExplore in
+            resetPagination()
+            if !nowFromExplore {
+                selectedButton = "For You"
+            }
+            Task {
+                await fetchCategory(for: "for_you")
+                await fetchLiveShow()
+            }
+        }
+        // Also refresh when the actual category/subCategory binding changes
+        // (defensive — covers an Explore -> different category re-tap that
+        // keeps comeFromExploreScreen at true but rotates the filter).
+        .onChange(of: showCategory) { _, _ in
+            resetPagination()
+            Task { await fetchLiveShow() }
+        }
+        .onChange(of: showSubCategory) { _, _ in
+            resetPagination()
+            Task { await fetchLiveShow() }
         }
         .onDisappear {
             isActiveOnHomeScreen = false
@@ -514,14 +563,30 @@ struct HomeViewScreen: View {
             apiCategory = (selectedButton == "For You") ? "" : selectedButton
         }
         
-        await viewModel.getLiveShows(param: GetLiveShowsRequest(
+        let params = GetLiveShowsRequest(
             type: selectedTab,
             category: apiCategory,
             sub_category: subCategory,
             search: searchText,
             page: "\(currentPage)"
-        ))
-    
+        )
+        await viewModel.getLiveShows(param: params)
+
+        // MC cmp5crrg600j556kdjykbdaza (Ankit 2026-05-14): after sign-in the
+        // first feed call sometimes fails with a transient error (network
+        // not yet ready, server returning an unexpected shape, or a brief
+        // 401 before the auth token fully propagates). When the ViewModel
+        // sets errorMessage (meaning the request itself threw) on the first
+        // page, retry once after 1.5 s before surfacing the error sheet.
+        // If the retry also fails, success() shows the error normally.
+        if currentPage == 1,
+           let err = viewModel.errorMessage, !err.isEmpty {
+            print("⚠️ Initial feed load failed (\(err)) — retrying in 1.5 s")
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            viewModel.errorMessage = nil
+            await viewModel.getLiveShows(param: params)
+        }
+
         success()
     }
 
