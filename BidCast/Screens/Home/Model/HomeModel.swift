@@ -59,6 +59,8 @@ struct HomeModel: Codable, Identifiable {
     var promotion_start_at: String?
     var promotion_end_at: String?
     var sub_category: SubCategoryDataModel?
+    // MC wave-2 #26: show duration for past shows (mapped from video_duration)
+    var video_duration: String?
 }
 
 struct AuctionData : Codable {
@@ -119,5 +121,6 @@ extension HomeModel {
         promotion_start_at = try c.decodeIfPresent(String.self, forKey: .promotion_start_at)
         promotion_end_at = try c.decodeIfPresent(String.self, forKey: .promotion_end_at)
         sub_category = try c.decodeIfPresent(SubCategoryDataModel.self, forKey: .sub_category)
+        video_duration = try c.decodeIfPresent(String.self, forKey: .video_duration)
     }
 }
