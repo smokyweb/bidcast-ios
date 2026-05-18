@@ -188,7 +188,7 @@ struct ExploreViewScreen: View {
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             
             // Link to Search Results
-            NavigationLink(destination: SearchResultsView(initialQuery: searchText), isActive: $navigateToSearchResults) {
+            NavigationLink(destination: SearchResultsView(initialQuery: searchText), isActive: $navigateToSearchResults)  // TODO(post-v1): pass onShowTap once Explore has deepLinkShowId plumbing {
                 EmptyView()
             }
         }

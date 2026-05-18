@@ -2,190 +2,151 @@
 //  SearchResultsView.swift
 //  BidCast
 //
-//  Created by Larry Difficult Task Agent on 2026-05-18.
-//
 
 import SwiftUI
 
 struct SearchResultsView: View {
     @StateObject private var viewModel = SearchViewModel()
-    
-    // State for navigation
-    @State private var navigateToProduct: SearchResultProduct?
-    @State private var navigateToUser: SearchResultUser?
-    @State private var navigateToShow: SearchResultShow?
-    
-    // The initial query passed from Home or Explore
+
     let initialQuery: String
-    
+    /// Called when a show row is tapped. Parent handles deepLinkShowId nav.
+    var onShowTap: ((Int) -> Void)?
+
     var body: some View {
         ScrollView {
-            // Navigation Links
-            if let product = navigateToProduct {
-                NavigationLink(destination: ProductDetailsView(productId: String(product.id)), tag: product, selection: $navigateToProduct) { EmptyView() }
-            }
-            if let user = navigateToUser {
-                NavigationLink(destination: ProfileScreen(id: .constant(String(user.id)), isComeFrom: .constant("Search")), tag: user, selection: $navigateToUser) { EmptyView() }
-            }
-            if let show = navigateToShow {
-                // Placeholder: This will require fetching full show details first
-                // For now, it will just be a link that gets triggered.
-                // We'll need a new view or a loader that fetches details then presents LiveStream.
-                NavigationLink(destination: Text("Fetching Show Details..."), tag: show, selection: $navigateToShow) { EmptyView() }
-            }
-
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 if viewModel.isLoading {
                     ProgressView("Searching...")
                         .padding()
+                        .frame(maxWidth: .infinity)
                 } else if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .padding()
                 } else {
+                    // Shows section
                     if !viewModel.shows.isEmpty {
-                        Section(header: headerView(title: "Shows", count: viewModel.shows.count)) {
-                            ForEach(viewModel.shows) { show in
-                                ShowCard(show: show)
-                                    .onTapGesture {
-                                        // TODO: Implement full fetch & navigation logic
-                                        print("Tapped show \(show.id)")
-                                        self.navigateToShow = show
-                                    }
-                            }
+                        sectionHeader("Shows", count: viewModel.shows.count)
+                        ForEach(viewModel.shows) { show in
+                            ShowResultRow(show: show)
+                                .onTapGesture { onShowTap?(show.id) }
+                                .padding(.horizontal)
+                                .padding(.vertical, 4)
                         }
-                        .padding(.horizontal)
                     }
-                    
+
+                    // Products section
                     if !viewModel.products.isEmpty {
-                        Section(header: headerView(title: "Products", count: viewModel.products.count)) {
-                            ForEach(viewModel.products) { product in
-                                ProductCard(product: product)
-                                    .onTapGesture {
-                                        guard product.id != 0 else { return } // Assuming 0 is not a valid ID
-                                        self.navigateToProduct = product
-                                    }
-                            }
+                        sectionHeader("Products", count: viewModel.products.count)
+                        ForEach(viewModel.products) { product in
+                            ProductResultRow(product: product)
+                                // TODO(post-v1): tap → standalone product detail screen
+                                .padding(.horizontal)
+                                .padding(.vertical, 4)
                         }
-                        .padding(.horizontal)
                     }
-                    
+
+                    // Users section
                     if !viewModel.users.isEmpty {
-                        Section(header: headerView(title: "Users", count: viewModel.users.count)) {
-                            ForEach(viewModel.users) { user in
-                                UserCard(user: user)
-                                    .onTapGesture {
-                                        self.navigateToUser = user
-                                    }
-                            }
+                        sectionHeader("Users", count: viewModel.users.count)
+                        ForEach(viewModel.users) { user in
+                            UserResultRow(user: user)
+                                // TODO(post-v1): tap → standalone seller profile screen
+                                .padding(.horizontal)
+                                .padding(.vertical, 4)
                         }
-                        .padding(.horizontal)
+                    }
+
+                    if !viewModel.isLoading && viewModel.shows.isEmpty && viewModel.products.isEmpty && viewModel.users.isEmpty {
+                        Text("No results for \"\(initialQuery)\"")
+                            .foregroundColor(.secondary)
+                            .padding()
+                            .frame(maxWidth: .infinity)
                     }
                 }
             }
         }
         .navigationTitle("Search Results")
-        .onAppear {
-            viewModel.search(query: initialQuery)
-        }
+        .onAppear { viewModel.search(query: initialQuery) }
     }
-    
-    private func headerView(title: String, count: Int) -> some View {
+
+    private func sectionHeader(_ title: String, count: Int) -> some View {
         Text("\(title) (\(count))")
             .font(.headline)
-            .padding(.vertical, 8)
+            .padding(.horizontal)
+            .padding(.top, 12)
+            .padding(.bottom, 4)
     }
 }
 
-// MARK: - Simple Card Views
-private struct ShowCard: View {
+// MARK: - Row views
+
+private struct ShowResultRow: View {
     let show: SearchResultShow
     var body: some View {
-        HStack {
-            // Using a placeholder icon as image URLs can be complex
+        HStack(spacing: 12) {
             Image(systemName: "video.fill")
-                .frame(width: 50, height: 50)
-                .background(Color.gray.opacity(0.3))
+                .foregroundColor(.white)
+                .frame(width: 44, height: 44)
+                .background(Color.red.opacity(0.8))
                 .cornerRadius(8)
-            VStack(alignment: .leading) {
-                Text(show.title).fontWeight(.bold)
-                Text(show.user?.name ?? "Unknown creator").font(.caption)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(show.title).fontWeight(.semibold).lineLimit(1)
+                if let creator = show.user?.name {
+                    Text(creator).font(.caption).foregroundColor(.secondary)
+                }
             }
             Spacer()
+            Image(systemName: "chevron.right").foregroundColor(.secondary)
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
+        .padding(10)
+        .background(Color(.systemGray6))
         .cornerRadius(10)
     }
 }
 
-private struct ProductCard: View {
+private struct ProductResultRow: View {
     let product: SearchResultProduct
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             Image(systemName: "tag.fill")
-                .frame(width: 50, height: 50)
-                .background(Color.blue.opacity(0.2))
+                .foregroundColor(.white)
+                .frame(width: 44, height: 44)
+                .background(Color.blue.opacity(0.8))
                 .cornerRadius(8)
-            VStack(alignment: .leading) {
-                Text(product.title).fontWeight(.bold)
-                Text("$\(product.pricing)").font(.caption)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(product.title).fontWeight(.semibold).lineLimit(1)
+                if let pricing = product.pricing {
+                    Text(pricing).font(.caption).foregroundColor(.secondary)
+                }
             }
             Spacer()
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
+        .padding(10)
+        .background(Color(.systemGray6))
         .cornerRadius(10)
     }
 }
 
-private struct UserCard: View {
+private struct UserResultRow: View {
     let user: SearchResultUser
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             Image(systemName: "person.fill")
-                .frame(width: 50, height: 50)
-                .background(Color.green.opacity(0.2))
+                .foregroundColor(.white)
+                .frame(width: 44, height: 44)
+                .background(Color.green.opacity(0.8))
                 .cornerRadius(8)
-            VStack(alignment: .leading) {
-                Text(user.name ?? "Unknown").fontWeight(.bold)
-                Text(user.username ?? "").font(.caption)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(user.name ?? "Unknown").fontWeight(.semibold)
+                if let username = user.username, !username.isEmpty {
+                    Text("@\(username)").font(.caption).foregroundColor(.secondary)
+                }
             }
             Spacer()
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
+        .padding(10)
+        .background(Color(.systemGray6))
         .cornerRadius(10)
-    }
-}
-
-
-extension Product: Hashable {
-    static func == (lhs: SearchResultProduct, rhs: Product) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
-extension User: Hashable {
-    static func == (lhs: SearchResultUser, rhs: User) -> Bool {
-        return lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
-extension Show: Hashable {
-    static func == (lhs: SearchResultShow, rhs: Show) -> Bool {
-        return lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
     }
 }
