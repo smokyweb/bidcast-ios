@@ -180,6 +180,7 @@
 		99C9092E2DC8CD790054620B /* VerifyOtpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9090D2DC8CD790054620B /* VerifyOtpScreen.swift */; };
 		99C9093C2DC8CD790054620B /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908FC2DC8CD790054620B /* LoginViewModel.swift */; };
 		99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9090B2DC8CD790054620B /* VerifyOtpViewModel.swift */; };
+		7F02122B38D546888156571A /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC910A35F9F24CD999CA0216 /* SearchResultsView.swift */; };
 		99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908602DC8CD790054620B /* SearchViewModel.swift */; };
 		99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909102DC8CD790054620B /* ForgotViewModel.swift */; };
 		99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909012DC8CD790054620B /* SignupViewModel.swift */; };
@@ -191,7 +192,6 @@
 		99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909122DC8CD790054620B /* ForgotScreen.swift */; };
 		99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084D2DC8CD790054620B /* DeleteAccountScreen.swift */; };
 		99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908682DC8CD790054620B /* PrivacyPolicyScreen.swift */; };
-		99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908622DC8CD790054620B /* EmployerSearchScreen.swift */; };
 		99C909702DC8CD790054620B /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908FE2DC8CD790054620B /* LoginScreen.swift */; };
 		99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9083D2DC8CD790054620B /* AuthenticationStack.swift */; };
 		99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084E2DC8CD790054620B /* DeleteAccountSheet.swift */; };
@@ -235,6 +235,9 @@
 		99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C32DC8CDDC0054620B /* ContactModel.swift */; };
 		99C909DE2DC8CDDC0054620B /* NewsResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C52DC8CDDC0054620B /* NewsResponseModel.swift */; };
 		99C909DF2DC8CDDC0054620B /* UserDetailModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C12DC8CDDC0054620B /* UserDetailModal.swift */; };
+		CDEB5119D01342FDBE5C34AD /* UnifiedSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C630B291498344B18A22FF59 /* UnifiedSearchResponse.swift */; };
+		F9E21C736F464729A843B06B /* SearchRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35506E010B4F46D5B03EBCDB /* SearchRequest.swift */; };
+		E27AC7F50B354BFEAFBF86EB /* SearchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B75007528C4459B42B282B /* SearchModels.swift */; };
 		99C909E02DC8CDDC0054620B /* ParametresRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909BD2DC8CDDC0054620B /* ParametresRequest.swift */; };
 		99C909E12DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909BE2DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift */; };
 		99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CC2DC8CDDC0054620B /* InterviewScheduleModal.swift */; };
@@ -780,8 +783,8 @@
 		99C9084B2DC8CD790054620B /* DeleteAccountViweModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViweModel.swift; sourceTree = "<group>"; };
 		99C9084D2DC8CD790054620B /* DeleteAccountScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountScreen.swift; sourceTree = "<group>"; };
 		99C9084E2DC8CD790054620B /* DeleteAccountSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountSheet.swift; sourceTree = "<group>"; };
+		FC910A35F9F24CD999CA0216 /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
 		99C908602DC8CD790054620B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
-		99C908622DC8CD790054620B /* EmployerSearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerSearchScreen.swift; sourceTree = "<group>"; };
 		99C908632DC8CD790054620B /* UserSearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchScreen.swift; sourceTree = "<group>"; };
 		99C908662DC8CD790054620B /* MenuOptionsViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuOptionsViewModal.swift; sourceTree = "<group>"; };
 		99C908682DC8CD790054620B /* PrivacyPolicyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyScreen.swift; sourceTree = "<group>"; };
@@ -828,6 +831,9 @@
 		99C9099D2DC8CD930054620B /* UserDefaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
 		99C9099E2DC8CD930054620B /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		99C9099F2DC8CD930054620B /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		C630B291498344B18A22FF59 /* UnifiedSearchResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnifiedSearchResponse.swift; sourceTree = "<group>"; };
+		35506E010B4F46D5B03EBCDB /* SearchRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRequest.swift; sourceTree = "<group>"; };
+		89B75007528C4459B42B282B /* SearchModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchModels.swift; sourceTree = "<group>"; };
 		99C909BD2DC8CDDC0054620B /* ParametresRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametresRequest.swift; sourceTree = "<group>"; };
 		99C909BE2DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileUpdateResponseModal.swift; sourceTree = "<group>"; };
 		99C909C02DC8CDDC0054620B /* LoginResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponseModel.swift; sourceTree = "<group>"; };
@@ -2124,6 +2130,7 @@
 		99C908612DC8CD790054620B /* ViewModal */ = {
 			isa = PBXGroup;
 			children = (
+				FC910A35F9F24CD999CA0216 /* SearchResultsView.swift */,
 				99C908602DC8CD790054620B /* SearchViewModel.swift */,
 			);
 			name = ViewModal;
@@ -2133,7 +2140,6 @@
 		99C908642DC8CD790054620B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				99C908622DC8CD790054620B /* EmployerSearchScreen.swift */,
 				99C908632DC8CD790054620B /* UserSearchScreen.swift */,
 			);
 			path = View;
@@ -2507,6 +2513,9 @@
 		99C909BF2DC8CDDC0054620B /* API request Params */ = {
 			isa = PBXGroup;
 			children = (
+				C630B291498344B18A22FF59 /* UnifiedSearchResponse.swift */,
+				35506E010B4F46D5B03EBCDB /* SearchRequest.swift */,
+				89B75007528C4459B42B282B /* SearchModels.swift */,
 				99C909BD2DC8CDDC0054620B /* ParametresRequest.swift */,
 				99C909BE2DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift */,
 			);
@@ -4793,6 +4802,9 @@
 				99C909DF2DC8CDDC0054620B /* UserDetailModal.swift in Sources */,
 				35987D2E2DE5CE2B00D6C2C9 /* TrustedBuyerScreen.swift in Sources */,
 				355AE96E2DD1DE3100CD3D17 /* LoginModel.swift in Sources */,
+				CDEB5119D01342FDBE5C34AD /* UnifiedSearchResponse.swift in Sources */,
+				F9E21C736F464729A843B06B /* SearchRequest.swift in Sources */,
+				E27AC7F50B354BFEAFBF86EB /* SearchModels.swift in Sources */,
 				99C909E02DC8CDDC0054620B /* ParametresRequest.swift in Sources */,
 				D408478F2ECD85BE001CC925 /* RehearsalScreenV1.swift in Sources */,
 				D4CAECBD2DE73BCC00705CD7 /* EndShowModel.swift in Sources */,
@@ -4859,6 +4871,7 @@
 				355AE9772DD1F99C00CD3D17 /* ExploreViewScreen.swift in Sources */,
 				D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */,
 				99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */,
+				7F02122B38D546888156571A /* SearchResultsView.swift in Sources */,
 				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,
 				358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */,
 				35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */,
@@ -5037,7 +5050,6 @@
 				D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */,
 				D678E3502EC86F88005283BF /* ShimmerEffectView.swift in Sources */,
 				D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */,
-				99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */,
 				99C909702DC8CD790054620B /* LoginScreen.swift in Sources */,
 				35F8B5682DED985200FE0778 /* ProfileModel.swift in Sources */,
 				35CCE01F2DD8A8BC00760CEE /* SellingTips.swift in Sources */,
