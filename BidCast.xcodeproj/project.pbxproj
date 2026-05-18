@@ -1795,6 +1795,8 @@
 		35F8B55F2DED843A00FE0778 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				C630B291498344B18A22FF59 /* UnifiedSearchResponse.swift */,
+				89B75007528C4459B42B282B /* SearchModels.swift */,
 				35F8B55E2DED843A00FE0778 /* HomeModel.swift */,
 			);
 			path = Model;
@@ -2130,7 +2132,6 @@
 		99C908612DC8CD790054620B /* ViewModal */ = {
 			isa = PBXGroup;
 			children = (
-				FC910A35F9F24CD999CA0216 /* SearchResultsView.swift */,
 				99C908602DC8CD790054620B /* SearchViewModel.swift */,
 			);
 			name = ViewModal;
@@ -2140,6 +2141,7 @@
 		99C908642DC8CD790054620B /* View */ = {
 			isa = PBXGroup;
 			children = (
+				FC910A35F9F24CD999CA0216 /* SearchResultsView.swift */,
 				99C908632DC8CD790054620B /* UserSearchScreen.swift */,
 			);
 			path = View;
@@ -2513,9 +2515,7 @@
 		99C909BF2DC8CDDC0054620B /* API request Params */ = {
 			isa = PBXGroup;
 			children = (
-				C630B291498344B18A22FF59 /* UnifiedSearchResponse.swift */,
 				35506E010B4F46D5B03EBCDB /* SearchRequest.swift */,
-				89B75007528C4459B42B282B /* SearchModels.swift */,
 				99C909BD2DC8CDDC0054620B /* ParametresRequest.swift */,
 				99C909BE2DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift */,
 			);
@@ -4871,7 +4871,6 @@
 				355AE9772DD1F99C00CD3D17 /* ExploreViewScreen.swift in Sources */,
 				D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */,
 				99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */,
-				7F02122B38D546888156571A /* SearchResultsView.swift in Sources */,
 				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,
 				358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */,
 				35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */,
@@ -4888,6 +4887,7 @@
 				99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */,
 				D4D453D02E4C6FCD005A2F63 /* MaxBidBottomSheet.swift in Sources */,
 				99C909542DC8CD790054620B /* DeleteAccountViweModel.swift in Sources */,
+				7F02122B38D546888156571A /* SearchResultsView.swift in Sources */,
 				99C909562DC8CD790054620B /* UserSearchScreen.swift in Sources */,
 				99C909572DC8CD790054620B /* SignUpScreen.swift in Sources */,
 				D4BA9C2A2DE4A4E700DFF6E6 /* TipsViewModel.swift in Sources */,
