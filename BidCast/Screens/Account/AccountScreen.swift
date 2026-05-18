@@ -677,6 +677,9 @@ struct SellerHubSection: View {
     @State private var payouts = "$199.00"
     @State private var totalOrders = "22 Items"
     @State private var vacationToggle = false
+    // QA #35 — Vacation mode confirmation
+    @State private var showVacationConfirm = false
+    @State private var pendingVacationToggle = false
     @State private var navigateToInventory = false
     @State private var navigateToPayouts = false
     @State private var navigateToUserProfile = false
@@ -1028,9 +1031,26 @@ struct SellerHubSection: View {
             Toggle("", isOn: $vacationToggle)
                 .labelsHidden()
                 .tint(.defaultTheme)
-                .onChange(of: vacationToggle) { _, newValue in
-                    print("Vacation Mode:", newValue)
-                   vacationData(valueData: newValue)
+                .onChange(of: vacationToggle) { oldValue, newValue in
+                    // QA #35 — require confirmation before flipping vacation mode
+                    guard oldValue != newValue, !showVacationConfirm else { return }
+                    pendingVacationToggle = newValue
+                    showVacationConfirm = true
+                    // Revert visually until user confirms (will re-set in alert handler if confirmed)
+                    vacationToggle = oldValue
+                }
+                .alert("Enable Vacation Mode?", isPresented: $showVacationConfirm) {
+                    Button("Cancel", role: .cancel) {
+                        // Keep the previous state — nothing to do, vacationToggle was already reverted.
+                    }
+                    Button(pendingVacationToggle ? "Turn On" : "Turn Off") {
+                        vacationToggle = pendingVacationToggle
+                        vacationData(valueData: pendingVacationToggle)
+                    }
+                } message: {
+                    Text(pendingVacationToggle
+                        ? "While Vacation Mode is on, your store will be marked as away. Buyers can still browse but new orders are paused until you turn it off. Are you sure?"
+                        : "Turn off Vacation Mode and resume accepting new orders?")
                 }
         }
         .padding(16)
