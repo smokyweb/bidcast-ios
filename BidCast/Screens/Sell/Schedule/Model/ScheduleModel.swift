@@ -289,6 +289,34 @@ private func decodeFlexibleBool<K: CodingKey>(_ c: KeyedDecodingContainer<K>, fo
     return nil
 }
 
+// Cross-platform tolerant string-array decoder. (MC cmpba6p4e000b34hgn3mtjyo4)
+//
+// The socket server occasionally emits `null` elements inside string arrays
+// (`images[]`, `thumbnail[]`, `videos[]`) — Android explicitly types these as
+// `List<String?>?` in AuctionStartedResponse.kt for exactly that reason.
+//
+// The iOS model declares `[String]?` (non-optional elements), so decoding
+// `[String].self` throws `valueNotFound` the moment any element is null and
+// the surrounding `try?` silently turns the whole array into `nil` — every
+// product then renders without an image and falls through to the
+// `defaultUser` asset placeholder (the BidSwipe logo).
+//
+// Decode as `[String?]`, drop nils + empties, and return `nil` if nothing
+// usable survives. Also tolerates a single-string payload by wrapping it.
+private func decodeFlexibleStringArray<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> [String]? {
+    if let arr = try? c.decodeIfPresent([String?].self, forKey: key) {
+        let cleaned = arr.compactMap { $0 }
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        return cleaned.isEmpty ? nil : cleaned
+    }
+    if let single = try? c.decodeIfPresent(String.self, forKey: key) {
+        let t = single.trimmingCharacters(in: .whitespacesAndNewlines)
+        return t.isEmpty ? nil : [t]
+    }
+    return nil
+}
+
 extension ProductDataModel1 {
     // Local CodingKeys for the custom init.
     private enum FlexCodingKeys: String, CodingKey {
@@ -334,9 +362,13 @@ extension ProductDataModel1 {
         self.shippingProfileId = decodeFlexibleInt(c, forKey: .shippingProfileId)
         self.subCategoryId = decodeFlexibleInt(c, forKey: .subCategoryId)
         self.userId = decodeFlexibleInt(c, forKey: .userId)
-        self.images = try? c.decodeIfPresent([String].self, forKey: .images)
-        self.thumbnail = try? c.decodeIfPresent([String].self, forKey: .thumbnail)
-        self.videos = try? c.decodeIfPresent([String].self, forKey: .videos)
+        // String arrays may contain null elements from the server — see
+        // decodeFlexibleStringArray comment. Strict `[String].self` decode +
+        // `try?` was the silent failure that turned every product image
+        // into the defaultUser fallback. (MC cmpba6p4e000b34hgn3mtjyo4)
+        self.images = decodeFlexibleStringArray(c, forKey: .images)
+        self.thumbnail = decodeFlexibleStringArray(c, forKey: .thumbnail)
+        self.videos = decodeFlexibleStringArray(c, forKey: .videos)
         self.createdAt = decodeFlexibleString(c, forKey: .createdAt)
         self.category = try? c.decodeIfPresent(ProductCategory.self, forKey: .category)
         self.user = try? c.decodeIfPresent(ProductUser.self, forKey: .user)
