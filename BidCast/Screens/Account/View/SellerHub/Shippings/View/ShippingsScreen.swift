@@ -19,6 +19,11 @@ struct ShippingsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    // MC: cmpbefoac00003ghgmjc4msqo — #47 Shipping Profile cell navigation
+    @State private var navigateToShippingProfiles = false
+    @State private var navigateToFreePickup = false
+    @State private var navigateToDomestic = false
+    @State private var navigateToShippingCosts = false
     
     
     @State var categoryList: [CategoryDataModel] = [
@@ -55,11 +60,28 @@ struct ShippingsScreen: View {
                 VStack(spacing: 10) {
                     TwoVerticalLabelCell(dataModel: ShippingValue.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description.localized})
                     
+                    // #47: Each cell navigates to its section
                     ForEach(0 ..< categoryList.count, id: \.self) { ind in
-//                            print("\(ind)")
-//                            print(self.title[ind])
-                        ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : categoryList[ind].subLabel ?? "", tintColot: categoryList[ind].color ?? "",imgViewSize : 40.0,imgSize:24.0)
-                            .padding(.horizontal,Leading)
+                        ListCell(
+                            isComeFrom: "ShippingScreen",
+                            image: categoryList[ind].image ?? "",
+                            title: categoryList[ind].name ?? "",
+                            vectorImg: .icArrowUp,
+                            subLabel: categoryList[ind].subLabel ?? "",
+                            tintColot: categoryList[ind].color ?? "",
+                            imgViewSize: 40.0,
+                            imgSize: 24.0,
+                            onTapMenuCell: {
+                                switch ind {
+                                case 0: navigateToFreePickup = true
+                                case 1: navigateToDomestic = true
+                                case 2: navigateToShippingCosts = true
+                                case 3: navigateToShippingProfiles = true
+                                default: break
+                                }
+                            }
+                        )
+                        .padding(.horizontal, Leading)
                     }
                 }
                 .padding(.top)
@@ -67,6 +89,17 @@ struct ShippingsScreen: View {
             }
         }
         .background(Color(.backGround))
+        // #47: Navigation links for each shipping category cell
+        .background(Group {
+            NavigationLink(destination: FreePickupScreen(changeFreeToggle: { _ in })
+                .navigationBarBackButtonHidden(true), isActive: $navigateToFreePickup) { EmptyView() }
+            NavigationLink(destination: DomesticShipmentsScreen(shippingDetail: shippingDetail)
+                .navigationBarBackButtonHidden(true), isActive: $navigateToDomestic) { EmptyView() }
+            NavigationLink(destination: ShippingCostsScreen(shippingDetail: shippingDetail)
+                .navigationBarBackButtonHidden(true), isActive: $navigateToShippingCosts) { EmptyView() }
+            NavigationLink(destination: ShippingProfilesListScreen()
+                .navigationBarBackButtonHidden(true), isActive: $navigateToShippingProfiles) { EmptyView() }
+        })
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }

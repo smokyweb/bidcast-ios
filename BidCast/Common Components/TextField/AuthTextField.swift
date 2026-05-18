@@ -39,6 +39,9 @@ struct AuthTextField: View {
     
     
     var enteredText: ((String) -> Void)?
+    /// Called when the user taps the keyboard Return/Next/Done key.
+    /// Use this to chain focus between fields or trigger form submission.
+    var onSubmitAction: (() -> Void)? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             
@@ -110,6 +113,7 @@ struct AuthTextField: View {
                                 })
                                 .onSubmit {
                                     self.enteredText?(text)
+                                    self.onSubmitAction?()
                                 }
                                 .ignoresSafeArea(.keyboard, edges: .bottom)
                         }
@@ -247,6 +251,7 @@ struct AuthTextField: View {
                                     } )
                                     .onSubmit {
                                         self.enteredText?(text)
+                                        self.onSubmitAction?()
                                     }
                                     .onAppear {
                                     if isForPrice {

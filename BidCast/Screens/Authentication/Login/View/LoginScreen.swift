@@ -41,6 +41,8 @@ struct LoginScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     
+    // MC: cmpbefoac00003ghgmjc4msqo — #1 Login field focus chaining
+    @FocusState private var passwordFieldFocused: Bool
     @State var request: SignInRequest = SignInRequest(email: "", password: "")
     @State var loginDetail: LoginModel = LoginModel()
     
@@ -61,15 +63,40 @@ struct LoginScreen: View {
                 }
                 VStack(alignment: .leading, spacing: 16) {
                     Group {
+                        // #1: onSubmitAction moves focus to password field
                         AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email, enteredText:  { email in
                             self.request.email = email
+                        }, onSubmitAction: {
+                            passwordFieldFocused = true
                         })
                         .textContentType(.username)
                         .keyboardType(.emailAddress)
                         
+                        // #1: focused modifier lets email field's onSubmitAction trigger focus here
                         AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText:  { password in
                             self.request.password = password
+                        }, onSubmitAction: {
+                            // Tapping Return on password field triggers login
+                            UIApplication.shared.endEditing()
+                            guard !request.email.isEmpty, !request.password.isEmpty,
+                                  request.password.count > 7 else { return }
+                            Task {
+                                guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"; showhud = true; return
+                                }
+                                SVProgressHUD.show()
+                                viewModel.errorMessage?.removeAll()
+                                await self.viewModel.logIn(parameters: self.request)
+                                await SVProgressHUD.dismiss()
+                                if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                                    await success()
+                                } else {
+                                    alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+                                    withAnimation(.snappy) { showError = true }
+                                }
+                            }
                         })
+                        .focused($passwordFieldFocused)
                         .textContentType(.password)
                     }
                     
