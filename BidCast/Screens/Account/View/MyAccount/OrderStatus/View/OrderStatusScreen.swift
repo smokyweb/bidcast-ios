@@ -25,6 +25,12 @@ struct OrderStatusScreen: View {
     @State private var showStatusConfirm = false
     @State private var pendingStatus: String = ""
     @State private var isChangingStatus = false
+    // MC Wave 4 — #32 tracking number sheet
+    @State private var showTrackingSheet = false
+    @State private var trackingInput: String = ""
+    // MC Wave 4 — #33 Get Label
+    @State private var isFetchingLabel = false
+    @State private var labelUrl: String? = nil
     var comeFrom: String = ""
     @Binding var orderId : Int
     
@@ -154,6 +160,44 @@ struct OrderStatusScreen: View {
                     withAnimation { showError = false }
                 }
             )
+        }
+        // MC Wave 4 #32 — Tracking number entry sheet
+        .sheet(isPresented: $showTrackingSheet) {
+            NavigationView {
+                VStack(spacing: 20) {
+                    Text("Enter Tracking Number")
+                        .font(.custom(poppinsBold, size: 18))
+                        .padding(.top, 24)
+                    Text("Enter the USPS tracking number for this shipment. The buyer will be notified.")
+                        .font(.custom(poppinsMedium, size: 13))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                    TextField("e.g. 9400100000000000000001", text: $trackingInput)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
+                        .keyboardType(.asciiCapable)
+                        .autocapitalization(.allCharacters)
+                    Button(action: {
+                        showTrackingSheet = false
+                        changeOrderStatusWithTracking(to: "out_for_delivery", tracking: trackingInput)
+                    }) {
+                        Text("Confirm Shipment")
+                            .font(.custom(poppinsSemiBold, size: 15))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(trackingInput.trimmingCharacters(in: .whitespaces).isEmpty ? Color.gray : Color.orange)
+                            .cornerRadius(28)
+                            .padding(.horizontal)
+                    }
+                    .disabled(trackingInput.trimmingCharacters(in: .whitespaces).isEmpty)
+                    Spacer()
+                }
+                .navigationBarItems(leading: Button("Cancel") { showTrackingSheet = false })
+            }
+            .presentationDetents([.fraction(0.45)])
+            .presentationCornerRadius(25)
         }
     }
     
@@ -342,9 +386,10 @@ struct OrderStatusScreen: View {
 
             // #31: Processing order → seller can mark as Shipped (out_for_delivery)
             if status == "processing" {
+                // #32: Show tracking number input before marking shipped
                 Button(action: {
-                    pendingStatus = "out_for_delivery"
-                    showStatusConfirm = true
+                    trackingInput = order.trackingNumber ?? ""
+                    showTrackingSheet = true
                 }) {
                     HStack {
                         Image(systemName: "shippingbox")
@@ -359,6 +404,53 @@ struct OrderStatusScreen: View {
                     .padding(.horizontal)
                 }
                 .disabled(isChangingStatus)
+
+                // #33: Get USPS Label button
+                Button(action: {
+                    fetchLabel(orderId: order.id ?? 0)
+                }) {
+                    HStack {
+                        if isFetchingLabel {
+                            ProgressView().tint(.white)
+                        } else {
+                            Image(systemName: "doc.text.fill")
+                        }
+                        Text(isFetchingLabel ? "Generating Label..." : "Get Shipping Label")
+                            .font(.custom(poppinsSemiBold, size: 15))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color(red: 0.2, green: 0.5, blue: 0.85))
+                    .cornerRadius(28)
+                    .padding(.horizontal)
+                }
+                .disabled(isFetchingLabel || isChangingStatus)
+            }
+
+            // Show existing tracking number if set
+            if let tn = order.trackingNumber, !tn.isEmpty {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Tracking Number")
+                            .font(.custom(poppinsMedium, size: 11))
+                            .foregroundColor(.gray)
+                        Text(tn)
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .foregroundColor(.black)
+                    }
+                    Spacer()
+                    Button(action: { UIPasteboard.general.string = tn }) {
+                        Image(systemName: "doc.on.doc")
+                            .foregroundColor(.defaultTheme)
+                    }
+                }
+                .padding(12)
+                .background(Color.gray.opacity(0.08))
+                .cornerRadius(10)
+                .padding(.horizontal)
             }
 
             // #34: Out-for-delivery → seller can mark as Delivered (triggers Stripe capture)
@@ -428,6 +520,66 @@ struct OrderStatusScreen: View {
             showhud = true
         }
     }
+
+    // MC Wave 4 #32 — Mark as Shipped with tracking number
+    func changeOrderStatusWithTracking(to newStatus: String, tracking: String) {
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"; showhud = true; return
+            }
+            isChangingStatus = true
+            SVProgressHUD.show()
+            var param = ChangeOrderStatusRequest(order_id: orderId, status: newStatus)
+            let tn = tracking.trimmingCharacters(in: .whitespaces)
+            if !tn.isEmpty { param.tracking_number = tn }
+            await viewModel.changeOrderStatus(parameters: param)
+            await SVProgressHUD.dismiss()
+            isChangingStatus = false
+            if let err = viewModel.errorMessage, !err.isEmpty {
+                hudMsg = err; showhud = true; return
+            }
+            fetchOrderDetail()
+            hudMsg = "Order marked as Shipped ✔️"
+            showhud = true
+        }
+    }
+
+    // MC Wave 4 #33 — Get USPS shipping label
+    func fetchLabel(orderId: Int) {
+        guard !isFetchingLabel else { return }
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"; showhud = true; return
+            }
+            isFetchingLabel = true
+            SVProgressHUD.show()
+            let param = CreateLabelRequest(order_id: orderId)
+            await viewModel.createLabel(parameters: param)
+            await SVProgressHUD.dismiss()
+            isFetchingLabel = false
+            if let err = viewModel.errorMessage, !err.isEmpty {
+                hudMsg = err; showhud = true; return
+            }
+            let resp = viewModel.createLabelResponse
+            if resp.status == "success" {
+                if let url = resp.data?.labelUrl, !url.isEmpty,
+                   let labelURL = URL(string: url) {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.open(labelURL)
+                    }
+                } else if let tn = resp.data?.trackingNumber {
+                    hudMsg = "Label generated. Tracking: \(tn)"
+                    showhud = true
+                } else {
+                    hudMsg = "Label generated successfully ✔️"
+                    showhud = true
+                }
+                fetchOrderDetail()
+            } else {
+                hudMsg = resp.message ?? "Failed to generate label"
+                showhud = true
+            }
+        }
+    }
+
 }
-
-

@@ -55,6 +55,38 @@ final class OrderStatusViewModel: ObservableObject {
         }
     }
 
+    // MARK: - createLabel (MC Wave 4 #33 cmpbefoaj00033ghgs38av42u)
+    @Published var createLabelResponse = ResponseModel<CreateLabelData>()
+
+    func createLabel(parameters: CreateLabelRequest) async {
+        self.errorMessage = nil
+        do {
+            let response: ResponseModel<CreateLabelData> = try await APIManager.shared.request(
+                type: APIEndPoint.createLabel(param: parameters),
+                header: true
+            )
+            self.createLabelResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+
+    // MARK: - taxExemptionApply (MC Wave 4 #41 cmpbefoaj00033ghgs38av42u)
+    @Published var taxExemptionResponse = ResponseModel<TaxExemptionApplicationData>()
+
+    func taxExemptionApply(parameters: TaxExemptionApplyRequest) async {
+        self.errorMessage = nil
+        do {
+            let response: ResponseModel<TaxExemptionApplicationData> = try await APIManager.shared.request(
+                type: APIEndPoint.taxExemptionApply(param: parameters),
+                header: true
+            )
+            self.taxExemptionResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+
     // MARK: - changeOrderStatus (MC Wave 4 #31/#34 cmpbefoaj00033ghgs38av42u)
     func changeOrderStatus(parameters: ChangeOrderStatusRequest) async {
         self.errorMessage = nil
