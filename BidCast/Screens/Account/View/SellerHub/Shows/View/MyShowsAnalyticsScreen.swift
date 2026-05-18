@@ -20,6 +20,9 @@ struct MyShowsAnalyticsScreen: View {
     @State private var videoURL: String = ""
     // MC wave-2 #25: wire "Visit Seller Analytics" CTA
     @State private var navigateToAnalytics: Bool = false
+    // MC Wave 4 #23 cmpbefoaj00033ghgs38av42u — track whether a valid VOD URL exists
+    @State private var hasValidVOD: Bool = false
+    @State private var showTitle: String = "Show Clip"
     
     @State var hudMsg: String = ""
     @State var showError = false
@@ -68,8 +71,17 @@ struct MyShowsAnalyticsScreen: View {
 //                    Button {
 //                        
 //                    } label: {
-                    WatchVODCard(duration: showsOverviewData.videoDuration ?? "--:--") {
-                        navigateToVideoReceipt = true
+                    // MC Wave 4 #23 — only enable playback when a valid VOD URL exists
+                    WatchVODCard(
+                        duration: showsOverviewData.videoDuration ?? "--:--",
+                        hasVideo: hasValidVOD
+                    ) {
+                        if hasValidVOD {
+                            navigateToVideoReceipt = true
+                        } else {
+                            showhud = true
+                            hudMsg = "VOD recording is not available for this show yet."
+                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
@@ -152,7 +164,7 @@ struct MyShowsAnalyticsScreen: View {
             }
             .background(Color.backGround)
             
-            CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
+            CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL, videoTitle: showTitle))
             // MC wave-2 #25: Seller Analytics CTA nav link
             CusNavLink(doNavigate: $navigateToAnalytics, destination: AnalyticsScreen())
         }
@@ -244,7 +256,11 @@ extension MyShowsAnalyticsScreen {
 
             DispatchQueue.main.async {
                 self.showsOverviewData = overview
-                self.videoURL = overview.fileURL ?? ""
+                // MC Wave 4 #23: treat "No Url Found" (backend sentinel) and empty as no VOD
+                let rawURL = overview.fileURL ?? ""
+                let isValidURL = !rawURL.isEmpty && rawURL != "No Url Found" && rawURL.lowercased().hasPrefix("http")
+                self.videoURL = isValidURL ? rawURL : ""
+                self.hasValidVOD = isValidURL
             }
         }
     }
@@ -255,6 +271,8 @@ extension MyShowsAnalyticsScreen {
 // MARK: - Watch VOD Card
 struct WatchVODCard: View {
     var duration: String
+    // MC Wave 4 #23 cmpbefoaj00033ghgs38av42u — nil means loading, true=available, false=unavailable
+    var hasVideo: Bool = true
     @State private var isPressed: Bool = false
     var buttonPressedClosure: (() -> Void)?
     var body: some View {
@@ -291,11 +309,11 @@ struct WatchVODCard: View {
                 
                 // Text Content
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Watch VOD")
+                    Text(hasVideo ? "Watch VOD" : "VOD Unavailable")
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(hasVideo ? .primary : .secondary)
                     
-                    Text("Show Duration: \(duration)")
+                    Text(hasVideo ? "Show Duration: \(duration)" : "No recording available for this show")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.secondary)
                 }

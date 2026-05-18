@@ -959,3 +959,23 @@ struct AgoraTokenRequest : Encodable{
     var uid: Int
 }
 
+
+// MARK: - MC Wave 4 cmpbefoaj00033ghgs38av42u — #31/#34 Order Status
+struct ChangeOrderStatusRequest: Encodable {
+    var order_id: Int
+    var status: String  // "processing" | "out_for_delivery" | "delivered"
+    var tracking_number: String?  // #32 USPS tracking — optional, sent when marking as Shipped
+}
+
+// MARK: - MC Wave 4 cmpbefoaj00033ghgs38av42u — #33 USPS Label
+struct CreateLabelRequest: Encodable {
+    var order_id: Int
+}
+
+// MARK: - MC Wave 4 cmpbefoaj00033ghgs38av42u — #41 Tax Exemption
+struct TaxExemptionApplyRequest: Encodable {
+    var business_name: String
+    var tax_id: String
+    var business_type: String
+    // certificate is a multipart file upload — handled separately via URLSession / Alamofire multipart
+}

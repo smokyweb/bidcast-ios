@@ -146,6 +146,9 @@ enum APIEndPoint{
     case getProduct(param:ProductRequest)
     case getScheduleShow(param:getShowRequest)
     case orderReceipt(param:getOrderReceiptRequest)
+    case changeOrderStatus(param: ChangeOrderStatusRequest)
+    case createLabel(param: CreateLabelRequest)          // MC Wave 4 #33 USPS label
+    case taxExemptionApply(param: TaxExemptionApplyRequest) // MC Wave 4 #41
     case saveProduct(param:MakeOfferListRequest)
     case getCoupon
     case updateVacation(param:vacationRequest)
@@ -500,6 +503,12 @@ extension APIEndPoint: EndPointType {
             return "get-show-details-by-id?show_id=\(param.show_id)"
         case .orderReceipt:
             return "product/order-receipt"
+        case .changeOrderStatus:
+            return "change-order-status"
+        case .createLabel:
+            return "usps/create-label"
+        case .taxExemptionApply:
+            return "tax-exemption/apply"
         case .saveProduct:
             return "product/save"
         case .getCoupon:
@@ -807,6 +816,12 @@ extension APIEndPoint: EndPointType {
         case .getScheduleShow:
             return .get
         case .orderReceipt:
+            return .post
+        case .changeOrderStatus:
+            return .post
+        case .createLabel:
+            return .post
+        case .taxExemptionApply:
             return .post
         case .saveProduct:
             return .post
@@ -1122,6 +1137,12 @@ extension APIEndPoint: EndPointType {
             return nil
         case .orderReceipt(param: let param):
             return param
+        case .changeOrderStatus(param: let param):
+            return param
+        case .createLabel(param: let param):
+            return param
+        case .taxExemptionApply(param: let param):
+            return param
         case .saveProduct(param: let param):
             return param
         case .getCoupon:
@@ -1416,6 +1437,12 @@ extension APIEndPoint: EndPointType {
         case .getScheduleShow:
             return nil
         case .orderReceipt:
+            return nil
+        case .changeOrderStatus:
+            return nil
+        case .createLabel:
+            return nil
+        case .taxExemptionApply:
             return nil
         case .saveProduct:
             return nil

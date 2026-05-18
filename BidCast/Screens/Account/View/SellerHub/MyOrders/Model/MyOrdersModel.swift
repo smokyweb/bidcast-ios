@@ -24,6 +24,11 @@ struct MyOrderModel: Codable {
     var status: String?
     var paymentStatus: String?
     var createdAt: String?
+    // MC Wave 4 cmpbefoaj00033ghgs38av42u — #32/#33 shipping fields
+    var trackingNumber: String?
+    var shipmentId: String?
+    var shippingStatus: String?
+    var labelUrl: String?
 
     var product: ProductDetails?
     var shippingTracking: [ShippingTrackingModel]?
@@ -56,6 +61,10 @@ struct MyOrderModel: Codable {
         case status
         case paymentStatus = "payment_status"
         case createdAt = "created_at"
+        case trackingNumber = "tracking_number"
+        case shipmentId = "shipment_id"
+        case shippingStatus = "shipping_status"
+        case labelUrl = "label_url"
         case product
         case shippingTracking = "shipping_tracking"
         case user
@@ -414,5 +423,41 @@ struct ResponseModelOrder<T: Codable>: Codable {
     var data: T?
     var new_order_count, completed_order_count,processing_order_count: Int?
     var total,totalPage,currentPage,perPage : Int?
+}
+
+// MARK: - MC Wave 4 cmpbefoaj00033ghgs38av42u — #33 USPS Label response
+struct CreateLabelData: Codable {
+    var trackingNumber: String?
+    var shipmentId: String?
+    var labelImage: String?   // base64 PDF
+    var labelUrl: String?     // public URL saved by backend
+
+    enum CodingKeys: String, CodingKey {
+        case trackingNumber = "trackingNumber"
+        case shipmentId = "shipmentId"
+        case labelImage = "labelImage"
+        case labelUrl = "label_url"
+    }
+}
+
+// MARK: - MC Wave 4 cmpbefoaj00033ghgs38av42u — #41 Tax exemption response
+struct TaxExemptionApplicationData: Codable {
+    var id: Int?
+    var userId: Int?
+    var businessName: String?
+    var taxId: String?
+    var businessType: String?
+    var status: String?  // "pending" | "approved" | "rejected"
+    var createdAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case businessName = "business_name"
+        case taxId = "tax_id"
+        case businessType = "business_type"
+        case status
+        case createdAt = "created_at"
+    }
 }
 
