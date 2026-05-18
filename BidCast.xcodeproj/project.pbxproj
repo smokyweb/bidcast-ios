@@ -1795,8 +1795,6 @@
 		35F8B55F2DED843A00FE0778 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				C630B291498344B18A22FF59 /* UnifiedSearchResponse.swift */,
-				89B75007528C4459B42B282B /* SearchModels.swift */,
 				35F8B55E2DED843A00FE0778 /* HomeModel.swift */,
 			);
 			path = Model;
@@ -2530,6 +2528,8 @@
 				99C909C12DC8CDDC0054620B /* UserDetailModal.swift */,
 				99C909C22DC8CDDC0054620B /* UserJobModal.swift */,
 				99C909C32DC8CDDC0054620B /* ContactModel.swift */,
+				C630B291498344B18A22FF59 /* UnifiedSearchResponse.swift */,
+				89B75007528C4459B42B282B /* SearchModels.swift */,
 				99C909C42DC8CDDC0054620B /* AboutUsResponseModel.swift */,
 				99C909C52DC8CDDC0054620B /* NewsResponseModel.swift */,
 				99C909C62DC8CDDC0054620B /* JobCategoriesListModal.swift */,
