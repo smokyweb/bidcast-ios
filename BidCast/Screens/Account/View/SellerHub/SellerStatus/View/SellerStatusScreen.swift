@@ -51,10 +51,11 @@ struct SellerStatusScreen: View {
                     let seller = sellerData.live_sell_vendor
                     let market = sellerData.marketplace_vendor
                     if seller != nil {
-                        SellerStatusCardView(title: seller?.title ?? "", status: seller?.status ?? "", icon: "cart.fill", subtitle: seller?.submitted ?? "",statusColor: .gray)
+                        // MC wave-2 #48: derive color from actual status string
+                        SellerStatusCardView(title: seller?.title ?? "", status: seller?.status ?? "", icon: "cart.fill", subtitle: seller?.submitted ?? "", statusColor: statusColor(for: seller?.status))
                     }
                     if market != nil {
-                        SellerStatusCardView(title: market?.title ?? "", status: market?.status ?? "", icon: "video.fill", subtitle: market?.vendor_since ?? "",statusColor: .darkYellow)
+                        SellerStatusCardView(title: market?.title ?? "", status: market?.status ?? "", icon: "video.fill", subtitle: market?.vendor_since ?? "", statusColor: statusColor(for: market?.status))
                     }
 
                     
@@ -107,6 +108,21 @@ struct SellerStatusScreen: View {
         }
         CusNavLink(doNavigate: $navigateToContact, destination: ContactUs())
            
+    }
+
+    // MC wave-2 #48: map API status string to a semantic color
+    // Backend values seen: "approved", "pending", "rejected", "active", "inactive"
+    private func statusColor(for status: String?) -> Color {
+        switch status?.lowercased().trimmingCharacters(in: .whitespaces) {
+        case "approved", "active", "verified":
+            return .green
+        case "pending", "processing", "under_review":
+            return .orange
+        case "rejected", "suspended", "banned":
+            return .red
+        default:
+            return .gray
+        }
     }
 }
 

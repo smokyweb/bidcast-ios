@@ -18,6 +18,8 @@ struct MyShowsAnalyticsScreen: View {
     
     @State var navigateToVideoReceipt: Bool = false
     @State private var videoURL: String = ""
+    // MC wave-2 #25: wire "Visit Seller Analytics" CTA
+    @State private var navigateToAnalytics: Bool = false
     
     @State var hudMsg: String = ""
     @State var showError = false
@@ -142,7 +144,8 @@ struct MyShowsAnalyticsScreen: View {
                         .padding(.horizontal, 20)
                     }
                     
-                    SellerAnalyticsCTA()
+                    // MC wave-2 #25: pass binding so CTA can trigger navigation
+                    SellerAnalyticsCTA(navigateToAnalytics: $navigateToAnalytics)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 30)
                 }
@@ -150,6 +153,8 @@ struct MyShowsAnalyticsScreen: View {
             .background(Color.backGround)
             
             CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
+            // MC wave-2 #25: Seller Analytics CTA nav link
+            CusNavLink(doNavigate: $navigateToAnalytics, destination: AnalyticsScreen())
         }
         .onFirstAppear {
             getShowOverviewData()
@@ -454,6 +459,8 @@ struct ContributionCard: View {
 // MARK: - Seller Analytics CTA
 struct SellerAnalyticsCTA: View {
     @State private var isPressed: Bool = false
+    // MC wave-2 #25: binding so parent can push AnalyticsScreen
+    @Binding var navigateToAnalytics: Bool
     
     var body: some View {
         Button(action: {
@@ -464,6 +471,8 @@ struct SellerAnalyticsCTA: View {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     isPressed = false
                 }
+                // MC wave-2 #25: trigger parent navigation after animation
+                navigateToAnalytics = true
             }
         }) {
             HStack(spacing: 16) {

@@ -28,6 +28,8 @@ struct AnalyticsScreen: View {
     }
     
     @State private var navigateToLesson = false
+    // MC wave-2 #49: Promote segment nav
+    @State private var navigateToPromoteTools = false
     @State var segment : AnalyticsSegment = .overall
     @Environment(\.presentationMode) var presentationMode
     
@@ -265,6 +267,17 @@ struct AnalyticsScreen: View {
         .sheet(isPresented: $showMetricsInfo) {
 //            MetricsInfoView()
         }
+        // MC wave-2 #49: when Promote segment is tapped, navigate to PromoteToolsView
+        .onChange(of: segment) { newSegment in
+            if newSegment == .promote {
+                navigateToPromoteTools = true
+                // Reset to overall so back-nav lands on the analytics overview
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    segment = .overall
+                }
+            }
+        }
+        CusNavLink(doNavigate: $navigateToPromoteTools, destination: PromoteToolsView())
     }
     
     struct ToolGridItemsView: View {
