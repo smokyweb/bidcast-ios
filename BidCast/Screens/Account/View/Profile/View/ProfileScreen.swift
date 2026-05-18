@@ -127,8 +127,8 @@ struct ProfileScreen: View {
                                           onTapMore: {
                             showReportSheet = true
                         },
-                                          isOwnProfile: isOwnProfile,
                                           showBackButton: false,
+                                          isOwnProfile: isOwnProfile,
                                           sellerID : $id)
                         
                         // #15/#18: Hide Follow/Message/Tip on own profile

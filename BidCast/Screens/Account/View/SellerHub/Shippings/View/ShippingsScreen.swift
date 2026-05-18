@@ -69,8 +69,6 @@ struct ShippingsScreen: View {
                             vectorImg: .icArrowUp,
                             subLabel: categoryList[ind].subLabel ?? "",
                             tintColot: categoryList[ind].color ?? "",
-                            imgViewSize: 40.0,
-                            imgSize: 24.0,
                             onTapMenuCell: {
                                 switch ind {
                                 case 0: navigateToFreePickup = true
@@ -79,7 +77,9 @@ struct ShippingsScreen: View {
                                 case 3: navigateToShippingProfiles = true
                                 default: break
                                 }
-                            }
+                            },
+                            imgViewSize: 40.0,
+                            imgSize: 24.0
                         )
                         .padding(.horizontal, Leading)
                     }
