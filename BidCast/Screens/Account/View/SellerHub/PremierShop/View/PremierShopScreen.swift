@@ -24,7 +24,7 @@ struct PremierShopScreen: View {
     @State private var policyStanding = "Excellent"
     @State private var totalSales = "$5,240"
     @State private var ordersCompleted = 142
-    @State private var averageRating = 4.8
+    @State private var averageRating: Double = 0.0
     
     @State private var animateCard = false
     
@@ -681,6 +681,8 @@ extension PremierShopScreen {
             withAnimation(.snappy) { showError = true }
         } else {
             premierShopData = viewModel.premierShopResponse.data ?? PremierShopModel()
+            // #14 — wire average rating to real API value (shop_options.Rating)
+            averageRating = premierShopData.shopOptions?.rating ?? 0.0
         }
     }
     
