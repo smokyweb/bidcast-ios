@@ -14,6 +14,8 @@ struct MyShowsAnalyticsScreen: View {
     @State private var showsOverviewData = GetShowOverviewModel()
     
     @Binding var showId: String
+    // QA #26 — Optional show title for the Watch VOD card (defaults to "Watch Replay" if not provided)
+    var showTitle: String = ""
     @State var showhud: Bool = false
     
     @State var navigateToVideoReceipt: Bool = false
@@ -66,7 +68,8 @@ struct MyShowsAnalyticsScreen: View {
 //                    Button {
 //                        
 //                    } label: {
-                    WatchVODCard(duration: showsOverviewData.videoDuration ?? "--:--") {
+                    // QA #26 — pass show title (when available) so the card shows the title instead of "Watch VOD"
+                    WatchVODCard(title: showTitle, duration: showsOverviewData.videoDuration ?? "--:--") {
                         navigateToVideoReceipt = true
                     }
                     .padding(.horizontal, 20)
@@ -249,9 +252,12 @@ extension MyShowsAnalyticsScreen {
 
 // MARK: - Watch VOD Card
 struct WatchVODCard: View {
+    // QA #26 — prefer showing the show title; fall back to "Watch Replay" if empty
+    var title: String = ""
     var duration: String
     @State private var isPressed: Bool = false
     var buttonPressedClosure: (() -> Void)?
+    private var displayTitle: String { title.trimmingCharacters(in: .whitespaces).isEmpty ? "Watch Replay" : title }
     var body: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -286,11 +292,13 @@ struct WatchVODCard: View {
                 
                 // Text Content
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Watch VOD")
+                    Text(displayTitle)
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.primary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                     
-                    Text("Show Duration: \(duration)")
+                    Text("Duration: \(duration)")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.secondary)
                 }

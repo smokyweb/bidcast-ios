@@ -41,6 +41,8 @@ struct ShowsScreen: View {
     @State private var selectedProductIds: [String] = []
     @State var selectedShowsData = HomeModel()
     @State var showID = ""
+    // QA #26 — capture selected show title for the Analytics screen's Watch Replay card
+    @State var selectedShowTitle: String = ""
     @State var SHowId = 0
     @State var navigateToshowTitle = false
     
@@ -115,6 +117,7 @@ struct ShowsScreen: View {
                             ShowCardView(show: data,onTap: {
                                 if segment == .pastShows {
                                     showID = "\(data.id ?? 0)"
+                                    selectedShowTitle = data.title ?? "" // QA #26
                                     navigateToShowAnalytics = true
                                 }
                                 else {
@@ -143,7 +146,7 @@ struct ShowsScreen: View {
                 .padding(.top)
             }
             CusNavLink(doNavigate: $navigateToShowAnalytics,
-                       destination:  MyShowsAnalyticsScreen(showId: $showID))
+                       destination:  MyShowsAnalyticsScreen(showId: $showID, showTitle: selectedShowTitle))
             
             CusNavLink(doNavigate: $navigateToShowDetails,
                        destination:  ShowDetailsScreen(showId: $showID))
