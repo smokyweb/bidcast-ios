@@ -291,8 +291,10 @@ private func decodeFlexibleBool<K: CodingKey>(_ c: KeyedDecodingContainer<K>, fo
 
 extension ProductDataModel1 {
     // Local CodingKeys for the custom init.
+    // QA #11 — backend (wave3) emits `purchased_quantity` for sellers; iOS payloads emit `purchasedQuantity`. Accept either.
     private enum FlexCodingKeys: String, CodingKey {
         case id, title, description, pricing, quantity, purchasedQuantity, sku, status, type
+        case purchased_quantity
         case variant, productCondition, productShow, acceptOffers, auction, flashSale
         case reserveForLive, hazardousMaterial, bidCount, bid_count
         case height, length, width, weight
@@ -311,7 +313,9 @@ extension ProductDataModel1 {
         self.description = decodeFlexibleString(c, forKey: .description)
         self.pricing = decodeFlexibleString(c, forKey: .pricing)
         self.quantity = decodeFlexibleString(c, forKey: .quantity)
-        self.purchasedQuantity = decodeFlexibleString(c, forKey: .purchasedQuantity)
+        // QA #11 — accept both `purchasedQuantity` (legacy) and `purchased_quantity` (backend wave3) so the
+        // available-stock badge in the inventory screen reflects post-purchase remaining count.
+        self.purchasedQuantity = decodeFlexibleString(c, forKey: .purchasedQuantity) ?? decodeFlexibleString(c, forKey: .purchased_quantity)
         self.sku = decodeFlexibleString(c, forKey: .sku)
         self.status = decodeFlexibleString(c, forKey: .status)
         self.type = decodeFlexibleString(c, forKey: .type)

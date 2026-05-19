@@ -117,8 +117,10 @@ struct MyOrdersScreen: View {
                     .padding(.vertical, 6)
                     .cornerRadius(28, corners: .allCorners)
                     // MARK: - Filter Pills
+                    // QA #30 — append live counts to each pill (e.g. "New Order (24)") so the New Orders count
+                    // isn't blank. Counts come from the same API response that populates the list.
                     PillsSelectorView(
-                        titles:  Segment.segmentArray,
+                        titles:  segmentTitlesWithCounts,
                         selectedIndex: $selectedTabIndex,
                         backgroundStyle: .roundedRect,
                         underlineEnabled: false,
@@ -427,6 +429,21 @@ extension MyOrdersScreen{
             return "\(viewModel.myOrderResponse.processing_order_count ?? 0)"
         case .completed:
             return "\(viewModel.myOrderResponse.completed_order_count  ?? 0)"
+        }
+    }
+
+    // QA #30 — build pill titles with the live count baked in. Falls back to bare title if no count available.
+    private var segmentTitlesWithCounts: [String] {
+        Segment.allCases.map { seg in
+            let count: Int?
+            switch seg {
+            case .all:        count = viewModel.myOrderResponse.total
+            case .newOrder:   count = viewModel.myOrderResponse.new_order_count
+            case .processing: count = viewModel.myOrderResponse.processing_order_count
+            case .completed:  count = viewModel.myOrderResponse.completed_order_count
+            }
+            if let c = count { return "\(seg.rawValue) (\(c))" }
+            return seg.rawValue
         }
     }
 }

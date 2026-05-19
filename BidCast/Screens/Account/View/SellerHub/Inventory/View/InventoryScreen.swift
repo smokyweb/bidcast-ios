@@ -99,6 +99,8 @@ struct InventoryScreen: View {
     @State var selectedProducts: [ProductDataModel1] = []
     var onProductsSelected: (([ProductDataModel1]) -> Void)?
     @State var navigateToDetail = false
+    // QA #10 — Inventory Orders tab → push to MyOrdersScreen
+    @State private var navigateToMyOrders = false
     
     
     var body: some View {
@@ -166,6 +168,12 @@ struct InventoryScreen: View {
             // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: InventorySegment.allCases)
                 .onChange(of: segment) { newSegment in
+                    // QA #10 — Orders is not a fetch path; it pushes to MyOrdersScreen and reverts the segment.
+                    if newSegment == .orders {
+                        navigateToMyOrders = true
+                        DispatchQueue.main.async { segment = .active }
+                        return
+                    }
                     clearFilter()
                     Task {
                         await performAPICalls(
@@ -324,6 +332,8 @@ struct InventoryScreen: View {
             }
             
             CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
+            // QA #10 — Inventory Orders tab → MyOrdersScreen
+            CusNavLink(doNavigate: $navigateToMyOrders, destination: MyOrdersScreen())
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
@@ -900,6 +910,8 @@ struct InventoryScreen: View {
     
     // MARK: - ✅ CORRECTED Fetch Inventory
     func fetchInventory(for segment: InventorySegment, page: Int) async throws {
+        // QA #10 — Orders is a navigation-only sentinel; do not call the inventory API for it.
+        if segment == .orders { return }
         // Build request
         request.status = segment.rawValue.lowercased()
         request.page = page
@@ -989,12 +1001,13 @@ struct InventoryScreen: View {
 
 // MARK: - Inventory Segment Enum
 // QA #45 — added Sold segment so fulfilled items are reflected in inventory.
-// QA #10 (Orders tab) deferred — needs a separate fetch path to MyOrdersScreen; will follow up.
+// QA #10 — Orders segment pushes to MyOrdersScreen (sentinel; not a fetch path).
 enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     case active = "Active"
     case draft = "Draft"
     case inactive = "Inactive"
     case sold = "Sold"
+    case orders = "Orders"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
@@ -1410,9 +1423,19 @@ extension ProductCardView {
     }
     
     private var productQuantity: some View {
-        Text("Quantity: \(product.quantity ?? "0")")
+        // QA #11 — show remaining stock (quantity - purchased_quantity) so the badge updates after a sale.
+        // Falls back to quantity when purchased_quantity is missing; clamps at 0 so we never show negatives.
+        Text("Quantity: \(availableStockString)")
             .font(.custom(poppinsRegular, size: 13))
             .foregroundColor(.darkGray)
+    }
+
+    private var availableStockString: String {
+        let totalString = product.quantity ?? "0"
+        let purchasedString = product.purchasedQuantity ?? "0"
+        guard let total = Int(totalString) else { return totalString }
+        let purchased = Int(purchasedString) ?? 0
+        return "\(max(total - purchased, 0))"
     }
 }
 
