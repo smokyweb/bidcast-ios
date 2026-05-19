@@ -156,6 +156,11 @@ enum APIEndPoint{
     case deleteProductSuppriseSet(param:DeleteProductSetRequest)
     case SaveShippingCosts(param:SaveShippingCostsRequest)
 
+    // MARK: - QA #31 / #32 / #33 / #34 — USPS Order Workflow (Wave 2 Orange tier)
+    case changeOrderStatus(param: ChangeOrderStatusRequest)
+    case createUSPSLabel(param: CreateUSPSLabelRequest)
+    case trackUSPSOrder(param: TrackUSPSOrderRequest)
+
 }
 
 extension APIEndPoint: EndPointType {
@@ -524,6 +529,13 @@ extension APIEndPoint: EndPointType {
             return "save-shipping-costs"
         case .getShippinDetails:
             return "get-shipping-details"
+        // QA #31/#32/#34 — USPS Order Workflow
+        case .changeOrderStatus:
+            return "change-order-status"
+        case .createUSPSLabel:
+            return "usps/create-label"
+        case .trackUSPSOrder:
+            return "usps/track-order"
         }
     }
     
@@ -832,6 +844,13 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getShippinDetails:
             return .get
+        // QA #31/#32/#34 — USPS Order Workflow (all POST)
+        case .changeOrderStatus:
+            return .post
+        case .createUSPSLabel:
+            return .post
+        case .trackUSPSOrder:
+            return .post
         }
     }
     
@@ -1146,6 +1165,13 @@ extension APIEndPoint: EndPointType {
             return param
         case .getShippinDetails:
             return nil
+        // QA #31/#32/#34 — USPS Order Workflow params
+        case .changeOrderStatus(param: let param):
+            return param
+        case .createUSPSLabel(param: let param):
+            return param
+        case .trackUSPSOrder(param: let param):
+            return param
         }
     }
     
@@ -1442,6 +1468,13 @@ extension APIEndPoint: EndPointType {
         case .getShippinDetails:
             return nil
         case .getUspsShippingPrice:
+            return nil
+        // QA #31/#32/#34 — USPS Order Workflow (no url-query params; bodies handled above)
+        case .changeOrderStatus:
+            return nil
+        case .createUSPSLabel:
+            return nil
+        case .trackUSPSOrder:
             return nil
         }
     }

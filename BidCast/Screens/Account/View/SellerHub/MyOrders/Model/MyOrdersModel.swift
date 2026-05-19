@@ -40,6 +40,10 @@ struct MyOrderModel: Codable {
     var status: String?
     var paymentStatus: String?
     var createdAt: String?
+    // QA Wave 2 Orange tier — USPS shipping fields persisted by ApiController@createLabel.
+    var tracking_number: String?
+    var label_url: String?
+    var shipping_status: String?
 
     var product: ProductDetails?
     var shippingTracking: [ShippingTrackingModel]?
@@ -72,6 +76,10 @@ struct MyOrderModel: Codable {
         case status
         case paymentStatus = "payment_status"
         case createdAt = "created_at"
+        // QA Wave 2 Orange tier — USPS shipping fields
+        case tracking_number
+        case label_url
+        case shipping_status
         case product
         case shippingTracking = "shipping_tracking"
         case user
