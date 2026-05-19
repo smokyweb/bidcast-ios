@@ -898,10 +898,12 @@ struct ProfileHeaderView: View {
                     }
                     }
                     
-                    // QA #21 — share button stays for everyone (including own profile)
-                    Button(action: {
-                        // Share action
-                    }) {
+                    // QA #21 — Wire up Share button (works on own profile too). Uses native SwiftUI ShareLink with a deep link to the seller profile.
+                    ShareLink(
+                        item: URL(string: "https://bidcast.app/profile/\(sellerID)") ?? URL(string: "https://bidcast.app")!,
+                        subject: Text("Check out \(name) on Bidcast"),
+                        message: Text("Tap to view their shop on Bidcast.")
+                    ) {
                         Image(systemName: "square.and.arrow.up")
                             .resizable()
                             .scaledToFit()

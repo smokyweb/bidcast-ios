@@ -671,11 +671,13 @@ struct SellerHubSection: View {
     @State private var itemsCount = 0
     @State private var revenue = "$0.00"
     @State private var rating = 0.0
-    @State private var onTimeRate = "100"
-    @State private var defectFreeRate = "100"
-    @State private var policyStanding = "Excellent"
-    @State private var payouts = "$199.00"
-    @State private var totalOrders = "22 Items"
+    @State private var onTimeRate = "0"
+    // QA #29 — Defaults were showing fake values before the API landed.
+    // Use safe zero/blank defaults so users never see filler data.
+    @State private var defectFreeRate = "0"
+    @State private var policyStanding = ""
+    @State private var payouts = "$0.00"
+    @State private var totalOrders = "0 Items"
     @State private var vacationToggle = false
     // QA #35 — Vacation mode confirmation
     @State private var showVacationConfirm = false
