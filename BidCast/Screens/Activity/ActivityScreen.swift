@@ -790,6 +790,16 @@ struct MessageRow: View {
         blockedMe.contains { String($0.id ?? -1) == otherUserId }
     }
     
+    // QA #37 — read/responded state on the messages list.
+    // "Unread" means: last message came from the other user AND I haven't opened the thread since.
+    // When unread, the row shows bold name + a small primary-color dot indicator.
+    // When seen (I responded or just read it), the preview text dims to gray.
+    private var isUnread: Bool {
+        // ChatUsers.senderId is a non-optional String on ChatMessage.
+        let lastSenderIsOther = message.users.senderId != currentUserId
+        return lastSenderIsOther && !message.seen
+    }
+    
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             CustomProfileImage(url: otherUserImage, isCircular: true, size: 48)
@@ -802,9 +812,16 @@ struct MessageRow: View {
 //            .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: 6) {
-                HStack {
+                HStack(spacing: 6) {
                     Text(otherUserName.capitalizingFirstLetter())
-                        .font(.system(size: 16, weight: .semibold))
+                        // QA #37 — bold name only when there's a fresh unread message.
+                        .font(.system(size: 16, weight: isUnread ? .bold : .semibold))
+                    // QA #37 — unread indicator dot (hidden when message is seen / I responded).
+                    if isUnread {
+                        Circle()
+                            .fill(Color.defaultTheme)
+                            .frame(width: 8, height: 8)
+                    }
                     Spacer()
                     Text(timestampString)
                         .font(.system(size: 14))
@@ -812,6 +829,9 @@ struct MessageRow: View {
                 }
                 Text(message.message)
                     .font(.system(size: 15))
+                    // QA #37 — dim preview text to gray when the thread is already read/responded;
+                    // keep it black when there's an unread message so it draws the eye.
+                    .foregroundColor(isUnread ? .primary : .gray)
                     .lineLimit(3)
             }
         }

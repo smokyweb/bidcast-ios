@@ -47,7 +47,10 @@ struct NotificationScreen: View {
                             NotificationCardView(
                                 title: title,
                                 message: message,
-                                timeAgo: createdAt.convertToTimeAgo()
+                                timeAgo: createdAt.convertToTimeAgo(),
+                                // QA #39 — forward type + unread state so the card can render typed icon + highlight.
+                                type: notification.type,
+                                isUnread: (notification.isSeen ?? 1) == 0
                             )
                             .listRowSeparator(.hidden)
                             .swipeActions {
