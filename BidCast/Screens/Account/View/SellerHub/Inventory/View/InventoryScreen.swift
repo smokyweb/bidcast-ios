@@ -988,10 +988,13 @@ struct InventoryScreen: View {
 }
 
 // MARK: - Inventory Segment Enum
+// QA #45 — added Sold segment so fulfilled items are reflected in inventory.
+// QA #10 (Orders tab) deferred — needs a separate fetch path to MyOrdersScreen; will follow up.
 enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     case active = "Active"
     case draft = "Draft"
     case inactive = "Inactive"
+    case sold = "Sold"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
