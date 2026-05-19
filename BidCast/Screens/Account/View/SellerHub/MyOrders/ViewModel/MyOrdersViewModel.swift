@@ -63,7 +63,40 @@ struct CreateLabelData: Codable {
 
 /// USPS tracking response — backend forwards the raw tracking blob; we treat it as
 /// opaque JSON until QA confirms the shape we want to surface.
-typealias TrackOrderData = [String: JSONValue]
+/// Local minimal codable wrapper avoids the JSONValue.swift type (not in the Xcode
+/// project target as of build 14).
+enum OrderAnyJSON: Codable {
+    case null
+    case bool(Bool)
+    case number(Double)
+    case string(String)
+    case array([OrderAnyJSON])
+    case object([String: OrderAnyJSON])
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.singleValueContainer()
+        if c.decodeNil() { self = .null; return }
+        if let v = try? c.decode(Bool.self)     { self = .bool(v); return }
+        if let v = try? c.decode(Double.self)   { self = .number(v); return }
+        if let v = try? c.decode(String.self)   { self = .string(v); return }
+        if let v = try? c.decode([OrderAnyJSON].self)         { self = .array(v); return }
+        if let v = try? c.decode([String: OrderAnyJSON].self) { self = .object(v); return }
+        self = .null
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.singleValueContainer()
+        switch self {
+        case .null:          try c.encodeNil()
+        case .bool(let v):   try c.encode(v)
+        case .number(let v): try c.encode(v)
+        case .string(let v): try c.encode(v)
+        case .array(let v):  try c.encode(v)
+        case .object(let v): try c.encode(v)
+        }
+    }
+}
+typealias TrackOrderData = [String: OrderAnyJSON]
 
 @MainActor
 final class OrderWorkflowViewModel: ObservableObject {
@@ -85,7 +118,7 @@ final class OrderWorkflowViewModel: ObservableObject {
                 status: status,
                 tracking_number: trackingNumber
             )
-            let response: ResponseModel<JSONValue> = try await APIManager.shared.request(
+            let response: ResponseModel<OrderAnyJSON> = try await APIManager.shared.request(
                 type: APIEndPoint.changeOrderStatus(param: param),
                 header: true
             )
