@@ -19,6 +19,8 @@ struct MyShowsAnalyticsScreen: View {
     @State var showhud: Bool = false
     
     @State var navigateToVideoReceipt: Bool = false
+    // QA #25 — wire Visit Seller Analytics For More CTA → AnalyticsScreen
+    @State private var navigateToSellerAnalytics: Bool = false
     @State private var videoURL: String = ""
     
     @State var hudMsg: String = ""
@@ -145,7 +147,7 @@ struct MyShowsAnalyticsScreen: View {
                         .padding(.horizontal, 20)
                     }
                     
-                    SellerAnalyticsCTA()
+                    SellerAnalyticsCTA(onTap: { navigateToSellerAnalytics = true })
                         .padding(.horizontal, 20)
                         .padding(.bottom, 30)
                 }
@@ -153,6 +155,8 @@ struct MyShowsAnalyticsScreen: View {
             .background(Color.backGround)
             
             CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
+            // QA #25 — navigation target for the Visit Seller Analytics For More CTA
+            CusNavLink(doNavigate: $navigateToSellerAnalytics, destination: AnalyticsScreen())
         }
         .onFirstAppear {
             getShowOverviewData()
@@ -462,6 +466,8 @@ struct ContributionCard: View {
 // MARK: - Seller Analytics CTA
 struct SellerAnalyticsCTA: View {
     @State private var isPressed: Bool = false
+    // QA #25 — callback so the parent can push to AnalyticsScreen when this CTA is tapped.
+    var onTap: (() -> Void)? = nil
     
     var body: some View {
         Button(action: {
@@ -473,6 +479,8 @@ struct SellerAnalyticsCTA: View {
                     isPressed = false
                 }
             }
+            // QA #25 — fire the parent-supplied navigation closure.
+            onTap?()
         }) {
             HStack(spacing: 16) {
                 // Chart Icon
