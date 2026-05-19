@@ -6,7 +6,23 @@
 //
 
 import Foundation
-    
+
+// QA #3 — helper: decode a [String] field that legacy/old orders may return as a JSON-encoded string.
+fileprivate func decodeStringArrayFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> [String]? {
+    if let arr = try? c.decodeIfPresent([String].self, forKey: key) { return arr }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return nil }
+        if let data = trimmed.data(using: .utf8),
+           let arr = try? JSONDecoder().decode([String].self, from: data) {
+            return arr
+        }
+        // Fallback: single-URL string
+        return [trimmed]
+    }
+    return nil
+}
+
 // MARK: - MyOrderModel
 struct MyOrderModel: Codable {
     var id: Int?
@@ -298,7 +314,14 @@ extension MyOrderModel {
         productSetID = try? c.decodeIfPresent(Int.self, forKey: .productSet)
         productSetItemID = try? c.decodeIfPresent(Int.self, forKey: .productSetItem)
         productSetItemUnitID = try? c.decodeIfPresent(Int.self, forKey: .productSetItemUnit)
-        transaction = try c.decodeIfPresent([TransactionModel].self, forKey: .transaction)
+        // QA #3 — old orders return `transaction` as a single object (not array). Accept both shapes.
+        if let txArr = try? c.decodeIfPresent([TransactionModel].self, forKey: .transaction) {
+            transaction = txArr
+        } else if let txOne = try? c.decodeIfPresent(TransactionModel.self, forKey: .transaction) {
+            transaction = [txOne]
+        } else {
+            transaction = nil
+        }
         productSet = try c.decodeIfPresent(ProductSetModel.self, forKey: .productSet)
         productSetItem = try c.decodeIfPresent(ProductSetItemModel.self, forKey: .productSetItem)
         productSetItemUnit = try c.decodeIfPresent(ProductSetItemUnitModel.self, forKey: .productSetItemUnit)
@@ -372,8 +395,9 @@ extension ProductDetails {
         shippingProfileID = try c.decodeIfPresent(Int.self, forKey: .shippingProfileID)
         status = try c.decodeIfPresent(String.self, forKey: .status)
         productShow = try c.decodeIfPresent(String.self, forKey: .productShow)
-        images = try c.decodeIfPresent([String].self, forKey: .images)
-        thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
+        // QA #3 — old orders return `images`/`thumbnail` as JSON-encoded strings (e.g. "[\"url\"]"). Accept both shapes.
+        images = decodeStringArrayFlexible(c, forKey: .images)
+        thumbnail = decodeStringArrayFlexible(c, forKey: .thumbnail)
         createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt)
         category = try c.decodeIfPresent(Category.self, forKey: .category)
     }
