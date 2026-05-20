@@ -1000,13 +1000,13 @@ struct InventoryScreen: View {
 }
 
 // MARK: - Inventory Segment Enum
-// QA #45 — added Sold segment so fulfilled items are reflected in inventory.
 // QA #10 — Orders segment pushes to MyOrdersScreen (sentinel; not a fetch path).
+// NOTE: Sold segment removed (MC cmpdqpgof000nc9kp6f0xtti6) — the API has no 'sold' status;
+//       per-product sold state is shown via the quantity/purchasedQuantity badge instead.
 enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     case active = "Active"
     case draft = "Draft"
     case inactive = "Inactive"
-    case sold = "Sold"
     case orders = "Orders"
     
     var description: String {
