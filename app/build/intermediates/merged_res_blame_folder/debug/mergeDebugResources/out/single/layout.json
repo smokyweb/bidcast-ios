@@ -1,0 +1,998 @@
+[
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_f_a_q.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_f_a_q.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_select_thumbnail.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_select_thumbnail.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/auction_settings_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/auction_settings_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_category.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_category.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_get_started.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_get_started.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_messages.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_messages.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/input_bottom_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/input_bottom_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_player.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_player.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_complete_your_profile.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_complete_your_profile.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/clips_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/clips_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/show_listing_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/show_listing_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/receiver_chat_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/receiver_chat_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/messages_items.xml",
+        "source": "io.bidswipe.app-main-120:/layout/messages_items.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_language.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_language.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_list_a_product.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_list_a_product.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_seller_products.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_seller_products.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/inventory_filter_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/inventory_filter_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/poll_details_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/poll_details_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_payout.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_payout.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/send_tip_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/send_tip_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_refer_friend.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_refer_friend.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_forgot_password.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_forgot_password.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/show_notes_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/show_notes_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_how_to_sell.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_how_to_sell.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_shipping_costs.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_shipping_costs.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/share_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/share_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_product_set_details.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_product_set_details.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/domestic_shipment_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/domestic_shipment_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/inventory_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/inventory_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/create_clip_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/create_clip_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/notification_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/notification_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_seller_verification.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_seller_verification.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/seller_info_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/seller_info_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/select_product_type_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/select_product_type_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/dash_content.xml",
+        "source": "io.bidswipe.app-main-120:/layout/dash_content.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_subcategory.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_subcategory.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_raise_ticket.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_raise_ticket.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_shows.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_shows.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/item_reply_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/item_reply_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/promote_show_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/promote_show_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_show_details.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_show_details.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_select_address.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_select_address.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/product_tip_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/product_tip_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/seller_tools_inner_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/seller_tools_inner_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/shop_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/shop_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/no_data_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/no_data_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/show_confirmation_alert.xml",
+        "source": "io.bidswipe.app-main-120:/layout/show_confirmation_alert.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/app_alert_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/app_alert_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_select_show_time.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_select_show_time.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/more_option_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/more_option_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/sell_sheet_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/sell_sheet_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/item_promote_metric.xml",
+        "source": "io.bidswipe.app-main-120:/layout/item_promote_metric.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/variant_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/variant_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/plyer_controller.xml",
+        "source": "io.bidswipe.app-main-120:/layout/plyer_controller.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/shipping_profile_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/shipping_profile_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_over_all.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_over_all.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_privacy_policy.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_privacy_policy.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/selcetable_card_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/selcetable_card_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_view_live_show.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_view_live_show.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_manage_surprise_products.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_manage_surprise_products.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_activity.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_activity.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_o_b_s_setup.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_o_b_s_setup.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_prepare_your_show.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_prepare_your_show.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/remember_list_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/remember_list_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/shop_sheet_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/shop_sheet_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_send_gift.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_send_gift.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_product_tips.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_product_tips.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_promote_tools.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_promote_tools.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_explore.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_explore.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_seller_offers.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_seller_offers.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_dash.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_dash.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/sorting_selection_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/sorting_selection_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/referral_benefits_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/referral_benefits_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_list_aproduct.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_list_aproduct.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_order_status.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_order_status.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/app_report_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/app_report_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/requirement_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/requirement_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/faq_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/faq_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_show_title.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_show_title.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/seller_offers_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/seller_offers_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/poll_option_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/poll_option_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/seller_info_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/seller_info_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_seller_profile.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_seller_profile.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/unsold_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/unsold_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/header_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/header_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/surprise_product_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/surprise_product_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_transactions.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_transactions.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_video_receipt_player.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_video_receipt_player.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_affiliate_program.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_affiliate_program.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_shop.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_shop.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/offer_price_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/offer_price_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/payment_and_address_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/payment_and_address_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/country_picker_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/country_picker_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/user_selector_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/user_selector_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/format_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/format_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_add_product.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_add_product.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/upload_image_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/upload_image_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/progress_alert_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/progress_alert_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_order_details.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_order_details.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_rate_seller.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_rate_seller.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_reset_password.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_reset_password.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/transaction_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/transaction_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_update_account.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_update_account.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/follow_info_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/follow_info_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_premier_shop.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_premier_shop.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_clip_edit.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_clip_edit.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/how_to_sell_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/how_to_sell_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/payment_card_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/payment_card_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/create_poll_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/create_poll_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_create_surprise_set.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_create_surprise_set.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/randomizer_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/randomizer_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/dialog_tax_exemption_form.xml",
+        "source": "io.bidswipe.app-main-120:/layout/dialog_tax_exemption_form.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_create_shipping_profile.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_create_shipping_profile.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_shipping_profiles.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_shipping_profiles.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_analytics.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_analytics.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/inventory_filter_innner_iitem.xml",
+        "source": "io.bidswipe.app-main-120:/layout/inventory_filter_innner_iitem.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/category_list_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/category_list_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_inventory.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_inventory.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/show_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/show_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/select_time_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/select_time_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_explore_type.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_explore_type.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_watch_stream.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_watch_stream.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/make_offer_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/make_offer_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_terms_condition.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_terms_condition.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/seller_tools_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/seller_tools_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/shipping_update_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/shipping_update_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/payout_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/payout_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_seller_status.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_seller_status.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/inventory_filter_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/inventory_filter_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/attachment_chooser_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/attachment_chooser_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/purchases_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/purchases_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_my_orders.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_my_orders.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_contact_us.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_contact_us.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/notification_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/notification_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_custom_crop_image.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_custom_crop_image.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_agora_publisher.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_agora_publisher.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_wallet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_wallet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_shipping.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_shipping.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/live_show_more_menu.xml",
+        "source": "io.bidswipe.app-main-120:/layout/live_show_more_menu.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/live_comment_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/live_comment_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_k_y_c.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_k_y_c.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_sales_tax_exemption.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_sales_tax_exemption.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/weight_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/weight_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_bids.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_bids.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_clips.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_clips.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_trusted_buyer.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_trusted_buyer.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_search_show.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_search_show.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/share_target_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/share_target_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_free_pickup.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_free_pickup.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/product_image_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/product_image_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_show_details.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_show_details.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_splash.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/info_card_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/info_card_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/viewer_show_notes_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/viewer_show_notes_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_seller_hub.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_seller_hub.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_payment_shipping.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_payment_shipping.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_select_category.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_select_category.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/address_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/address_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/subcategory_recycler_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/subcategory_recycler_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/checkbox_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/checkbox_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_add_shipping_address.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_add_shipping_address.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/menu_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/menu_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_account.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_account.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_choose_interest.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_choose_interest.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_overview.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_overview.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/benifits_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/benifits_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_choose_sales_format.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_choose_sales_format.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/coupon_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/coupon_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_seller_order_detail.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_seller_order_detail.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_tutorials.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_tutorials.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/date_chat_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/date_chat_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_purchases.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_purchases.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/goods_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/goods_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_manage_surprise_set_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_manage_surprise_set_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/promote_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/promote_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/loader_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/loader_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/account_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/account_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/entries_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/entries_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/seller_hub_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/seller_hub_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/subcategory_expanded_row.xml",
+        "source": "io.bidswipe.app-main-120:/layout/subcategory_expanded_row.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_domestic_shipments.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_domestic_shipments.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/frame_image_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/frame_image_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_buy_now.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_buy_now.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/bids_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/bids_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/selectable_address_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/selectable_address_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_more.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_more.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_about_us.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_about_us.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/product_list_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/product_list_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_promoted_shows.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_promoted_shows.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/won_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/won_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_create_account.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_create_account.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_saved_items.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_saved_items.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/search_users_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/search_users_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/live_seller_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/live_seller_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/explore_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/explore_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/surprise_set_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/surprise_set_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_login.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_review_list.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_review_list.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/seller_tip_settings_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/seller_tip_settings_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/payment_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/payment_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_preferences.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_preferences.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_o_t_p.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_o_t_p.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/shipping_address_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/shipping_address_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_delete_account.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_delete_account.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/grid_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/grid_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_product_details.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_product_details.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/sender_chat_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/sender_chat_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/status_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/status_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/available_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/available_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_home.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_wallet_view.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_wallet_view.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_addresses.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_addresses.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_offer.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_offer.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/date_picker_layout.xml",
+        "source": "io.bidswipe.app-main-120:/layout/date_picker_layout.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/title_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/title_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_schedule_show.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_schedule_show.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_blocked_users.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_blocked_users.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/subcategory_list_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/subcategory_list_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_products_for_live_show.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_products_for_live_show.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_notification.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_notification.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/review_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/review_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_live_rehearsal.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_live_rehearsal.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_add_payment_card.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_add_payment_card.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_chat.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_chat.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/item_top_buyer.xml",
+        "source": "io.bidswipe.app-main-120:/layout/item_top_buyer.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/my_orders_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/my_orders_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/coupons_list_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/coupons_list_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/sorting_option_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/sorting_option_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/sell_bottom_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/sell_bottom_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/product_selection_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/product_selection_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/item_pro_tip.xml",
+        "source": "io.bidswipe.app-main-120:/layout/item_pro_tip.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/tips_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/tips_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_product_details.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_product_details.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_tip_setting.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_tip_setting.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_tips.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_tips.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/team_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/team_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_verify_phone.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_verify_phone.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_show_tips.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_show_tips.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_seller_show.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_seller_show.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_content.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_content.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_coupons.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_coupons.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/home_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/home_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/home_category_tile.xml",
+        "source": "io.bidswipe.app-main-120:/layout/home_category_tile.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/fragment_product_weight.xml",
+        "source": "io.bidswipe.app-main-120:/layout/fragment_product_weight.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/category_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/category_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/activity_auth.xml",
+        "source": "io.bidswipe.app-main-120:/layout/activity_auth.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/end_show_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/end_show_sheet.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/blocked_item.xml",
+        "source": "io.bidswipe.app-main-120:/layout/blocked_item.xml"
+    },
+    {
+        "merged": "io.bidswipe.app-mergeDebugResources-117:/layout/surprise_add_product_sheet.xml",
+        "source": "io.bidswipe.app-main-120:/layout/surprise_add_product_sheet.xml"
+    }
+]

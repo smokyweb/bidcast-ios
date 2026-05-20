@@ -1,0 +1,43 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.bidswipe.app-mergeDebugResources-116:/values-id/values-id.xml",
+            "map": [
+                {
+                    "source": "/Users/bluemini/.gradle/caches/8.13/transforms/d17ad8e8cefd6c0d4ad4e4828ec8f8b7/transformed/jetified-play-services-wallet-19.4.0/res/values-id/values.xml",
+                    "from": {
+                        "startLines": "4,5",
+                        "startColumns": "0,0",
+                        "startOffsets": "202,259",
+                        "endColumns": "56,73",
+                        "endOffsets": "258,332"
+                    },
+                    "to": {
+                        "startLines": "2,4",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,166",
+                        "endColumns": "60,77",
+                        "endOffsets": "111,239"
+                    }
+                },
+                {
+                    "source": "/Users/bluemini/.gradle/caches/8.13/transforms/21f2d420439c2cdfde16dff5901df63e/transformed/jetified-singledateandtimepicker-2.2.7/res/values-id/values-id.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "49",
+                        "endOffsets": "100"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "116",
+                        "endColumns": "49",
+                        "endOffsets": "161"
+                    }
+                }
+            ]
+        }
+    ]
+}

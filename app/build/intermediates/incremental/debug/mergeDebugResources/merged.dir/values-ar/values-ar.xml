@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2" xmlns:ns2="http://schemas.android.com/tools">
+    <string-array name="exo_controls_playback_speeds">
+    <item>أسرع بـ 0.25 مرة</item>
+    <item>أسرع بـ 0.5 مرات</item>
+    <item>أسرع بـ 0.75 مرة</item>
+    <item>عادية</item>
+    <item>أسرع بـ 1.25 مرة</item>
+    <item>أسرع بـ 1.5 مرة</item>
+    <item>أسرع بمرتين</item>
+  </string-array>
+    <plurals name="exo_controls_fastforward_by_amount_description">
+    <item quantity="zero">تقديم سريع للفيديو بمقدار %d ثانية</item>
+    <item quantity="one">تقديم سريع للفيديو بمقدار ثانية واحدة (%d)</item>
+    <item quantity="two">تقديم سريع للفيديو بمقدار ثانيتَين (%d)</item>
+    <item quantity="few">تقديم سريع للفيديو بمقدار %d ثوانٍ</item>
+    <item quantity="many">تقديم سريع للفيديو بمقدار %d ثانية</item>
+    <item quantity="other">تقديم سريع للفيديو بمقدار %d ثانية</item>
+  </plurals>
+    <plurals name="exo_controls_rewind_by_amount_description">
+    <item quantity="zero">ترجيع الفيديو بمقدار %d ثانية</item>
+    <item quantity="one">ترجيع الفيديو بمقدار ثانية واحدة (%d)</item>
+    <item quantity="two">ترجيع الفيديو بمقدار ثانيتَين (%d)</item>
+    <item quantity="few">ترجيع الفيديو بمقدار %d ثوانٍ</item>
+    <item quantity="many">ترجيع الفيديو بمقدار %d ثانية</item>
+    <item quantity="other">ترجيع الفيديو بمقدار %d ثانية</item>
+  </plurals>
+    <plurals name="mtrl_badge_content_description">
+    <item quantity="zero">%d إشعار جديد</item>
+    <item quantity="one">إشعار جديد واحد (%d)</item>
+    <item quantity="two">إشعاران جديدان (%d)</item>
+    <item quantity="few">%d إشعارات جديدة</item>
+    <item quantity="many">%d إشعارًا جديدًا</item>
+    <item quantity="other">%d إشعار جديد</item>
+  </plurals>
+    <string name="_0_00">$ 0.00</string>
+    <string name="_10_00_oz">10.00 أوقية</string>
+    <string name="_continue">متابعة</string>
+    <string name="_switch">تبديل</string>
+    <string msgid="5976598919945601918" name="abc_action_bar_home_description">"التوجه إلى المنزل"</string>
+    <string msgid="8388173803310557296" name="abc_action_bar_up_description">"التنقل إلى أعلى"</string>
+    <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"خيارات أكثر"</string>
+    <string msgid="4692188335987374352" name="abc_action_mode_done">"تم"</string>
+    <string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"عرض الكل"</string>
+    <string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"اختيار تطبيق"</string>
+    <string msgid="4215997306490295099" name="abc_capital_off">"إيقاف"</string>
+    <string msgid="884982626291842264" name="abc_capital_on">"مفعّلة"</string>
+    <string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt+"</string>
+    <string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl+"</string>
+    <string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"حذف"</string>
+    <string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"enter"</string>
+    <string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Function+"</string>
+    <string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta+"</string>
+    <string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Shift+"</string>
+    <string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"فضاء"</string>
+    <string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym+"</string>
+    <string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"القائمة+"</string>
+    <string msgid="7208076849092622260" name="abc_search_hint">"بحث…"</string>
+    <string msgid="3741173234950517107" name="abc_searchview_description_clear">"محو طلب البحث"</string>
+    <string msgid="693312494995508443" name="abc_searchview_description_query">"طلب بحث"</string>
+    <string msgid="3417662926640357176" name="abc_searchview_description_search">"البحث"</string>
+    <string msgid="1486535517437947103" name="abc_searchview_description_submit">"إرسال طلب البحث"</string>
+    <string msgid="2293578557972875415" name="abc_searchview_description_voice">"بحث صوتي"</string>
+    <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"مشاركة مع"</string>
+    <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"مشاركة مع <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"تصغير"</string>
+    <string name="about_us">من نحن</string>
+    <string name="accept_offers">قبول العروض</string>
+    <string name="accepted">مقبول</string>
+    <string name="account">الحساب</string>
+    <string name="account_health">صحة الحساب</string>
+    <string name="active">نشط</string>
+    <string name="activity">النشاط</string>
+    <string name="activity_status">حالة النشاط</string>
+    <string name="add">إضافة</string>
+    <string name="add_a_gift_message_optional">أضف رسالة هدية (اختياري)</string>
+    <string name="add_address">إضافة عنوان</string>
+    <string name="add_another_product">إضافة منتج آخر</string>
+    <string name="add_new_address">+ إضافة عنوان جديد</string>
+    <string name="add_payment_method">+ إضافة طريقة دفع</string>
+    <string name="add_payment_method_and_address">Add Payment Method and Address</string>
+    <string name="add_product">إضافة منتج</string>
+    <string name="add_variants">إضافة تنويعات</string>
+    <string name="added_product">تمت إضافة المنتج</string>
+    <string name="address_type">نوع العنوان</string>
+    <string name="addresses">العناوين</string>
+    <string name="affiliate_program">برنامج الشركاء</string>
+    <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">بعد بيع كل منتج، سيتم تعيين المشتري عشوائيًا. أوقفه إذا كنت تريد التعيين يدويًا.</string>
+    <string name="allow_offers">السماح بالعروض</string>
+    <string name="analytics">التحليلات</string>
+    <string msgid="1150566100598813236" name="androidx_compose_ui_autofill">"الملء التلقائي"</string>
+    <string name="app_name">Bidswipe</string>
+    <string name="apply_now">تقدم الآن</string>
+    <string name="auction">مزاد</string>
+    <string name="auction_settings">إعدادات المزاد</string>
+    <string name="auction_type">نوع المزاد</string>
+    <string name="auctions">المزادات</string>
+    <string name="awaiting_next_item">بانتظار العنصر التالي</string>
+    <string name="back">رجوع</string>
+    <string name="become_a_bidswipe_seller">كن بائعاً على Bidswipe</string>
+    <string name="become_a_trusted_buyer">كن مشترياً موثوقاً</string>
+    <string name="before_you_start_selling_please_review_and_agree_to_our_seller_guidelines">قبل أن تبدأ البيع، يرجى مراجعة والموافقة على إرشادات البائعين الخاصة بنا.</string>
+    <string name="better_promotion_opportunities">فرص ترويج أفضل</string>
+    <string name="bids">العروض</string>
+    <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">يحسب Bidswipe رسوم الشحن بناءً على وزن المنتج. يمكنك تعديلها لاحقاً إذا لزم الأمر.</string>
+    <string name="bio">نبذة</string>
+    <string name="block_seller">حظر البائع</string>
+    <string name="blocked_message">You cannot send messages to this chat.</string>
+    <string name="blocked_users">المستخدمون المحظورون</string>
+    <string name="bottomsheet_action_collapse">تصغير البطاقة السفلية</string>
+    <string name="bottomsheet_action_expand">توسيع البطاقة السفلية</string>
+    <string name="bottomsheet_action_expand_halfway">توسيع البطاقة السفلية</string>
+    <string name="bottomsheet_drag_handle_clicked">تم النقر مرّتين على مقبض السحب.</string>
+    <string name="bottomsheet_drag_handle_content_description">مقبض السحب</string>
+    <string name="broadcasting_options">Broadcasting Options</string>
+    <string name="buy_in_price">سعر الاشتراك</string>
+    <string name="buy_it_now">اشترِ الآن</string>
+    <string name="buy_now">شراء الآن</string>
+    <string msgid="881409763997275156" name="call_notification_answer_action">"ردّ"</string>
+    <string msgid="8793775615905189152" name="call_notification_answer_video_action">"فيديو"</string>
+    <string msgid="3229508546291798546" name="call_notification_decline_action">"رفض"</string>
+    <string msgid="2659457946726154263" name="call_notification_hang_up_action">"قطع الاتصال"</string>
+    <string msgid="6107532579223922871" name="call_notification_incoming_text">"مكالمة واردة"</string>
+    <string msgid="8623827134497363134" name="call_notification_ongoing_text">"مكالمة جارية"</string>
+    <string msgid="59049573811482460" name="call_notification_screening_text">"يتم فحص المكالمة الواردة"</string>
+    <string name="cancel">إلغاء</string>
+    <string name="caption">التسمية التوضيحية</string>
+    <string name="card_holder_name">اسم صاحب البطاقة</string>
+    <string name="card_number">رقم البطاقة</string>
+    <string name="category">الفئة</string>
+    <string name="certification_details">تفاصيل الشهادة</string>
+    <string name="change">تغيير</string>
+    <string name="character_counter_content_description">تمّ إدخال %1$d حرف من إجمالي %2$d.</string>
+    <string name="character_counter_overflowed_content_description">تجاوز عدد الأحرف المسموح به %1$d من %2$d.</string>
+    <string name="choose_file">اختر ملف</string>
+    <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
+    <string name="city">المدينة</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="clear_text_end_icon_content_description">محو النص</string>
+    <string name="clips">المقاطع</string>
+    <string msgid="406453423630273620" name="close_drawer">"إغلاق قائمة التنقل"</string>
+    <string msgid="7573152094250666567" name="close_sheet">"إغلاق الورقة"</string>
+    <string name="comming_soon">قريباً</string>
+    <string msgid="2523291102206661146" name="common_google_play_services_enable_button">تفعيل</string>
+    <string msgid="227660514972886228" name="common_google_play_services_enable_text">‏لن يعمل %1$s ما لم يتم تفعيل خدمات Google Play.</string>
+    <string msgid="5122002158466380389" name="common_google_play_services_enable_title">‏تفعيل خدمات Google Play</string>
+    <string msgid="7153882981874058840" name="common_google_play_services_install_button">تثبيت</string>
+    <string name="common_google_play_services_install_text">‏لن يتم تشغيل %1$s بدون خدمات Google Play، والتي لا تتوفر على جهازك.</string>
+    <string msgid="7215213145546190223" name="common_google_play_services_install_title">‏الحصول على خدمات Google Play</string>
+    <string name="common_google_play_services_notification_channel_name">‏مدى توفّر خدمات Google Play</string>
+    <string name="common_google_play_services_notification_ticker">‏خطأ في خدمات Google Play</string>
+    <string name="common_google_play_services_unknown_issue">‏لدى %1$s مشكلة في خدمات Google Play. يُرجى إعادة المحاولة.</string>
+    <string name="common_google_play_services_unsupported_text">‏لن يتم تشغيل %1$s بدون خدمات Google Play التي لا يوفرها جهازك.</string>
+    <string msgid="6556509956452265614" name="common_google_play_services_update_button">تحديث</string>
+    <string msgid="9053896323427875356" name="common_google_play_services_update_text">‏لن يتم تشغيل %1$s ما لم يتم تحديث خدمات Google Play.</string>
+    <string msgid="6006316683626838685" name="common_google_play_services_update_title">‏تحديث خدمات Google Play</string>
+    <string name="common_google_play_services_updating_text">‏لن يتم تشغيل %1$s بدون خدمات Google Play، والتي يتم تحديثها حاليًا.</string>
+    <string name="common_google_play_services_wear_update_text">‏يجب توفر إصدار جديد من خدمات Google Play. سيتم تحديثها تلقائيًا قريبًا.</string>
+    <string name="common_open_on_phone">فتح على الهاتف</string>
+    <string name="common_signin_button_text">تسجل الدخول</string>
+    <string name="common_signin_button_text_long">‏تسجيل الدخول عبر Google</string>
+    <string name="completed">مكتمل</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirm_password">تأكيد كلمة المرور</string>
+    <string name="confirm_purchase">تأكيد الشراء</string>
+    <string name="contact_support">اتصل بالدعم</string>
+    <string name="contact_us">اتصل بنا</string>
+    <string name="content">المحتوى</string>
+    <string name="continue_to_next_step">الانتقال للخطوة التالية</string>
+    <string name="copy">نسخ</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"تم نسخ الرابط إلى الحافظة."</string>
+    <string name="country_of_residence">بلد الإقامة</string>
+    <string name="coupons">قسائم</string>
+    <string name="create_a_raid">إنشاء غارة</string>
+    <string name="create_a_surprise_set">إنشاء مجموعة مفاجآت</string>
+    <string name="create_account">إنشاء حساب</string>
+    <string name="create_clip">إنشاء مقطع</string>
+    <string name="create_poll">Create Poll</string>
+    <string name="create_poll_description">Engage your audience by creating a poll. Ask a question and let viewers vote!</string>
+    <string name="create_product">إنشاء منتج</string>
+    <string name="create_show">إنشاء عرض</string>
+    <string name="create_surprise_set">إنشاء مجموعة مفاجآت</string>
+    <string name="credits">رصيد</string>
+    <string name="crop_image_menu_crop">قُصّ</string>
+    <string name="custom_offer">عرض مخصص</string>
+    <string name="cvv">رمز التحقق</string>
+    <string name="declined">مرفوض</string>
+    <string msgid="8038256446254964252" name="default_error_message">"إدخال غير صالح"</string>
+    <string msgid="6312721426453364202" name="default_popup_window_title">"نافذة منبثقة"</string>
+    <string name="defect_free_order_rate">معدل الطلبات الخالية من العيوب</string>
+    <string name="delete">حذف</string>
+    <string name="delete_account">حذف الحساب</string>
+    <string name="deleting_your_account_is_irreversible_and_will_permanently_erase_all_your_data_this_action_cannot_be_undone_please_consider_carefully_before_proceeding">Deleting your account is irreversible and will permanently erase all your data. This action cannot be undone. Please consider carefully before proceeding.</string>
+    <string name="delivered">تم التوصيل</string>
+    <string name="delivery_address">عنوان التوصيل</string>
+    <string name="describe_your_product">صف منتجك</string>
+    <string name="description">الوصف</string>
+    <string name="description_optional">الوصف (اختياري)</string>
+    <string name="direct_messages">الرسائل المباشرة</string>
+    <string name="display">عرض</string>
+    <string name="draft">مسودة</string>
+    <string msgid="1890207353314751437" name="dropdown_menu">"قائمة منسدلة"</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="enable_allow_offers_to_let_buyers_offer_a_different_price_for_your_product_you_may_counter_accept_or_simply_decline_the_offer">فعّل "السماح بالعروض" لتمكين المشترين من تقديم سعر مختلف لمنتجك. يمكنك المقايضة أو القبول أو الرفض.</string>
+    <string name="enable_clips">تمكين المقاطع</string>
+    <string name="enable_free_pickup">تفعيل الاستلام المجاني</string>
+    <string name="enable_private_entry">تمكين الدخول الخاص</string>
+    <string name="end_show">End Show</string>
+    <string name="enter_card_number">أدخل رقم البطاقة</string>
+    <string name="enter_code">أدخل الرمز</string>
+    <string name="enter_phone_number">أدخل رقم الهاتف</string>
+    <string name="enter_poll_question">Enter your poll question here</string>
+    <string name="enter_price">Enter Price</string>
+    <string name="enter_product_title">أدخل عنوان المنتج</string>
+    <string name="enter_promo_code">أدخل الرمز الترويجي</string>
+    <string name="enter_quantity">أدخل الكمية</string>
+    <string name="enter_referral_code">أدخل رمز الإحالة</string>
+    <string name="enter_street_address">أدخل عنوان الشارع</string>
+    <string name="enter_subject">أدخل الموضوع</string>
+    <string name="enter_your_confirm_password">أدخل تأكيد كلمة المرور</string>
+    <string name="enter_your_email">أدخل بريدك الإلكتروني</string>
+    <string name="enter_your_first_name">أدخل اسمك الأول</string>
+    <string name="enter_your_full_name">أدخل اسمك الكامل</string>
+    <string name="enter_your_last_name">أدخل اسم العائلة</string>
+    <string name="enter_your_message_here">أدخل رسالتك هنا..</string>
+    <string name="enter_your_own_amount">أدخل مبلغك الخاص</string>
+    <string name="enter_your_password">أدخل كلمة المرور</string>
+    <string name="enter_your_show_title">أدخل عنوان العرض</string>
+    <string name="error_a11y_label">خطأ: غير صالح</string>
+    <string name="error_icon_content_description">خطأ</string>
+    <string name="example_preview">معاينة المثال</string>
+    <string name="exemption_status">حالة الإعفاء</string>
+    <string name="exit">خروج</string>
+    <string name="exo_controls_cc_disabled_description">تفعيل الترجمة</string>
+    <string name="exo_controls_cc_enabled_description">إيقاف الترجمة</string>
+    <string name="exo_controls_fastforward_description">تقديم سريع</string>
+    <string name="exo_controls_fullscreen_enter_description">دخول إلى وضع ملء الشاشة</string>
+    <string name="exo_controls_fullscreen_exit_description">خروج من وضع ملء الشاشة</string>
+    <string name="exo_controls_hide">إخفاء عناصر التحكم بالمشغّل</string>
+    <string name="exo_controls_next_description">التالي</string>
+    <string name="exo_controls_overflow_hide_description">إخفاء الإعدادات الإضافية</string>
+    <string name="exo_controls_overflow_show_description">عرض الإعدادات الإضافية</string>
+    <string name="exo_controls_pause_description">إيقاف مؤقت</string>
+    <string name="exo_controls_play_description">تشغيل</string>
+    <string name="exo_controls_playback_speed">السرعة</string>
+    <string name="exo_controls_previous_description">السابق</string>
+    <string name="exo_controls_repeat_all_description">الوضع الحالي: تكرار الكل. تبديل وضع التكرار</string>
+    <string name="exo_controls_repeat_off_description">الوضع الحالي: عدم التكرار. تبديل وضع التكرار</string>
+    <string name="exo_controls_repeat_one_description">الوضع الحالي: التكرار مرة واحدة. تبديل وضع التكرار</string>
+    <string name="exo_controls_rewind_description">ترجيع</string>
+    <string name="exo_controls_seek_bar_description">مستوى تقدُّم التشغيل</string>
+    <string name="exo_controls_settings_description">الإعدادات</string>
+    <string name="exo_controls_show">عرض عناصر التحكم بالمشغّل</string>
+    <string name="exo_controls_shuffle_off_description">تفعيل وضع الترتيب العشوائي</string>
+    <string name="exo_controls_shuffle_on_description">إيقاف وضع الترتيب العشوائي</string>
+    <string name="exo_controls_stop_description">إيقاف</string>
+    <string name="exo_controls_vr_description">وضع VR</string>
+    <string name="exo_download_completed">اكتمل التنزيل</string>
+    <string name="exo_download_description">تنزيل</string>
+    <string name="exo_download_downloading">جارٍ التنزيل.</string>
+    <string name="exo_download_failed">تعذّر التنزيل</string>
+    <string name="exo_download_notification_channel_name">عمليات التنزيل</string>
+    <string name="exo_download_paused">تمّ إيقاف عمليات التنزيل مؤقتًا.</string>
+    <string name="exo_download_paused_for_network">عمليات التنزيل في انتظار الاتصال بالشبكة</string>
+    <string name="exo_download_paused_for_wifi">عمليات التنزيل في انتظار اتصال Wi-Fi.</string>
+    <string name="exo_download_removing">تجري إزالة المحتوى الذي تم تنزيله</string>
+    <string name="exo_item_list">%1$s، %2$s</string>
+    <string name="exo_track_bitrate">%1$.2f ميغابت في الثانية</string>
+    <string name="exo_track_mono">قناة أحادية</string>
+    <string name="exo_track_resolution">%1$d × %2$d</string>
+    <string name="exo_track_role_alternate">بديل</string>
+    <string name="exo_track_role_closed_captions">الترجمة والشرح</string>
+    <string name="exo_track_role_commentary">التعليقات</string>
+    <string name="exo_track_role_supplementary">تكميلي</string>
+    <string name="exo_track_selection_auto">تلقائي</string>
+    <string name="exo_track_selection_none">بدون اختيار</string>
+    <string name="exo_track_selection_title_audio">صوت</string>
+    <string name="exo_track_stereo">استريو</string>
+    <string name="exo_track_surround">صوت مجسّم</string>
+    <string name="exo_track_surround_5_point_1">صوت مجسّم 5.1</string>
+    <string name="exo_track_surround_7_point_1">صوت مجسّم 7.1</string>
+    <string name="exo_track_unknown">غير معروف</string>
+    <string name="exo_track_unknown_name">غير معروف (%1$s)</string>
+    <string name="expiration_date">تاريخ الانتهاء</string>
+    <string name="expiry_date">تاريخ الانتهاء</string>
+    <string name="explore">استكشاف</string>
+    <string name="exposed_dropdown_menu_content_description">عرض القائمة المنسدلة</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"نسخ الرابط"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"فتح في المتصفح"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"مشاركة الرابط"</string>
+    <string name="faq_label">الأسئلة الشائعة</string>
+    <string name="favourite">المفضلة</string>
+    <string name="finish">إنهاء</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="first_name">الاسم الأول</string>
+    <string name="follow">متابعة</string>
+    <string name="follow_seller">متابعة البائع</string>
+    <string name="for_you_tile">For You</string>
+    <string name="forgot_password">نسيت كلمة المرور</string>
+    <string name="full_name">الاسم الكامل</string>
+    <string name="get_featured_in_the_top_shows_for_15_minutes">الظهور ضمن أفضل العروض لمدة 15 دقيقة</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="get_notification">Get Notification</string>
+    <string name="gift_to_a_friend">هدية لصديق</string>
+    <string name="goods_examples">أمثلة على السلع</string>
+    <string name="gpay_logo_description">Google Pay</string>
+    <string name="haptic_feedback">استجابة لمسية</string>
+    <string name="hazardous_material">مواد خطرة</string>
+    <string name="home">الرئيسية</string>
+    <string name="how_it_works">كيف يعمل</string>
+    <string name="how_it_works_info">
+        &lt;p>
+        Surprise items is a format where a set of items are each sold at random —
+        the buyer finds out which of the items they will receive live.
+        You can see all available items in this format in the Items tab.
+        &lt;/p>
+
+        &lt;h3>What To Expect?&lt;/h3>
+
+        &lt;p>Surprise Sets go through two main stages:&lt;/p>
+
+        &lt;h4>⏳ Filling + Running&lt;/h4>
+        &lt;p>
+        The excitement begins! This is the time when you can purchase a surprise item.
+        You can always see how many spots are left and what items have been sold.
+        &lt;/p>
+
+        &lt;h4>✅ Completed&lt;/h4>
+        &lt;p>
+        The sale is over. All of the available items have been sold and revealed,
+        and the seller will ship to you as soon as they can.
+        &lt;/p>
+    </string>
+    <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">أوافق على اتباع هذه الإرشادات وأفهم أن الانتهاكات قد تؤدي إلى تعليق الحساب</string>
+    <string name="ic_flip_24">اقلب</string>
+    <string name="ic_flip_24_horizontally">اقلب أفقيًا</string>
+    <string name="ic_flip_24_vertically">اقلب رأسيًا</string>
+    <string name="ic_rotate_left_24">أدر عكس اتجاه عقارب الساعة</string>
+    <string name="ic_rotate_right_24">أدر</string>
+    <string name="icon_content_description">رمز مربع الحوار</string>
+    <string name="id_card">بطاقة الهوية</string>
+    <string name="id_verification">التحقق من الهوية</string>
+    <string name="identity_verification">التحقق من الهوية</string>
+    <string msgid="6827826412747255547" name="in_progress">"قيد التقدم"</string>
+    <string name="inactive">غير نشط</string>
+    <string msgid="7933458017204019916" name="indeterminate">"تم وضع علامة في المربّع بشكل جزئي"</string>
+    <string name="inventory">المخزون</string>
+    <string name="invite_friends_and_earn_rewards_when_they_join">ادعُ أصدقائك واكسب مكافآت عند انضمامهم</string>
+    <string name="issue_date">تاريخ الإصدار</string>
+    <string name="item_view_role_description">علامة تبويب</string>
+    <string name="item_weight">وزن المنتج</string>
+    <string name="items">السلع</string>
+    <string name="items_containing_flammable_explosive_or_other_dangerous_materials_learn_more_about_hazardous_materials">سلع تحتوي على مواد قابلة للاشتعال أو متفجرة أو خطرة. تعرّف على المزيد حول المواد الخطرة</string>
+    <string name="john_smith">John Smith</string>
+    <string name="language">اللغة</string>
+    <string name="last_60_seconds">آخر 60 ثانية</string>
+    <string name="last_name">اسم العائلة</string>
+    <string name="learn_more">تعلم المزيد</string>
+    <string name="let_others_know_who_you_are">أخبر الآخرين من أنت؟</string>
+    <string name="listed_price">السعر المدرج</string>
+    <string name="live_now">بث مباشر الآن</string>
+    <string name="live_poll">استطلاع مباشر</string>
+    <string name="livestream">Livestream</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="make_an_offer">قدم عرضاً</string>
+    <string name="make_offer">قدم عرضاً</string>
+    <string name="manage_products">إدارة المنتجات</string>
+    <string name="managing_orders_amp_shipping"><![CDATA[إدارة الطلبات والشحن]]></string>
+    <string name="manual_verification">تحقق يدوي</string>
+    <string name="material_clock_toggle_content_description">يُرجى اختيار صباحًا أو مساءً.</string>
+    <string name="material_hour_24h_suffix">%1$s ساعة</string>
+    <string name="material_hour_selection">تحديد الساعة</string>
+    <string name="material_hour_suffix">الساعة %1$s</string>
+    <string name="material_minute_selection">تحديد الدقائق</string>
+    <string name="material_minute_suffix">%1$s دقيقة</string>
+    <string name="material_timepicker_am">صباحًا</string>
+    <string name="material_timepicker_clock_mode_description">يُرجى التبديل إلى وضع الساعة لإدخال الوقت.</string>
+    <string name="material_timepicker_hour">الساعة</string>
+    <string name="material_timepicker_minute">دقيقة</string>
+    <string name="material_timepicker_pm">مساءً</string>
+    <string name="material_timepicker_select_time">اختيار الوقت</string>
+    <string name="material_timepicker_text_input_mode_description">يُرجى التبديل إلى وضع إدخال النص لإدخال الوقت.</string>
+    <string name="max_bid_amount">الحد الأقصى للمزايدة</string>
+    <string name="messages">الرسائل</string>
+    <string name="mic">الميكروفون</string>
+    <string name="mic_test">اختبار الميكروفون</string>
+    <string name="minimum_starting_bid_is_1_00">الحد الأدنى للعرض المبدئي $1.00</string>
+    <string name="more_info">المزيد من المعلومات</string>
+    <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
+    <string name="mtrl_badge_numberless_content_description">إشعار جديد</string>
+    <string name="mtrl_checkbox_state_description_checked">تم وضع علامة في المربّع</string>
+    <string name="mtrl_checkbox_state_description_indeterminate">يجوز أنه تم وضع علامة في المربّع</string>
+    <string name="mtrl_checkbox_state_description_unchecked">لم يتم وضع علامة في المربّع</string>
+    <string name="mtrl_chip_close_icon_content_description">إزالة %1$s</string>
+    <string name="mtrl_exceed_max_badge_number_content_description" ns2:ignore="PluralsCandidate">يبلغ عدد الإشعارات الجديدة أكثر من %1$d.</string>
+    <string name="mtrl_picker_a11y_next_month">التغيير إلى الشهر التالي</string>
+    <string name="mtrl_picker_a11y_prev_month">التغيير إلى الشهر السابق</string>
+    <string name="mtrl_picker_announce_current_range_selection">اختيار تاريخ البدء: %1$s – اختيار تاريخ الانتهاء: %2$s</string>
+    <string name="mtrl_picker_announce_current_selection">الاختيار الحالي: %1$s</string>
+    <string name="mtrl_picker_announce_current_selection_none">بلا</string>
+    <string name="mtrl_picker_cancel">إلغاء</string>
+    <string name="mtrl_picker_confirm">حسنًا</string>
+    <string name="mtrl_picker_date_header_selected">%1$s</string>
+    <string name="mtrl_picker_date_header_title">يُرجى اختيار تاريخ.</string>
+    <string name="mtrl_picker_date_header_unselected">التاريخ المحدَّد</string>
+    <string name="mtrl_picker_day_of_week_column_header">%1$s</string>
+    <string name="mtrl_picker_end_date_description">تاريخ الانتهاء: %1$s</string>
+    <string name="mtrl_picker_invalid_format">التنسيق غير صالح</string>
+    <string name="mtrl_picker_invalid_format_example">مثال: %1$s</string>
+    <string name="mtrl_picker_invalid_format_use">استخدام: %1$s</string>
+    <string name="mtrl_picker_invalid_range">النطاق غير صالح</string>
+    <string name="mtrl_picker_navigate_to_current_year_description">الانتقال إلى السنة الحالية %1$d</string>
+    <string name="mtrl_picker_navigate_to_year_description">التنقل إلى العام %1$d</string>
+    <string name="mtrl_picker_out_of_range">خارج النطاق: %1$s</string>
+    <string name="mtrl_picker_range_header_only_end_selected">تاريخ البدء – %1$s</string>
+    <string name="mtrl_picker_range_header_only_start_selected">%1$s – تاريخ الانتهاء</string>
+    <string name="mtrl_picker_range_header_selected">%1$s – %2$s</string>
+    <string name="mtrl_picker_range_header_title">يُرجى اختيار نطاق زمني.</string>
+    <string name="mtrl_picker_range_header_unselected">تاريخ البدء - تاريخ الانتهاء</string>
+    <string name="mtrl_picker_save">حفظ</string>
+    <string name="mtrl_picker_start_date_description">تاريخ البدء: %1$s</string>
+    <string name="mtrl_picker_text_input_date_hint">التاريخ</string>
+    <string name="mtrl_picker_text_input_date_range_end_hint">تاريخ الانتهاء</string>
+    <string name="mtrl_picker_text_input_date_range_start_hint">تاريخ البدء</string>
+    <string name="mtrl_picker_text_input_day_abbr">ي</string>
+    <string name="mtrl_picker_text_input_month_abbr">ش</string>
+    <string name="mtrl_picker_text_input_year_abbr">س</string>
+    <string name="mtrl_picker_today_description">اليوم %1$s</string>
+    <string name="mtrl_picker_toggle_to_calendar_input_mode">التبديل إلى وضع \"الإدخال في التقويم\"</string>
+    <string name="mtrl_picker_toggle_to_day_selection">يمكنك النقر للتبديل إلى عرض \"تقويم Google\".</string>
+    <string name="mtrl_picker_toggle_to_text_input_mode">التبديل إلى وضع \"إدخال النص\"</string>
+    <string name="mtrl_picker_toggle_to_year_selection">يمكنك النقر للتبديل إلى عرض السنة.</string>
+    <string name="mtrl_timepicker_cancel">إلغاء</string>
+    <string name="mtrl_timepicker_confirm">حسنًا</string>
+    <string name="my_account">حسابي</string>
+    <string name="my_addresses">عناويني</string>
+    <string name="my_orders">طلباتي</string>
+    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"التنقل إلى أعلى"</string>
+    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"فتح لائحة التنقل"</string>
+    <string msgid="542007171693138492" name="navigation_menu">"قائمة تنقل"</string>
+    <string name="need_help_contact_our_support_team">بحاجة إلى مساعدة؟ تواصل مع فريق الدعم</string>
+    <string name="new_orders">طلبات جديدة</string>
+    <string name="new_product">+ منتج جديد</string>
+    <string name="new_show">عرض جديد</string>
+    <string name="new_user">مستخدم جديد؟</string>
+    <string name="next">التالي</string>
+    <string name="no">لا</string>
+    <string name="no_cancel">لا، إلغاء</string>
+    <string name="no_data_found">لم يتم العثور على بيانات</string>
+    <string name="no_internet">لا يوجد اتصال بالإنترنت.\nالرجاء الاتصال بالإنترنت وإعادة المحاولة</string>
+    <string name="no_offers_found">لم يتم العثور على عروض</string>
+    <string name="no_thanks">لا شكرًا</string>
+    <string name="no_user_matches_the_name_entered">لا يوجد مستخدم يطابق الاسم المُدخل.</string>
+    <string msgid="6610465462668679431" name="not_selected">"غير محدّد"</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="number_of_products">عدد المنتجات</string>
+    <string name="obs_open_broadcast_software_is_a_free_streaming_and_recording_program_that_lets_you_share_your_live_content_with_your_audience">OBS (برنامج البث المفتوح) هو برنامج بث وتسجيل مجاني يتيح لك مشاركة محتواك المباشر مع جمهورك.</string>
+    <string name="offers">عروض</string>
+    <string name="on_time_scan_rate">معدل المسح في الوقت المحدد</string>
+    <string name="optional_fields">حقول اختيارية</string>
+    <string name="order_date">تاريخ الطلب</string>
+    <string name="order_id">معرف الطلب</string>
+    <string name="other_settings">إعدادات أخرى</string>
+    <string name="over_all">Over All</string>
+    <string name="overview">نظرة عامة</string>
+    <string name="oz">أوقية</string>
+    <string name="password">كلمة المرور</string>
+    <string name="password_toggle_content_description">عرض كلمة المرور</string>
+    <string name="payment_method">طريقة الدفع</string>
+    <string name="payment_shipping"><![CDATA[الدفع والشحن]]></string>
+    <string name="payout_history">سجل الدفعات</string>
+    <string name="payouts">المدفوعات</string>
+    <string name="pending">معلق</string>
+    <string name="performance_section">الأداء</string>
+    <string name="phone_number">رقم الهاتف</string>
+    <string name="pick_a_date_and_time_for_your_live_show">اختر تاريخ ووقت البث المباشر</string>
+    <string name="pick_image_camera">الة تصوير</string>
+    <string name="pick_image_chooser_title">اختر مصدرًا</string>
+    <string name="pick_image_gallery">صالة عرض</string>
+    <string name="places_autocomplete_clear_button">محو البحث</string>
+    <string name="places_autocomplete_label">اختيار مكان</string>
+    <string name="places_autocomplete_no_results_for_query">لم يتم العثور على نتائج عن %1$s</string>
+    <string name="places_autocomplete_search_hint">البحث عن مكان</string>
+    <string name="places_cancel">إلغاء</string>
+    <string name="places_powered_by_google">‏بواسطة Google‏</string>
+    <string name="places_search_error">يتعذر تحميل نتائج البحث.</string>
+    <string name="places_try_again">إعادة المحاولة</string>
+    <string name="play_pause">Play/Pause</string>
+    <string name="play_video">Play video</string>
+    <string name="please_enter_the_email_address_associated_with_your_account">الرجاء إدخال عنوان البريد الإلكتروني المرتبط بحسابك.</string>
+    <string name="please_upload_a_clear_photo_of_your_valid_government_issued_id_driver_s_license_or_passport">يرجى تحميل صورة واضحة لبطاقة هويتك الحكومية الصالحة (رخصة القيادة أو جواز السفر).</string>
+    <string name="policy_standing">حالة الامتثال للسياسات</string>
+    <string name="poll_duration">Poll Duration</string>
+    <string name="poll_options">Poll Options</string>
+    <string name="poll_question">Poll Question</string>
+    <string name="popular">شائع</string>
+    <string name="preferences">التفضيلات</string>
+    <string name="premier_shop">متجر رئيسي</string>
+    <string name="prices_shown_in_usd_actual_boost_duration_may_vary">الأسعار بالدولار الأمريكي. قد تختلف مدة التعزيز الفعلية.</string>
+    <string name="privacy">الخصوصية</string>
+    <string name="privacy_policy"><u>Privacy Policy</u></string>
+    <string name="privacy_policy_plain">سياسة الخصوصية</string>
+    <string name="processing">قيد المعالجة</string>
+    <string name="product_deleted">Product Deleted</string>
+    <string name="product_name">اسم المنتج</string>
+    <string name="product_no_longer_available">This product is no longer available</string>
+    <string name="professional_photographer_specializing_in_portrait_and_wedding_photography_available_for_bookings_worldwide">مصور محترف متخصص في تصوير البورتريه والأعراس. متاح للحجوزات في جميع أنحاء العالم.</string>
+    <string name="promote_show">ترويج العرض</string>
+    <string name="promote_tools">أدوات الترويج</string>
+    <string name="promotion_section">الترويج</string>
+    <string name="publish">نشر</string>
+    <string name="purchases">المشتريات</string>
+    <string name="quantity">الكمية</string>
+    <string name="quantity_available">الكمية المتاحة</string>
+    <string name="quick_visibility_boost">تعزيز سريع للظهور</string>
+    <string msgid="5941395253238309765" name="range_end">"نهاية النطاق"</string>
+    <string msgid="7097486360902471446" name="range_start">"بداية النطاق"</string>
+    <string name="rate_seller">تقييم البائع</string>
+    <string name="rating">التقييم</string>
+    <string name="receive_gifts">استلام الهدايا</string>
+    <string name="rehearsal">بروفة</string>
+    <string name="remember_me">تذكرني</string>
+    <string name="repeats">التكرار</string>
+    <string name="report_seller">Report Seller</string>
+    <string name="requirements">المتطلبات</string>
+    <string name="reserve_for_live">حجز للبث المباشر</string>
+    <string name="reset_password">إعادة تعيين كلمة المرور</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="returns">الإرجاع</string>
+    <string name="revenue">الإيرادات</string>
+    <string name="review">مراجعة</string>
+    <string name="reviews">التقييمات</string>
+    <string name="sales">المبيعات</string>
+    <string name="sales_tax_exemption">إعفاء ضريبة المبيعات</string>
+    <string name="save">حفظ</string>
+    <string name="save_draft">حفظ المسودة</string>
+    <string name="save_past_shows">حفظ العروض السابقة</string>
+    <string name="saved_items">العناصر المحفوظة</string>
+    <string name="say_something">Say Something...</string>
+    <string name="schedule_your_first_show">حدد موعد بثك الأول</string>
+    <string msgid="6264217191555673260" name="search_menu_title">"البحث"</string>
+    <string name="search_products">بحث عن المنتجات..</string>
+    <string name="search_users">بحث عن المستخدمين</string>
+    <string name="searchview_clear_text_content_description">محو النص</string>
+    <string name="searchview_navigation_content_description">رجوع</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="see_all_categories_tile">See All
+Categories</string>
+    <string name="select">اختيار</string>
+    <string name="select_auction_type">اختر نوع المزاد</string>
+    <string name="select_category">اختر الفئة</string>
+    <string name="select_country">اختر الدولة</string>
+    <string name="select_duration">Select duration (minutes)</string>
+    <string name="select_format">اختر التنسيق</string>
+    <string name="select_from_product_inventory">اختر من مخزون المنتجات</string>
+    <string name="select_language">اختر اللغة</string>
+    <string name="select_live_seller_for_raid">اختر بائعًا مباشرًا للغارة</string>
+    <string name="select_media_type">اختر نوع الوسائط</string>
+    <string name="select_next_product_for_auction">Select Next Product For Auction</string>
+    <string name="select_payment_method">اختر طريقة الدفع</string>
+    <string name="select_profile">اختر الملف الشخصي</string>
+    <string name="select_shipping_address">اختر عنوان الشحن</string>
+    <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
+    <string name="select_the_category_the_most_accurately_describes_your_show_and_how_you_would_like_to_sell">اختر الفئة التي تصف بثك بدقة وكيف تريد البيع.</string>
+    <string name="select_time">اختر الوقت</string>
+    <string msgid="6043586758067023" name="selected">"محدّد"</string>
+    <string name="selfie">صورة سيلفي</string>
+    <string name="sell">بيع</string>
+    <string name="sell_on_bidswipe">بيع على Bidswipe</string>
+    <string name="seller_analytics">تحليلات البائع</string>
+    <string name="seller_hub">مركز البائع</string>
+    <string name="seller_section">البائع</string>
+    <string name="seller_status">حالة البائع</string>
+    <string name="seller_training">تدريب البائع</string>
+    <string name="seller_verification">توثيق البائع</string>
+    <string name="sellers_covers_ny_shipping_adjustments">يتحمل البائع أي تعديلات على الشحن.</string>
+    <string name="send_as_a_gift">أرسل كهدية؟</string>
+    <string name="send_message">Send Message</string>
+    <string name="send_offer">إرسال العرض</string>
+    <string name="send_this_purchase_as_a_gift_to_someone_special">أرسل هذا الشراء كهدية لشخص مميز</string>
+    <string name="send_tip">Send Tip</string>
+    <string name="set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity">حدد سعراً مبدئياً تنافسياً لجذب المشترين المحتملين. السعر المناسب يزيد فرص البيع الناجح ويحفّز نشاط المزايدة.</string>
+    <string name="set_as_default">تعيين كافتراضي</string>
+    <string name="setting_up_your_store">إعداد متجرك</string>
+    <string name="settings_section">الإعدادات</string>
+    <string name="share">Share</string>
+    <string name="share_amp_earn_reward"><![CDATA[شارك واربح مكافآت]]></string>
+    <string name="share_invite_link">شارك رابط الدعوة</string>
+    <string name="share_show">مشاركة العرض</string>
+    <string name="share_your_link">شارك رابطك</string>
+    <string name="shipping">الشحن</string>
+    <string name="shipping_address">عنوان الشحن</string>
+    <string name="shipping_profile">Shipping Profile</string>
+    <string name="shop">المتجر</string>
+    <string name="show_category">فئة البث</string>
+    <string name="show_details">تفاصيل البث</string>
+    <string name="show_nnotes">ملاحظات\nالعرض</string>
+    <string name="show_notes">ملاحظات\nالعرض</string>
+    <string name="show_reward_status">إظهار حالة المكافأة</string>
+    <string name="show_seller_tools">إظهار أدوات البائع</string>
+    <string name="show_time_00_00_01">وقت البث:00:00:00</string>
+    <string name="show_title">عنوان البث</string>
+    <string name="shows">العروض</string>
+    <string name="side_sheet_accessibility_pane_title">ورقة جانبية</string>
+    <string msgid="2792228137354697160" name="snackbar_pane_title">"تنبيه"</string>
+    <string name="sold_by">مباع من قبل</string>
+    <string name="sort_by">فرز حسب</string>
+    <string name="sound">الصوت</string>
+    <string name="start_auction">بدء المزاد</string>
+    <string name="start_bid">ابدأ بالمزايدة</string>
+    <string name="start_now">Start Now</string>
+    <string name="start_your_selling_journey_on_bidswipe_learn_how_to_list_products_manage_your_store_and_connect_with_buyers">ابدأ رحلتك البيعية على Bidswipe! تعلّم كيفية إدراج المنتجات وإدارة متجرك والتواصل مع المشترين.</string>
+    <string name="state">الولاية</string>
+    <string msgid="4139871816613051306" name="state_empty">"حقل فارغ"</string>
+    <string msgid="5834637030682409883" name="state_off">"غير مفعَّل"</string>
+    <string msgid="1490883874751719580" name="state_on">"مفعَّل"</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="step_1_of_7">الخطوة 1 من 7</string>
+    <string name="stream_title">عنوان البث</string>
+    <string name="street_address">عنوان الشارع</string>
+    <string name="stripe_hcaptcha_loading_text">التحقق من أنك إنسان</string>
+    <string name="sub_category">فئة فرعية</string>
+    <string name="subject">الموضوع</string>
+    <string name="submit">إرسال</string>
+    <string name="submit_for_review">إرسال للمراجعة</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="success_please_enter_the_code_that_was_sent_to_the_email_associated_with_your_account">تم! الرجاء إدخال الرمز المرسل إلى بريدك الإلكتروني.</string>
+    <string name="success_please_enter_your_new_password_below">تم! الرجاء إدخال كلمة المرور الجديدة.</string>
+    <string name="support_company_com">support@company.com</string>
+    <string name="surprise_set">مجموعة مفاجآت</string>
+    <string name="surprise_set_description">وصف مجموعة المفاجآت</string>
+    <string name="surprise_set_details">Surprise Set Details</string>
+    <string name="surprise_set_name">اسم مجموعة المفاجآت</string>
+    <string name="swiftbid_buyer_protection">حماية مشتري SwiftBid</string>
+    <string msgid="2561197295334830845" name="switch_role">"تبديل"</string>
+    <string msgid="1672349317127674378" name="tab">"علامة تبويب"</string>
+    <string name="tap_to_upload_thumbnail">اضغط لرفع الصورة المصغرة</string>
+    <string name="tap_to_upload_your_id_photo">انقر لتحميل صورة هويتك</string>
+    <string name="tell_us_about_yourself">أخبرنا عن نفسك</string>
+    <string name="tell_us_more">Tell us more</string>
+    <string msgid="5946805113151406391" name="template_percent">"<ns1:g id="PERCENTAGE">%1$d</ns1:g> في المئة."</string>
+    <string name="terms_and_conditions">الشروط والأحكام</string>
+    <string name="terms_of_service">  | <u>Terms of Service</u></string>
+    <string name="this_is_my_message">هذه رسالتي</string>
+    <string name="time_to_prepare_your_items_properly">حان الوقت لتحضير منتجاتك بشكلٍ صحيح</string>
+    <string name="tip_settings">إعدادات الإكراميات</string>
+    <string name="tips">نصائح</string>
+    <string name="tips_for_a_great_thumbnail">نصائح لصورة مصغرة رائعة</string>
+    <string name="tips_for_a_great_title">نصائح لعناوين جذابة</string>
+    <string name="title">العنوان</string>
+    <string name="to_become_a_trusted_buyer_we_need_to_verify_your_identity_this_helps_create_a_safe">لتصبح مشترياً موثوقاً به، نحتاج إلى التحقق من هويتك. يساعد هذا في خلق بيئة آمنة</string>
+    <string msgid="3765533235322692011" name="tooltip_description">"تلميح"</string>
+    <string msgid="3124740595719787496" name="tooltip_label">"إظهار التلميح"</string>
+    <string name="total">المجموع</string>
+    <string name="total_orders">إجمالي الطلبات</string>
+    <string name="transactions">المعاملات</string>
+    <string name="trim_clip">قص المقطع</string>
+    <string name="trust">Trust</string>
+    <string name="trusted_buyer">مشتري موثوق</string>
+    <string name="try_something_like_tip_for_a_shoutout">جرّب شيئًا مثل \"إكرامية مقابل تحية\"</string>
+    <string name="turn_off_if_you_want_a_slower_spin_animation_this_does_not_affect_randomization">أوقفه إذا كنت تريد حركة دوران أبطأ. هذا لا يؤثر على العشوائية.</string>
+    <string name="type_here">Type here...</string>
+    <string name="unmute">Unmute</string>
+    <string name="upcoming_shows">العروض القادمة</string>
+    <string name="update">تحديث</string>
+    <string name="upload">تحميل</string>
+    <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[حمّل بطاقة هويتك والتقط صورة سيلفي]]></string>
+    <string name="username">اسم المستخدم</string>
+    <string name="users">المستخدمون</string>
+    <string name="vacation_mode">وضع العطلة</string>
+    <string name="verification_progress">تقدّم التحقق</string>
+    <string name="verified">تم التحقق</string>
+    <string name="verified_buyers">Verified Buyers</string>
+    <string name="verify_code">تحقق من الرمز</string>
+    <string name="view_all">عرض الكل</string>
+    <string name="wallet">المحفظة</string>
+    <string name="wallet_buy_button_place_holder">الشراء عبر Google</string>
+    <string name="watch_vod">مشاهدة الفيديو عند الطلب</string>
+    <string name="we_re_here_to_help_send_us_your_queries_and_we_ll_get_back_to_you_soon">نحن هنا للمساعدة! أرسل لنا استفساراتك وسنعاود الاتصال بك قريباً.</string>
+    <string name="weight_0_00">0.00</string>
+    <string name="what_are_you_looking_for">ماذا تبحث عنه؟</string>
+    <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
+    <string name="why_scedule_in_advance">لماذا الجدولة المسبقة؟</string>
+    <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
+    <string name="write_something">Write Something</string>
+    <string name="write_your_message_here">اكتب رسالتك هنا...</string>
+    <string name="yes">نعم</string>
+    <string name="yes_notify_me">نعم، أبلغني</string>
+    <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">لن يتم تحصيل رسوم منك إلا إذا قبل البائع عرضك</string>
+    <string name="your_referral_link">رابط الإحالة الخاص بك</string>
+    <string name="your_referral_stats">إحصائيات إحالاتك</string>
+    <string name="zip_code">الرمز البريدي</string>
+    <string name="zoom_in">تكبير</string>
+</resources>

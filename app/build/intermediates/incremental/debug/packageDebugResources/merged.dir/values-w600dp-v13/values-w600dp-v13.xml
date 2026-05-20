@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add">Add</string>
+    <string name="address_type">Address Type</string>
+    <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">After each product sells, the buyer will be randomly assigned. Turn off if you want to randomize manually.</string>
+    <string name="auction_settings">Auction Settings</string>
+    <string name="awaiting_next_item">Awaiting Next Item</string>
+    <string name="buy_in_price">Buy-in-Price</string>
+    <string name="create_a_surprise_set">Create a Surprise Set</string>
+    <string name="create_surprise_set">Create Surprise Set</string>
+    <string name="description_optional">Description (Optional)</string>
+    <string name="follow_seller">Follow Seller</string>
+    <string name="last_60_seconds">Last 60 seconds</string>
+    <string name="live_poll">Live Poll</string>
+    <string name="manage_products">Manage Products</string>
+    <string name="max_bid_amount">Max Bid Amount</string>
+    <string name="number_of_products">Number of Products</string>
+    <string name="product_name">Product Name</string>
+    <string name="search_users">Search Users</string>
+    <string name="select_country">Select Country</string>
+    <string name="select_live_seller_for_raid">Select Live Seller for Raid</string>
+    <string name="select_media_type">Select Media Type</string>
+    <string name="select_payment_method">Select Payment Method</string>
+    <string name="sort_by">Sort By</string>
+    <string name="sub_category">Sub-Category</string>
+    <string name="surprise_set">Surprise Set</string>
+    <string name="surprise_set_description">Surprise Set Description</string>
+    <string name="surprise_set_name">Surprise Set Name</string>
+    <string name="tip_settings">Tip Settings</string>
+    <string name="turn_off_if_you_want_a_slower_spin_animation_this_does_not_affect_randomization">Turn off if you want a slower spin animation. This does not affect randomization.</string>
+    <string name="view_all">View All</string>
+</resources>

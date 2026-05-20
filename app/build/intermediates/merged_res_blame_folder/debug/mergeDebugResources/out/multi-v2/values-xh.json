@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.bidswipe.app-mergeDebugResources-116:/values-xh/values-xh.xml",
+            "map": [
+                {
+                    "source": "/Users/bluemini/.gradle/caches/8.13/transforms/2c8ac5f91bd39d7f9802abca5c8ea1f6/transformed/jetified-hcaptcha-22.5.0/res/values-xh/values-xh.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "85",
+                        "endOffsets": "136"
+                    }
+                }
+            ]
+        }
+    ]
+}

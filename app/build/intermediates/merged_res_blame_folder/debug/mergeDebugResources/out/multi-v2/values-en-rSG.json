@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.bidswipe.app-mergeDebugResources-116:/values-en-rSG/values-en-rSG.xml",
+            "map": [
+                {
+                    "source": "/Users/bluemini/.gradle/caches/8.13/transforms/d17ad8e8cefd6c0d4ad4e4828ec8f8b7/transformed/jetified-play-services-wallet-19.4.0/res/values-en-rSG/values.xml",
+                    "from": {
+                        "startLines": "4,5",
+                        "startColumns": "0,0",
+                        "startOffsets": "206,263",
+                        "endColumns": "56,70",
+                        "endOffsets": "262,333"
+                    },
+                    "to": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,116",
+                        "endColumns": "60,74",
+                        "endOffsets": "111,186"
+                    }
+                }
+            ]
+        }
+    ]
+}

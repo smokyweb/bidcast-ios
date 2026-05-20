@@ -17,6 +17,11 @@ import SVProgressHUD
 
 struct LoginScreen: View {
     
+    enum FocusableField: Hashable {
+        case email
+        case password
+    }
+    
     @EnvironmentObject private var appRootManager: AppRootManager
     @Environment(\.managedObjectContext) var viewContext
     @ObservedObject var languageManager = LanguageManager.shared
@@ -49,6 +54,7 @@ struct LoginScreen: View {
     
     @State var navigateToPrivacy = false
     @State var navigateToTerms = false
+    @FocusState private var focusedField: FocusableField?
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -61,16 +67,22 @@ struct LoginScreen: View {
                 }
                 VStack(alignment: .leading, spacing: 16) {
                     Group {
-                        AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email, enteredText:  { email in
+                        AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email, submitLabel: .next, onSubmit: {
+                            focusedField = .password
+                        }, enteredText:  { email in
                             self.request.email = email
                         })
                         .textContentType(.username)
                         .keyboardType(.emailAddress)
+                        .focused($focusedField, equals: .email)
                         
-                        AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText:  { password in
+                        AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, submitLabel: .go, onSubmit: {
+                            performLogin()
+                        }, enteredText:  { password in
                             self.request.password = password
                         })
                         .textContentType(.password)
+                        .focused($focusedField, equals: .password)
                     }
                     
                     HStack {
@@ -105,50 +117,7 @@ struct LoginScreen: View {
                     
                     
                     PrimaryButton(title: AppString.login.localized, isOutLine: false,onButtonClick: {
-                        UIApplication.shared.endEditing()
-                        hideKeyboard()
-                        guard Reachability.isConnectedToNetwork() else {
-                            hudMsg = "No Internet Connection"
-                            showhud = true
-                            return
-                        }
-                        
-                        guard !request.email.isEmpty else {
-                            hudMsg = AppString.pleaseEnterEmail.localized
-                            showhud = true
-                            return
-                        }
-                        
-                        guard !request.password.isEmpty else {
-                            hudMsg = AppString.pleaseEnterPassword.localized
-                            showhud = true
-                            return
-                        }
-                        
-                        guard request.password.count > 7 else {
-                            hudMsg = AppString.passwordNotLessThan.localized
-                            showhud = true
-                            return
-                        }
-                        print("Parameters used for login:- \(self.request)")
-                        Task{
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            SVProgressHUD.show()
-                            viewModel.errorMessage?.removeAll()
-                            await self.viewModel.logIn(parameters: self.request)
-                            await SVProgressHUD.dismiss()
-                            if viewModel.errorMessage == "" || viewModel.errorMessage == nil  {
-                                await success()
-                            }else{
-                                alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
-                                withAnimation(.snappy) { showError = true }
-                            }
-                           
-                        }
+                        performLogin()
                     }, btnTextColor: .white)
                     
                     
@@ -252,6 +221,53 @@ struct LoginScreen: View {
                     }
                 }
             }
+    }
+    
+    private func performLogin() {
+        UIApplication.shared.endEditing()
+        hideKeyboard()
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        
+        guard !request.email.isEmpty else {
+            hudMsg = AppString.pleaseEnterEmail.localized
+            showhud = true
+            return
+        }
+        
+        guard !request.password.isEmpty else {
+            hudMsg = AppString.pleaseEnterPassword.localized
+            showhud = true
+            return
+        }
+        
+        guard request.password.count > 7 else {
+            hudMsg = AppString.passwordNotLessThan.localized
+            showhud = true
+            return
+        }
+        print("Parameters used for login:- \(self.request)")
+        Task{
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            SVProgressHUD.show()
+            viewModel.errorMessage?.removeAll()
+            await self.viewModel.logIn(parameters: self.request)
+            await SVProgressHUD.dismiss()
+            if viewModel.errorMessage == "" || viewModel.errorMessage == nil  {
+                await success()
+            }else{
+                alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+                withAnimation(.snappy) { showError = true }
+            }
+           
+        }
     }
     
     private func openURL(_ urlString: String) {

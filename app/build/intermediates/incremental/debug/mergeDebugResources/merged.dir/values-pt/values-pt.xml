@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string-array name="exo_controls_playback_speeds">
+    <item>0,25x</item>
+    <item>0,5x</item>
+    <item>0,75x</item>
+    <item>Normal</item>
+    <item>1,25x</item>
+    <item>1,5x</item>
+    <item>2x</item>
+  </string-array>
+    <plurals name="exo_controls_fastforward_by_amount_description">
+    <item quantity="one">Avançar %d segundo</item>
+    <item quantity="other">Avançar %d segundos</item>
+  </plurals>
+    <plurals name="exo_controls_rewind_by_amount_description">
+    <item quantity="one">Voltar %d segundo</item>
+    <item quantity="other">Voltar %d segundos</item>
+  </plurals>
+    <string name="_0_00">$ 0.00</string>
+    <string name="_10_00_oz">10,00 oz</string>
+    <string name="_continue">Continuar</string>
+    <string name="_switch">Alternar</string>
+    <string msgid="5976598919945601918" name="abc_action_bar_home_description">"Navegar para a página inicial"</string>
+    <string msgid="8388173803310557296" name="abc_action_bar_up_description">"Navegar para cima"</string>
+    <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"Mais opções"</string>
+    <string msgid="4692188335987374352" name="abc_action_mode_done">"Concluído"</string>
+    <string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"Ver tudo"</string>
+    <string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"Selecionar um app"</string>
+    <string msgid="4215997306490295099" name="abc_capital_off">"DESATIVADO"</string>
+    <string msgid="884982626291842264" name="abc_capital_on">"ATIVADO"</string>
+    <string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt+"</string>
+    <string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl+"</string>
+    <string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"delete"</string>
+    <string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"enter"</string>
+    <string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Function+"</string>
+    <string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta+"</string>
+    <string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Shift+"</string>
+    <string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"espaço"</string>
+    <string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym+"</string>
+    <string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Menu+"</string>
+    <string msgid="7208076849092622260" name="abc_search_hint">"Pesquisar…"</string>
+    <string msgid="3741173234950517107" name="abc_searchview_description_clear">"Limpar consulta"</string>
+    <string msgid="693312494995508443" name="abc_searchview_description_query">"Consulta de pesquisa"</string>
+    <string msgid="3417662926640357176" name="abc_searchview_description_search">"Pesquisar"</string>
+    <string msgid="1486535517437947103" name="abc_searchview_description_submit">"Enviar consulta"</string>
+    <string msgid="2293578557972875415" name="abc_searchview_description_voice">"Pesquisa por voz"</string>
+    <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Compartilhar com"</string>
+    <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Compartilhar com <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Recolher"</string>
+    <string name="about_us">Sobre nós</string>
+    <string name="accept_offers">Aceitar ofertas</string>
+    <string name="accepted">Aceito</string>
+    <string name="account">Conta</string>
+    <string name="account_health">Saúde da conta</string>
+    <string name="active">Ativo</string>
+    <string name="activity">Atividade</string>
+    <string name="activity_status">Status de atividade</string>
+    <string name="add">Adicionar</string>
+    <string name="add_a_gift_message_optional">Adicionar uma mensagem de presente (opcional)</string>
+    <string name="add_address">Adicionar endereço</string>
+    <string name="add_another_product">Adicionar outro produto</string>
+    <string name="add_new_address">+ Adicionar novo endereço</string>
+    <string name="add_payment_method">+ Adicionar forma de pagamento</string>
+    <string name="add_payment_method_and_address">Add Payment Method and Address</string>
+    <string name="add_product">Adicionar produto</string>
+    <string name="add_variants">Adicionar variantes</string>
+    <string name="added_product">Produto adicionado</string>
+    <string name="address_type">Tipo de endereço</string>
+    <string name="addresses">Endereços</string>
+    <string name="affiliate_program">Programa de afiliados</string>
+    <string name="after_each_product_sells_the_buyer_will_be_randomly_assigned_turn_off_if_you_want_to_randomize_manually">Após a venda de cada produto, o comprador será atribuído aleatoriamente. Desative se quiser randomizar manualmente.</string>
+    <string name="allow_offers">Permitir ofertas</string>
+    <string name="analytics">Análises</string>
+    <string msgid="1150566100598813236" name="androidx_compose_ui_autofill">"Preencher automaticamente"</string>
+    <string name="app_name">Bidswipe</string>
+    <string name="apply_now">Inscreva-se agora</string>
+    <string name="auction">Leilão</string>
+    <string name="auction_settings">Configurações do leilão</string>
+    <string name="auction_type">Tipo de leilão</string>
+    <string name="auctions">Leilões</string>
+    <string name="awaiting_next_item">Aguardando o próximo item</string>
+    <string name="back">Voltar</string>
+    <string name="become_a_bidswipe_seller">Torne-se um vendedor Bidswipe</string>
+    <string name="become_a_trusted_buyer">Torne-se um comprador confiável</string>
+    <string name="before_you_start_selling_please_review_and_agree_to_our_seller_guidelines">Antes de começar a vender, revise e aceite nossas diretrizes para vendedores.</string>
+    <string name="better_promotion_opportunities">Melhores oportunidades de promoção</string>
+    <string name="bids">Lances</string>
+    <string name="bidswipe_calculates_shipping_fees_based_on_the_product_weight_you_can_adjust_this_later_if_needed">O Bidswipe calcula as taxas de envio com base no peso do produto. Você pode ajustá-las depois, se necessário.</string>
+    <string name="bio">Biografia</string>
+    <string name="block_seller">Bloquear vendedor</string>
+    <string name="blocked_message">You cannot send messages to this chat.</string>
+    <string name="blocked_users">Usuários bloqueados</string>
+    <string name="broadcasting_options">Broadcasting Options</string>
+    <string name="buy_in_price">Preço de entrada</string>
+    <string name="buy_it_now">Compre agora</string>
+    <string name="buy_now">Comprar agora</string>
+    <string msgid="881409763997275156" name="call_notification_answer_action">"Atender"</string>
+    <string msgid="8793775615905189152" name="call_notification_answer_video_action">"Vídeo"</string>
+    <string msgid="3229508546291798546" name="call_notification_decline_action">"Recusar"</string>
+    <string msgid="2659457946726154263" name="call_notification_hang_up_action">"Desligar"</string>
+    <string msgid="6107532579223922871" name="call_notification_incoming_text">"Alguém está ligando"</string>
+    <string msgid="8623827134497363134" name="call_notification_ongoing_text">"Chamada em andamento"</string>
+    <string msgid="59049573811482460" name="call_notification_screening_text">"Filtrando uma ligação recebida"</string>
+    <string name="cancel">Cancelar</string>
+    <string name="caption">Legenda</string>
+    <string name="card_holder_name">Nome no cartão</string>
+    <string name="card_number">Número do cartão</string>
+    <string name="category">Categoria</string>
+    <string name="certification_details">Detalhes da certificação</string>
+    <string name="change">Alterar</string>
+    <string name="choose_file">Escolher arquivo</string>
+    <string name="choose_the_categories_you_re_interested_in_to_watch_related_shows">Choose the categories you’re interested in to watch related shows.</string>
+    <string name="city">Cidade</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="clips">Clipes</string>
+    <string msgid="406453423630273620" name="close_drawer">"Fechar menu de navegação"</string>
+    <string msgid="7573152094250666567" name="close_sheet">"Fechar planilha"</string>
+    <string name="comming_soon">Em breve</string>
+    <string name="completed">Concluído</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirm_password">Confirmar senha</string>
+    <string name="confirm_purchase">Confirmar compra</string>
+    <string name="contact_support">Contatar suporte</string>
+    <string name="contact_us">Fale conosco</string>
+    <string name="content">Conteúdo</string>
+    <string name="continue_to_next_step">Continuar para a próxima etapa</string>
+    <string name="copy">Copiar</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Link copiado para a área de transferência"</string>
+    <string name="country_of_residence">País de residência</string>
+    <string name="coupons">Cupons</string>
+    <string name="create_a_raid">Criar um raid</string>
+    <string name="create_a_surprise_set">Criar um conjunto surpresa</string>
+    <string name="create_account">Criar conta</string>
+    <string name="create_clip">Criar clipe</string>
+    <string name="create_poll">Create Poll</string>
+    <string name="create_poll_description">Engage your audience by creating a poll. Ask a question and let viewers vote!</string>
+    <string name="create_product">Criar produto</string>
+    <string name="create_show">Criar show</string>
+    <string name="create_surprise_set">Criar conjunto surpresa</string>
+    <string name="credits">Créditos</string>
+    <string name="custom_offer">Oferta personalizada</string>
+    <string name="cvv">CVV</string>
+    <string name="declined">Recusado</string>
+    <string msgid="8038256446254964252" name="default_error_message">"Entrada inválida"</string>
+    <string msgid="6312721426453364202" name="default_popup_window_title">"Janela pop-up"</string>
+    <string name="defect_free_order_rate">Taxa de pedidos sem defeitos</string>
+    <string name="delete">Excluir</string>
+    <string name="delete_account">Excluir conta</string>
+    <string name="deleting_your_account_is_irreversible_and_will_permanently_erase_all_your_data_this_action_cannot_be_undone_please_consider_carefully_before_proceeding">Deleting your account is irreversible and will permanently erase all your data. This action cannot be undone. Please consider carefully before proceeding.</string>
+    <string name="delivered">Entregue</string>
+    <string name="delivery_address">Endereço de entrega</string>
+    <string name="describe_your_product">Descreva seu produto</string>
+    <string name="description">Descrição</string>
+    <string name="description_optional">Descrição (opcional)</string>
+    <string name="direct_messages">Mensagens diretas</string>
+    <string name="display">Exibição</string>
+    <string name="draft">Rascunho</string>
+    <string msgid="1890207353314751437" name="dropdown_menu">"Menu suspenso"</string>
+    <string name="email">E-mail</string>
+    <string name="enable_allow_offers_to_let_buyers_offer_a_different_price_for_your_product_you_may_counter_accept_or_simply_decline_the_offer">Ative “Permitir ofertas” para permitir que compradores ofereçam um preço diferente pelo seu produto. Você pode contraofertar, aceitar ou recusar.</string>
+    <string name="enable_clips">Ativar clipes</string>
+    <string name="enable_free_pickup">Ativar retirada grátis</string>
+    <string name="enable_private_entry">Ativar entrada privada</string>
+    <string name="end_show">End Show</string>
+    <string name="enter_card_number">Digite o número do cartão</string>
+    <string name="enter_code">Digitar código</string>
+    <string name="enter_phone_number">Digite o número de telefone</string>
+    <string name="enter_poll_question">Enter your poll question here</string>
+    <string name="enter_price">Enter Price</string>
+    <string name="enter_product_title">Digitar título do produto</string>
+    <string name="enter_promo_code">Inserir código promocional</string>
+    <string name="enter_quantity">Digitar quantidade</string>
+    <string name="enter_referral_code">Digite o código de indicação</string>
+    <string name="enter_street_address">Digite o endereço</string>
+    <string name="enter_subject">Inserir assunto</string>
+    <string name="enter_your_confirm_password">Digite sua senha de confirmação</string>
+    <string name="enter_your_email">Digite seu email</string>
+    <string name="enter_your_first_name">Digite seu nome</string>
+    <string name="enter_your_full_name">Digite seu nome completo</string>
+    <string name="enter_your_last_name">Digite seu sobrenome</string>
+    <string name="enter_your_message_here">Digite sua mensagem aqui...</string>
+    <string name="enter_your_own_amount">Insira seu próprio valor</string>
+    <string name="enter_your_password">Digite sua senha</string>
+    <string name="enter_your_show_title">Digite o título do seu evento</string>
+    <string name="example_preview">Visualização de exemplo</string>
+    <string name="exemption_status">Status de isenção</string>
+    <string name="exit">Sair</string>
+    <string name="exo_controls_cc_disabled_description">Ativar legendas</string>
+    <string name="exo_controls_cc_enabled_description">Desativar legendas</string>
+    <string name="exo_controls_fastforward_description">Avançar</string>
+    <string name="exo_controls_fullscreen_enter_description">Entrar no modo de tela cheia</string>
+    <string name="exo_controls_fullscreen_exit_description">Sair do modo de tela cheia</string>
+    <string name="exo_controls_hide">Ocultar controles do player</string>
+    <string name="exo_controls_next_description">Avançar</string>
+    <string name="exo_controls_overflow_hide_description">Ocultar configurações extras</string>
+    <string name="exo_controls_overflow_show_description">Exibir configurações extras</string>
+    <string name="exo_controls_pause_description">Pausar</string>
+    <string name="exo_controls_play_description">Reproduzir</string>
+    <string name="exo_controls_playback_speed">Velocidade</string>
+    <string name="exo_controls_previous_description">Anterior</string>
+    <string name="exo_controls_repeat_all_description">Modo atual: repetir tudo. Alternar modo de repetição.</string>
+    <string name="exo_controls_repeat_off_description">Modo atual: não repetir. Alternar modo de repetição.</string>
+    <string name="exo_controls_repeat_one_description">Modo atual: repetir um item. Alternar modo de repetição.</string>
+    <string name="exo_controls_rewind_description">Voltar</string>
+    <string name="exo_controls_seek_bar_description">Andamento da reprodução</string>
+    <string name="exo_controls_settings_description">Configurações</string>
+    <string name="exo_controls_show">Mostrar controles do player</string>
+    <string name="exo_controls_shuffle_off_description">Ativar o modo de ordem aleatória</string>
+    <string name="exo_controls_shuffle_on_description">Desativar o modo de ordem aleatória</string>
+    <string name="exo_controls_stop_description">Parar</string>
+    <string name="exo_controls_vr_description">Modo RV</string>
+    <string name="exo_download_completed">Download concluído</string>
+    <string name="exo_download_description">Fazer o download</string>
+    <string name="exo_download_downloading">Fazendo o download</string>
+    <string name="exo_download_failed">Falha no download</string>
+    <string name="exo_download_notification_channel_name">Downloads</string>
+    <string name="exo_download_paused">Downloads pausados</string>
+    <string name="exo_download_paused_for_network">Downloads aguardando uma conexão de rede</string>
+    <string name="exo_download_paused_for_wifi">Downloads aguardando uma rede Wi-Fi</string>
+    <string name="exo_download_removing">Removendo downloads</string>
+    <string name="exo_item_list">%1$s, %2$s</string>
+    <string name="exo_track_bitrate">%1$.2f Mbps</string>
+    <string name="exo_track_mono">Mono</string>
+    <string name="exo_track_resolution">%1$d × %2$d</string>
+    <string name="exo_track_role_alternate">Alternativa</string>
+    <string name="exo_track_role_closed_captions">CC</string>
+    <string name="exo_track_role_commentary">Comentários</string>
+    <string name="exo_track_role_supplementary">Complementar</string>
+    <string name="exo_track_selection_auto">Automática</string>
+    <string name="exo_track_selection_none">Nenhuma</string>
+    <string name="exo_track_selection_title_audio">Áudio</string>
+    <string name="exo_track_stereo">Estéreo</string>
+    <string name="exo_track_surround">Sistema surround</string>
+    <string name="exo_track_surround_5_point_1">Sistema surround 5.1</string>
+    <string name="exo_track_surround_7_point_1">Sistema surround 7.1</string>
+    <string name="exo_track_unknown">Desconhecido</string>
+    <string name="exo_track_unknown_name">Desconhecido (%1$s)</string>
+    <string name="expiration_date">Data de validade</string>
+    <string name="expiry_date">Data de validade</string>
+    <string name="explore">Explorar</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Copiar link"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Abrir no navegador"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Compartilhar link"</string>
+    <string name="faq_label">Perguntas frequentes</string>
+    <string name="favourite">Favorito</string>
+    <string name="finish">Concluir</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="first_name">Nome</string>
+    <string name="follow">Seguir</string>
+    <string name="follow_seller">Seguir vendedor</string>
+    <string name="for_you_tile">For You</string>
+    <string name="forgot_password">Esqueceu a senha?</string>
+    <string name="full_name">Nome completo</string>
+    <string name="get_featured_in_the_top_shows_for_15_minutes">Destaque-se nos principais shows por 15 minutos</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="get_notification">Get Notification</string>
+    <string name="gift_to_a_friend">Presente para um amigo</string>
+    <string name="goods_examples">Exemplos de produtos</string>
+    <string name="haptic_feedback">Feedback tátil</string>
+    <string name="hazardous_material">Material perigoso</string>
+    <string name="home">Início</string>
+    <string name="how_it_works">Como funciona</string>
+    <string name="how_it_works_info">
+        &lt;p>
+        Surprise items is a format where a set of items are each sold at random —
+        the buyer finds out which of the items they will receive live.
+        You can see all available items in this format in the Items tab.
+        &lt;/p>
+
+        &lt;h3>What To Expect?&lt;/h3>
+
+        &lt;p>Surprise Sets go through two main stages:&lt;/p>
+
+        &lt;h4>⏳ Filling + Running&lt;/h4>
+        &lt;p>
+        The excitement begins! This is the time when you can purchase a surprise item.
+        You can always see how many spots are left and what items have been sold.
+        &lt;/p>
+
+        &lt;h4>✅ Completed&lt;/h4>
+        &lt;p>
+        The sale is over. All of the available items have been sold and revealed,
+        and the seller will ship to you as soon as they can.
+        &lt;/p>
+    </string>
+    <string name="i_agree_to_follow_these_guidelines_and_understand_that_violations_may_result_in_account_suspension">Concordo em seguir estas diretrizes e entendo que violações podem resultar em suspensão da conta</string>
+    <string name="id_card">Documento de identidade</string>
+    <string name="id_verification">Verificação de identidade</string>
+    <string name="identity_verification">Verificação de identidade</string>
+    <string msgid="6827826412747255547" name="in_progress">"Em andamento"</string>
+    <string name="inactive">Inativo</string>
+    <string msgid="7933458017204019916" name="indeterminate">"Parcialmente selecionada"</string>
+    <string name="inventory">Inventário</string>
+    <string name="invite_friends_and_earn_rewards_when_they_join">Convide amigos e ganhe recompensas quando eles se juntarem</string>
+    <string name="issue_date">Data de emissão</string>
+    <string name="item_weight">Peso do item</string>
+    <string name="items">Itens</string>
+    <string name="items_containing_flammable_explosive_or_other_dangerous_materials_learn_more_about_hazardous_materials">Itens contendo materiais inflamáveis, explosivos ou outros perigosos. Saiba mais sobre materiais perigosos</string>
+    <string name="john_smith">John Smith</string>
+    <string name="language">Idioma</string>
+    <string name="last_60_seconds">Últimos 60 segundos</string>
+    <string name="last_name">Sobrenome</string>
+    <string name="learn_more">Saiba mais</string>
+    <string name="let_others_know_who_you_are">Deixe os outros saberem quem você é?</string>
+    <string name="listed_price">Preço listado</string>
+    <string name="live_now">Ao vivo agora</string>
+    <string name="live_poll">Enquete ao vivo</string>
+    <string name="livestream">Livestream</string>
+    <string name="login">Entrar</string>
+    <string name="logout">Sair</string>
+    <string name="make_an_offer">Fazer uma oferta</string>
+    <string name="make_offer">Fazer oferta</string>
+    <string name="manage_products">Gerenciar produtos</string>
+    <string name="managing_orders_amp_shipping"><![CDATA[Gerenciando pedidos e envio]]></string>
+    <string name="manual_verification">Verificação manual</string>
+    <string name="max_bid_amount">Valor máximo do lance</string>
+    <string name="messages">Mensagens</string>
+    <string name="mic">Microfone</string>
+    <string name="mic_test">Teste de microfone</string>
+    <string name="minimum_starting_bid_is_1_00">Lance inicial mínimo de $1.00</string>
+    <string name="more_info">Mais informações</string>
+    <string name="more_potential_buyers_can_plan_to_attend">More potential buyers can plan to attend</string>
+    <string name="my_account">Minha conta</string>
+    <string name="my_addresses">Meus endereços</string>
+    <string name="my_orders">Meus pedidos</string>
+    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"Navegar para cima"</string>
+    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"Abrir gaveta de navegação"</string>
+    <string msgid="542007171693138492" name="navigation_menu">"Menu de navegação"</string>
+    <string name="need_help_contact_our_support_team">Precisa de ajuda? Contate nossa equipe de suporte</string>
+    <string name="new_orders">Novos pedidos</string>
+    <string name="new_product">+ Novo produto</string>
+    <string name="new_show">Novo show</string>
+    <string name="new_user">Novo usuário?</string>
+    <string name="next">Próximo</string>
+    <string name="no">Não</string>
+    <string name="no_cancel">Não cancelar..</string>
+    <string name="no_data_found">Nenhum dado encontrado</string>
+    <string name="no_internet">Sem conexão com a internet.\nConecte-se à internet e tente novamente</string>
+    <string name="no_offers_found">Nenhuma oferta encontrada</string>
+    <string name="no_thanks">Não, obrigado</string>
+    <string name="no_user_matches_the_name_entered">Nenhum usuário corresponde ao nome informado.</string>
+    <string msgid="6610465462668679431" name="not_selected">"Não selecionado"</string>
+    <string name="notifications">Notificações</string>
+    <string name="number_of_products">Número de produtos</string>
+    <string name="obs_open_broadcast_software_is_a_free_streaming_and_recording_program_that_lets_you_share_your_live_content_with_your_audience">OBS (Open Broadcast Software) é um programa gratuito de streaming e gravação que permite compartilhar seu conteúdo ao vivo com o público.</string>
+    <string name="offers">Ofertas</string>
+    <string name="on_time_scan_rate">Taxa de escaneamento no prazo</string>
+    <string name="optional_fields">Campos opcionais</string>
+    <string name="order_date">Data do pedido</string>
+    <string name="order_id">ID do pedido</string>
+    <string name="other_settings">Outras configurações</string>
+    <string name="over_all">Over All</string>
+    <string name="overview">Visão geral</string>
+    <string name="oz">oz</string>
+    <string name="password">Senha</string>
+    <string name="payment_method">Forma de pagamento</string>
+    <string name="payment_shipping"><![CDATA[Pagamento e Entrega]]></string>
+    <string name="payout_history">Histórico de saques</string>
+    <string name="payouts">Pagamentos</string>
+    <string name="pending">Pendente</string>
+    <string name="performance_section">Desempenho</string>
+    <string name="phone_number">Número de telefone</string>
+    <string name="pick_a_date_and_time_for_your_live_show">Escolha uma data e hora para seu evento ao vivo</string>
+    <string name="picker_today">Hoje</string>
+    <string name="play_pause">Play/Pause</string>
+    <string name="play_video">Play video</string>
+    <string name="please_enter_the_email_address_associated_with_your_account">Por favor, digite o endereço de email associado à sua conta.</string>
+    <string name="please_upload_a_clear_photo_of_your_valid_government_issued_id_driver_s_license_or_passport">Faça upload de uma foto nítida de um documento de identidade oficial válido (carteira de motorista ou passaporte).</string>
+    <string name="policy_standing">Status de conformidade com políticas</string>
+    <string name="poll_duration">Poll Duration</string>
+    <string name="poll_options">Poll Options</string>
+    <string name="poll_question">Poll Question</string>
+    <string name="popular">Populares</string>
+    <string name="preferences">Preferências</string>
+    <string name="premier_shop">Loja Premier</string>
+    <string name="prices_shown_in_usd_actual_boost_duration_may_vary">Preços exibidos em USD. A duração real do impulso pode variar.</string>
+    <string name="privacy">Privacidade</string>
+    <string name="privacy_policy"><u>Privacy Policy</u></string>
+    <string name="privacy_policy_plain">Política de Privacidade</string>
+    <string name="processing">Processando</string>
+    <string name="product_deleted">Product Deleted</string>
+    <string name="product_name">Nome do produto</string>
+    <string name="product_no_longer_available">This product is no longer available</string>
+    <string name="professional_photographer_specializing_in_portrait_and_wedding_photography_available_for_bookings_worldwide">Fotógrafo profissional especializado em retratos e casamentos. Disponível para reservas em todo o mundo.</string>
+    <string name="promote_show">Promover show</string>
+    <string name="promote_tools">Ferramentas de promoção</string>
+    <string name="promotion_section">Promoção</string>
+    <string name="publish">Publicar</string>
+    <string name="purchases">Compras</string>
+    <string name="quantity">Quantidade</string>
+    <string name="quantity_available">Quantidade disponível</string>
+    <string name="quick_visibility_boost">Impulso rápido de visibilidade</string>
+    <string msgid="5941395253238309765" name="range_end">"Fim do intervalo"</string>
+    <string msgid="7097486360902471446" name="range_start">"Início do intervalo"</string>
+    <string name="rate_seller">Avaliar vendedor</string>
+    <string name="rating">Avaliação</string>
+    <string name="receive_gifts">Receber presentes</string>
+    <string name="rehearsal">Ensaio</string>
+    <string name="remember_me">Lembrar de mim</string>
+    <string name="repeats">Repetições</string>
+    <string name="report_seller">Report Seller</string>
+    <string name="requirements">Requisitos</string>
+    <string name="reserve_for_live">Reservar para transmissão ao vivo</string>
+    <string name="reset_password">Redefinir senha</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="returns">Devoluções</string>
+    <string name="revenue">Receita</string>
+    <string name="review">Revisar</string>
+    <string name="reviews">Avaliações</string>
+    <string name="sales">Vendas</string>
+    <string name="sales_tax_exemption">Isenção de imposto sobre vendas</string>
+    <string name="save">Salvar</string>
+    <string name="save_draft">Salvar rascunho</string>
+    <string name="save_past_shows">Salvar shows anteriores</string>
+    <string name="saved_items">Itens salvos</string>
+    <string name="say_something">Say Something...</string>
+    <string name="schedule_your_first_show">Agende seu primeiro evento</string>
+    <string msgid="6264217191555673260" name="search_menu_title">"Pesquisar"</string>
+    <string name="search_products">Pesquisar produtos..</string>
+    <string name="search_users">Pesquisar usuários</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="see_all_categories_tile">See All
+Categories</string>
+    <string name="select">Selecionar</string>
+    <string name="select_auction_type">Selecionar tipo de leilão</string>
+    <string name="select_category">Selecionar categoria</string>
+    <string name="select_country">Selecionar país</string>
+    <string name="select_duration">Select duration (minutes)</string>
+    <string name="select_format">Selecionar formato</string>
+    <string name="select_from_product_inventory">Selecionar do inventário de produtos</string>
+    <string name="select_language">Selecionar idioma</string>
+    <string name="select_live_seller_for_raid">Selecionar vendedor ao vivo para raid</string>
+    <string name="select_media_type">Selecionar tipo de mídia</string>
+    <string name="select_next_product_for_auction">Select Next Product For Auction</string>
+    <string name="select_payment_method">Selecionar método de pagamento</string>
+    <string name="select_profile">Selecionar perfil</string>
+    <string name="select_shipping_address">Selecionar endereço de envio</string>
+    <string name="select_sub_categories_based_on_the_categories_you_chose_on_the_previous_page">Select Sub Categories based on the Categories you chose on the previous page</string>
+    <string name="select_the_category_the_most_accurately_describes_your_show_and_how_you_would_like_to_sell">Selecione a categoria que descreve melhor seu evento e como você deseja vender.</string>
+    <string name="select_time">Selecionar hora</string>
+    <string msgid="6043586758067023" name="selected">"Selecionado"</string>
+    <string name="selfie">Autorretato</string>
+    <string name="sell">Vender</string>
+    <string name="sell_on_bidswipe">Vender no Bidswipe</string>
+    <string name="seller_analytics">Análises do vendedor</string>
+    <string name="seller_hub">Central do vendedor</string>
+    <string name="seller_section">Vendedor</string>
+    <string name="seller_status">Status do vendedor</string>
+    <string name="seller_training">Treinamento do vendedor</string>
+    <string name="seller_verification">Verificação do vendedor</string>
+    <string name="sellers_covers_ny_shipping_adjustments">Os vendedores cobrem quaisquer ajustes de envio.</string>
+    <string name="send_as_a_gift">Enviar como presente?</string>
+    <string name="send_message">Send Message</string>
+    <string name="send_offer">Enviar oferta</string>
+    <string name="send_this_purchase_as_a_gift_to_someone_special">Envie esta compra como presente para alguém especial</string>
+    <string name="send_tip">Send Tip</string>
+    <string name="set_a_competitive_starting_price_that_will_attract_potential_buyers_a_well_priced_item_increases_your_chances_of_a_successful_sale_and_can_lead_to_better_bidding_activity">Defina um preço inicial competitivo que atraia compradores potenciais. Um item bem precificado aumenta suas chances de venda bem-sucedida e pode gerar mais lances.</string>
+    <string name="set_as_default">Definir como padrão</string>
+    <string name="setting_up_your_store">Configurando sua loja</string>
+    <string name="settings_section">Configurações</string>
+    <string name="share">Share</string>
+    <string name="share_amp_earn_reward"><![CDATA[Compartilhe e ganhe recompensas]]></string>
+    <string name="share_invite_link">Compartilhar link de convite</string>
+    <string name="share_show">Compartilhar show</string>
+    <string name="share_your_link">Compartilhar seu link</string>
+    <string name="shipping">Frete</string>
+    <string name="shipping_address">Endereço de entrega</string>
+    <string name="shipping_profile">Shipping Profile</string>
+    <string name="shop">Loja</string>
+    <string name="show_category">Categoria do evento</string>
+    <string name="show_details">Detalhes do evento</string>
+    <string name="show_nnotes">Notas do show</string>
+    <string name="show_notes">Notas do show</string>
+    <string name="show_reward_status">Mostrar status de recompensa</string>
+    <string name="show_seller_tools">Mostrar ferramentas do vendedor</string>
+    <string name="show_time_00_00_01">Horário do evento: 00:00:00</string>
+    <string name="show_title">Título do evento</string>
+    <string name="shows">Transmissões</string>
+    <string msgid="2792228137354697160" name="snackbar_pane_title">"Alerta"</string>
+    <string name="sold_by">Vendido por</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="sound">Som</string>
+    <string name="start_auction">Iniciar leilão</string>
+    <string name="start_bid">Iniciar lance</string>
+    <string name="start_now">Start Now</string>
+    <string name="start_your_selling_journey_on_bidswipe_learn_how_to_list_products_manage_your_store_and_connect_with_buyers">Comece sua jornada de vendas no Bidswipe! Aprenda a listar produtos, gerenciar sua loja e se conectar com compradores.</string>
+    <string name="state">Estado</string>
+    <string msgid="4139871816613051306" name="state_empty">"Vazio"</string>
+    <string msgid="5834637030682409883" name="state_off">"Desativado"</string>
+    <string msgid="1490883874751719580" name="state_on">"Ativado"</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="step_1_of_7">Passo 1 de 7</string>
+    <string name="stream_title">Título do evento</string>
+    <string name="street_address">Endereço</string>
+    <string name="stripe_hcaptcha_loading_text">Verificando se você é humano</string>
+    <string name="sub_category">Subcategoria</string>
+    <string name="subject">Assunto</string>
+    <string name="submit">Enviar</string>
+    <string name="submit_for_review">Enviar para análise</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="success_please_enter_the_code_that_was_sent_to_the_email_associated_with_your_account">Sucesso! Por favor, digite o código enviado para o email associado à sua conta.</string>
+    <string name="success_please_enter_your_new_password_below">Sucesso! Por favor, digite sua nova senha abaixo.</string>
+    <string name="support_company_com">support@company.com</string>
+    <string name="surprise_set">Conjunto surpresa</string>
+    <string name="surprise_set_description">Descrição do conjunto surpresa</string>
+    <string name="surprise_set_details">Surprise Set Details</string>
+    <string name="surprise_set_name">Nome do conjunto surpresa</string>
+    <string name="swiftbid_buyer_protection">Proteção ao comprador SwiftBid</string>
+    <string msgid="2561197295334830845" name="switch_role">"Chave"</string>
+    <string msgid="1672349317127674378" name="tab">"Guia"</string>
+    <string name="tap_to_upload_thumbnail">Toque para enviar miniatura</string>
+    <string name="tap_to_upload_your_id_photo">Toque para enviar sua foto de ID</string>
+    <string name="tell_us_about_yourself">Conte-nos sobre você</string>
+    <string name="tell_us_more">Tell us more</string>
+    <string msgid="5946805113151406391" name="template_percent">"<ns1:g id="PERCENTAGE">%1$d</ns1:g>%%"</string>
+    <string name="terms_and_conditions">Termos e Condições</string>
+    <string name="terms_of_service">  | <u>Terms of Service</u></string>
+    <string name="this_is_my_message">Esta é minha mensagem</string>
+    <string name="time_to_prepare_your_items_properly">Hora de preparar seus itens adequadamente</string>
+    <string name="tip_settings">Configurações de gorjeta</string>
+    <string name="tips">Dicas</string>
+    <string name="tips_for_a_great_thumbnail">Dicas para uma ótima miniatura</string>
+    <string name="tips_for_a_great_title">Dicas para um ótimo título</string>
+    <string name="title">Título</string>
+    <string name="to_become_a_trusted_buyer_we_need_to_verify_your_identity_this_helps_create_a_safe">Para se tornar um comprador confiável, precisamos verificar sua identidade. Isso ajuda a criar um ambiente seguro.</string>
+    <string msgid="3765533235322692011" name="tooltip_description">"dica"</string>
+    <string msgid="3124740595719787496" name="tooltip_label">"mostrar dica"</string>
+    <string name="total">Valor total</string>
+    <string name="total_orders">Total de pedidos</string>
+    <string name="transactions">Transações</string>
+    <string name="trim_clip">Cortar clipe</string>
+    <string name="trust">Trust</string>
+    <string name="trusted_buyer">Comprador confiável</string>
+    <string name="try_something_like_tip_for_a_shoutout">Tente algo como \"Gorjeta por um alô\"</string>
+    <string name="turn_off_if_you_want_a_slower_spin_animation_this_does_not_affect_randomization">Desative se quiser uma animação de giro mais lenta. Isso não afeta a aleatoriedade.</string>
+    <string name="type_here">Type here...</string>
+    <string name="unmute">Unmute</string>
+    <string name="upcoming_shows">Próximos shows</string>
+    <string name="update">Atualizar</string>
+    <string name="upload">Enviar</string>
+    <string name="upload_your_id_card_amp_take_a_selfie"><![CDATA[Envie seu documento de identidade e tire uma selfie]]></string>
+    <string name="username">Nome de usuário</string>
+    <string name="users">Usuários</string>
+    <string name="vacation_mode">Modo de férias</string>
+    <string name="verification_progress">Progresso da verificação</string>
+    <string name="verified">Verificado</string>
+    <string name="verified_buyers">Verified Buyers</string>
+    <string name="verify_code">Verificar código</string>
+    <string name="view_all">Ver tudo</string>
+    <string name="wallet">Carteira</string>
+    <string name="watch_vod">Assistir VOD</string>
+    <string name="we_re_here_to_help_send_us_your_queries_and_we_ll_get_back_to_you_soon">Estamos aqui para ajudar! Envie suas dúvidas e entraremos em contato em breve.</string>
+    <string name="weight_0_00">0.00</string>
+    <string name="what_are_you_looking_for">O que você está procurando?</string>
+    <string name="when_on_allows_bids_from_verified_buyers_only">When on, allows bids from verified buyers only</string>
+    <string name="why_scedule_in_advance">Por que agendar com antecedência?</string>
+    <string name="would_you_like_to_notified_when_usrname_goes_live">Would you like to notified when @usrname goes live</string>
+    <string name="write_something">Write Something</string>
+    <string name="write_your_message_here">Escreva sua mensagem aqui...</string>
+    <string name="yes">Sim</string>
+    <string name="yes_notify_me">Sim, me avise</string>
+    <string name="you_won_t_be_charged_unless_the_seller_accepts_your_offer">Você não será cobrado a menos que o vendedor aceite sua oferta</string>
+    <string name="your_referral_link">Seu link de referência</string>
+    <string name="your_referral_stats">Suas estatísticas de indicação</string>
+    <string name="zip_code">Código postal</string>
+    <string name="zoom_in">Aproximar</string>
+</resources>

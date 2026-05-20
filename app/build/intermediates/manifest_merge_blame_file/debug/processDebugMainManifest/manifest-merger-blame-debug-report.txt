@@ -1,0 +1,1217 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="io.bidswipe.app"
+4    android:versionCode="2"
+5    android:versionName="1.1" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="36" />
+10
+11    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+11-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:5:5-76
+11-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:5:22-73
+12    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+12-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:6:5-71
+12-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:6:22-68
+13    <uses-permission android:name="android.permission.INTERNET" />
+13-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:7:5-67
+13-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:7:22-64
+14    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+14-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:8:5-79
+14-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:8:22-76
+15    <uses-permission android:name="android.permission.CAMERA" />
+15-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:9:5-65
+15-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:9:22-62
+16    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+16-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:10:5-80
+16-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:10:22-77
+17    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+17-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:11:5-75
+17-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:11:22-72
+18    <uses-permission android:name="android.permission.VIBRATE" />
+18-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:12:5-66
+18-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:12:22-63
+19    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+19-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:13:5-80
+19-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:13:22-77
+20    <uses-permission android:name="android.permission.BLUETOOTH" />
+20-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:14:5-68
+20-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:14:22-65
+21    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+21-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:15:5-76
+21-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:15:22-73
+22    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+22-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:16:5-73
+22-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:16:22-70
+23    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+23-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:17:5-77
+23-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:17:22-74
+24
+25    <uses-feature
+25-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:19:5-21:36
+26        android:name="android.hardware.camera"
+26-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:20:9-47
+27        android:required="false" />
+27-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:21:9-33
+28    <uses-feature
+28-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:22:5-24:35
+29        android:glEsVersion="0x00020000"
+29-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:23:9-41
+30        android:required="true" />
+30-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:24:9-32
+31    <uses-feature
+31-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:25:5-28:46
+32        android:name="android.hardware.camera.autofocus"
+32-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:26:9-57
+33        android:required="false" />
+33-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:27:9-33
+34
+35    <queries>
+35-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:7:5-18:15
+36        <intent>
+36-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:8:9-14:18
+37            <action android:name="android.intent.action.GET_CONTENT" />
+37-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:9:13-72
+37-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:9:21-69
+38
+39            <category android:name="android.intent.category.OPENABLE" />
+39-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:11:13-73
+39-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:11:23-70
+40
+41            <data android:mimeType="*/*" />
+41-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:157:17-159:46
+42        </intent>
+43        <intent>
+43-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:15:9-17:18
+44            <action android:name="android.media.action.IMAGE_CAPTURE" />
+44-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:16:13-73
+44-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:16:21-70
+45        </intent>
+46        <!-- Added to check if Chrome is installed for browser-based payment authentication (e.g. 3DS1). -->
+47        <package android:name="com.android.chrome" />
+47-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:11:9-54
+47-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:11:18-51
+48
+49        <intent>
+49-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:13:9-15:18
+50            <action android:name="com.android.vending.billing.InAppBillingService.BIND" />
+50-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:14:13-91
+50-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:14:21-88
+51        </intent>
+52        <intent>
+52-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:16:9-18:18
+53            <action android:name="com.google.android.apps.play.billingtestcompanion.BillingOverrideService.BIND" />
+53-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:17:13-116
+53-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:17:21-113
+54        </intent> <!-- Needs to be explicitly declared on Android R+ -->
+55        <package android:name="com.google.android.apps.maps" />
+55-->[com.google.android.gms:play-services-maps:18.0.2] /Users/bluemini/.gradle/caches/8.13/transforms/d72d779be048c4572cb5152079cc3811/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:33:9-64
+55-->[com.google.android.gms:play-services-maps:18.0.2] /Users/bluemini/.gradle/caches/8.13/transforms/d72d779be048c4572cb5152079cc3811/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:33:18-61
+56    </queries>
+57
+58    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+58-->[org.wordpress:utils:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/1627fb643029559e080087ccdd51b7cb/transformed/jetified-utils-3.5.0/AndroidManifest.xml:9:5-71
+58-->[org.wordpress:utils:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/1627fb643029559e080087ccdd51b7cb/transformed/jetified-utils-3.5.0/AndroidManifest.xml:9:22-68
+59    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+59-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:9:5-81
+59-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:9:22-78
+60    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+60-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:10:5-79
+60-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:10:22-76
+61    <uses-permission android:name="com.android.vending.BILLING" />
+61-->[com.android.billingclient:billing-ktx:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/ef3edf534a2381d6c81719ba50c9a4d5/transformed/jetified-billing-ktx-8.3.0/AndroidManifest.xml:9:5-67
+61-->[com.android.billingclient:billing-ktx:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/ef3edf534a2381d6c81719ba50c9a4d5/transformed/jetified-billing-ktx-8.3.0/AndroidManifest.xml:9:22-64
+62    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+62-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:23:5-77
+62-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:23:22-74
+63    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+63-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:24:5-68
+63-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:24:22-65
+64    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+64-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:26:5-82
+64-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:26:22-79
+65
+66    <uses-feature
+66-->[com.otaliastudios:cameraview:2.7.2] /Users/bluemini/.gradle/caches/8.13/transforms/ec9c8879d9d7efdde6c632957d44d257/transformed/jetified-cameraview-2.7.2/AndroidManifest.xml:25:5-27:36
+67        android:name="android.hardware.camera.front"
+67-->[com.otaliastudios:cameraview:2.7.2] /Users/bluemini/.gradle/caches/8.13/transforms/ec9c8879d9d7efdde6c632957d44d257/transformed/jetified-cameraview-2.7.2/AndroidManifest.xml:26:9-53
+68        android:required="false" />
+68-->[com.otaliastudios:cameraview:2.7.2] /Users/bluemini/.gradle/caches/8.13/transforms/ec9c8879d9d7efdde6c632957d44d257/transformed/jetified-cameraview-2.7.2/AndroidManifest.xml:27:9-33
+69    <uses-feature
+69-->[com.otaliastudios:cameraview:2.7.2] /Users/bluemini/.gradle/caches/8.13/transforms/ec9c8879d9d7efdde6c632957d44d257/transformed/jetified-cameraview-2.7.2/AndroidManifest.xml:28:5-30:36
+70        android:name="android.hardware.microphone"
+70-->[com.otaliastudios:cameraview:2.7.2] /Users/bluemini/.gradle/caches/8.13/transforms/ec9c8879d9d7efdde6c632957d44d257/transformed/jetified-cameraview-2.7.2/AndroidManifest.xml:29:9-51
+71        android:required="false" />
+71-->[com.otaliastudios:cameraview:2.7.2] /Users/bluemini/.gradle/caches/8.13/transforms/ec9c8879d9d7efdde6c632957d44d257/transformed/jetified-cameraview-2.7.2/AndroidManifest.xml:30:9-33
+72
+73    <permission
+73-->[androidx.core:core:1.17.0] /Users/bluemini/.gradle/caches/8.13/transforms/42fec14e0f8d5fb9542c9069b14d41ce/transformed/core-1.17.0/AndroidManifest.xml:22:5-24:47
+74        android:name="io.bidswipe.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+74-->[androidx.core:core:1.17.0] /Users/bluemini/.gradle/caches/8.13/transforms/42fec14e0f8d5fb9542c9069b14d41ce/transformed/core-1.17.0/AndroidManifest.xml:23:9-81
+75        android:protectionLevel="signature" />
+75-->[androidx.core:core:1.17.0] /Users/bluemini/.gradle/caches/8.13/transforms/42fec14e0f8d5fb9542c9069b14d41ce/transformed/core-1.17.0/AndroidManifest.xml:24:9-44
+76
+77    <uses-permission android:name="io.bidswipe.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+77-->[androidx.core:core:1.17.0] /Users/bluemini/.gradle/caches/8.13/transforms/42fec14e0f8d5fb9542c9069b14d41ce/transformed/core-1.17.0/AndroidManifest.xml:26:5-97
+77-->[androidx.core:core:1.17.0] /Users/bluemini/.gradle/caches/8.13/transforms/42fec14e0f8d5fb9542c9069b14d41ce/transformed/core-1.17.0/AndroidManifest.xml:26:22-94
+78
+79    <application
+79-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:30:5-209:19
+80        android:name="io.bidswipe.app.App"
+80-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:31:9-28
+81        android:allowBackup="true"
+81-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:32:9-35
+82        android:allowClearUserData="true"
+82-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:33:9-42
+83        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+83-->[androidx.core:core:1.17.0] /Users/bluemini/.gradle/caches/8.13/transforms/42fec14e0f8d5fb9542c9069b14d41ce/transformed/core-1.17.0/AndroidManifest.xml:28:18-86
+84        android:dataExtractionRules="@xml/data_extraction_rules"
+84-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:34:9-65
+85        android:debuggable="true"
+86        android:enableOnBackInvokedCallback="true"
+86-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:35:9-51
+87        android:extractNativeLibs="false"
+88        android:fullBackupContent="@xml/backup_rules"
+88-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:36:9-54
+89        android:icon="@mipmap/ic_launcher"
+89-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:37:9-43
+90        android:label="@string/app_name"
+90-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:38:9-41
+91        android:roundIcon="@mipmap/ic_launcher_round"
+91-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:39:9-54
+92        android:supportsRtl="true"
+92-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:40:9-35
+93        android:theme="@style/Theme.Bidswipe"
+93-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:41:9-46
+94        android:usesCleartextTraffic="true" >
+94-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:42:9-44
+95        <activity
+95-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:44:9-46:40
+96            android:name="io.bidswipe.app.ui.product.ProductSetDetailsActivity"
+96-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:45:13-65
+97            android:exported="false" />
+97-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:46:13-37
+98        <activity
+98-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:47:9-49:40
+99            android:name="io.bidswipe.app.ui.sellerProfile.ClipEditActivity"
+99-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:48:13-62
+100            android:exported="false" />
+100-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:49:13-37
+101        <activity
+101-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:50:9-52:40
+102            android:name="io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity"
+102-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:51:13-64
+103            android:exported="false" />
+103-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:52:13-37
+104        <activity
+104-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:53:9-55:40
+105            android:name="io.bidswipe.app.ui.scheduleShow.TipSettingActivity"
+105-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:54:13-63
+106            android:exported="false" />
+106-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:55:13-37
+107        <activity
+107-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:56:9-63:58
+108            android:name="io.bidswipe.app.ui.agoraStream.AgoraPublisherActivity"
+108-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:57:13-66
+109            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+109-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:58:13-91
+110            android:exported="false"
+110-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:59:13-37
+111            android:launchMode="singleTop"
+111-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:60:13-43
+112            android:resizeableActivity="true"
+112-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:61:13-46
+113            android:supportsPictureInPicture="true"
+113-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:62:13-52
+114            android:windowSoftInputMode="adjustResize" />
+114-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:63:13-55
+115        <activity
+115-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:64:9-67:53
+116            android:name="io.bidswipe.app.ui.interest.ChooseInterestActivity"
+116-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:65:13-63
+117            android:exported="false"
+117-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:66:13-37
+118            android:theme="@style/Theme.Bidswipe" />
+118-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:67:13-50
+119        <activity
+119-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:68:9-71:58
+120            android:name="io.bidswipe.app.ui.dashboard.ChatActivity"
+120-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:69:13-54
+121            android:exported="false"
+121-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:70:13-37
+122            android:windowSoftInputMode="adjustResize" />
+122-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:71:13-55
+123        <activity
+123-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:72:9-74:40
+124            android:name="io.bidswipe.app.ui.dashboard.RateSellerActivity"
+124-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:73:13-60
+125            android:exported="false" />
+125-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:74:13-37
+126        <activity
+126-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:75:9-77:40
+127            android:name="io.bidswipe.app.ui.dashboard.UpdateAccountActivity"
+127-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:76:13-63
+128            android:exported="false" />
+128-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:77:13-37
+129        <activity
+129-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:78:9-80:40
+130            android:name="io.bidswipe.app.ui.more.NotificationActivity"
+130-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:79:13-57
+131            android:exported="false" />
+131-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:80:13-37
+132        <activity
+132-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:81:9-87:58
+133            android:name="io.bidswipe.app.ui.watchStream.ViewLiveShowActivity"
+133-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:82:13-64
+134            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+134-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:83:13-91
+135            android:exported="true"
+135-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:84:13-36
+136            android:resizeableActivity="true"
+136-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:85:13-46
+137            android:supportsPictureInPicture="true"
+137-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:86:13-52
+138            android:windowSoftInputMode="adjustResize" />
+138-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:87:13-55
+139        <activity
+139-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:88:9-90:40
+140            android:name="io.bidswipe.app.ui.dashboard.AddPaymentCardActivity"
+140-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:89:13-64
+141            android:exported="false" />
+141-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:90:13-37
+142        <activity
+142-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:91:9-94:58
+143            android:name="io.bidswipe.app.ui.sellerProfile.SellerProfileActivity"
+143-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:92:13-67
+144            android:exported="true"
+144-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:93:13-36
+145            android:windowSoftInputMode="adjustResize" />
+145-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:94:13-55
+146        <activity
+146-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:95:9-97:39
+147            android:name="io.bidswipe.app.ui.product.ProductDetailsActivity"
+147-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:96:13-62
+148            android:exported="true" />
+148-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:97:13-36
+149        <activity
+149-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:98:9-100:40
+150            android:name="io.bidswipe.app.ui.sellerHub.SellerHubActivity"
+150-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:99:13-59
+151            android:exported="false" />
+151-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:100:13-37
+152        <activity
+152-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:101:9-103:40
+153            android:name="io.bidswipe.app.ui.product.OrderStatusActivity"
+153-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:102:13-59
+154            android:exported="false" />
+154-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:103:13-37
+155        <!-- cmpcqb2m6: in-app PDF receipt viewer (PdfRenderer, no external app handoff). -->
+156        <activity
+156-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:105:9-109:72
+157            android:name="io.bidswipe.app.ui.product.PdfViewerActivity"
+157-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:106:13-57
+158            android:exported="false"
+158-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:107:13-37
+159            android:label="Receipt"
+159-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:108:13-36
+160            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+160-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:109:13-69
+161        <!-- cmpcqb1yo: viewers list (tap from ShowDetailsFragment Viewers tile). -->
+162        <activity
+162-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:111:9-115:72
+163            android:name="io.bidswipe.app.ui.sellerHub.ShowViewersActivity"
+163-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:112:13-61
+164            android:exported="false"
+164-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:113:13-37
+165            android:label="Viewers"
+165-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:114:13-36
+166            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+166-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:115:13-69
+167        <activity
+167-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:116:9-118:40
+168            android:name="io.bidswipe.app.ui.more.MoreActivity"
+168-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:117:13-49
+169            android:exported="false" />
+169-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:118:13-37
+170        <activity
+170-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:119:9-121:40
+171            android:name="io.bidswipe.app.ui.dashboard.LanguageActivity"
+171-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:120:13-58
+172            android:exported="false" />
+172-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:121:13-37
+173        <activity
+173-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:122:9-125:58
+174            android:name="io.bidswipe.app.ui.scheduleShow.ScheduleShowActivity"
+174-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:123:13-65
+175            android:exported="false"
+175-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:124:13-37
+176            android:windowSoftInputMode="adjustResize" />
+176-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:125:13-55
+177        <activity
+177-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:126:9-128:40
+178            android:name="io.bidswipe.app.ui.tutorials.TutorialsActivity"
+178-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:127:13-59
+179            android:exported="false" />
+179-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:128:13-37
+180        <activity
+180-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:129:9-132:58
+181            android:name="io.bidswipe.app.ui.tutorials.LiveRehearsalActivity"
+181-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:130:13-63
+182            android:exported="false"
+182-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:131:13-37
+183            android:windowSoftInputMode="adjustResize" />
+183-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:132:13-55
+184        <activity
+184-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:133:9-136:58
+185            android:name="io.bidswipe.app.ui.sell.ListAProductActivity"
+185-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:134:13-57
+186            android:exported="false"
+186-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:135:13-37
+187            android:windowSoftInputMode="adjustResize" />
+187-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:136:13-55
+188        <activity
+188-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:137:9-146:20
+189            android:name="io.bidswipe.app.ui.SplashActivity"
+189-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:138:13-46
+190            android:exported="true"
+190-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:139:13-36
+191            android:theme="@style/RemoveSplash" >
+191-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:140:13-48
+192            <intent-filter>
+192-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:141:13-145:29
+193                <action android:name="android.intent.action.MAIN" />
+193-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:142:17-69
+193-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:142:25-66
+194
+195                <category android:name="android.intent.category.LAUNCHER" />
+195-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:144:17-77
+195-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:144:27-74
+196            </intent-filter>
+197        </activity>
+198        <activity
+198-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:147:9-161:20
+199            android:name="io.bidswipe.app.ui.dashboard.DashActivity"
+199-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:148:13-54
+200            android:exported="true"
+200-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:149:13-36
+201            android:windowSoftInputMode="adjustNothing" >
+201-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:150:13-56
+202            <intent-filter android:autoVerify="true" >
+202-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:151:13-160:29
+202-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:151:28-53
+203                <action android:name="android.intent.action.VIEW" />
+203-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:17-69
+203-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:25-66
+204
+205                <category android:name="android.intent.category.DEFAULT" />
+205-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:17-76
+205-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:27-73
+206                <category android:name="android.intent.category.BROWSABLE" />
+206-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:17-78
+206-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:27-75
+207
+208                <data
+208-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:157:17-159:46
+209                    android:host="backend.bidcast.betaplanets.com"
+209-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:158:21-67
+210                    android:scheme="https" />
+210-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:159:21-43
+211            </intent-filter>
+212        </activity>
+213        <activity
+213-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:162:9-177:20
+214            android:name="io.bidswipe.app.ui.auth.AuthActivity"
+214-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:163:13-49
+215            android:exported="true"
+215-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:164:13-36
+216            android:windowSoftInputMode="adjustResize" >
+216-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:165:13-55
+217            <intent-filter android:autoVerify="true" >
+217-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:166:13-176:29
+217-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:166:28-53
+218                <action android:name="android.intent.action.VIEW" />
+218-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:17-69
+218-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:25-66
+219
+220                <category android:name="android.intent.category.DEFAULT" />
+220-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:17-76
+220-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:27-73
+221                <category android:name="android.intent.category.BROWSABLE" />
+221-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:17-78
+221-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:27-75
+222
+223                <data
+223-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:157:17-159:46
+224                    android:host="backend.bidcast.betaplanets.com"
+224-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:158:21-67
+225                    android:pathPrefix="/invite"
+225-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:174:21-49
+226                    android:scheme="https" />
+226-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:159:21-43
+227            </intent-filter>
+228        </activity>
+229        <activity
+229-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:178:9-180:40
+230            android:name="io.bidswipe.app.ui.more.TrustedBuyerActivity"
+230-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:179:13-57
+231            android:exported="false" />
+231-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:180:13-37
+232        <activity
+232-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:181:9-183:40
+233            android:name="io.bidswipe.app.ui.sellerHub.SellerVerificationActivity"
+233-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:182:13-68
+234            android:exported="false" />
+234-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:183:13-37
+235        <activity
+235-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:184:9-188:58
+236            android:name="io.bidswipe.app.utils.cropper.CustomCropImageActivity"
+236-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:185:13-66
+237            android:exported="false"
+237-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:186:13-37
+238            android:theme="@style/Theme.Bidswipe"
+238-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:187:13-50
+239            android:windowSoftInputMode="adjustResize" />
+239-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:188:13-55
+240
+241        <service
+241-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:190:9-197:19
+242            android:name="io.bidswipe.app.messaging.MyFirebaseMessagingService"
+242-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:191:13-65
+243            android:directBootAware="true"
+243-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:192:13-43
+244            android:exported="false" >
+244-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:193:13-37
+245            <intent-filter>
+245-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:194:13-196:29
+246                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+246-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:195:17-78
+246-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:195:25-75
+247            </intent-filter>
+248        </service>
+249
+250        <provider
+251            android:name="androidx.core.content.FileProvider"
+251-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:200:13-62
+252            android:authorities="io.bidswipe.app.provider"
+252-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:201:13-60
+253            android:exported="false"
+253-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:202:13-37
+254            android:grantUriPermissions="true"
+254-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:203:13-47
+255            android:permission="android.permission.MANAGE_EXTERNAL_STORAGE" >
+255-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:204:13-76
+256            <meta-data
+256-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:205:13-207:54
+257                android:name="android.support.FILE_PROVIDER_PATHS"
+257-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:206:17-67
+258                android:resource="@xml/file_paths" />
+258-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:207:17-51
+259        </provider>
+260        <provider
+260-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:21:9-29:20
+261            android:name="com.canhub.cropper.CropFileProvider"
+261-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:22:13-63
+262            android:authorities="io.bidswipe.app.cropper.fileprovider"
+262-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:23:13-72
+263            android:exported="false"
+263-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:24:13-37
+264            android:grantUriPermissions="true" >
+264-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:25:13-47
+265            <meta-data
+265-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:205:13-207:54
+266                android:name="android.support.FILE_PROVIDER_PATHS"
+266-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:206:17-67
+267                android:resource="@xml/cropper_library_file_paths" />
+267-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:207:17-51
+268        </provider>
+269
+270        <activity
+270-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:31:9-33:39
+271            android:name="com.canhub.cropper.CropImageActivity"
+271-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:32:13-64
+272            android:exported="true" />
+272-->[com.vanniktech:android-image-cropper:4.7.0] /Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/AndroidManifest.xml:33:13-36
+273        <activity
+273-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:8:9-11:69
+274            android:name="com.stripe.android.paymentsheet.PaymentSheetActivity"
+274-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:9:13-80
+275            android:exported="false"
+275-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:10:13-37
+276            android:theme="@style/StripePaymentSheetDefaultTheme" />
+276-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:11:13-66
+277        <activity
+277-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:12:9-15:69
+278            android:name="com.stripe.android.paymentsheet.PaymentOptionsActivity"
+278-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:13:13-82
+279            android:exported="false"
+279-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:14:13-37
+280            android:theme="@style/StripePaymentSheetDefaultTheme" />
+280-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:15:13-66
+281        <activity
+281-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:16:9-19:69
+282            android:name="com.stripe.android.customersheet.CustomerSheetActivity"
+282-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:17:13-82
+283            android:exported="false"
+283-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:18:13-37
+284            android:theme="@style/StripePaymentSheetDefaultTheme" />
+284-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:19:13-66
+285        <activity
+285-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:20:9-23:69
+286            android:name="com.stripe.android.paymentsheet.addresselement.AddressElementActivity"
+286-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:21:13-97
+287            android:exported="false"
+287-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:22:13-37
+288            android:theme="@style/StripePaymentSheetDefaultTheme" />
+288-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:23:13-66
+289        <activity
+289-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:24:9-27:69
+290            android:name="com.stripe.android.paymentsheet.addresselement.AutocompleteActivity"
+290-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:25:13-95
+291            android:exported="false"
+291-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:26:13-37
+292            android:theme="@style/StripePaymentSheetDefaultTheme" />
+292-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:27:13-66
+293        <activity
+293-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:28:9-31:69
+294            android:name="com.stripe.android.paymentsheet.paymentdatacollection.bacs.BacsMandateConfirmationActivity"
+294-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:29:13-118
+295            android:exported="false"
+295-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:30:13-37
+296            android:theme="@style/StripePaymentSheetDefaultTheme" />
+296-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:31:13-66
+297        <activity
+297-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:32:9-35:69
+298            android:name="com.stripe.android.paymentsheet.paymentdatacollection.polling.PollingActivity"
+298-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:33:13-105
+299            android:exported="false"
+299-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:34:13-37
+300            android:theme="@style/StripePaymentSheetDefaultTheme" />
+300-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:35:13-66
+301        <activity
+301-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:36:9-39:69
+302            android:name="com.stripe.android.paymentsheet.ui.SepaMandateActivity"
+302-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:37:13-82
+303            android:exported="false"
+303-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:38:13-37
+304            android:theme="@style/StripePaymentSheetDefaultTheme" />
+304-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:39:13-66
+305        <activity
+305-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:40:9-43:68
+306            android:name="com.stripe.android.paymentsheet.ExternalPaymentMethodProxyActivity"
+306-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:41:13-94
+307            android:exported="false"
+307-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:42:13-37
+308            android:theme="@style/StripePayLauncherDefaultTheme" />
+308-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:43:13-65
+309        <activity
+309-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:44:9-47:68
+310            android:name="com.stripe.android.paymentelement.confirmation.cpms.CustomPaymentMethodProxyActivity"
+310-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:45:13-112
+311            android:exported="false"
+311-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:46:13-37
+312            android:theme="@style/StripePayLauncherDefaultTheme" />
+312-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:47:13-65
+313        <activity
+313-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:48:9-50:69
+314            android:name="com.stripe.android.paymentsheet.paymentdatacollection.cvcrecollection.CvcRecollectionActivity"
+314-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:49:13-121
+315            android:theme="@style/StripePaymentSheetDefaultTheme" />
+315-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:50:13-66
+316        <activity
+316-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:51:9-53:69
+317            android:name="com.stripe.android.paymentelement.embedded.form.FormActivity"
+317-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:52:13-88
+318            android:theme="@style/StripePaymentSheetDefaultTheme" />
+318-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:53:13-66
+319        <activity
+319-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:54:9-56:69
+320            android:name="com.stripe.android.paymentelement.embedded.manage.ManageActivity"
+320-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:55:13-92
+321            android:theme="@style/StripePaymentSheetDefaultTheme" />
+321-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:56:13-66
+322        <activity
+322-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:57:9-60:61
+323            android:name="com.stripe.android.attestation.AttestationActivity"
+323-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:58:13-78
+324            android:exported="false"
+324-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:59:13-37
+325            android:theme="@style/StripeTransparentTheme" />
+325-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:60:13-58
+326        <activity
+326-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:61:9-66:69
+327            android:name="com.stripe.android.link.LinkActivity"
+327-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:62:13-64
+328            android:autoRemoveFromRecents="true"
+328-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:63:13-49
+329            android:exported="false"
+329-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:64:13-37
+330            android:label="@string/stripe_link"
+330-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:65:13-48
+331            android:theme="@style/StripePaymentSheetDefaultTheme" />
+331-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:66:13-66
+332        <activity
+332-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:67:9-72:61
+333            android:name="com.stripe.android.link.LinkForegroundActivity"
+333-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:68:13-74
+334            android:autoRemoveFromRecents="true"
+334-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:69:13-49
+335            android:configChanges="orientation|keyboard|keyboardHidden|screenLayout|screenSize|smallestScreenSize"
+335-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:70:13-115
+336            android:launchMode="singleTop"
+336-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:71:13-43
+337            android:theme="@style/StripeTransparentTheme" />
+337-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:72:13-58
+338        <activity
+338-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:73:9-90:20
+339            android:name="com.stripe.android.link.LinkRedirectHandlerActivity"
+339-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:74:13-79
+340            android:autoRemoveFromRecents="true"
+340-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:75:13-49
+341            android:exported="true"
+341-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:76:13-36
+342            android:launchMode="singleInstance"
+342-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:77:13-48
+343            android:theme="@style/StripeTransparentTheme" >
+343-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:78:13-58
+344            <intent-filter>
+344-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:79:13-89:29
+345                <action android:name="android.intent.action.VIEW" />
+345-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:17-69
+345-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:25-66
+346
+347                <category android:name="android.intent.category.DEFAULT" />
+347-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:17-76
+347-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:27-73
+348                <category android:name="android.intent.category.BROWSABLE" />
+348-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:17-78
+348-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:27-75
+349
+350                <data
+350-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:157:17-159:46
+351                    android:host="complete"
+351-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:158:21-67
+352                    android:path="/io.bidswipe.app"
+353                    android:scheme="link-popup" />
+353-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:159:21-43
+354            </intent-filter>
+355        </activity>
+356        <activity
+356-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:91:9-93:69
+357            android:name="com.stripe.android.shoppay.ShopPayActivity"
+357-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:92:13-70
+358            android:theme="@style/StripePaymentSheetDefaultTheme" />
+358-->[com.stripe:paymentsheet:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7d90909f34ac5b0a5cc1f755e47c8cb/transformed/jetified-paymentsheet-22.5.0/AndroidManifest.xml:93:13-66
+359        <activity
+359-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:15:9-18:57
+360            android:name="com.stripe.android.view.PaymentAuthWebViewActivity"
+360-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:16:13-78
+361            android:exported="false"
+361-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:17:13-37
+362            android:theme="@style/StripeDefaultTheme" />
+362-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:18:13-54
+363        <activity
+363-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:19:9-22:61
+364            android:name="com.stripe.android.view.PaymentRelayActivity"
+364-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:20:13-72
+365            android:exported="false"
+365-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:21:13-37
+366            android:theme="@style/StripeTransparentTheme" />
+366-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:22:13-58
+367        <!--
+368        Set android:launchMode="singleTop" so that the StripeBrowserLauncherActivity instance that
+369        launched the browser Activity will also handle the return URL deep link.
+370        -->
+371        <activity
+371-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:28:9-32:61
+372            android:name="com.stripe.android.payments.StripeBrowserLauncherActivity"
+372-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:29:13-85
+373            android:exported="false"
+373-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:30:13-37
+374            android:launchMode="singleTask"
+374-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:31:13-44
+375            android:theme="@style/StripeTransparentTheme" />
+375-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:32:13-58
+376        <activity
+376-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:33:9-50:20
+377            android:name="com.stripe.android.payments.StripeBrowserProxyReturnActivity"
+377-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:34:13-88
+378            android:exported="true"
+378-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:35:13-36
+379            android:launchMode="singleTask"
+379-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:36:13-44
+380            android:theme="@style/StripeTransparentTheme" >
+380-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:37:13-58
+381            <intent-filter>
+381-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:38:13-49:29
+382                <action android:name="android.intent.action.VIEW" />
+382-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:17-69
+382-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:25-66
+383
+384                <category android:name="android.intent.category.DEFAULT" />
+384-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:17-76
+384-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:27-73
+385                <category android:name="android.intent.category.BROWSABLE" />
+385-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:17-78
+385-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:27-75
+386
+387                <!-- Must match `DefaultReturnUrl#value`. -->
+388                <data
+388-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:157:17-159:46
+389                    android:host="payment_return_url"
+389-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:158:21-67
+390                    android:path="/io.bidswipe.app"
+391                    android:scheme="stripesdk" />
+391-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:159:21-43
+392            </intent-filter>
+393        </activity>
+394        <activity
+394-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:51:9-54:57
+395            android:name="com.stripe.android.payments.core.authentication.threeds2.Stripe3ds2TransactionActivity"
+395-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:52:13-114
+396            android:exported="false"
+396-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:53:13-37
+397            android:theme="@style/StripeDefaultTheme" />
+397-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:54:13-54
+398        <activity
+398-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:55:9-58:66
+399            android:name="com.stripe.android.googlepaylauncher.GooglePayLauncherActivity"
+399-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:56:13-90
+400            android:exported="false"
+400-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:57:13-37
+401            android:theme="@style/StripeGooglePayDefaultTheme" />
+401-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:58:13-63
+402        <activity
+402-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:59:9-62:66
+403            android:name="com.stripe.android.googlepaylauncher.GooglePayPaymentMethodLauncherActivity"
+403-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:60:13-103
+404            android:exported="false"
+404-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:61:13-37
+405            android:theme="@style/StripeGooglePayDefaultTheme" />
+405-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:62:13-63
+406        <activity
+406-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:63:9-66:68
+407            android:name="com.stripe.android.payments.paymentlauncher.PaymentLauncherConfirmationActivity"
+407-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:64:13-107
+408            android:exported="false"
+408-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:65:13-37
+409            android:theme="@style/StripePayLauncherDefaultTheme" />
+409-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:66:13-65
+410        <activity
+410-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:67:9-70:61
+411            android:name="com.stripe.android.payments.bankaccount.ui.CollectBankAccountActivity"
+411-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:68:13-97
+412            android:exported="false"
+412-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:69:13-37
+413            android:theme="@style/StripeTransparentTheme" />
+413-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:70:13-58
+414        <activity
+414-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:71:9-74:61
+415            android:name="com.stripe.android.challenge.passive.PassiveChallengeActivity"
+415-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:72:13-89
+416            android:exported="false"
+416-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:73:13-37
+417            android:theme="@style/StripeTransparentTheme" />
+417-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:74:13-58
+418        <activity
+418-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:75:9-78:61
+419            android:name="com.stripe.android.challenge.passive.warmer.activity.PassiveChallengeWarmerActivity"
+419-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:76:13-111
+420            android:exported="false"
+420-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:77:13-37
+421            android:theme="@style/StripeTransparentTheme" />
+421-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:78:13-58
+422        <activity
+422-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:79:9-82:66
+423            android:name="com.stripe.android.challenge.confirmation.IntentConfirmationChallengeActivity"
+423-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:80:13-105
+424            android:exported="false"
+424-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:81:13-37
+425            android:theme="@style/StripePaymentSheetBaseTheme" />
+425-->[com.stripe:payments-core:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/ac93023aa0c20959c479fb1359984cc7/transformed/jetified-payments-core-22.5.0/AndroidManifest.xml:82:13-63
+426        <activity
+426-->[com.stripe:stripe-3ds2-android:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/86371204a94db39719bcfde7917f6576/transformed/jetified-stripe-3ds2-android-22.5.0/AndroidManifest.xml:8:9-12:54
+427            android:name="com.stripe.android.stripe3ds2.views.ChallengeActivity"
+427-->[com.stripe:stripe-3ds2-android:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/86371204a94db39719bcfde7917f6576/transformed/jetified-stripe-3ds2-android-22.5.0/AndroidManifest.xml:9:13-81
+428            android:configChanges="orientation|screenSize"
+428-->[com.stripe:stripe-3ds2-android:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/86371204a94db39719bcfde7917f6576/transformed/jetified-stripe-3ds2-android-22.5.0/AndroidManifest.xml:10:13-59
+429            android:exported="false"
+429-->[com.stripe:stripe-3ds2-android:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/86371204a94db39719bcfde7917f6576/transformed/jetified-stripe-3ds2-android-22.5.0/AndroidManifest.xml:11:13-37
+430            android:theme="@style/Stripe3DS2Theme" />
+430-->[com.stripe:stripe-3ds2-android:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/86371204a94db39719bcfde7917f6576/transformed/jetified-stripe-3ds2-android-22.5.0/AndroidManifest.xml:12:13-51
+431        <activity
+431-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:15:9-21:20
+432            android:name="com.google.android.libraries.places.widget.AutocompleteActivity"
+432-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:16:13-91
+433            android:exported="false"
+433-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:17:13-37
+434            android:label="@string/places_autocomplete_label"
+434-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:18:13-62
+435            android:theme="@style/PlacesAutocompleteOverlay"
+435-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:19:13-61
+436            android:windowSoftInputMode="adjustResize" >
+436-->[com.google.android.libraries.places:places:3.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/98b6bc59348e76abb08c5ccd1c3afe93/transformed/jetified-places-3.5.0/AndroidManifest.xml:20:13-55
+437        </activity>
+438        <activity
+438-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:8:9-23:20
+439            android:name="com.stripe.android.financialconnections.lite.FinancialConnectionsSheetLiteRedirectActivity"
+439-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:9:13-118
+440            android:exported="true"
+440-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:10:13-36
+441            android:launchMode="singleTask" >
+441-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:11:13-44
+442            <intent-filter>
+442-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:12:13-22:29
+443                <action android:name="android.intent.action.VIEW" />
+443-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:17-69
+443-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:152:25-66
+444
+445                <category android:name="android.intent.category.DEFAULT" />
+445-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:17-76
+445-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:154:27-73
+446                <category android:name="android.intent.category.BROWSABLE" />
+446-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:17-78
+446-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:155:27-75
+447
+448                <data
+448-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:157:17-159:46
+449                    android:host="financial-connections-lite"
+449-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:158:21-67
+450                    android:pathPrefix="/io.bidswipe.app/auth_redirect"
+450-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:174:21-49
+451                    android:scheme="stripe" />
+451-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:159:21-43
+452            </intent-filter>
+453        </activity>
+454        <activity
+454-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:24:9-26:69
+455            android:name="com.stripe.android.financialconnections.lite.FinancialConnectionsSheetLiteActivity"
+455-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:25:13-110
+456            android:theme="@style/StripeBottomSheetActivityTheme" />
+456-->[com.stripe:financial-connections-lite:22.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/10e29e81367bfb98d3c057029d029314/transformed/jetified-financial-connections-lite-22.5.0/AndroidManifest.xml:26:13-66
+457
+458        <meta-data
+458-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:22:9-24:37
+459            android:name="com.google.android.play.billingclient.version"
+459-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:23:13-73
+460            android:value="8.3.0" />
+460-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:24:13-34
+461
+462        <activity
+462-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:26:9-30:75
+463            android:name="com.android.billingclient.api.ProxyBillingActivity"
+463-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:27:13-78
+464            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+464-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:28:13-96
+465            android:exported="false"
+465-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:29:13-37
+466            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+466-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:30:13-72
+467        <activity
+467-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:31:9-35:75
+468            android:name="com.android.billingclient.api.ProxyBillingActivityV2"
+468-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:32:13-80
+469            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+469-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:33:13-96
+470            android:exported="false"
+470-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:34:13-37
+471            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+471-->[com.android.billingclient:billing:8.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/8e4d1c57c74c12da36b8e372dc7fc82e/transformed/jetified-billing-8.3.0/AndroidManifest.xml:35:13-72
+472
+473        <service
+473-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:26:9-35:19
+474            android:name="com.google.firebase.components.ComponentDiscoveryService"
+474-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:27:13-84
+475            android:directBootAware="true"
+475-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:32:13-43
+476            android:exported="false" >
+476-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:28:13-37
+477            <meta-data
+477-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:29:13-31:85
+478                android:name="com.google.firebase.components:com.google.firebase.database.FirebaseDatabaseKtxRegistrar"
+478-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:30:17-120
+479                android:value="com.google.firebase.components.ComponentRegistrar" />
+479-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:31:17-82
+480            <meta-data
+480-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:32:13-34:85
+481                android:name="com.google.firebase.components:com.google.firebase.database.DatabaseRegistrar"
+481-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:33:17-109
+482                android:value="com.google.firebase.components.ComponentRegistrar" />
+482-->[com.google.firebase:firebase-database:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/1c46d762445c44adb1a798967042047a/transformed/jetified-firebase-database-22.0.1/AndroidManifest.xml:34:17-82
+483            <meta-data
+483-->[com.google.firebase:firebase-messaging-ktx:24.1.2] /Users/bluemini/.gradle/caches/8.13/transforms/a649ad3aa23ca6e56f2e8e0efb237e41/transformed/jetified-firebase-messaging-ktx-24.1.2/AndroidManifest.xml:26:13-28:85
+484                android:name="com.google.firebase.components:com.google.firebase.messaging.ktx.FirebaseMessagingLegacyRegistrar"
+484-->[com.google.firebase:firebase-messaging-ktx:24.1.2] /Users/bluemini/.gradle/caches/8.13/transforms/a649ad3aa23ca6e56f2e8e0efb237e41/transformed/jetified-firebase-messaging-ktx-24.1.2/AndroidManifest.xml:27:17-129
+485                android:value="com.google.firebase.components.ComponentRegistrar" />
+485-->[com.google.firebase:firebase-messaging-ktx:24.1.2] /Users/bluemini/.gradle/caches/8.13/transforms/a649ad3aa23ca6e56f2e8e0efb237e41/transformed/jetified-firebase-messaging-ktx-24.1.2/AndroidManifest.xml:28:17-82
+486            <meta-data
+486-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:57:13-59:85
+487                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
+487-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:58:17-122
+488                android:value="com.google.firebase.components.ComponentRegistrar" />
+488-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:59:17-82
+489            <meta-data
+489-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:60:13-62:85
+490                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+490-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:61:17-119
+491                android:value="com.google.firebase.components.ComponentRegistrar" />
+491-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:62:17-82
+492            <meta-data
+492-->[com.google.firebase:firebase-crashlytics:20.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/8cdbb82a9d8547fea20ffb2a582c7995/transformed/jetified-firebase-crashlytics-20.0.3/AndroidManifest.xml:15:13-17:85
+493                android:name="com.google.firebase.components:com.google.firebase.crashlytics.FirebaseCrashlyticsKtxRegistrar"
+493-->[com.google.firebase:firebase-crashlytics:20.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/8cdbb82a9d8547fea20ffb2a582c7995/transformed/jetified-firebase-crashlytics-20.0.3/AndroidManifest.xml:16:17-126
+494                android:value="com.google.firebase.components.ComponentRegistrar" />
+494-->[com.google.firebase:firebase-crashlytics:20.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/8cdbb82a9d8547fea20ffb2a582c7995/transformed/jetified-firebase-crashlytics-20.0.3/AndroidManifest.xml:17:17-82
+495            <meta-data
+495-->[com.google.firebase:firebase-crashlytics:20.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/8cdbb82a9d8547fea20ffb2a582c7995/transformed/jetified-firebase-crashlytics-20.0.3/AndroidManifest.xml:18:13-20:85
+496                android:name="com.google.firebase.components:com.google.firebase.crashlytics.CrashlyticsRegistrar"
+496-->[com.google.firebase:firebase-crashlytics:20.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/8cdbb82a9d8547fea20ffb2a582c7995/transformed/jetified-firebase-crashlytics-20.0.3/AndroidManifest.xml:19:17-115
+497                android:value="com.google.firebase.components.ComponentRegistrar" />
+497-->[com.google.firebase:firebase-crashlytics:20.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/8cdbb82a9d8547fea20ffb2a582c7995/transformed/jetified-firebase-crashlytics-20.0.3/AndroidManifest.xml:20:17-82
+498            <meta-data
+498-->[com.google.firebase:firebase-common-ktx:21.0.0] /Users/bluemini/.gradle/caches/8.13/transforms/d1e37c09446f17f1fb06f6e145dba2f6/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:12:13-14:85
+499                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+499-->[com.google.firebase:firebase-common-ktx:21.0.0] /Users/bluemini/.gradle/caches/8.13/transforms/d1e37c09446f17f1fb06f6e145dba2f6/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:13:17-116
+500                android:value="com.google.firebase.components.ComponentRegistrar" />
+500-->[com.google.firebase:firebase-common-ktx:21.0.0] /Users/bluemini/.gradle/caches/8.13/transforms/d1e37c09446f17f1fb06f6e145dba2f6/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:14:17-82
+501            <meta-data
+501-->[com.google.firebase:firebase-sessions:3.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/3e677dfc2e54627a7d554f1fdbe712f3/transformed/jetified-firebase-sessions-3.0.3/AndroidManifest.xml:25:13-27:85
+502                android:name="com.google.firebase.components:com.google.firebase.sessions.FirebaseSessionsRegistrar"
+502-->[com.google.firebase:firebase-sessions:3.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/3e677dfc2e54627a7d554f1fdbe712f3/transformed/jetified-firebase-sessions-3.0.3/AndroidManifest.xml:26:17-117
+503                android:value="com.google.firebase.components.ComponentRegistrar" />
+503-->[com.google.firebase:firebase-sessions:3.0.3] /Users/bluemini/.gradle/caches/8.13/transforms/3e677dfc2e54627a7d554f1fdbe712f3/transformed/jetified-firebase-sessions-3.0.3/AndroidManifest.xml:27:17-82
+504            <meta-data
+504-->[com.google.firebase:firebase-installations:19.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/56fd4d07085fab588bbed80590f7d317/transformed/jetified-firebase-installations-19.0.1/AndroidManifest.xml:15:13-17:85
+505                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+505-->[com.google.firebase:firebase-installations:19.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/56fd4d07085fab588bbed80590f7d317/transformed/jetified-firebase-installations-19.0.1/AndroidManifest.xml:16:17-130
+506                android:value="com.google.firebase.components.ComponentRegistrar" />
+506-->[com.google.firebase:firebase-installations:19.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/56fd4d07085fab588bbed80590f7d317/transformed/jetified-firebase-installations-19.0.1/AndroidManifest.xml:17:17-82
+507            <meta-data
+507-->[com.google.firebase:firebase-installations:19.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/56fd4d07085fab588bbed80590f7d317/transformed/jetified-firebase-installations-19.0.1/AndroidManifest.xml:18:13-20:85
+508                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+508-->[com.google.firebase:firebase-installations:19.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/56fd4d07085fab588bbed80590f7d317/transformed/jetified-firebase-installations-19.0.1/AndroidManifest.xml:19:17-127
+509                android:value="com.google.firebase.components.ComponentRegistrar" />
+509-->[com.google.firebase:firebase-installations:19.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/56fd4d07085fab588bbed80590f7d317/transformed/jetified-firebase-installations-19.0.1/AndroidManifest.xml:20:17-82
+510            <meta-data
+510-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:35:13-37:85
+511                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+511-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:36:17-109
+512                android:value="com.google.firebase.components.ComponentRegistrar" />
+512-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:37:17-82
+513            <meta-data
+513-->[com.google.firebase:firebase-datatransport:19.0.0] /Users/bluemini/.gradle/caches/8.13/transforms/93ebb01be854ae7c384c2f86a4dd249d/transformed/jetified-firebase-datatransport-19.0.0/AndroidManifest.xml:25:13-27:85
+514                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+514-->[com.google.firebase:firebase-datatransport:19.0.0] /Users/bluemini/.gradle/caches/8.13/transforms/93ebb01be854ae7c384c2f86a4dd249d/transformed/jetified-firebase-datatransport-19.0.0/AndroidManifest.xml:26:17-115
+515                android:value="com.google.firebase.components.ComponentRegistrar" />
+515-->[com.google.firebase:firebase-datatransport:19.0.0] /Users/bluemini/.gradle/caches/8.13/transforms/93ebb01be854ae7c384c2f86a4dd249d/transformed/jetified-firebase-datatransport-19.0.0/AndroidManifest.xml:27:17-82
+516        </service>
+517
+518        <receiver
+518-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:29:9-40:20
+519            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+519-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:30:13-78
+520            android:exported="true"
+520-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:31:13-36
+521            android:permission="com.google.android.c2dm.permission.SEND" >
+521-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:32:13-73
+522            <intent-filter>
+522-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:33:13-35:29
+523                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+523-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:34:17-81
+523-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:34:25-78
+524            </intent-filter>
+525
+526            <meta-data
+526-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:37:13-39:40
+527                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
+527-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:38:17-92
+528                android:value="true" />
+528-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:39:17-37
+529        </receiver>
+530        <!--
+531             FirebaseMessagingService performs security checks at runtime,
+532             but set to not exported to explicitly avoid allowing another app to call it.
+533        -->
+534        <service
+534-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:46:9-53:19
+535            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+535-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:47:13-82
+536            android:directBootAware="true"
+536-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:48:13-43
+537            android:exported="false" >
+537-->[com.google.firebase:firebase-messaging:25.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/81f1414043e5e39cf2b7a01c9d318d39/transformed/jetified-firebase-messaging-25.0.1/AndroidManifest.xml:49:13-37
+538            <intent-filter android:priority="-500" >
+538-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:194:13-196:29
+539                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+539-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:195:17-78
+539-->/Users/bluemini/.openclaw/workspace/bidcast/app/src/main/AndroidManifest.xml:195:25-75
+540            </intent-filter>
+541        </service> <!-- Needs to be explicitly declared on P+ -->
+542        <uses-library
+542-->[com.google.android.gms:play-services-maps:18.0.2] /Users/bluemini/.gradle/caches/8.13/transforms/d72d779be048c4572cb5152079cc3811/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:39:9-41:40
+543            android:name="org.apache.http.legacy"
+543-->[com.google.android.gms:play-services-maps:18.0.2] /Users/bluemini/.gradle/caches/8.13/transforms/d72d779be048c4572cb5152079cc3811/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:40:13-50
+544            android:required="false" />
+544-->[com.google.android.gms:play-services-maps:18.0.2] /Users/bluemini/.gradle/caches/8.13/transforms/d72d779be048c4572cb5152079cc3811/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:41:13-37
+545
+546        <activity
+546-->[com.google.android.gms:play-services-base:18.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/1c77587c7c3b331564b283535ec76b70/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+547            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+547-->[com.google.android.gms:play-services-base:18.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/1c77587c7c3b331564b283535ec76b70/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+548            android:exported="false"
+548-->[com.google.android.gms:play-services-base:18.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/1c77587c7c3b331564b283535ec76b70/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+549            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+549-->[com.google.android.gms:play-services-base:18.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/1c77587c7c3b331564b283535ec76b70/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+550
+551        <provider
+551-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:23:9-28:39
+552            android:name="com.google.firebase.provider.FirebaseInitProvider"
+552-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:24:13-77
+553            android:authorities="io.bidswipe.app.firebaseinitprovider"
+553-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:25:13-72
+554            android:directBootAware="true"
+554-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:26:13-43
+555            android:exported="false"
+555-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:27:13-37
+556            android:initOrder="100" />
+556-->[com.google.firebase:firebase-common:22.0.1] /Users/bluemini/.gradle/caches/8.13/transforms/4b8e6f8afc04f2f3cd5f5970e5ae4766/transformed/jetified-firebase-common-22.0.1/AndroidManifest.xml:28:13-36
+557        <provider
+557-->[androidx.emoji2:emoji2:1.4.0] /Users/bluemini/.gradle/caches/8.13/transforms/7ec5d28c774ec8a0bc60db5d0091743f/transformed/jetified-emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+558            android:name="androidx.startup.InitializationProvider"
+558-->[androidx.emoji2:emoji2:1.4.0] /Users/bluemini/.gradle/caches/8.13/transforms/7ec5d28c774ec8a0bc60db5d0091743f/transformed/jetified-emoji2-1.4.0/AndroidManifest.xml:25:13-67
+559            android:authorities="io.bidswipe.app.androidx-startup"
+559-->[androidx.emoji2:emoji2:1.4.0] /Users/bluemini/.gradle/caches/8.13/transforms/7ec5d28c774ec8a0bc60db5d0091743f/transformed/jetified-emoji2-1.4.0/AndroidManifest.xml:26:13-68
+560            android:exported="false" >
+560-->[androidx.emoji2:emoji2:1.4.0] /Users/bluemini/.gradle/caches/8.13/transforms/7ec5d28c774ec8a0bc60db5d0091743f/transformed/jetified-emoji2-1.4.0/AndroidManifest.xml:27:13-37
+561            <meta-data
+561-->[androidx.emoji2:emoji2:1.4.0] /Users/bluemini/.gradle/caches/8.13/transforms/7ec5d28c774ec8a0bc60db5d0091743f/transformed/jetified-emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+562                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+562-->[androidx.emoji2:emoji2:1.4.0] /Users/bluemini/.gradle/caches/8.13/transforms/7ec5d28c774ec8a0bc60db5d0091743f/transformed/jetified-emoji2-1.4.0/AndroidManifest.xml:30:17-75
+563                android:value="androidx.startup" />
+563-->[androidx.emoji2:emoji2:1.4.0] /Users/bluemini/.gradle/caches/8.13/transforms/7ec5d28c774ec8a0bc60db5d0091743f/transformed/jetified-emoji2-1.4.0/AndroidManifest.xml:31:17-49
+564            <meta-data
+564-->[androidx.lifecycle:lifecycle-process:2.10.0] /Users/bluemini/.gradle/caches/8.13/transforms/bb2be6ba8f915da891285ac22bedfafc/transformed/jetified-lifecycle-process-2.10.0/AndroidManifest.xml:29:13-31:52
+565                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+565-->[androidx.lifecycle:lifecycle-process:2.10.0] /Users/bluemini/.gradle/caches/8.13/transforms/bb2be6ba8f915da891285ac22bedfafc/transformed/jetified-lifecycle-process-2.10.0/AndroidManifest.xml:30:17-78
+566                android:value="androidx.startup" />
+566-->[androidx.lifecycle:lifecycle-process:2.10.0] /Users/bluemini/.gradle/caches/8.13/transforms/bb2be6ba8f915da891285ac22bedfafc/transformed/jetified-lifecycle-process-2.10.0/AndroidManifest.xml:31:17-49
+567            <meta-data
+567-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:29:13-31:52
+568                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+568-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:30:17-85
+569                android:value="androidx.startup" />
+569-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:31:17-49
+570            <meta-data
+570-->[com.squareup.okhttp3:okhttp-android:5.3.2] /Users/bluemini/.gradle/caches/8.13/transforms/59d0f84bf5cc398d1be70a339a9b1f54/transformed/jetified-okhttp-release/AndroidManifest.xml:16:13-18:52
+571                android:name="okhttp3.internal.platform.PlatformInitializer"
+571-->[com.squareup.okhttp3:okhttp-android:5.3.2] /Users/bluemini/.gradle/caches/8.13/transforms/59d0f84bf5cc398d1be70a339a9b1f54/transformed/jetified-okhttp-release/AndroidManifest.xml:17:17-77
+572                android:value="androidx.startup" />
+572-->[com.squareup.okhttp3:okhttp-android:5.3.2] /Users/bluemini/.gradle/caches/8.13/transforms/59d0f84bf5cc398d1be70a339a9b1f54/transformed/jetified-okhttp-release/AndroidManifest.xml:18:17-49
+573        </provider>
+574
+575        <uses-library
+575-->[androidx.window:window:1.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7eac284a327a9b35f7104bda6b1d74a/transformed/jetified-window-1.5.0/AndroidManifest.xml:23:9-25:40
+576            android:name="androidx.window.extensions"
+576-->[androidx.window:window:1.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7eac284a327a9b35f7104bda6b1d74a/transformed/jetified-window-1.5.0/AndroidManifest.xml:24:13-54
+577            android:required="false" />
+577-->[androidx.window:window:1.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7eac284a327a9b35f7104bda6b1d74a/transformed/jetified-window-1.5.0/AndroidManifest.xml:25:13-37
+578        <uses-library
+578-->[androidx.window:window:1.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7eac284a327a9b35f7104bda6b1d74a/transformed/jetified-window-1.5.0/AndroidManifest.xml:26:9-28:40
+579            android:name="androidx.window.sidecar"
+579-->[androidx.window:window:1.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7eac284a327a9b35f7104bda6b1d74a/transformed/jetified-window-1.5.0/AndroidManifest.xml:27:13-51
+580            android:required="false" />
+580-->[androidx.window:window:1.5.0] /Users/bluemini/.gradle/caches/8.13/transforms/d7eac284a327a9b35f7104bda6b1d74a/transformed/jetified-window-1.5.0/AndroidManifest.xml:28:13-37
+581
+582        <meta-data
+582-->[com.google.android.gms:play-services-basement:18.9.0] /Users/bluemini/.gradle/caches/8.13/transforms/642437074664ac8d4cda9bee1ae1d4f4/transformed/jetified-play-services-basement-18.9.0/AndroidManifest.xml:21:9-23:69
+583            android:name="com.google.android.gms.version"
+583-->[com.google.android.gms:play-services-basement:18.9.0] /Users/bluemini/.gradle/caches/8.13/transforms/642437074664ac8d4cda9bee1ae1d4f4/transformed/jetified-play-services-basement-18.9.0/AndroidManifest.xml:22:13-58
+584            android:value="@integer/google_play_services_version" />
+584-->[com.google.android.gms:play-services-basement:18.9.0] /Users/bluemini/.gradle/caches/8.13/transforms/642437074664ac8d4cda9bee1ae1d4f4/transformed/jetified-play-services-basement-18.9.0/AndroidManifest.xml:23:13-66
+585
+586        <service
+586-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/7aa01e1bf3e411879e284aad38bdfd90/transformed/jetified-transport-backend-cct-3.3.0/AndroidManifest.xml:26:9-32:19
+587            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+587-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/7aa01e1bf3e411879e284aad38bdfd90/transformed/jetified-transport-backend-cct-3.3.0/AndroidManifest.xml:27:13-103
+588            android:exported="false" >
+588-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/7aa01e1bf3e411879e284aad38bdfd90/transformed/jetified-transport-backend-cct-3.3.0/AndroidManifest.xml:28:13-37
+589            <meta-data
+589-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/7aa01e1bf3e411879e284aad38bdfd90/transformed/jetified-transport-backend-cct-3.3.0/AndroidManifest.xml:29:13-31:39
+590                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+590-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/7aa01e1bf3e411879e284aad38bdfd90/transformed/jetified-transport-backend-cct-3.3.0/AndroidManifest.xml:30:17-94
+591                android:value="cct" />
+591-->[com.google.android.datatransport:transport-backend-cct:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/7aa01e1bf3e411879e284aad38bdfd90/transformed/jetified-transport-backend-cct-3.3.0/AndroidManifest.xml:31:17-36
+592        </service>
+593        <service
+593-->[com.google.android.datatransport:transport-runtime:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/541378be2f52343aa9e8b17b7c16c548/transformed/jetified-transport-runtime-3.3.0/AndroidManifest.xml:24:9-28:19
+594            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+594-->[com.google.android.datatransport:transport-runtime:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/541378be2f52343aa9e8b17b7c16c548/transformed/jetified-transport-runtime-3.3.0/AndroidManifest.xml:25:13-117
+595            android:exported="false"
+595-->[com.google.android.datatransport:transport-runtime:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/541378be2f52343aa9e8b17b7c16c548/transformed/jetified-transport-runtime-3.3.0/AndroidManifest.xml:26:13-37
+596            android:permission="android.permission.BIND_JOB_SERVICE" >
+596-->[com.google.android.datatransport:transport-runtime:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/541378be2f52343aa9e8b17b7c16c548/transformed/jetified-transport-runtime-3.3.0/AndroidManifest.xml:27:13-69
+597        </service>
+598
+599        <receiver
+599-->[com.google.android.datatransport:transport-runtime:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/541378be2f52343aa9e8b17b7c16c548/transformed/jetified-transport-runtime-3.3.0/AndroidManifest.xml:30:9-32:40
+600            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+600-->[com.google.android.datatransport:transport-runtime:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/541378be2f52343aa9e8b17b7c16c548/transformed/jetified-transport-runtime-3.3.0/AndroidManifest.xml:31:13-132
+601            android:exported="false" />
+601-->[com.google.android.datatransport:transport-runtime:3.3.0] /Users/bluemini/.gradle/caches/8.13/transforms/541378be2f52343aa9e8b17b7c16c548/transformed/jetified-transport-runtime-3.3.0/AndroidManifest.xml:32:13-37
+602        <receiver
+602-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:34:9-52:20
+603            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+603-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:35:13-76
+604            android:directBootAware="false"
+604-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:36:13-44
+605            android:enabled="true"
+605-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:37:13-35
+606            android:exported="true"
+606-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:38:13-36
+607            android:permission="android.permission.DUMP" >
+607-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:39:13-57
+608            <intent-filter>
+608-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:40:13-42:29
+609                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+609-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:41:17-91
+609-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:41:25-88
+610            </intent-filter>
+611            <intent-filter>
+611-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:43:13-45:29
+612                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+612-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:44:17-85
+612-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:44:25-82
+613            </intent-filter>
+614            <intent-filter>
+614-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:46:13-48:29
+615                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+615-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:47:17-88
+615-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:47:25-85
+616            </intent-filter>
+617            <intent-filter>
+617-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:49:13-51:29
+618                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+618-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:50:17-95
+618-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/bluemini/.gradle/caches/8.13/transforms/5f0d8fc183ff107899500620a99302ba/transformed/jetified-profileinstaller-1.4.1/AndroidManifest.xml:50:25-92
+619            </intent-filter>
+620        </receiver>
+621
+622        <meta-data
+622-->[com.google.android.instantapps:instantapps:1.1.0] /Users/bluemini/.gradle/caches/8.13/transforms/7f390a750a2c1200efbe9044e7ed4858/transformed/jetified-instantapps-1.1.0/AndroidManifest.xml:10:9-12:33
+623            android:name="aia-compat-api-min-version"
+623-->[com.google.android.instantapps:instantapps:1.1.0] /Users/bluemini/.gradle/caches/8.13/transforms/7f390a750a2c1200efbe9044e7ed4858/transformed/jetified-instantapps-1.1.0/AndroidManifest.xml:11:13-54
+624            android:value="1" /> <!-- The activities will be merged into the manifest of the hosting app. -->
+624-->[com.google.android.instantapps:instantapps:1.1.0] /Users/bluemini/.gradle/caches/8.13/transforms/7f390a750a2c1200efbe9044e7ed4858/transformed/jetified-instantapps-1.1.0/AndroidManifest.xml:12:13-30
+625        <activity
+625-->[com.google.android.play:core-common:2.0.4] /Users/bluemini/.gradle/caches/8.13/transforms/466094f5296c057424fb23b58afe18fc/transformed/jetified-core-common-2.0.4/AndroidManifest.xml:14:9-18:65
+626            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
+626-->[com.google.android.play:core-common:2.0.4] /Users/bluemini/.gradle/caches/8.13/transforms/466094f5296c057424fb23b58afe18fc/transformed/jetified-core-common-2.0.4/AndroidManifest.xml:15:13-93
+627            android:exported="false"
+627-->[com.google.android.play:core-common:2.0.4] /Users/bluemini/.gradle/caches/8.13/transforms/466094f5296c057424fb23b58afe18fc/transformed/jetified-core-common-2.0.4/AndroidManifest.xml:16:13-37
+628            android:stateNotNeeded="true"
+628-->[com.google.android.play:core-common:2.0.4] /Users/bluemini/.gradle/caches/8.13/transforms/466094f5296c057424fb23b58afe18fc/transformed/jetified-core-common-2.0.4/AndroidManifest.xml:17:13-42
+629            android:theme="@style/Theme.PlayCore.Transparent" />
+629-->[com.google.android.play:core-common:2.0.4] /Users/bluemini/.gradle/caches/8.13/transforms/466094f5296c057424fb23b58afe18fc/transformed/jetified-core-common-2.0.4/AndroidManifest.xml:18:13-62
+630    </application>
+631
+632</manifest>

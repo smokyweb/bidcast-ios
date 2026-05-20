@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black25"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <androidx.media3.ui.DefaultTimeBar
+            android:id="@id/exo_progress"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginEnd="@dimen/margin"
+            android:layout_marginBottom="12dp"
+            app:bar_height="4dp"
+            app:buffered_color="@color/surfaceVariant"
+            app:played_color="@color/primary"
+            app:scrubber_color="@color/primary"
+            app:scrubber_dragged_size="16dp"
+            app:scrubber_enabled_size="12dp"
+            app:unplayed_color="@color/surfaceVariant" />
+
+        <LinearLayout
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginEnd="@dimen/margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Skip back 10 s -->
+            <ImageButton
+                android:id="@+id/btnSkipBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="0"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Skip back 10 seconds"
+                android:padding="@dimen/half_margin"
+                android:scaleType="fitCenter"
+                android:src="@drawable/exo_icon_rewind"
+                app:tint="@color/onSurface" />
+
+            <!-- Play / Pause -->
+            <ImageButton
+                android:id="@id/exo_play_pause"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/play_pause"
+                android:padding="@dimen/half_margin"
+                android:scaleType="fitCenter"
+                android:src="@drawable/exo_icon_play"
+                app:tint="@color/onSurface" />
+
+            <!-- Skip forward 10 s -->
+            <ImageButton
+                android:id="@+id/btnSkipForward"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="0"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Skip forward 10 seconds"
+                android:padding="@dimen/half_margin"
+                android:scaleType="fitCenter"
+                android:src="@drawable/exo_icon_fastforward"
+                app:tint="@color/onSurface" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSound"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/sound"
+                android:textColor="@color/onSurface"
+                app:icon="@drawable/ic_sound"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/onSurface" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCaption"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/caption"
+                android:textColor="@color/onSurface"
+                app:icon="@drawable/ic_cc"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/onSurface" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

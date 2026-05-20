@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bottom_sheet_back"
+    android:orientation="vertical"
+    android:padding="@dimen/padding">
+
+    <View
+        android:layout_width="64dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/card_16"
+        android:backgroundTint="@color/outlineVariant" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin"
+        android:gravity="center_vertical">
+
+        <TextView
+            style="@style/TitleLarge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Randomizer" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?selectableItemBackground"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close"
+            app:tint="@color/onSurface" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/spin_controllers_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/show_spin"
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/half_margin"
+                android:layout_weight="1"
+                android:text="Show SpinWheel"
+                android:paddingVertical="12dp"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/hide_wheel"
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:paddingVertical="12dp"
+                android:text="Hide SpinWheel"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/shuffle_entries"
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:paddingVertical="12dp"
+                android:text="Shuffle Entries"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/spin_wheel"
+                style="@style/appBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingVertical="12dp"
+                android:text="Spin Wheel"
+                android:textAppearance="@style/BodySmall"
+                app:cornerRadius="@dimen/half_margin" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:text="Users Entered in Freebie" />
+
+       <!-- <TextView
+            style="@style/TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            android:text="Manual Entries" />-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:id="@+id/recycler"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/entries_item"/>
+
+
+        <TextView
+            android:id="@+id/noEntries"
+            style="@style/BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:gravity="center"
+            android:paddingVertical="@dimen/margin"
+            android:text="No Entries Found!"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/manual_entry_box"
+            style="@style/inputBoxStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            app:boxCornerRadiusBottomEnd="@dimen/margin"
+            app:boxCornerRadiusBottomStart="@dimen/margin"
+            app:boxCornerRadiusTopEnd="@dimen/margin"
+            app:boxCornerRadiusTopStart="@dimen/margin">
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/manual_entry"
+                style="@style/inputTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="Enter manual entries here..."
+                android:inputType="textMultiLine"
+                android:minLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_all"
+            style="@style/appBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin"
+            android:text="Remove All" />
+
+    </LinearLayout>
+
+</LinearLayout>

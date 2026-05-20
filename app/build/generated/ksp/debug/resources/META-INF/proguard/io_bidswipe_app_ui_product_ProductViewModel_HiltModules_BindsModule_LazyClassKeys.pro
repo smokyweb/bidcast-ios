@@ -1,0 +1,1 @@
+-keep,allowobfuscation,allowshrinking class io.bidswipe.app.ui.product.ProductViewModel

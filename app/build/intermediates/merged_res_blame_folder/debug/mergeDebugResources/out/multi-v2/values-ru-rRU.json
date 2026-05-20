@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.bidswipe.app-mergeDebugResources-116:/values-ru-rRU/values-ru-rRU.xml",
+            "map": [
+                {
+                    "source": "/Users/bluemini/.gradle/caches/8.13/transforms/86371204a94db39719bcfde7917f6576/transformed/jetified-stripe-3ds2-android-22.5.0/res/values-ru-rRU/values-ru-rRU.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "55,141,244,311,378,442,529",
+                        "endColumns": "85,102,66,66,63,86,71",
+                        "endOffsets": "136,239,306,373,437,524,596"
+                    },
+                    "to": {
+                        "startLines": "11,12,13,14,15,16,17",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "615,701,804,871,938,1002,1089",
+                        "endColumns": "85,102,66,66,63,86,71",
+                        "endOffsets": "696,799,866,933,997,1084,1156"
+                    }
+                },
+                {
+                    "source": "/Users/bluemini/.gradle/caches/8.13/transforms/37f684f7f23ec29559b53ea012d12d24/transformed/jetified-android-image-cropper-4.7.0/res/values-ru-rRU/values-ru-rRU.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,113,161,237,309,372,437,490,560",
+                        "endColumns": "57,47,75,71,62,64,52,69,54",
+                        "endOffsets": "108,156,232,304,367,432,485,555,610"
+                    }
+                }
+            ]
+        }
+    ]
+}

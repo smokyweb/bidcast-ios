@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="firebase_database_url" translatable="false">https://bidcast-a527c-default-rtdb.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">988454812680</string>
+    <string name="google_api_key" translatable="false">AIzaSyC1TfaBJi35l1u_vqed6WR9dl9nSYISJKI</string>
+    <string name="google_app_id" translatable="false">1:988454812680:android:38c0054039521d4ddea5bd</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyC1TfaBJi35l1u_vqed6WR9dl9nSYISJKI</string>
+    <string name="google_storage_bucket" translatable="false">bidcast-a527c.firebasestorage.app</string>
+    <string name="project_id" translatable="false">bidcast-a527c</string>
+</resources>

@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.bidswipe.app-mergeDebugResources-116:/values-night-v33/values-night-v33.xml",
+            "map": [
+                {
+                    "source": "/Users/bluemini/.gradle/caches/8.13/transforms/91cd7b8ab6e4bc8a37b45924c3b28701/transformed/jetified-core-splashscreen-1.2.0/res/values-night-v33/values-night-v33.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "215"
+                    }
+                }
+            ]
+        }
+    ]
+}
