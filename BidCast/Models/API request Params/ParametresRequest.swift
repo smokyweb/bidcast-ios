@@ -963,5 +963,28 @@ struct AgoraTokenRequest : Encodable{
 struct UnifiedSearchRequest: Encodable {
     var search: String
     var page: String
+// MARK: - QA #31 / #32 / #34 — USPS Order Workflow request bodies.
+// Mirrors POST /api/change-order-status on the Laravel backend (ApiController@changeOrderStatus).
+// Allowed status values: 'pending' | 'processing' | 'out_for_delivery' | 'delivered'.
+// When marking shipped (status='out_for_delivery'), include the tracking_number returned by
+// the usps/create-label call so the order row picks up shipping_status='shipped' on the server.
+struct ChangeOrderStatusRequest : Encodable {
+    var order_id : Int
+    var status : String
+    var tracking_number : String? = nil
+}
+
+// MARK: - QA #32 / #33 — USPS label generation.
+// Mirrors POST /api/usps/create-label on the Laravel backend (ApiController@createLabel).
+// Response carries trackingNumber, shipmentId, and labelImage (base64 PDF). The server also
+// persists order.tracking_number, order.label_url, and order.shipping_status='label_created'.
+struct CreateUSPSLabelRequest : Encodable {
+    var order_id : Int
+}
+
+// MARK: - QA #32 / #34 — USPS tracking lookup.
+// Mirrors POST /api/usps/track-order on the Laravel backend (ApiController@trackOrder).
+struct TrackUSPSOrderRequest : Encodable {
+    var tracking_number : String
 }
 

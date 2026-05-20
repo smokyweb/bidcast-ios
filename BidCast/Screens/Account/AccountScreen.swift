@@ -671,12 +671,17 @@ struct SellerHubSection: View {
     @State private var itemsCount = 0
     @State private var revenue = "$0.00"
     @State private var rating = 0.0
-    @State private var onTimeRate = "100"
-    @State private var defectFreeRate = "100"
-    @State private var policyStanding = "Excellent"
-    @State private var payouts = "$199.00"
-    @State private var totalOrders = "22 Items"
+    @State private var onTimeRate = "0"
+    // QA #29 — Defaults were showing fake values before the API landed.
+    // Use safe zero/blank defaults so users never see filler data.
+    @State private var defectFreeRate = "0"
+    @State private var policyStanding = ""
+    @State private var payouts = "$0.00"
+    @State private var totalOrders = "0 Items"
     @State private var vacationToggle = false
+    // QA #35 — Vacation mode confirmation
+    @State private var showVacationConfirm = false
+    @State private var pendingVacationToggle = false
     @State private var navigateToInventory = false
     @State private var navigateToPayouts = false
     @State private var navigateToUserProfile = false
@@ -987,8 +992,9 @@ struct SellerHubSection: View {
                 Button {
                     navigateToWallet = true
                 } label: {
+                    // cmpcqb3fa (2026-05-20): rename per Trey's option A — see PWA + Android.
                     PayoutCard(
-                        title: "Payouts",
+                        title: "Withdrawn",
                         value: payouts
                     )
                 }
@@ -1002,8 +1008,9 @@ struct SellerHubSection: View {
                 Button {
                     navigateToOrder = true
                 } label: {
+                    // cmpcqb3fa (2026-05-20): rename per Trey's option A — value is still order COUNT, label is now LIFETIME SALES.
                     PayoutCard(
-                        title: "Total Orders",
+                        title: "Lifetime Sales",
                         value: totalOrders
                     )
                 }
@@ -1028,9 +1035,26 @@ struct SellerHubSection: View {
             Toggle("", isOn: $vacationToggle)
                 .labelsHidden()
                 .tint(.defaultTheme)
-                .onChange(of: vacationToggle) { _, newValue in
-                    print("Vacation Mode:", newValue)
-                   vacationData(valueData: newValue)
+                .onChange(of: vacationToggle) { oldValue, newValue in
+                    // QA #35 — require confirmation before flipping vacation mode
+                    guard oldValue != newValue, !showVacationConfirm else { return }
+                    pendingVacationToggle = newValue
+                    showVacationConfirm = true
+                    // Revert visually until user confirms (will re-set in alert handler if confirmed)
+                    vacationToggle = oldValue
+                }
+                .alert("Enable Vacation Mode?", isPresented: $showVacationConfirm) {
+                    Button("Cancel", role: .cancel) {
+                        // Keep the previous state — nothing to do, vacationToggle was already reverted.
+                    }
+                    Button(pendingVacationToggle ? "Turn On" : "Turn Off") {
+                        vacationToggle = pendingVacationToggle
+                        vacationData(valueData: pendingVacationToggle)
+                    }
+                } message: {
+                    Text(pendingVacationToggle
+                        ? "While Vacation Mode is on, your store will be marked as away. Buyers can still browse but new orders are paused until you turn it off. Are you sure?"
+                        : "Turn off Vacation Mode and resume accepting new orders?")
                 }
         }
         .padding(16)

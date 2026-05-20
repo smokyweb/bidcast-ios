@@ -495,7 +495,8 @@ struct SellerVerificationScreen: View {
                 }
             }
         } else if status.lowercased() == "pending" {
-            kycVerificationComplete = false
+            // QA #43 — KYC pending means the user has SUBMITTED their info; show a checkmark, not Verify.
+            kycVerificationComplete = true
             if !forVerified {
                 hudMsg = "KYC verification is pending. Please wait for approval."
                 showhud = true

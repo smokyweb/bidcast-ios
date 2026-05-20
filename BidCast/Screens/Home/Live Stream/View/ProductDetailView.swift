@@ -65,29 +65,15 @@ struct ProductDetailView: View {
     
     
     var body: some View {
-        
+        // QA #22 — Back button must be pinned (not scroll with content) and positioned to avoid sitting behind the clock.
+        ZStack(alignment: .topLeading) {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
                 // MARK: - Product Images Carousel (Clean theme)
-                ZStack(alignment: .topLeading) {
-                    productImageCarousel
-                    
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        Image(systemName: "chevron.left.circle.fill")
-                            .font(.custom(poppinsBold, size: 24))
-                            .foregroundColor(.primary)
-                            .frame(width: 48, height: 48)
-                    }
-                    .padding(12)
-                    .padding(.top,24)
-                    .padding(.leading,8)
-                    Spacer()
-                }
+                productImageCarousel
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    // MARK: - Product Basic Info
+                    // MARK: - Product Basic Info (back button is now an outer overlay; the inner Spacer was inside the old ZStack)
                     productHeaderSection
                     
                     Divider()
@@ -212,6 +198,19 @@ struct ProductDetailView: View {
         .onFirstAppear {
             loadData()
         }
+        // QA #22 — Pinned back button overlay (top-left, padded to avoid clock area)
+        Button(action: {
+            presentationMode.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "chevron.left.circle.fill")
+                .font(.custom(poppinsBold, size: 24))
+                .foregroundColor(.primary)
+                .frame(width: 48, height: 48)
+        }
+        .padding(.top, 60) // clear status bar / clock
+        .padding(.leading, 8)
+        .zIndex(10)
+        } // end outer ZStack for QA #22 pinned back button
     }
     func prepareChatNavigation() {
         let currentUserId = String(UserDefaults.userId)
@@ -460,9 +459,16 @@ extension ProductDetailView {
                     .foregroundColor(.darkGray)
             }
             
-            Text("Starting at \(productPrice.compactCurrency()) + Shipping + taxes")
-                .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.darkGray)
+            // QA #7 — Only show "Starting at" for auction items. Buy Now items show just the price.
+            if productDetail?.auction == true {
+                Text("Starting at \(productPrice.compactCurrency()) + Shipping + taxes")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            } else {
+                Text("\(productPrice.compactCurrency()) + Shipping + taxes")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            }
         }
     }
 }

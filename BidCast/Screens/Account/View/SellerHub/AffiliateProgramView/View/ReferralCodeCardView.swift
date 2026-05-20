@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import AlertToast
 
 struct ReferralCodeCardView: View {
     var code: String
     var onShare: () -> Void
+    // QA #50 — toast confirmation state for the copy button
+    @State private var showCopiedToast = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -33,8 +36,11 @@ struct ReferralCodeCardView: View {
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                // QA #50 — Copy button now shows haptic + AlertToast confirmation.
                 Button(action: {
                     UIPasteboard.general.string = code
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                    showCopiedToast = true
                 }) {
                     Image(systemName: "doc.on.doc")
                         .foregroundColor(.gray)
@@ -59,6 +65,10 @@ struct ReferralCodeCardView: View {
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        // QA #50 — Copy confirmation toast.
+        .toast(isPresenting: $showCopiedToast, duration: 1.5, tapToDismiss: true) {
+            AlertToast(displayMode: .hud, type: .complete(.green), title: "Copied!", subTitle: code)
+        }
     }
 }
 

@@ -158,6 +158,10 @@ enum APIEndPoint{
 
     case unifiedSearch(param: UnifiedSearchRequest)
 
+    // MARK: - QA #31 / #32 / #33 / #34 — USPS Order Workflow (Wave 2 Orange tier)
+    case changeOrderStatus(param: ChangeOrderStatusRequest)
+    case createUSPSLabel(param: CreateUSPSLabelRequest)
+    case trackUSPSOrder(param: TrackUSPSOrderRequest)
 
 }
 
@@ -530,6 +534,13 @@ extension APIEndPoint: EndPointType {
             return "get-shipping-details"
         case .unifiedSearch:
             return "search"
+        // QA #31/#32/#34 — USPS Order Workflow
+        case .changeOrderStatus:
+            return "change-order-status"
+        case .createUSPSLabel:
+            return "usps/create-label"
+        case .trackUSPSOrder:
+            return "usps/track-order"
         }
     }
     
@@ -839,6 +850,12 @@ extension APIEndPoint: EndPointType {
         case .getShippinDetails:
             return .get
         case .unifiedSearch:
+        // QA #31/#32/#34 — USPS Order Workflow (all POST)
+        case .changeOrderStatus:
+            return .post
+        case .createUSPSLabel:
+            return .post
+        case .trackUSPSOrder:
             return .post
         }
     }
@@ -1155,6 +1172,12 @@ extension APIEndPoint: EndPointType {
         case .getShippinDetails:
             return nil
         case .unifiedSearch(let param):
+        // QA #31/#32/#34 — USPS Order Workflow params
+        case .changeOrderStatus(param: let param):
+            return param
+        case .createUSPSLabel(param: let param):
+            return param
+        case .trackUSPSOrder(param: let param):
             return param
         }
     }
@@ -1454,6 +1477,12 @@ extension APIEndPoint: EndPointType {
         case .getUspsShippingPrice:
             return nil
         case .unifiedSearch:
+        // QA #31/#32/#34 — USPS Order Workflow (no url-query params; bodies handled above)
+        case .changeOrderStatus:
+            return nil
+        case .createUSPSLabel:
+            return nil
+        case .trackUSPSOrder:
             return nil
         }
     }

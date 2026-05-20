@@ -18,6 +18,10 @@ struct OffersScreen: View {
     @StateObject var viewModel = OffersViewModel()
     @State private var offerList: [OfferListModel] = []
     @State var status : String = ""
+    // QA #38 — toggle between offers I've placed/received vs bids placed on my items.
+    // Same cell + list + pagination; only the API endpoint changes.
+    private enum ActivityMode { case offers, bids }
+    @State private var activityMode: ActivityMode = .offers
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var currentPage = 1
@@ -40,6 +44,13 @@ struct OffersScreen: View {
                     count: .constant(0)
                 )
             }
+            // QA #38 — mode toggle: Offers (default) vs Bids on my items
+            HStack(spacing: 0) {
+                modeToggleButton(title: "Offers", mode: .offers)
+                modeToggleButton(title: "Bids on my items", mode: .bids)
+            }
+            .padding(.horizontal, 15)
+            .padding(.vertical, 8)
             // MARK: - Scrollable Show List
             ScrollView {
                 VStack(spacing: 10) {
@@ -96,7 +107,19 @@ struct OffersScreen: View {
                 }
                 SVProgressHUD.show()
                 let param = PageRequest(page: currentPage)
-                await viewModel.getOfferList(param: param)
+                await fetchActivityList(param: param)
+                await SVProgressHUD.dismiss()
+                getOfferSuccess()
+            }
+        }
+        // QA #38 — reload list when the user flips between Offers and Bids on my items.
+        .onChange(of: activityMode) { _ in
+            Task {
+                currentPage = 1
+                offerList = []
+                SVProgressHUD.show()
+                let param = PageRequest(page: currentPage)
+                await fetchActivityList(param: param)
                 await SVProgressHUD.dismiss()
                 getOfferSuccess()
             }
@@ -135,7 +158,8 @@ struct OffersScreen: View {
                 SVProgressHUD.show()
                 await viewModel.updateOfferStatus(parameters: param)
                 let param = PageRequest(page: currentPage)
-                await viewModel.getOfferList(param: param)
+                // QA #38 — refresh via whichever feed the user is currently viewing.
+                await fetchActivityList(param: param)
                 await SVProgressHUD.dismiss()
                 if viewModel.offerListResponse.status == "success" {
                     self.offerList = viewModel.offerListResponse.data ?? []
@@ -161,7 +185,8 @@ struct OffersScreen: View {
         if isLastItem && canFetchMore {
             let nextPage = currentPage + 1
             let param = PageRequest(page: nextPage)
-            await viewModel.getOfferList(param: param)
+            // QA #38 — paginate the active feed (offers OR bids).
+            await fetchActivityList(param: param)
             
             if viewModel.offerListResponse.status == "success" {
                 currentPage = nextPage
@@ -195,6 +220,30 @@ struct OffersScreen: View {
         case .decline:
             return "\(viewModel.offerListResponse.declined ?? 0)"
         }
+    }
+
+    // QA #38 — routes to either getOfferList or getBidList depending on the current mode.
+    private func fetchActivityList(param: PageRequest) async {
+        switch activityMode {
+        case .offers: await viewModel.getOfferList(param: param)
+        case .bids:   await viewModel.getBidList(param: param)
+        }
+    }
+
+    // QA #38 — compact pill-style toggle for Offers vs Bids on my items.
+    @ViewBuilder
+    private func modeToggleButton(title: String, mode: ActivityMode) -> some View {
+        let selected = (activityMode == mode)
+        Button(action: { activityMode = mode }) {
+            Text(title)
+                .font(.custom(selected ? poppinsBold : poppinsMedium, size: 14))
+                .foregroundColor(selected ? .white : .primary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(selected ? Color.defaultTheme.opacity(0.85) : Color.gray.opacity(0.12))
+                .cornerRadius(10)
+        }
+        .buttonStyle(.plain)
     }
 }
 

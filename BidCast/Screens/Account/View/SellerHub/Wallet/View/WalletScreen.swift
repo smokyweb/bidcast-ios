@@ -85,6 +85,35 @@ struct TransactionRow: View {
     let transaction: TransactionModel
     @State private var isPressed = false
     
+    // QA #13 — derive a human-readable title from the live transaction data.
+    private func transactionTitle(for txn: TransactionModel) -> String {
+        let counterparty = txn.counterpartyName?.trimmingCharacters(in: .whitespaces)
+            ?? txn.buyer?.name?.trimmingCharacters(in: .whitespaces)
+            ?? txn.sender?.name?.trimmingCharacters(in: .whitespaces)
+            ?? txn.receiver?.name?.trimmingCharacters(in: .whitespaces)
+        let typeRaw = (txn.type ?? "").trimmingCharacters(in: .whitespaces).lowercased()
+        // Map snake_case backend values to human copy.
+        let typeCopy: String = {
+            switch typeRaw {
+            case "payout", "withdrawal":     return "Payout"
+            case "refund":                   return "Refund"
+            case "tip":                      return "Tip"
+            case "earning", "earnings", "sale", "order": return "Earnings from sale"
+            case "":                          return "Transaction"
+            default:                          return typeRaw.capitalized
+            }
+        }()
+        if let cp = counterparty, !cp.isEmpty {
+            switch typeRaw {
+            case "payout", "withdrawal": return "Payout to \(cp)"
+            case "refund":               return "Refund to \(cp)"
+            case "tip":                  return "Tip from \(cp)"
+            default:                     return "\(typeCopy) — \(cp)"
+            }
+        }
+        return typeCopy
+    }
+    
     var body: some View {
         Button(action: {
             isPressed = true
@@ -94,8 +123,10 @@ struct TransactionRow: View {
         }) {
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
-                    //                    Text(transacti)
-                    Text("Earnings for selling a Men's Square-Face Solitaire Ring – Engraved Setting + High-Fire Stone #3")
+                    // QA #13 — Transactions section was rendering a hardcoded ring title for every row.
+                    // Build a real label from the transaction model (counterparty + type) so users see
+                    // their actual transactions instead of filler data.
+                    Text(transactionTitle(for: transaction))
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.black)
                         .fixedSize(horizontal: false, vertical: true)
@@ -309,9 +340,10 @@ struct WalletPayoutView: View {
     private var walletContent: some View {
         VStack(spacing: 20) {
             
-            // Account Balance
+            // cmpcqb3fa (2026-05-20): renamed labels per Trey's option A — Total Balance = In Escrow + Available.
+            // Matches Android (MR !24) + PWA (deployed 2026-05-20 09:34 EDT).
             VStack(alignment: .leading, spacing: 6) {
-                Text("Account Balance")
+                Text("Total Balance")
                     .font(.custom(poppinsRegular, size: 14))
                     .foregroundColor(.gray)
                 
@@ -323,15 +355,15 @@ struct WalletPayoutView: View {
             // Payout Info Card (REPLACED MIDDLE)
             VStack(spacing: 18) {
                 payoutRow(
-                    title: "$\(walletInfo.avaiableForPayout ?? 0) available for payout",
-                    desc: "These funds are available to initiate payout to your bank account."
+                    title: "$\(walletInfo.avaiableForPayout ?? 0) Available",
+                    desc: "Available — these funds are ready to initiate payout to your bank account."
                 )
                 
                 Divider()
                 
                 payoutRow(
-                    title: "$\(walletInfo.processing ?? 0.00) processing",
-                    desc: "Funds will be available after order confirmation."
+                    title: "$\(walletInfo.processing ?? 0.00) In Escrow",
+                    desc: "In Escrow — these funds will become Available up to 4 hours after the order has been delivered."
                 )
                 if walletInfo.avaiableForPayout ?? 0 == 0{
                     Divider()

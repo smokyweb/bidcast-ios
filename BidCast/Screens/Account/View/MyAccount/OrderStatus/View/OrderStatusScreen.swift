@@ -8,14 +8,26 @@
 import SwiftUI
 import SVProgressHUD
 import AlertToast
+import SafariServices
 
 struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State var navigateToTab = false
     @StateObject var viewModel = OrderStatusViewModel()
+    // QA Wave 2 Orange tier (#31/#32/#33/#34) — seller-side workflow VM.
+    @StateObject private var workflowVM = OrderWorkflowViewModel()
     @Binding var productDetail : MyOrderModel?
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var recieptUrl : String?
+    // QA #8 — Open receipt PDF inside the app via in-app Safari sheet, not the Files download flow.
+    @State private var showReceiptSheet = false
+    // QA #5 — Shipping Details should navigate to the dedicated screen (or, if not present in this branch, show a sheet with tracking info).
+    @State private var showShippingDetailsSheet = false
+    // QA #33 — share / preview shipping label PDF after createLabel returns.
+    @State private var labelShareItems: [Any] = []
+    @State private var showLabelShareSheet = false
+    // QA #31/#34 — seller workflow toast feedback.
+    @State private var sellerActionToast: String? = nil
     @State private var isLoading = false
     @State private var showError = false
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -78,7 +90,8 @@ struct OrderStatusScreen: View {
                                     .frame(width: (geometry.size.width - 16) / 2)
                                     
                                     OutlinedButtonView(title: "Shipping Details", onTap: {
-                                        // Optionally handle this as well
+                                        // QA #5 — Wire the Shipping Details button to open a tracking sheet for the order.
+                                        showShippingDetailsSheet = true
                                     })
                                     .frame(width: (geometry.size.width - 16) / 2)
                                 }
@@ -89,8 +102,30 @@ struct OrderStatusScreen: View {
                         
                     }
                     
-                    // 🛡️ Buyer Protection
-                    BuyerProtectionView()
+                    // QA Wave 2 Orange tier — seller actions only show when this screen was opened
+                    // from the seller's My Orders flow (comeFrom == "myOrder").
+                    if comeFrom == "myOrder", let order = productDetail {
+                        SellerOrderWorkflowSection(
+                            order: order,
+                            workflowVM: workflowVM,
+                            onActionFeedback: { msg in
+                                sellerActionToast = msg
+                                hudMsg = msg
+                                showhud = true
+                                // Refresh the order so the new status reflects in the UI.
+                                fetchOrderDetail()
+                            },
+                            onLabelReady: { items in
+                                labelShareItems = items
+                                showLabelShareSheet = true
+                            }
+                        )
+                    }
+                    
+                    // 🛡️ Buyer Protection (buyer-side only — not relevant to a seller managing their order)
+                    if comeFrom != "myOrder" {
+                        BuyerProtectionView()
+                    }
                     
                     Spacer()
                 }
@@ -120,6 +155,30 @@ struct OrderStatusScreen: View {
             )
         }
         .background(Color.backGround.ignoresSafeArea())
+        // QA #8 — Present the receipt PDF in an in-app Safari sheet.
+        .sheet(isPresented: $showReceiptSheet) {
+            if let urlString = recieptUrl, let url = URL(string: urlString) {
+                ReceiptSafariView(url: url)
+                    .ignoresSafeArea()
+            } else {
+                Text("Receipt URL is not available.")
+                    .padding()
+            }
+        }
+        // QA #5 — Present Shipping Details (tracking info) in a sheet.
+        .sheet(isPresented: $showShippingDetailsSheet) {
+            ShippingDetailsSheet(order: productDetail)
+                .presentationDetents([.medium, .large])
+        }
+        // QA #33 — share / open shipping label PDF.
+        .sheet(isPresented: $showLabelShareSheet) {
+            if #available(iOS 16.0, *) {
+                ActivityShareSheet(items: labelShareItems)
+                    .presentationDetents([.medium, .large])
+            } else {
+                ActivityShareSheet(items: labelShareItems)
+            }
+        }
         .onDisappear {
             UIScrollView.appearance().bounces = true
         }
@@ -261,7 +320,8 @@ struct OrderStatusScreen: View {
             // clear message so they know the receipt isn't available yet.
             if let url = response.data, !url.isEmpty {
                 recieptUrl = url
-                downloadRecieptData(with: url)
+                // QA #8 — Open in-app sheet rather than downloading to Files.
+                showReceiptSheet = true
             } else {
                 hudMsg = "Receipt isn't available yet for this order."
                 showhud = true
@@ -305,4 +365,326 @@ struct OrderStatusScreen: View {
     }
 }
 
+// MARK: - QA #8 ReceiptSafariView
+// In-app PDF / web viewer for the receipt URL returned by the order-receipt API.
+struct ReceiptSafariView: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let config = SFSafariViewController.Configuration()
+        config.entersReaderIfAvailable = false
+        config.barCollapsingEnabled = true
+        let vc = SFSafariViewController(url: url, configuration: config)
+        vc.dismissButtonStyle = .close
+        return vc
+    }
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+}
 
+// MARK: - QA #5 ShippingDetailsSheet
+// Lightweight tracking-info sheet shown when the Shipping Details button is tapped on the order status screen.
+// Reads tracking fields off the existing MyOrderModel (the order-status API already exposes them).
+struct ShippingDetailsSheet: View {
+    let order: MyOrderModel?
+    @Environment(\.dismiss) private var dismiss
+
+    private var trackingNumber: String? {
+        // The order-status API may return tracking under any of these keys depending on backend version.
+        // Use the helper accessor when available, otherwise fall back to the order's own state mapping.
+        let mirrored = Mirror(reflecting: order as Any).children
+        for child in mirrored {
+            guard let label = child.label?.lowercased() else { continue }
+            if label.contains("tracking") || label.contains("awb") || label.contains("track_number") || label.contains("shipment") {
+                if let s = child.value as? String, !s.isEmpty { return s }
+                if let s = child.value as? String?, let v = s, !v.isEmpty { return v }
+            }
+        }
+        return nil
+    }
+
+    private var carrier: String? {
+        let mirrored = Mirror(reflecting: order as Any).children
+        for child in mirrored {
+            guard let label = child.label?.lowercased() else { continue }
+            if label.contains("carrier") || label.contains("shipper") || label.contains("mail_class") {
+                if let s = child.value as? String, !s.isEmpty { return s }
+            }
+        }
+        return nil
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Shipping Details")
+                    .font(.custom(poppinsBold, size: 18))
+                Spacer()
+                Button(action: { dismiss() }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(.top, 20)
+
+            Divider()
+
+            if let tn = trackingNumber, !tn.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Tracking Number")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                    Text(tn)
+                        .font(.custom(poppinsSemiBold, size: 16))
+                }
+                if let c = carrier {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Carrier")
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(.gray)
+                        Text(c)
+                            .font(.custom(poppinsSemiBold, size: 16))
+                    }
+                }
+                Button(action: {
+                    if let url = URL(string: "https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=\(tn)") {
+                        UIApplication.shared.open(url)
+                    }
+                }) {
+                    Text("Track with USPS")
+                        .font(.custom(poppinsSemiBold, size: 14))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.defaultThemeLight)
+                        .foregroundColor(.defaultTheme)
+                        .cornerRadius(32)
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    Image(systemName: "shippingbox")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                        .foregroundColor(.gray)
+                    Text("Shipping details not available yet.")
+                        .font(.custom(poppinsRegular, size: 14))
+                        .foregroundColor(.gray)
+                    Text("You'll see your tracking number here once the seller ships your order.")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                }
+                .padding(.top, 24)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+
+
+// MARK: - QA Wave 2 Orange tier — Seller Order Workflow
+// Renders progression buttons (#31), shipping label create + download/share (#32 / #33),
+// and a "Mark Delivered" button that flips the order into Completed (#34).
+// Only mounted when OrderStatusScreen is opened from the seller's My Orders flow.
+
+import UIKit
+
+struct SellerOrderWorkflowSection: View {
+    let order: MyOrderModel
+    @ObservedObject var workflowVM: OrderWorkflowViewModel
+    /// Called after a successful API mutation; parent re-fetches the order to refresh UI.
+    var onActionFeedback: (String) -> Void
+    /// Called when createLabel returns a base64 PDF; parent presents the share sheet.
+    var onLabelReady: ([Any]) -> Void
+    
+    private var currentStatus: String {
+        (order.status ?? "").lowercased()
+    }
+    
+    /// Allowed backend statuses: pending | processing | out_for_delivery | delivered.
+    /// Decide which next-step button to surface based on where we currently are.
+    private var nextStatusOption: (label: String, status: String)? {
+        switch currentStatus {
+        case "pending":
+            return ("Mark Processing", "processing")
+        case "processing":
+            // Processing → next step is "Create label + mark shipped" (#32) handled separately.
+            return nil
+        case "out_for_delivery", "shipped":
+            return ("Mark Delivered", "delivered")
+        case "delivered", "completed":
+            return nil
+        default:
+            return ("Mark Processing", "processing")
+        }
+    }
+    
+    private var showCreateLabel: Bool {
+        currentStatus == "processing" && (order.tracking_number ?? "").isEmpty
+    }
+    private var showDownloadLabel: Bool {
+        // Label was created (server set tracking_number) — let seller re-download / share it.
+        !(order.tracking_number ?? "").isEmpty || workflowVM.lastLabel?.labelImage != nil
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "shippingbox.and.arrow.backward.fill")
+                    .foregroundColor(.defaultTheme)
+                Text("Seller Actions")
+                    .font(.custom(poppinsBold, size: 16))
+                    .foregroundColor(.black)
+                Spacer()
+                Text(prettyStatus(currentStatus))
+                    .font(.custom(poppinsMedium, size: 12))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(Capsule().fill(statusColor(currentStatus)))
+            }
+            
+            // QA #31 / #34 — single progression button per state.
+            if let next = nextStatusOption {
+                Button(action: { progressStatus(to: next.status) }) {
+                    progressButtonLabel(text: next.label, primary: true)
+                }
+                .disabled(workflowVM.isWorking)
+            }
+            
+            // QA #32 — create USPS shipping label (transitions status to out_for_delivery once tracking comes back).
+            if showCreateLabel {
+                Button(action: { createLabelTapped() }) {
+                    progressButtonLabel(text: "Create Shipping Label (USPS)", primary: false)
+                }
+                .disabled(workflowVM.isWorking)
+            }
+            
+            // QA #33 — once a label exists, let the seller download or share the PDF.
+            if showDownloadLabel {
+                HStack(spacing: 12) {
+                    Button(action: { shareExistingLabel() }) {
+                        progressButtonLabel(text: "Share Label", primary: false)
+                    }
+                    .disabled(workflowVM.isWorking)
+                }
+            }
+            
+            if let err = workflowVM.lastError, !err.isEmpty {
+                Text(err)
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.red)
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        )
+    }
+    
+    // MARK: - Actions
+    
+    private func progressStatus(to status: String) {
+        guard let id = order.id else { return }
+        Task {
+            let ok = await workflowVM.changeStatus(orderId: id, status: status, trackingNumber: nil)
+            await MainActor.run {
+                onActionFeedback(ok ? "Order moved to \(prettyStatus(status))." : (workflowVM.lastError ?? "Update failed."))
+            }
+        }
+    }
+    
+    private func createLabelTapped() {
+        guard let id = order.id else { return }
+        Task {
+            if let data = await workflowVM.createLabel(orderId: id) {
+                // After label exists, automatically advance the order to out_for_delivery with the new tracking #.
+                if let trk = data.trackingNumber, !trk.isEmpty {
+                    _ = await workflowVM.changeStatus(orderId: id, status: "out_for_delivery", trackingNumber: trk)
+                }
+                await MainActor.run {
+                    presentLabelPDF(base64: data.labelImage, orderId: id)
+                    onActionFeedback("Shipping label created. Tracking: \(data.trackingNumber ?? "—")")
+                }
+            } else {
+                await MainActor.run {
+                    onActionFeedback(workflowVM.lastError ?? "Label creation failed.")
+                }
+            }
+        }
+    }
+    
+    private func shareExistingLabel() {
+        if let base64 = workflowVM.lastLabel?.labelImage {
+            presentLabelPDF(base64: base64, orderId: order.id ?? 0)
+        } else if let urlString = order.label_url, let url = URL(string: urlString) {
+            // Server already persisted label_url on the Order — share that URL.
+            onLabelReady([url])
+        } else {
+            onActionFeedback("No label available yet — tap Create Shipping Label first.")
+        }
+    }
+    
+    private func presentLabelPDF(base64: String?, orderId: Int) {
+        guard let b64 = base64,
+              let fileURL = OrderWorkflowViewModel.writeLabelPDFToTempFile(b64, orderId: orderId)
+        else {
+            onActionFeedback("Could not decode label PDF.")
+            return
+        }
+        onLabelReady([fileURL])
+    }
+    
+    // MARK: - Helpers
+    
+    private func progressButtonLabel(text: String, primary: Bool) -> some View {
+        HStack {
+            if workflowVM.isWorking {
+                ProgressView().tint(primary ? .white : .defaultTheme)
+            }
+            Text(text)
+                .font(.custom(poppinsSemiBold, size: 14))
+                .foregroundColor(primary ? .white : .defaultTheme)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(primary ? Color.defaultTheme : Color.defaultTheme.opacity(0.10))
+        )
+    }
+    
+    private func prettyStatus(_ s: String) -> String {
+        switch s {
+        case "pending":           return "Pending"
+        case "processing":        return "Processing"
+        case "out_for_delivery":  return "Out for Delivery"
+        case "delivered":         return "Delivered"
+        case "completed":         return "Completed"
+        case "shipped":           return "Shipped"
+        default: return s.replacingOccurrences(of: "_", with: " ").capitalized
+        }
+    }
+    
+    private func statusColor(_ s: String) -> Color {
+        switch s {
+        case "pending":          return .gray
+        case "processing":       return .orange
+        case "out_for_delivery", "shipped": return .blue
+        case "delivered", "completed":      return .green
+        default: return .gray
+        }
+    }
+}
+
+// MARK: - QA #33 — UIActivityViewController wrapper for sharing the label PDF.
+struct ActivityShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+    func updateUIViewController(_ vc: UIActivityViewController, context: Context) {}
+}

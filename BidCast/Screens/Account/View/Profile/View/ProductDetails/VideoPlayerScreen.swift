@@ -209,9 +209,33 @@ struct VideoControlsView: View {
                         viewModel.skipForward()
                     }
                 )
+                
+                // QA #23 — fast-forward speed toggle (1x → 1.5x → 2x)
+                Button(action: { viewModel.cyclePlaybackRate() }) {
+                    Text(playbackRateLabel(viewModel.playbackRate))
+                        .font(.custom("Poppins-Bold", size: 13))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 32)
+                        .background(
+                            Capsule().fill(Color.white.opacity(0.18))
+                        )
+                        .overlay(
+                            Capsule().stroke(Color.white.opacity(0.35), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
             }
             .padding(.vertical, 10)
         }
+    }
+    
+    private func playbackRateLabel(_ rate: Float) -> String {
+        // 1.0 -> "1x", 1.5 -> "1.5x", 2.0 -> "2x"
+        if rate == 1.0 { return "1x" }
+        if rate == 2.0 { return "2x" }
+        // Drop trailing zero for fractional rates (e.g. 1.5 not 1.50).
+        let trimmed = String(format: "%g", rate)
+        return "\(trimmed)x"
     }
     
     private func formatTime(_ time: Double) -> String {
@@ -332,6 +356,8 @@ class VideoPlayerViewModel: ObservableObject {
     @Published var duration: Double = 0
     @Published var isDownloading = false
     @Published var downloadProgress: Double = 0
+    // QA #23 — fast-forward speed cycle: 1x → 1.5x → 2x → 1x.
+    @Published var playbackRate: Float = 1.0
     
     let originalURL: String
     let downloader = VideoDownloader()
@@ -412,9 +438,24 @@ class VideoPlayerViewModel: ObservableObject {
     }
     
     func togglePlayPause() {
-        if isPlaying { player.pause() }
-        else { player.play() }
+        if isPlaying {
+            player.pause()
+        } else {
+            // QA #23 — setting player.rate also starts playback at the chosen rate.
+            player.rate = playbackRate
+        }
         isPlaying.toggle()
+    }
+
+    // QA #23 — cycle fast-forward speed; only push rate to the player if it is currently playing,
+    // otherwise we'd resume playback unintentionally.
+    func cyclePlaybackRate() {
+        switch playbackRate {
+        case 1.0:  playbackRate = 1.5
+        case 1.5:  playbackRate = 2.0
+        default:   playbackRate = 1.0
+        }
+        if isPlaying { player.rate = playbackRate }
     }
     
     func skipForward() {
