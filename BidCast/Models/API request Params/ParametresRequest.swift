@@ -963,6 +963,8 @@ struct AgoraTokenRequest : Encodable{
 struct UnifiedSearchRequest: Encodable {
     var search: String
     var page: String
+}
+
 // MARK: - QA #31 / #32 / #34 — USPS Order Workflow request bodies.
 // Mirrors POST /api/change-order-status on the Laravel backend (ApiController@changeOrderStatus).
 // Allowed status values: 'pending' | 'processing' | 'out_for_delivery' | 'delivered'.

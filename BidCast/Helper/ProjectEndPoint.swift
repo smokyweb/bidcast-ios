@@ -850,6 +850,7 @@ extension APIEndPoint: EndPointType {
         case .getShippinDetails:
             return .get
         case .unifiedSearch:
+            return .post
         // QA #31/#32/#34 — USPS Order Workflow (all POST)
         case .changeOrderStatus:
             return .post
@@ -1172,6 +1173,7 @@ extension APIEndPoint: EndPointType {
         case .getShippinDetails:
             return nil
         case .unifiedSearch(let param):
+            return param
         // QA #31/#32/#34 — USPS Order Workflow params
         case .changeOrderStatus(param: let param):
             return param
@@ -1477,6 +1479,7 @@ extension APIEndPoint: EndPointType {
         case .getUspsShippingPrice:
             return nil
         case .unifiedSearch:
+            return nil
         // QA #31/#32/#34 — USPS Order Workflow (no url-query params; bodies handled above)
         case .changeOrderStatus:
             return nil
