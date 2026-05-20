@@ -168,12 +168,14 @@ struct InventoryScreen: View {
             // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: InventorySegment.allCases)
                 .onChange(of: segment) { newSegment in
-                    // QA #10 — Orders is not a fetch path; it pushes to MyOrdersScreen and reverts the segment.
-                    if newSegment == .orders {
-                        navigateToMyOrders = true
-                        DispatchQueue.main.async { segment = .active }
-                        return
-                    }
+                    // MC cmpdqpgof000nc9kp6f0xtti6 — Orders tab hidden per PM (2026-05-20).
+                    // Original QA #10 navigation logic preserved below; restore by
+                    // un-commenting the `case orders` line in InventorySegment.
+//                    if newSegment == .orders {
+//                        navigateToMyOrders = true
+//                        DispatchQueue.main.async { segment = .active }
+//                        return
+//                    }
                     clearFilter()
                     Task {
                         await performAPICalls(
@@ -910,8 +912,10 @@ struct InventoryScreen: View {
     
     // MARK: - ✅ CORRECTED Fetch Inventory
     func fetchInventory(for segment: InventorySegment, page: Int) async throws {
-        // QA #10 — Orders is a navigation-only sentinel; do not call the inventory API for it.
-        if segment == .orders { return }
+        // MC cmpdqpgof000nc9kp6f0xtti6 — Orders tab hidden per PM (2026-05-20).
+        // Original QA #10 short-circuit preserved below; restore alongside the
+        // `case orders` line in InventorySegment.
+//        if segment == .orders { return }
         // Build request
         request.status = segment.rawValue.lowercased()
         request.page = page
@@ -1000,14 +1004,19 @@ struct InventoryScreen: View {
 }
 
 // MARK: - Inventory Segment Enum
-// QA #10 — Orders segment pushes to MyOrdersScreen (sentinel; not a fetch path).
-// NOTE: Sold segment removed (MC cmpdqpgof000nc9kp6f0xtti6) — the API has no 'sold' status;
-//       per-product sold state is shown via the quantity/purchasedQuantity badge instead.
+// MC cmpdqpgof000nc9kp6f0xtti6 (PM Pritika Gupta, 2026-05-20):
+//   Per PM request, BOTH the Sold and Orders tabs are commented out
+//   on iOS for now. Sold was redundant (per-product sold state is
+//   already visible via quantity badges). Orders is hidden until the
+//   PM decides the final placement for the orders entry point.
+//   Restore by un-commenting the two `case` lines below and the two
+//   `.orders` references in this file (search for "MC cmpdqpgof").
 enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     case active = "Active"
     case draft = "Draft"
     case inactive = "Inactive"
-    case orders = "Orders"
+//    case sold = "Sold"      // MC cmpdqpgof000nc9kp6f0xtti6 — hidden per PM (2026-05-20)
+//    case orders = "Orders"  // MC cmpdqpgof000nc9kp6f0xtti6 — hidden per PM (2026-05-20)
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
