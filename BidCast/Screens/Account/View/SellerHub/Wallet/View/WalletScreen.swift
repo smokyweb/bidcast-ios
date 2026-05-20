@@ -340,9 +340,10 @@ struct WalletPayoutView: View {
     private var walletContent: some View {
         VStack(spacing: 20) {
             
-            // Account Balance
+            // cmpcqb3fa (2026-05-20): renamed labels per Trey's option A — Total Balance = In Escrow + Available.
+            // Matches Android (MR !24) + PWA (deployed 2026-05-20 09:34 EDT).
             VStack(alignment: .leading, spacing: 6) {
-                Text("Account Balance")
+                Text("Total Balance")
                     .font(.custom(poppinsRegular, size: 14))
                     .foregroundColor(.gray)
                 
@@ -354,15 +355,15 @@ struct WalletPayoutView: View {
             // Payout Info Card (REPLACED MIDDLE)
             VStack(spacing: 18) {
                 payoutRow(
-                    title: "$\(walletInfo.avaiableForPayout ?? 0) available for payout",
-                    desc: "These funds are available to initiate payout to your bank account."
+                    title: "$\(walletInfo.avaiableForPayout ?? 0) Available",
+                    desc: "Available — these funds are ready to initiate payout to your bank account."
                 )
                 
                 Divider()
                 
                 payoutRow(
-                    title: "$\(walletInfo.processing ?? 0.00) processing",
-                    desc: "Funds will be available after order confirmation."
+                    title: "$\(walletInfo.processing ?? 0.00) In Escrow",
+                    desc: "In Escrow — these funds will become Available up to 4 hours after the order has been delivered."
                 )
                 if walletInfo.avaiableForPayout ?? 0 == 0{
                     Divider()

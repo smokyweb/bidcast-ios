@@ -992,8 +992,9 @@ struct SellerHubSection: View {
                 Button {
                     navigateToWallet = true
                 } label: {
+                    // cmpcqb3fa (2026-05-20): rename per Trey's option A — see PWA + Android.
                     PayoutCard(
-                        title: "Payouts",
+                        title: "Withdrawn",
                         value: payouts
                     )
                 }
@@ -1007,8 +1008,9 @@ struct SellerHubSection: View {
                 Button {
                     navigateToOrder = true
                 } label: {
+                    // cmpcqb3fa (2026-05-20): rename per Trey's option A — value is still order COUNT, label is now LIFETIME SALES.
                     PayoutCard(
-                        title: "Total Orders",
+                        title: "Lifetime Sales",
                         value: totalOrders
                     )
                 }
