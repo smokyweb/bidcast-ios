@@ -156,6 +156,8 @@ enum APIEndPoint{
     case deleteProductSuppriseSet(param:DeleteProductSetRequest)
     case SaveShippingCosts(param:SaveShippingCostsRequest)
 
+    case unifiedSearch(param: UnifiedSearchRequest)
+
     // MARK: - QA #31 / #32 / #33 / #34 — USPS Order Workflow (Wave 2 Orange tier)
     case changeOrderStatus(param: ChangeOrderStatusRequest)
     case createUSPSLabel(param: CreateUSPSLabelRequest)
@@ -184,7 +186,8 @@ extension APIEndPoint: EndPointType {
                 .getPurchasedOrderDetails,
                 .getMyPurchasedOrder,
                 .fetchProduct,
-                .getScheduleShow:
+                .getScheduleShow,
+                .unifiedSearch:
             return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         default :
             return URL(string: "\(baseURL)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
@@ -529,6 +532,8 @@ extension APIEndPoint: EndPointType {
             return "save-shipping-costs"
         case .getShippinDetails:
             return "get-shipping-details"
+        case .unifiedSearch:
+            return "search"
         // QA #31/#32/#34 — USPS Order Workflow
         case .changeOrderStatus:
             return "change-order-status"
@@ -844,6 +849,7 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getShippinDetails:
             return .get
+        case .unifiedSearch:
         // QA #31/#32/#34 — USPS Order Workflow (all POST)
         case .changeOrderStatus:
             return .post
@@ -1165,6 +1171,7 @@ extension APIEndPoint: EndPointType {
             return param
         case .getShippinDetails:
             return nil
+        case .unifiedSearch(let param):
         // QA #31/#32/#34 — USPS Order Workflow params
         case .changeOrderStatus(param: let param):
             return param
@@ -1469,6 +1476,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getUspsShippingPrice:
             return nil
+        case .unifiedSearch:
         // QA #31/#32/#34 — USPS Order Workflow (no url-query params; bodies handled above)
         case .changeOrderStatus:
             return nil

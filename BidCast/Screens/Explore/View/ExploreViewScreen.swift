@@ -30,6 +30,7 @@ struct ExploreViewScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var searchText: String = ""
+    @State private var navigateToSearchResults = false
     
     @State var categoryList = [CategoryDataModel]()
     @State var navigateToNoti: Bool = false
@@ -43,10 +44,14 @@ struct ExploreViewScreen: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
                 SearchBarView(placeholder: "What are you looking for?") { debouncedText in
-//                    if debouncedText == "" { return }
                     self.searchText = debouncedText
-                    let selectedCategory = categoryTitles[selectedCategoryIndex]
-                    Task { await fetchCategory(for: selectedCategory) }
+                    if !debouncedText.isEmpty {
+                        self.navigateToSearchResults = true
+                    } else {
+                        // Optionally, refresh the category list when search is cleared
+                        let selectedCategory = categoryTitles[selectedCategoryIndex]
+                        Task { await fetchCategory(for: selectedCategory) }
+                    }
                 }
                 HeaderMenuIconView(didTapMenuButton: {
                     print("Menu Button Tapped")
@@ -181,6 +186,12 @@ struct ExploreViewScreen: View {
                                                    comeFromExploreScreen: $navigateToCategoryDetailScreen)
                         .toolbar(.visible, for: .tabBar))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
+            
+            // Link to Search Results
+            // TODO(post-v1): pass onShowTap closure once Explore has deepLinkShowId plumbing
+            NavigationLink(destination: SearchResultsView(initialQuery: searchText), isActive: $navigateToSearchResults) {
+                EmptyView()
+            }
         }
         .background(.backGround)
         .padding(.bottom, -27)

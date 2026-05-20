@@ -58,6 +58,7 @@ struct HomeViewScreen: View {
     @State var navigateToAllCategoryScreen : Bool = false
     @State var isNavFrom : String = ""
     @State var searchText: String = ""
+    @State private var navigateToSearchResults = false
     
     @State var selectedShowUserName : String = ""
     @State var selectedShowUserImage : String = ""
@@ -109,10 +110,8 @@ struct HomeViewScreen: View {
                 VStack(spacing:8){
                     SearchBarView(placeholder: "What are you looking for?") { debouncedText in
                         self.searchText = debouncedText
-                        // Reset pagination on search
-                        resetPagination()
-                        Task {
-                            await fetchLiveShow()
+                        if !debouncedText.isEmpty {
+                            self.navigateToSearchResults = true
                         }
                     }
                     
@@ -268,6 +267,11 @@ struct HomeViewScreen: View {
                 showSubCategory: $subCategory,
                 comeFromExploreScreen: $navigateToCategoryDetailScreen
             ))
+            
+            // Link to Search Results
+            NavigationLink(destination: SearchResultsView(initialQuery: searchText), isActive: $navigateToSearchResults) {
+                EmptyView()
+            }
         }
         .background(.backGround)
         .edgesIgnoringSafeArea(.bottom)
