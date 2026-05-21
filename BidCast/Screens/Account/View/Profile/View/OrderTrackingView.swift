@@ -420,19 +420,21 @@ struct OrderTrackingView: View {
                 .padding(.top, 8)
             
             VStack(spacing: 0) {
+                // MC task cmpfposve005zoohgkxldfkth (Larry 2026-05-21):
+                // Move "Item Title" above "Order ID" so the buyer sees *what* the
+                // order is before the order number. Item Title was originally
+                // added below Category by cmpex02ro; Larry now wants it as the
+                // first row of the Order Details block on this screen too.
+                DetailRowView(label: "Item Title", value: orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "")
                 DetailRowView(label: "Order ID", value: orderResponse?.order?.orderID ?? "#ORD-123-345", isCopyable: false, showCopied: $showCopied)
                 DetailRowView(label: "Order Date", value: formatOrderDate(orderResponse?.order?.createdAt) ?? "Nov 25, 2025")
                 DetailRowView(label: "Sold By", value: orderResponse?.sellerDetails?.name ?? "wyynaut")
                 DetailRowView(label: "Qty", value: orderResponse?.order?.product?.purchasedQuantity ?? "1")
                 DetailRowView(label: "Category", value: orderResponse?.order?.product?.category?.name ?? "Near Mint")
-                // MC task cmpex02ro000psahg2n1zn7wz (Larry 2026-05-21, video Part 1 @ 01:16):
-                // show Item Title + itemized pricing inline so users don't have to
-                // download the receipt to see them. Stacked below Category in the
-                // order: Item Title → Cost → Taxes → Shipping → Total.
-                // Companion change in StoreProductModel.swift adds the `transaction`
-                // field on Order so the v1 API response's eager-loaded transaction
-                // data actually reaches this view.
-                DetailRowView(label: "Item Title", value: orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "")
+                // Itemized pricing block (cmpex02ro) — stays grouped below the
+                // order metadata so the totals appear together. The companion
+                // backend change is the `transaction` eager-load on Order in
+                // StoreProductModel.swift.
                 DetailRowView(label: "Cost", value: itemCostDisplay())
                 DetailRowView(label: "Taxes", value: formatCurrency(orderResponse?.order?.transaction?.first?.taxAmount ?? 0))
                 DetailRowView(label: "Shipping", value: formatCurrency(Double(orderResponse?.order?.transaction?.first?.shippingCharges ?? 0)))
