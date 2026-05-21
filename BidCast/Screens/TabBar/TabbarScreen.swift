@@ -183,21 +183,27 @@ struct TabbarScreen: View {
                     showSellSheet = true
                     tabBarRouter.selectedTab = previousTab
                 } else {
-                    // MC cmp5czpw900jo56kdn739kkjp (2026-05-14): Reset the
-                    // tab we are LEAVING as well as the tab we are entering.
-                    // When the user drills into a category from the Explore
-                    // tab, HomeViewScreen is pushed inside Explore's
-                    // NavigationView with .toolbar(.visible, for: .tabBar).
-                    // If that pushed view is still active when the user
-                    // switches to another tab, iOS leaks the toolbar modifier
-                    // state into the incoming tab — the bottom tab bar
-                    // disappears on the newly selected tab. Resetting the
-                    // previous tab's NavigationView ID here (same onChange,
-                    // same run-loop turn as the tab switch) tears down the
-                    // pushed stack before the new tab renders, eliminating
-                    // the toolbar bleed.
+                    // MC cmpewtofs000msahgns50t4yk (2026-05-xx): Fix tab-switch flash
+                    // on Home / Explore / Activity.
+                    //
+                    // Previously we called resetNavigation(for: newTab) here,
+                    // which regenerated the destination tab's UUID. Changing
+                    // a view's .id() tears down the entire SwiftUI subtree and
+                    // rebuilds it from scratch — triggering .onAppear, all API
+                    // calls, and any loading-skeleton states. That is the
+                    // visible "flash / snap" on Home, Explore, and Activity.
+                    // Account does not flash because it reads from UserDefaults
+                    // / cached state with no visible loading skeleton.
+                    //
+                    // Fix: only full-nuke (path + UUID) the tab we are
+                    // LEAVING (to collapse any pushed stack and clear the
+                    // toolbar-bleed from the Explore drill-in). For the tab we
+                    // are ARRIVING on, only reset the NavigationPath — this
+                    // collapses any stale pushed stack without destroying the
+                    // view tree, keeping the live content visible and
+                    // eliminating the flash.
                     resetNavigation(for: previousTab)
-                    resetNavigation(for: newTab)
+                    resetNavigationPath(for: newTab)
                     previousTab = newTab
                     // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): when we
                     // land on the Home tab and Explore has handed off a filter
@@ -421,6 +427,10 @@ struct TabbarScreen: View {
         }
     }
     
+    // Full reset: collapses the NavigationPath AND regenerates the view ID
+    // (destroys + rebuilds the entire SwiftUI subtree). Use this for the
+    // tab being LEFT on a tab switch, and for deep-link navigation resets
+    // where a completely fresh view is required.
     func resetNavigation(for tab: Int) {
         switch tab {
         case 0:
@@ -435,6 +445,25 @@ struct TabbarScreen: View {
         case 4:
             accountNavigationPath = NavigationPath()
             accountViewID = UUID()
+        default:
+            break
+        }
+    }
+
+    // Path-only reset: collapses any pushed NavigationPath stack without
+    // changing the view ID. Does NOT destroy the SwiftUI subtree — the
+    // existing rendered content stays live, so no flash or API-reload.
+    // Use this for the tab being ARRIVED ON during a tab switch.
+    func resetNavigationPath(for tab: Int) {
+        switch tab {
+        case 0:
+            homeNavigationPath = NavigationPath()
+        case 1:
+            exploreNavigationPath = NavigationPath()
+        case 3:
+            activityNavigationPath = NavigationPath()
+        case 4:
+            accountNavigationPath = NavigationPath()
         default:
             break
         }
