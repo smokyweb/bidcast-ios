@@ -57,6 +57,13 @@ struct LoginScreen: View {
     @FocusState private var focusedField: FocusableField?
     
     var body: some View {
+        // MC cmpewtofs000msahgns50t4yk (2026-05-21): paint the off-white
+        // backGround color underneath the login content so the cold-launch
+        // LaunchScreen -> first SwiftUI frame handoff is seamless. Without
+        // this, iOS shows white (the default system background) for an
+        // instant and we visibly snap to the tab-bar's #F6F8FB on login.
+        // Matching the LaunchScreen UIColorName (LaunchBackground -> #F6F8FB)
+        // makes the transition a smooth, single-color fade.
         ScrollView(showsIndicators: false) {
             ZStack {
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
@@ -221,6 +228,10 @@ struct LoginScreen: View {
                     }
                 }
             }
+            // MC cmpewtofs000msahgns50t4yk (2026-05-21): set the background to
+            // LaunchBackground (#F6F8FB) so the first SwiftUI frame matches the
+            // UILaunchScreen background exactly — no visible color snap on cold launch.
+            .background(Color("LaunchBackground").ignoresSafeArea())
     }
     
     private func performLogin() {
