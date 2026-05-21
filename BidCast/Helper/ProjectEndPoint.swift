@@ -187,7 +187,18 @@ extension APIEndPoint: EndPointType {
                 .getMyPurchasedOrder,
                 .fetchProduct,
                 .getScheduleShow,
-                .unifiedSearch:
+                .unifiedSearch,
+                // MC task cmpfql3rp0092oohgq66vqbtr (Larry 2026-05-21):
+                // "View Profile" was hitting /api/get-profile-by-id which is
+                // defined OUTSIDE the jwt.verify middleware group on the backend
+                // (routes/api.php line 309). The controller then checked
+                // Auth::id() (never populated, because no auth middleware ran)
+                // and returned 401 error_type=invalid_token — which iOS shows
+                // as the "Session Expired" alert. The v1 route
+                // (routes/Api/V1/api.php line 24) IS inside jwt.verify so
+                // Auth::id() is populated correctly. Route the call through
+                // /api/v1/ until backend dedupes the route.
+                .getProfileById:
             return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         default :
             return URL(string: "\(baseURL)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
