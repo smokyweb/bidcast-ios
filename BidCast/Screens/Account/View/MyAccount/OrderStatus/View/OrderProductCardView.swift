@@ -36,17 +36,19 @@ struct OrderProductCardView: View {
             Divider()
 
             VStack(spacing: 6) {
+                // MC task cmpfposve (Larry 2026-05-21):
+                // Move "Item Title" above "Order ID" so the buyer sees what the
+                // order is before the order number. Item Title was originally
+                // added below Category by cmpfga4ni; Larry now wants it as the
+                // first row.
+                InfoRow(label: "Item Title", value: order?.product?.title?.capitalizingFirstLetter() ?? "")
                 InfoRow(label: "Order ID", value: "\(order?.orderID ?? "")")
                 InfoRow(label: "Order Date", value: order?.createdAt?.formattedDate() ?? "N/A")
                 InfoRow(label: "Buyer", value: "\(order?.user?.name ?? "")")
                 InfoRow(label: "Quantity", value: "\(order?.product?.purchasedQuantity ?? "0")")
                 InfoRow(label: "Category", value: "\(order?.product?.category?.name ?? "")")
-                // MC task cmpfga4ni (Trey 2026-05-15, video Part 1 @ 01:16):
-                // show Item Title + itemized pricing inline on the Order Details
-                // screen so users don't have to download the receipt to see them.
-                // Stacked vertically below the Category row in the order:
-                // Item Title -> Cost -> Taxes -> Shipping -> Total.
-                InfoRow(label: "Item Title", value: order?.product?.title?.capitalizingFirstLetter() ?? "")
+                // Itemized pricing block (MC task cmpfga4ni) — stays grouped
+                // below the order metadata so the totals appear together.
                 InfoRow(label: "Cost", value: itemCostDisplay())
                 InfoRow(label: "Taxes", value: formatCurrency(order?.transaction?.first?.taxAmount ?? 0))
                 InfoRow(label: "Shipping", value: formatCurrency(Double(order?.transaction?.first?.shippingCharges ?? 0)))
