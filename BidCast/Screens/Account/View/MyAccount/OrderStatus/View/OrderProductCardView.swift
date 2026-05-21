@@ -41,34 +41,19 @@ struct OrderProductCardView: View {
                 InfoRow(label: "Buyer", value: "\(order?.user?.name ?? "")")
                 InfoRow(label: "Quantity", value: "\(order?.product?.purchasedQuantity ?? "0")")
                 InfoRow(label: "Category", value: "\(order?.product?.category?.name ?? "")")
+                // MC task cmpfga4ni (Trey 2026-05-15, video Part 1 @ 01:16):
+                // show Item Title + itemized pricing inline on the Order Details
+                // screen so users don't have to download the receipt to see them.
+                // Stacked vertically below the Category row in the order:
+                // Item Title -> Cost -> Taxes -> Shipping -> Total.
+                InfoRow(label: "Item Title", value: order?.product?.title?.capitalizingFirstLetter() ?? "")
+                InfoRow(label: "Cost", value: itemCostDisplay())
+                InfoRow(label: "Taxes", value: formatCurrency(order?.transaction?.first?.taxAmount ?? 0))
+                InfoRow(label: "Shipping", value: formatCurrency(Double(order?.transaction?.first?.shippingCharges ?? 0)))
+                InfoRow(label: "Total", value: totalCostDisplay())
             }
 //            .font(.subheadline)
             .foregroundColor(.gray)
-
-            // MC sub-task cmp4933lh00l93mx16gbj10ye (Trey 2026-05-13):
-            // when viewing the receipt/order, show an itemized price breakdown
-            // (subtotal, shipping, tax, total) — not just the order metadata.
-            // The transaction payload on MyOrderModel carries these values.
-            if let txn = order?.transaction?.first, hasAnyAmount(txn) {
-                Divider()
-                VStack(spacing: 6) {
-                    if let sub = txn.subTotal, sub > 0 {
-                        InfoRow(label: "Subtotal", value: formatCurrency(sub))
-                    }
-                    if let ship = txn.shippingCharges, ship > 0 {
-                        InfoRow(label: "Shipping", value: formatCurrency(Double(ship)))
-                    }
-                    if let tax = txn.taxAmount, tax > 0 {
-                        InfoRow(label: "Tax", value: formatCurrency(tax))
-                    }
-                    if let discount = txn.discount, discount > 0 {
-                        InfoRow(label: "Discount", value: "-" + formatCurrency(Double(discount)))
-                    }
-                    Divider()
-                    InfoRow(label: "Total", value: txn.total.flatMap { Double($0) }.map(formatCurrency) ?? (txn.total ?? "--"))
-                }
-                .foregroundColor(.gray)
-            }
         }
         .padding()
         .background(Color.white)
@@ -92,16 +77,34 @@ struct OrderProductCardView: View {
         }
     }
 
-    // MC sub-task cmp4933lh00l93mx16gbj10ye helper: skip the breakdown card if
-    // the transaction is empty of all amount fields (avoids an awkward empty
-    // divider on legacy orders that pre-date the line-item changes).
-    private func hasAnyAmount(_ t: TransactionModel) -> Bool {
-        if let v = t.subTotal, v > 0 { return true }
-        if let v = t.taxAmount, v > 0 { return true }
-        if let v = t.shippingCharges, v > 0 { return true }
-        if let v = t.discount, v > 0 { return true }
-        if let s = t.total, !s.isEmpty, s != "0", s != "0.0", s != "0.00" { return true }
-        return false
+    // MC task cmpfga4ni helper: "Cost" = item cost the buyer paid for the
+    // product itself (pre-tax/pre-shipping). Backend transaction.sub_total is
+    // the canonical value; fall back to transaction.product_price, then to the
+    // product's own pricing string so legacy/incomplete payloads still render.
+    private func itemCostDisplay() -> String {
+        if let sub = order?.transaction?.first?.subTotal, sub > 0 {
+            return formatCurrency(sub)
+        }
+        if let price = order?.transaction?.first?.productPrice, price > 0 {
+            return formatCurrency(Double(price))
+        }
+        if let pricing = order?.product?.pricing, let val = Double(pricing) {
+            return formatCurrency(val)
+        }
+        return formatCurrency(0)
+    }
+
+    // MC task cmpfga4ni helper: prefer the server-computed total string (it
+    // already includes tax + shipping - discount), otherwise sum locally.
+    private func totalCostDisplay() -> String {
+        if let s = order?.transaction?.first?.total, let v = Double(s), v > 0 {
+            return formatCurrency(v)
+        }
+        let sub = order?.transaction?.first?.subTotal ?? 0
+        let tax = order?.transaction?.first?.taxAmount ?? 0
+        let ship = Double(order?.transaction?.first?.shippingCharges ?? 0)
+        let disc = Double(order?.transaction?.first?.discount ?? 0)
+        return formatCurrency(max(0, sub + tax + ship - disc))
     }
 
     private func formatCurrency(_ amount: Double) -> String {
