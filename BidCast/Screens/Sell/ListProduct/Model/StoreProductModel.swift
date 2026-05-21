@@ -123,6 +123,15 @@ struct Order: Codable {
     var status, createdAt: String?
     var product: ProductDetailModel?
     var giftUser: String?
+    // MC task cmpex02ro000psahg2n1zn7wz (Larry 2026-05-21, video Part 1 @ 01:16):
+    // OrderTrackingView (called via Profile → My Orders) shows the Order Details
+    // card with the new Item Title / Cost / Taxes / Shipping / Total rows.
+    // The v1 `get-order-details` endpoint already eager-loads the transaction
+    // relation (see ApiV1Controller@getOrderDetails on prod), but this struct
+    // had no field to decode it into — the data was being silently dropped.
+    // Accepts either array (one or more transaction rows) or single object
+    // (legacy shape from older orders) via a custom decoder below.
+    var transaction: [TransactionModel]?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -140,6 +149,37 @@ struct Order: Codable {
         case createdAt = "created_at"
         case product
         case giftUser = "gift_user"
+        case transaction
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try? c.decodeIfPresent(Int.self, forKey: .id)
+        orderID = try? c.decodeIfPresent(String.self, forKey: .orderID)
+        userID = try? c.decodeIfPresent(Int.self, forKey: .userID)
+        productID = try? c.decodeIfPresent(Int.self, forKey: .productID)
+        shippingAddress = try? c.decodeIfPresent(String.self, forKey: .shippingAddress)
+        cardID = try? c.decodeIfPresent(String.self, forKey: .cardID)
+        customerPaymentProfileID = try? c.decodeIfPresent(String.self, forKey: .customerPaymentProfileID)
+        promoCode = try? c.decodeIfPresent(String.self, forKey: .promoCode)
+        sendAsGift = try? c.decodeIfPresent(Bool.self, forKey: .sendAsGift)
+        giftUserID = try? c.decodeIfPresent(String.self, forKey: .giftUserID)
+        giftMsg = try? c.decodeIfPresent(String.self, forKey: .giftMsg)
+        status = try? c.decodeIfPresent(String.self, forKey: .status)
+        createdAt = try? c.decodeIfPresent(String.self, forKey: .createdAt)
+        product = try? c.decodeIfPresent(ProductDetailModel.self, forKey: .product)
+        giftUser = try? c.decodeIfPresent(String.self, forKey: .giftUser)
+        // cmpex02ro: transaction comes as an array from the v1 endpoint
+        // (Order::with('transaction')… → HasMany), but accept a single object
+        // too for legacy/older orders that pre-date the array shape — same
+        // pattern MyOrderModel uses for its transaction decoder.
+        if let txArr = try? c.decodeIfPresent([TransactionModel].self, forKey: .transaction) {
+            transaction = txArr
+        } else if let txOne = try? c.decodeIfPresent(TransactionModel.self, forKey: .transaction) {
+            transaction = [txOne]
+        } else {
+            transaction = nil
+        }
     }
 }
 

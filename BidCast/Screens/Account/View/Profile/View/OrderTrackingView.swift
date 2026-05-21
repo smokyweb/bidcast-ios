@@ -425,6 +425,18 @@ struct OrderTrackingView: View {
                 DetailRowView(label: "Sold By", value: orderResponse?.sellerDetails?.name ?? "wyynaut")
                 DetailRowView(label: "Qty", value: orderResponse?.order?.product?.purchasedQuantity ?? "1")
                 DetailRowView(label: "Category", value: orderResponse?.order?.product?.category?.name ?? "Near Mint")
+                // MC task cmpex02ro000psahg2n1zn7wz (Larry 2026-05-21, video Part 1 @ 01:16):
+                // show Item Title + itemized pricing inline so users don't have to
+                // download the receipt to see them. Stacked below Category in the
+                // order: Item Title → Cost → Taxes → Shipping → Total.
+                // Companion change in StoreProductModel.swift adds the `transaction`
+                // field on Order so the v1 API response's eager-loaded transaction
+                // data actually reaches this view.
+                DetailRowView(label: "Item Title", value: orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "")
+                DetailRowView(label: "Cost", value: itemCostDisplay())
+                DetailRowView(label: "Taxes", value: formatCurrency(orderResponse?.order?.transaction?.first?.taxAmount ?? 0))
+                DetailRowView(label: "Shipping", value: formatCurrency(Double(orderResponse?.order?.transaction?.first?.shippingCharges ?? 0)))
+                DetailRowView(label: "Total", value: totalCostDisplay())
             }
             
             VStack(spacing: 12) {
@@ -607,6 +619,43 @@ struct OrderTrackingView: View {
         //        .background(Color.white)
         //        .cornerRadius(20)
         //        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
+    }
+
+    // MARK: - cmpex02ro pricing helpers
+    // Same logic as OrderProductCardView's helpers — keeps the two screens'
+    // pricing display consistent. Prefer the server-computed transaction
+    // fields; fall back to product pricing for legacy/empty payloads.
+    private func itemCostDisplay() -> String {
+        if let sub = orderResponse?.order?.transaction?.first?.subTotal, sub > 0 {
+            return formatCurrency(sub)
+        }
+        if let price = orderResponse?.order?.transaction?.first?.productPrice, price > 0 {
+            return formatCurrency(Double(price))
+        }
+        if let pricing = orderResponse?.order?.product?.pricing, let val = Double(pricing) {
+            return formatCurrency(val)
+        }
+        return formatCurrency(0)
+    }
+
+    private func totalCostDisplay() -> String {
+        if let s = orderResponse?.order?.transaction?.first?.total, let v = Double(s), v > 0 {
+            return formatCurrency(v)
+        }
+        let sub = orderResponse?.order?.transaction?.first?.subTotal ?? 0
+        let tax = orderResponse?.order?.transaction?.first?.taxAmount ?? 0
+        let ship = Double(orderResponse?.order?.transaction?.first?.shippingCharges ?? 0)
+        let disc = Double(orderResponse?.order?.transaction?.first?.discount ?? 0)
+        return formatCurrency(max(0, sub + tax + ship - disc))
+    }
+
+    private func formatCurrency(_ amount: Double) -> String {
+        let f = NumberFormatter()
+        f.numberStyle = .currency
+        f.locale = Locale(identifier: "en_US")
+        f.minimumFractionDigits = 2
+        f.maximumFractionDigits = 2
+        return f.string(from: NSNumber(value: amount)) ?? String(format: "$%.2f", amount)
     }
 }
 
