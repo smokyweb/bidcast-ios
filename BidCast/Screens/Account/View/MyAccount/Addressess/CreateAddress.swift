@@ -231,8 +231,15 @@ struct CreateAddress: View {
                             if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                                 success()
                             }else{
+                                // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22):
+                                // use the .alert icon on failure (was
+                                // mistakenly .success). Also clear the
+                                // viewModel's stale addressResponse so the
+                                // .bottomSheet onDismiss logic below does not
+                                // mistakenly think this was a success and
+                                // immediately re-present itself.
                                 alertType = .sheetType(
-                                    icon: .success,
+                                    icon: .alert,
                                     title: "Failed",
                                     message: self.viewModel.errorMessage ?? "",
                                     primaryBtnText: AppString.ok.localized,
@@ -251,16 +258,25 @@ struct CreateAddress: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
+        // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): the onDismiss
+        // handler used to set `showError = true` when errorMessage was
+        // nil, which caused the bottom sheet to re-present itself
+        // immediately after a successful close. On some iOS versions
+        // that re-presentation collides with the parent screen's own
+        // dismiss (`presentationMode.wrappedValue.dismiss()` called from
+        // `onPrimaryClick`), leaving the presentation stack in a state
+        // where SwiftUI thinks two view controllers are dismissing at
+        // the same root, which can manifest as a UI hang or a hard
+        // kick to whichever root the AppRootManager last published. We
+        // simply collapse onDismiss to clear the flag; the success path
+        // is now driven only by `onPrimaryClick`.
         .bottomSheet(
             isPresented: $showError,
             height: screenHeight / 2.5,
             topBarCornerRadius: 25,
-            showTopIndicator: false,onDismiss:{
-                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    showError = true
-                }else{
-                    showError = false
-                }
+            showTopIndicator: false,
+            onDismiss: {
+                showError = false
             }
         ){
             CommonBottomSheet(
@@ -296,8 +312,10 @@ struct CreateAddress: View {
                         self.stateArr = response.map { "\($0.name ?? "") - \($0.iso2 ?? "")" }
                     }
                 }else{
+                    // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): use the
+                    // .alert icon when state-load fails (was .success).
                     alertType = .sheetType(
-                        icon: .success,
+                        icon: .alert,
                         title: "Failed",
                         message: viewModel.errorMessage ?? "",
                         primaryBtnText: AppString.ok.localized,

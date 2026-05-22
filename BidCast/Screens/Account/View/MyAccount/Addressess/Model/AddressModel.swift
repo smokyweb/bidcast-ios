@@ -19,6 +19,14 @@ struct AddressModel  : Codable {
     // shipping_addresses.address_line_2 on the Laravel side (added the
     // same session via SSH-first migration).
     var address_line_2 : String?
+    // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): backend
+    // `upsert-shipping-address` and `get-shipping-address` both return
+    // `city` and `state` on the saved address payload. These were
+    // missing here, so a success response would partially decode and
+    // the fallback error envelope would emit confusing "model out of
+    // sync" messages. Adding them as optionals to match the live shape.
+    var city : String?
+    var state : String?
     var pincode : String?
     var is_default : Bool?
 }
