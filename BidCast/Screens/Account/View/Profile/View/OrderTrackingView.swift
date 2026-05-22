@@ -58,6 +58,14 @@ struct OrderTrackingView: View {
     @State private var navigateToProductDetail: Bool = false
     @State private var productDetailProductId: Int = 0
     @State private var productDetailSellerInfo: SellerInfoResponse? = nil
+
+    // MC cmpex02ro/cmpfposve (Larry 2026-05-22 15:56 EDT): "Receipt &
+    // shipping details" was previously routing to OrderStatusScreen with
+    // orderId: .constant(0) hard-coded, so the screen's fetchOrderDetail
+    // hit the API with order_id=0, got an empty/error response back, and
+    // showed the generic "Error" modal. Now we populate the int order id
+    // off the loaded orderResponse before navigating.
+    @State private var orderDetailsOrderId: Int = 0
     
     var body: some View {
         VStack {
@@ -119,9 +127,14 @@ struct OrderTrackingView: View {
             
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
             
+            // MC cmpex02ro/cmpfposve (Larry 2026-05-22 15:56 EDT): orderId
+            // is now bound to the real loaded order's int id instead of
+            // the hard-coded .constant(0) that produced the "Error"
+            // modal on tap. See navigateToOrderDetailsTapped() below for
+            // the seeder that fires before the CusNavLink fires.
             CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
                 productDetail: $selectedOrderDetails,
-                comeFrom: "myOrder", orderId:.constant(0)
+                comeFrom: "myOrder", orderId: $orderDetailsOrderId
             ))
             CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
 
@@ -474,7 +487,14 @@ struct OrderTrackingView: View {
             
             VStack(spacing: 12) {
                 CompactActionButton(icon: "doc.text", title: "Receipt & shipping details") {
-                    navigateToOrderDetails = true
+                    // MC cmpex02ro/cmpfposve (Larry 2026-05-22 15:56 EDT):
+                    // route via openOrderStatusReceipt() so we seed the
+                    // real int order id into orderDetailsOrderId before
+                    // OrderStatusScreen.fetchOrderDetail runs. Previous
+                    // direct `navigateToOrderDetails = true` left orderId
+                    // bound to .constant(0), making the API return empty
+                    // and the screen show the generic "Error" modal.
+                    openOrderStatusReceipt()
                 }
                 CompactActionButton(icon: "play.fill", title: "Video Receipt", subtitle: "Video receipt available for 60 more days") {
                     if let videooURL = orderResponse?.bidVideoURL {
@@ -655,6 +675,23 @@ struct OrderTrackingView: View {
     }
 
     // MARK: - cmpex02ro pricing helpers
+    // MC cmpex02ro/cmpfposve (Larry 2026-05-22 15:56 EDT): seed the
+    // orderDetailsOrderId from the loaded orderResponse before letting
+    // the CusNavLink fire. Called from the "Receipt & shipping details"
+    // CompactActionButton instead of the previous bare
+    // `navigateToOrderDetails = true`. If we can't resolve a real order
+    // id, surface a friendly toast and skip the navigation rather than
+    // pushing OrderStatusScreen to fetch order 0 (which is what caused
+    // the empty-state "Error" modal Larry hit on build 299).
+    private func openOrderStatusReceipt() {
+        if let id = orderResponse?.order?.id, id > 0 {
+            orderDetailsOrderId = id
+            navigateToOrderDetails = true
+        } else {
+            print("⚠️ openOrderStatusReceipt: no order id on orderResponse, skipping navigation")
+        }
+    }
+
     // MC cmpex02ro/cmpfposve/cmpgie0de (Larry 2026-05-22 15:27 EDT):
     // open the full Product Detail screen for the product on this order.
     // Pulls the Int productId off the order payload, clears the
