@@ -2315,7 +2315,49 @@ extension LiveStream {
         socketManagerChat.listenForChat(roomId: roomId)
         socketManagerChat.listenForViewerCount()
         socketManagerChat.listenForBidTimer(roomId: roomId)
-        
+
+        // MC cmpfokeza001doohgkt8xc8d0 (2026-05-22): wire the viewer-side
+        // poll listeners. Previously this screen declared `showPollView`
+        // and `currentPollModel` but never subscribed to the socket
+        // events that populate them, so polls created by the host were
+        // invisible on the buyer side. Mirrors the pattern in
+        // RehearsalScreen.swift:1937 (host) but adds `observePollCreated`
+        // and `observePollEnded` for resilience — the host can rely on
+        // vote-update alone because it created the poll, but viewers
+        // need the create event to know to show the card in the first
+        // place.
+        socketManagerChat.observePollCreated { pollModel in
+            guard pollModel.roomId == self.roomId else { return }
+            DispatchQueue.main.async {
+                self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
+                self.currentPollModel = pollModel
+                self.showPollView = pollModel.isActive
+            }
+        }
+
+        socketManagerChat.observePollVoteUpdate { pollModel in
+            guard pollModel.roomId == self.roomId else { return }
+            DispatchQueue.main.async {
+                self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
+                self.currentPollModel = pollModel
+                self.showPollView = pollModel.isActive
+            }
+        }
+
+        socketManagerChat.observePollEnded { pollId in
+            DispatchQueue.main.async {
+                // `pollId` arrives as a String from the socket payload;
+                // PollModel.pollId is an Int. Compare via String coercion
+                // so a numeric mismatch doesn't leak a stale poll into
+                // the UI.
+                if let current = self.currentPollModel,
+                   String(current.pollId) == pollId {
+                    self.currentPollModel = nil
+                }
+                self.showPollView = false
+            }
+        }
+
         socketManagerChat.listenForRoomEnded { endedRoomId in
             logoutRoom()
             guard roomId == endedRoomId else { return }
