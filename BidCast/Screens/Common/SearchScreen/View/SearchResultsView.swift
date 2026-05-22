@@ -11,6 +11,13 @@ struct SearchResultsView: View {
     let initialQuery: String
     /// Called when a show row is tapped. Parent handles deepLinkShowId nav.
     var onShowTap: ((Int) -> Void)?
+    /// Called when a user row is tapped. Parent presents a profile destination.
+    /// MC cmpfokdvh000zoohgznjjw726 (Trey 2026-05-21): rows were inert; now
+    /// route taps back up to the navigation host so Users and Products can
+    /// reuse the existing ProfileScreen / ProductDetailView destinations.
+    var onUserTap: ((Int) -> Void)?
+    /// Called when a product row is tapped. Parent presents ProductDetailView.
+    var onProductTap: ((Int) -> Void)?
 
     var body: some View {
         ScrollView {
@@ -40,7 +47,9 @@ struct SearchResultsView: View {
                         sectionHeader("Products", count: viewModel.products.count)
                         ForEach(viewModel.products) { product in
                             ProductResultRow(product: product)
-                                // TODO(post-v1): tap → standalone product detail screen
+                                // MC cmpfokdvh000zoohgznjjw726 (Trey 2026-05-21):
+                                // tap → ProductDetailView via parent.
+                                .onTapGesture { onProductTap?(product.id) }
                                 .padding(.horizontal)
                                 .padding(.vertical, 4)
                         }
@@ -51,7 +60,9 @@ struct SearchResultsView: View {
                         sectionHeader("Users", count: viewModel.users.count)
                         ForEach(viewModel.users) { user in
                             UserResultRow(user: user)
-                                // TODO(post-v1): tap → standalone seller profile screen
+                                // MC cmpfokdvh000zoohgznjjw726 (Trey 2026-05-21):
+                                // tap → ProfileScreen via parent.
+                                .onTapGesture { onUserTap?(user.id) }
                                 .padding(.horizontal)
                                 .padding(.vertical, 4)
                         }
