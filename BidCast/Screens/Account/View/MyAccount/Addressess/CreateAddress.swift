@@ -231,10 +231,18 @@ struct CreateAddress: View {
                             if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                                 success()
                             }else{
+                                // MC cmpfokeio0017oohg96ywquzc (Trey 2026-05-21):
+                                // Backend was leaking raw USPS OAuth error JSON
+                                // ("Failed to get USPS access token: {...}") into this
+                                // user-facing alert. Friendly-ize it before display.
+                                let (sanitizedTitle, sanitizedMessage) = friendlyAddressError(
+                                    rawTitle: "Failed",
+                                    rawMessage: self.viewModel.errorMessage
+                                )
                                 alertType = .sheetType(
-                                    icon: .success,
-                                    title: "Failed",
-                                    message: self.viewModel.errorMessage ?? "",
+                                    icon: .alert,
+                                    title: sanitizedTitle,
+                                    message: sanitizedMessage,
                                     primaryBtnText: AppString.ok.localized,
                                     secondaryBtnText: ""
                                 )
@@ -296,10 +304,16 @@ struct CreateAddress: View {
                         self.stateArr = response.map { "\($0.name ?? "") - \($0.iso2 ?? "")" }
                     }
                 }else{
+                    // MC cmpfokeio0017oohg96ywquzc (Trey 2026-05-21): sanitize
+                    // server error before showing it on the address screen.
+                    let (sanitizedTitle, sanitizedMessage) = friendlyAddressError(
+                        rawTitle: "Failed",
+                        rawMessage: viewModel.errorMessage
+                    )
                     alertType = .sheetType(
-                        icon: .success,
-                        title: "Failed",
-                        message: viewModel.errorMessage ?? "",
+                        icon: .alert,
+                        title: sanitizedTitle,
+                        message: sanitizedMessage,
                         primaryBtnText: AppString.ok.localized,
                         secondaryBtnText: ""
                     )
@@ -325,15 +339,79 @@ struct CreateAddress: View {
                 secondaryBtnText: ""
             )
         } else {
+            // MC cmpfokeio0017oohg96ywquzc (Trey 2026-05-21): the backend's
+            // /storeAddress can return a 200 envelope whose `message` field
+            // contains a raw USPS OAuth error dump ("Failed to get USPS
+            // access token: {\"error\":\"invalid_client\", ...}"). That used
+            // to be shown to the user verbatim. Run the message through the
+            // friendly-error helper so what ends up on screen is clean copy.
+            let (sanitizedTitle, sanitizedMessage) = friendlyAddressError(
+                rawTitle: response.error_type?.capitalized,
+                rawMessage: response.message
+            )
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
+                title: sanitizedTitle,
+                message: sanitizedMessage,
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
         }
         showError = true
+    }
+
+    /// MC cmpfokeio0017oohg96ywquzc (Trey 2026-05-21): convert a possibly-raw
+    /// server error payload into something safe to show end users.
+    ///
+    /// The Bidcast backend's address-store endpoint surfaces upstream USPS
+    /// OAuth failures by stuffing the raw OAuth error body into the response
+    /// envelope's `message`, prefixed with "Failed to get USPS access token:".
+    /// That ended up on a user-facing modal verbatim, including the JSON dump
+    /// and an RFC 6749 link.
+    ///
+    /// This helper detects messages that look like that leak (or any other
+    /// raw JSON / OAuth-shaped payload) and substitutes a clean user-facing
+    /// message. The raw message is preserved in the dev console via print()
+    /// for debugging.
+    private func friendlyAddressError(
+        rawTitle: String?,
+        rawMessage: String?
+    ) -> (title: String, message: String) {
+        let raw = (rawMessage ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let lowered = raw.lowercased()
+
+        // Patterns we want to suppress from the UI (case-insensitive).
+        let leakedPatterns: [String] = [
+            "failed to get usps access token",
+            "invalid_client",
+            "error_description",
+            "error_uri",
+            "rfc6749",
+            "rfc 6749",
+            "apis.usps.com",
+            "client authentication failed"
+        ]
+        let containsLeakedPattern = leakedPatterns.contains { lowered.contains($0) }
+
+        // Looks like a raw JSON blob if it starts with { or [ and contains a colon.
+        let looksLikeJSON: Bool = {
+            guard let first = raw.first else { return false }
+            return (first == "{" || first == "[") && raw.contains(":")
+        }()
+
+        if containsLeakedPattern || looksLikeJSON {
+            print("⚠️ Suppressed raw address-verification error in UI: \(raw)")
+            return (
+                title: "Address verification unavailable",
+                message: "We couldn't verify your address right now. Please double-check your address and try again. If this keeps happening, contact support."
+            )
+        }
+
+        let safeTitle = (rawTitle?.isEmpty == false ? rawTitle! : "Failed")
+        let safeMessage = raw.isEmpty
+            ? "Something went wrong. Please try again."
+            : raw
+        return (title: safeTitle, message: safeMessage)
     }
 }
 
