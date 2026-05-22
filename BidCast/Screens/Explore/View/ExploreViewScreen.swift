@@ -31,7 +31,17 @@ struct ExploreViewScreen: View {
     @State var showError: Bool = false
     @State var searchText: String = ""
     @State private var navigateToSearchResults = false
-    
+
+    // MC cmpfokdvh000zoohgznjjw726 (Trey 2026-05-21): Search results row taps.
+    // ProfileScreen wants a @Binding String id, ProductDetailView wants @Binding Int.
+    @State private var navigateToSearchProfile: Bool = false
+    @State private var navigateToSearchProduct: Bool = false
+    @State private var searchSelectedUserId: String = ""
+    @State private var searchSelectedUserName: String = ""
+    @State private var searchSelectedUserImage: String = ""
+    @State private var searchSelectedProductId: Int = 0
+    @State private var searchSelectedSellerInfo: SellerInfoResponse? = nil
+
     @State var categoryList = [CategoryDataModel]()
     @State var navigateToNoti: Bool = false
     @State var isLoadingAPI: Bool = true
@@ -188,10 +198,47 @@ struct ExploreViewScreen: View {
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             
             // Link to Search Results
-            // TODO(post-v1): pass onShowTap closure once Explore has deepLinkShowId plumbing
-            NavigationLink(destination: SearchResultsView(initialQuery: searchText), isActive: $navigateToSearchResults) {
+            // MC cmpfokdvh000zoohgznjjw726 (Trey 2026-05-21): wire Users and
+            // Products row taps to existing ProfileScreen / ProductDetailView
+            // destinations. Show row taps still rely on deepLinkShowId
+            // plumbing that Explore doesn't yet have — left as a follow-up.
+            NavigationLink(
+                destination: SearchResultsView(
+                    initialQuery: searchText,
+                    onUserTap: { userId in
+                        searchSelectedUserId = String(userId)
+                        searchSelectedUserName = ""
+                        searchSelectedUserImage = ""
+                        navigateToSearchProfile = true
+                    },
+                    onProductTap: { productId in
+                        searchSelectedProductId = productId
+                        searchSelectedSellerInfo = nil
+                        navigateToSearchProduct = true
+                    }
+                ),
+                isActive: $navigateToSearchResults
+            ) {
                 EmptyView()
             }
+
+            // Search-result destinations.
+            CusNavLink(
+                doNavigate: $navigateToSearchProfile,
+                destination: ProfileScreen(
+                    id: $searchSelectedUserId,
+                    isComeFrom: .constant("Search"),
+                    userName: $searchSelectedUserName,
+                    userImage: $searchSelectedUserImage
+                )
+            )
+            CusNavLink(
+                doNavigate: $navigateToSearchProduct,
+                destination: ProductDetailView(
+                    productID: $searchSelectedProductId,
+                    sellerInfo: $searchSelectedSellerInfo
+                )
+            )
         }
         .background(.backGround)
         .padding(.bottom, -27)

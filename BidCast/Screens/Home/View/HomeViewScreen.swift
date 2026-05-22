@@ -59,6 +59,14 @@ struct HomeViewScreen: View {
     @State var isNavFrom : String = ""
     @State var searchText: String = ""
     @State private var navigateToSearchResults = false
+
+    // MC cmpfokdvh000zoohgznjjw726 (Trey 2026-05-21): Search results product tap.
+    // Reuses existing userId/userImage/userName + navigateToProfile state
+    // for user taps; products need their own state to match
+    // ProductDetailView(productID: Binding<Int>, sellerInfo: Binding<SellerInfoResponse?>).
+    @State private var navigateToSearchProduct: Bool = false
+    @State private var searchSelectedProductId: Int = 0
+    @State private var searchSelectedSellerInfo: SellerInfoResponse? = nil
     
     @State var selectedShowUserName : String = ""
     @State var selectedShowUserImage : String = ""
@@ -269,9 +277,37 @@ struct HomeViewScreen: View {
             ))
             
             // Link to Search Results
-            NavigationLink(destination: SearchResultsView(initialQuery: searchText), isActive: $navigateToSearchResults) {
+            // MC cmpfokdvh000zoohgznjjw726 (Trey 2026-05-21): wire Users and
+            // Products row taps so they actually open destinations. Reuses
+            // the existing $navigateToProfile + ProfileScreen plumbing for
+            // users; ProductDetailView gets a small dedicated state pair.
+            NavigationLink(
+                destination: SearchResultsView(
+                    initialQuery: searchText,
+                    onUserTap: { uid in
+                        self.userId = String(uid)
+                        self.userName = ""
+                        self.userImage = ""
+                        self.navigateToProfile = true
+                    },
+                    onProductTap: { pid in
+                        self.searchSelectedProductId = pid
+                        self.searchSelectedSellerInfo = nil
+                        self.navigateToSearchProduct = true
+                    }
+                ),
+                isActive: $navigateToSearchResults
+            ) {
                 EmptyView()
             }
+
+            CusNavLink(
+                doNavigate: $navigateToSearchProduct,
+                destination: ProductDetailView(
+                    productID: $searchSelectedProductId,
+                    sellerInfo: $searchSelectedSellerInfo
+                )
+            )
         }
         .background(.backGround)
         .edgesIgnoringSafeArea(.bottom)
