@@ -231,10 +231,13 @@ struct ActivityScreen: View {
                                 PurchasesViewScreen(
                                     purchaseList: offer,
                                     onTapOrderTracking: { order in
-                                        selectedOrder = order
-                                        selectedOrderId = selectedOrder?.orderID ?? ""
-                                        selectedProductId = "\(selectedOrder?.productID ?? 0)"
-                                        navigateToOrderTracking = true
+                                        // Task cmpgie0de008r1nxy8xpjceq0 — "Product Purchased" tile
+                                        // should open the item-detail screen (matches BidSwipe PWA
+                                        // parallel task + the Saved Items tile pattern below).
+                                        // Previously this routed to OrderTrackingView, which is the
+                                        // wrong destination for a purchased-product tile tap.
+                                        productId = order?.product?.id ?? order?.productID ?? 0
+                                        navigateToDetail = true
                                     },onTapUserProfile: { userId, userImage, userName in
                                         self.userId = userId
                                         self.userImage = userImage
