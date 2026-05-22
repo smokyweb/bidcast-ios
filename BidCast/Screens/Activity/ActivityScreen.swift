@@ -231,13 +231,21 @@ struct ActivityScreen: View {
                                 PurchasesViewScreen(
                                     purchaseList: offer,
                                     onTapOrderTracking: { order in
-                                        // Task cmpgie0de008r1nxy8xpjceq0 — "Product Purchased" tile
-                                        // should open the item-detail screen (matches BidSwipe PWA
-                                        // parallel task + the Saved Items tile pattern below).
-                                        // Previously this routed to OrderTrackingView, which is the
-                                        // wrong destination for a purchased-product tile tap.
-                                        productId = order?.product?.id ?? order?.productID ?? 0
-                                        navigateToDetail = true
+                                        // MC cmpex02ro/cmpfposve/cmpgie0de (Larry 2026-05-22 15:27 EDT):
+                                        // Reverts the Karyashala-side Tenali fix (092a6f9c) for
+                                        // cmpgie0de008r1nxy8xpjceq0 — the Bluestone-US side wants
+                                        // a purchase tile to open the **Order Details / Order
+                                        // Tracking** screen (with Item Title, Cost, Taxes,
+                                        // Shipping, Total rows added in cmpex02ro + the row-
+                                        // reorder from cmpfposve), and only then let the user
+                                        // tap the product row inside Order Details to drill
+                                        // into ProductDetailView. Saved Items branch below
+                                        // keeps its current Product-Detail target since that's
+                                        // a save-for-later flow, not a purchase flow.
+                                        selectedOrder = order
+                                        selectedOrderId = selectedOrder?.orderID ?? ""
+                                        selectedProductId = "\(selectedOrder?.productID ?? 0)"
+                                        navigateToOrderTracking = true
                                     },onTapUserProfile: { userId, userImage, userName in
                                         self.userId = userId
                                         self.userImage = userImage

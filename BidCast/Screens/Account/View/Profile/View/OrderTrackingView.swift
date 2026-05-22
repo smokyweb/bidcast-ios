@@ -46,6 +46,18 @@ struct OrderTrackingView: View {
     @State private var userId: String = ""
     @State private var userImage: String = ""
     @State private var userName: String = ""
+
+    // MC cmpex02ro/cmpfposve/cmpgie0de (Larry 2026-05-22 15:27 EDT):
+    // Tapping the product image / title on the Order Details screen
+    // should drill into ProductDetailView. This is the design Larry
+    // resolved when the cross-PM conflict between Tenali's
+    // Activity→Product redirect and the Bluestone-US Order Details
+    // requirement came up. Activity→Purchases tile now opens Order
+    // Details (this screen), and from here a tap on the product opens
+    // the full Product Detail screen.
+    @State private var navigateToProductDetail: Bool = false
+    @State private var productDetailProductId: Int = 0
+    @State private var productDetailSellerInfo: SellerInfoResponse? = nil
     
     var body: some View {
         VStack {
@@ -112,6 +124,16 @@ struct OrderTrackingView: View {
                 comeFrom: "myOrder", orderId:.constant(0)
             ))
             CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
+
+            // MC cmpex02ro/cmpfposve/cmpgie0de (Larry 2026-05-22 15:27 EDT):
+            // drill-into-product navigation from this Order Details screen.
+            CusNavLink(
+                doNavigate: $navigateToProductDetail,
+                destination: ProductDetailView(
+                    productID: $productDetailProductId,
+                    sellerInfo: $productDetailSellerInfo
+                )
+            )
         }
         .overlay(
             CustomBottomSheetView(
@@ -355,6 +377,13 @@ struct OrderTrackingView: View {
                 
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
+                        // MC cmpex02ro/cmpfposve/cmpgie0de (Larry 2026-05-22
+                        // 15:27 EDT): tapping the product image OR the title
+                        // OR the description opens ProductDetailView. Wrapping
+                        // each in an explicit tap gesture rather than wrapping
+                        // the whole HStack so the chevron/View-Product-Details
+                        // disclosure below still works as a toggle (it's a
+                        // separate Button inside this stack).
                         CustomProfileImage(
                             url: orderResponse?.order?.product?.images?.first,
                             isCircular: false,
@@ -363,15 +392,17 @@ struct OrderTrackingView: View {
                             height: 200,
                             defaultImage: "photo"
                         ) {
-                            print("profile icon tapped")
+                            openProductDetail()
                         }
                         
                         Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "Single #212")
                             .font(.custom("Poppins-Bold", size: 20))
+                            .onTapGesture { openProductDetail() }
                         
                         Text(orderResponse?.order?.product?.description ?? "Near Mint")
                             .font(.custom("Poppins-Regular", size: 14))
                             .foregroundColor(.secondary)
+                            .onTapGesture { openProductDetail() }
                         
                         Button {
                             withAnimation(.spring()) { showProductDetails.toggle() }
@@ -624,6 +655,25 @@ struct OrderTrackingView: View {
     }
 
     // MARK: - cmpex02ro pricing helpers
+    // MC cmpex02ro/cmpfposve/cmpgie0de (Larry 2026-05-22 15:27 EDT):
+    // open the full Product Detail screen for the product on this order.
+    // Pulls the Int productId off the order payload, clears the
+    // sellerInfo (ProductDetailView fetches its own on appear), and
+    // flips the navigation flag.
+    private func openProductDetail() {
+        if let id = orderResponse?.order?.product?.id {
+            productDetailProductId = id
+        } else if let id = Int(productId) {
+            // Fallback to the @Binding productId string passed in from
+            // the Activity screen; that's the order.productID.
+            productDetailProductId = id
+        } else {
+            return
+        }
+        productDetailSellerInfo = nil
+        navigateToProductDetail = true
+    }
+
     // Same logic as OrderProductCardView's helpers — keeps the two screens'
     // pricing display consistent. Prefer the server-computed transaction
     // fields; fall back to product pricing for legacy/empty payloads.
