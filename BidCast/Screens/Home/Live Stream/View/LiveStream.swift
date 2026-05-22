@@ -2327,7 +2327,12 @@ extension LiveStream {
         // need the create event to know to show the card in the first
         // place.
         socketManagerChat.observePollCreated { pollModel in
-            guard pollModel.roomId == self.roomId else { return }
+            // MC cmpfokeza001doohgkt8xc8d0 (2026-05-22): match against the
+            // local `roomId` parameter on setupSocketListeners(for:) — the
+            // LiveStream view does not expose a `roomId` property of its
+            // own. (`self.currentRoomID` is the @Binding equivalent if a
+            // future caller wants to use that instead.)
+            guard pollModel.roomId == roomId else { return }
             DispatchQueue.main.async {
                 self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
                 self.currentPollModel = pollModel
@@ -2336,7 +2341,7 @@ extension LiveStream {
         }
 
         socketManagerChat.observePollVoteUpdate { pollModel in
-            guard pollModel.roomId == self.roomId else { return }
+            guard pollModel.roomId == roomId else { return }
             DispatchQueue.main.async {
                 self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
                 self.currentPollModel = pollModel
