@@ -810,9 +810,13 @@ extension APIManager: APIManaging {
 
 // MARK: - ApiError
 struct ApiError: Codable {
-    var message: String?
-    var error_type: String?
-    var errors: errorTypes?
+    // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): give every optional an
+    // explicit `= nil` default so the implicit zero-arg `ApiError()`
+    // initializer is synthesized. Used as the safe fallback when the
+    // 401 body doesn't decode (see APIManager.request line ~208).
+    var message: String? = nil
+    var error_type: String? = nil
+    var errors: errorTypes? = nil
 }
 
 struct errorTypes: Codable {
