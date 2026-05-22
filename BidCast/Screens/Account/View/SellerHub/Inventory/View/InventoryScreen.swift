@@ -440,6 +440,9 @@ struct InventoryScreen: View {
             )
         }
         .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.2) {
+            // MC cmpfoke0u0011oohg13gatadx (2026-05-22): seller-context
+            // surface — override the default "To purchase in lives" title
+            // with the seller-listing phrasing Trey requested.
             PaymentAndShippingInfoSheet(
                 isPresented: $showPaymentShipping,
                 onAddInfo: {
@@ -450,7 +453,8 @@ struct InventoryScreen: View {
                         }
                     }
                 },
-                buttonText: $titleText
+                buttonText: $titleText,
+                titleText: "To list products in live shows we need your payment and shipping info."
             )
         }
         .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {

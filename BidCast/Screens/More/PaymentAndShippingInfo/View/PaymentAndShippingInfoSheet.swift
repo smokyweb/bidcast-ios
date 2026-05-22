@@ -11,6 +11,11 @@ struct PaymentAndShippingInfoSheet: View {
     @Binding var isPresented: Bool
     var onAddInfo: () -> Void
     @Binding var buttonText: String
+    // MC cmpfoke0u0011oohg13gatadx (2026-05-22): allow the caller to
+    // override the headline so seller-context surfaces (Sell tab,
+    // SellerHub → Inventory) can read "To list products in live shows..."
+    // while the buyer-context surfaces keep the existing copy.
+    var titleText: String = "To purchase in lives we need your payment and shipping info"
 
     var body: some View {
         ScrollView {
@@ -22,7 +27,7 @@ struct PaymentAndShippingInfoSheet: View {
                     .padding(.top, 8)
 
                 // Title
-                Text("To purchase in lives we need your payment and shipping info")
+                Text(titleText)
                     .font(.custom(poppinsSemiBold, size: 15))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
