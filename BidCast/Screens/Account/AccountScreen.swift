@@ -171,7 +171,15 @@ struct AccountScreen: View {
                 onPrimaryClick: {
                     withAnimation {
                         showSellerSheet = false
-                        if UserDefaults.buyerVerafied != "pending" {
+                        // MC cmpfokety001boohg7kgtxmwv (2026-05-22): the
+                        // gate was checking the BUYER flag here, but the
+                        // sheet is the seller-verification nudge — so a
+                        // pending BUYER status would block the seller
+                        // navigation incorrectly, and a missing buyer
+                        // status would route them to seller verification
+                        // even when their seller status was "pending".
+                        // Check the seller flag instead.
+                        if UserDefaults.sellerVerafied != "pending" {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 navigateToSeller = true
                             }
@@ -250,10 +258,15 @@ struct AccountScreen: View {
                 contentSize: 12.0
             )
         } else {
+            // MC cmpfokety001boohg7kgtxmwv (2026-05-22): the old copy
+            // "Before you interact with live shows.you need to become a
+            // verified seller." was misleading — buyers do not need to
+            // be verified sellers to interact with live shows. Narrow
+            // the wording to the actual constraint (selling/hosting).
             alertType = .sheetType(
                 icon: .info,
                 title: "Become a Verified Seller!",
-                message: "Before you interact with live shows.you need to become a verified seller.",
+                message: "Before you can sell or host a live show, you need to become a verified seller.",
                 primaryBtnText: "OK",
                 secondaryBtnText: "",
                 buttonWidth: screenWidth - 60

@@ -410,10 +410,14 @@ struct TabbarScreen: View {
                 contentSize: 12.0
             )
         } else {
+            // MC cmpfokety001boohg7kgtxmwv (2026-05-22): match the narrower
+            // "sell or host" copy used in AccountScreen — the old
+            // "interact with live shows" wording made buyers feel they
+            // needed seller verification just to join a stream.
             alertType = .sheetType(
                 icon: .info,
                 title: "Become a Verified Seller!",
-                message: "Before you interact with live shows.you need to become a verified seller.",
+                message: "Before you can sell or host a live show, you need to become a verified seller.",
                 primaryBtnText: "OK",
                 secondaryBtnText: "",
                 buttonWidth: screenWidth - 60
