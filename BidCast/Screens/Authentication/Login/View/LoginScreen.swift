@@ -27,7 +27,12 @@ struct LoginScreen: View {
     @ObservedObject var languageManager = LanguageManager.shared
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
-    @State var isRemeber: Bool = true
+    // MC cmpfokfm2001joohgb7e3ueqj (2026-05-22): initialize from
+    // UserDefaults.rememberMe (now defaulting to false on fresh install)
+    // so the checkbox state reflects the user's actual preference on first
+    // render. Previous default-true caused the box to render checked even
+    // when no credentials were stored, which made the feature look broken.
+    @State var isRemeber: Bool = UserDefaults.rememberMe
     @State var showError: Bool = false
     @State var navigateToForgot: Bool = false
     @State var navigateToLanguage: Bool = false
@@ -308,7 +313,12 @@ struct LoginScreen: View {
                 saveLoginDetail(mail: request.email, password: request.password)
             }
             else  {
-                UserDefaults.userEmail = request.email
+                // MC cmpfokfm2001joohgb7e3ueqj (2026-05-22): when the user
+                // unchecks Remember Me at login, also clear any previously
+                // stored credentials so the next visit doesn't leak a stale
+                // email/password from an earlier session.
+                _ = KeychainManager.shared.delete(email: request.email)
+                UserDefaults.userEmail = ""
                 UserDefaults.rememberMe = false
             }
             UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)

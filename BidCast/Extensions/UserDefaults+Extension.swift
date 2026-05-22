@@ -591,12 +591,17 @@ extension UserDefaults{
         }
     }
     
+    // MC cmpfokfm2001joohgb7e3ueqj (2026-05-22): default-false on fresh
+    // install. Previous default-true caused the login screen checkbox to
+    // render checked on first launch even though no credentials had been
+    // saved, which made the Remember-Me feature look broken ("box is
+    // checked but nothing prefills").
     static var rememberMe:Bool{
         set(input){
             self.standard.setValue(input, forKey: "rememberMe")
         }
         get{
-            return self.standard.value(forKey: "rememberMe") as? Bool ?? true
+            return self.standard.value(forKey: "rememberMe") as? Bool ?? false
         }
     }
     
