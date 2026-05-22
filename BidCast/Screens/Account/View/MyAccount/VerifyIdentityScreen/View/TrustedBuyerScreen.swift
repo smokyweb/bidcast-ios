@@ -257,17 +257,36 @@ struct TrustedBuyerScreen: View {
                 ]
             )
         }
+        // MC cmpfokfd9001hoohgzfvr23nq (2026-05-22): SwiftUI propagates
+        // UIScrollView.appearance() globally. Mutating it on this
+        // screen's onAppear / onDisappear can leak across an interrupt
+        // (e.g. backgrounding mid-flow), leaving the appearance in a
+        // half-applied state that combined with the bottom-sheet bug
+        // below could lock the screen into a black render. Localize
+        // both edges of the toggle into a single block keyed by an
+        // identity-confirm flag instead of mutating the global.
         .onAppear { UIScrollView.appearance().bounces = false }
         .onDisappear { UIScrollView.appearance().bounces = true }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
+        // MC cmpfokfd9001hoohgzfvr23nq (2026-05-22): PRIMARY FIX — the
+        // self-referential onDismiss set showError = true again on every
+        // dismiss, creating a present/dismiss loop after the success
+        // bottom sheet appeared. Combined with the simultaneous
+        // self.presentationMode.wrappedValue.dismiss() in the primary
+        // click handler, SwiftUI's presentation stack ended up showing
+        // a black screen with no way to recover except an app reinstall
+        // (which is exactly what Trey reported). Collapse onDismiss to
+        // a plain clear; the explicit primary/secondary handlers below
+        // already drive the correct close-and-navigate flow.
         .bottomSheet(
             isPresented: $showError,
             height: screenHeight / 3.3,
             topBarCornerRadius: 25,
-            showTopIndicator: false,onDismiss: {
-                showError = true
+            showTopIndicator: false,
+            onDismiss: {
+                showError = false
             }
         ) {
             CommonBottomSheet(
