@@ -239,46 +239,54 @@ struct CommonBottomSheet: View {
     var onSecondaryClick: (() -> Void)?
     
     var body: some View {
+        // MC cmpfokeoh0019oohgosv0s5ic (2026-05-22): wrap the icon + title
+        // + message section in a ScrollView so long error bodies don't
+        // push the action buttons below the bottom-sheet's fixed frame.
+        // The buttons stay outside the ScrollView so they remain pinned
+        // at the bottom regardless of message length.
         VStack(spacing: 8) {
-            
-            // MARK: - Icon (Improved but same size)
-            ZStack {
-                Circle()
-                    .fill(Color(sheetType.sheetThemeColor).opacity(0.12))
-                    .frame(width: 70, height: 70)
-                    .blur(radius: 4)
-                
-                Circle()
-                    .fill(Color(sheetType.sheetThemeColor))
-                    .frame(width: 58, height: 58)
-                    .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)
-                
-                Image(sheetType.icon)
-                    .renderingMode(.template)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(.white)
-                    .transition(.opacity)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 8) {
+                    // MARK: - Icon (Improved but same size)
+                    ZStack {
+                        Circle()
+                            .fill(Color(sheetType.sheetThemeColor).opacity(0.12))
+                            .frame(width: 70, height: 70)
+                            .blur(radius: 4)
+
+                        Circle()
+                            .fill(Color(sheetType.sheetThemeColor))
+                            .frame(width: 58, height: 58)
+                            .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)
+
+                        Image(sheetType.icon)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.white)
+                            .transition(.opacity)
+                    }
+                    .padding(.top, 8)
+
+                    // MARK: - Title
+                    Text(sheetType.title)
+                        .font(.custom(poppinsBold, size: 22))
+                        .foregroundColor(.black)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 22)
+
+                    // MARK: - Message
+                    Text(sheetType.message)
+                        .font(.custom(poppinsSemiBold, size: sheetType.contentSize))
+                        .foregroundColor(.darkGray)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 28)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
-            .padding(.top, 8)
-            
-            // MARK: - Title
-            Text(sheetType.title)
-                .font(.custom(poppinsBold, size: 22))
-                .foregroundColor(.black)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 22)
-            
-            // MARK: - Message
-            Text(sheetType.message)
-                .font(.custom(poppinsSemiBold, size: sheetType.contentSize))
-                .foregroundColor(.darkGray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 28)
-                .fixedSize(horizontal: false, vertical: true)
-            
-            Spacer(minLength: 16)
+
+            Spacer(minLength: 8)
             
             // MARK: - Buttons (same structure, just improved aesthetics)
             if sheetType.isBtnVertical {
