@@ -195,12 +195,25 @@ private lazy var optimizedSession: URLSession = {
         
         // Handle status codes
         if httpResponse.statusCode == 401 {
-            let dataObj = try jsonDecoder.decode(ApiError.self, from: data)
-            await handleUnauthorized(data: data)
-            if UserDefaults.accessToken.isEmpty{
-                throw DataError.invalidCode(dataObj.message)
-            }else{
-                throw DataError.invalidCode("Unauthorized")
+            // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): if the 401 body
+            // doesn't decode as ApiError, do NOT crash the request chain;
+            // fall back to a plain unauthorized error so the calling
+            // screen still shows something useful instead of dying with
+            // a generic DecodingError. Also only run the sign-out alert
+            // when we actually have a recognized auth error_type — some
+            // endpoints (e.g. address validation) can legitimately return
+            // 401 from upstream services without meaning the user's
+            // session is dead. Treating ALL 401s as fatal was kicking
+            // users back to Sign-In on address-verification failures.
+            let dataObj = (try? jsonDecoder.decode(ApiError.self, from: data)) ?? ApiError()
+            let isAuthFailure = dataObj.error_type == "UNAUTHORIZED" || dataObj.error_type == "invalid_token" || dataObj.error_type == "expired_token" || dataObj.error_type == "account_deleted"
+            if isAuthFailure {
+                await handleUnauthorized(data: data)
+            }
+            if UserDefaults.accessToken.isEmpty {
+                throw DataError.invalidCode(dataObj.message ?? "Unauthorized")
+            } else {
+                throw DataError.invalidCode(dataObj.message ?? "Unauthorized")
             }
         }
         
@@ -576,11 +589,31 @@ private lazy var optimizedSession: URLSession = {
     }
     
     // MARK: - Helper: Handle Unauthorized
+    // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): added explicit gating on
+    // the decoded `error_type` so this function only presents the
+    // session-expired alert when the backend actually reports an auth
+    // failure. Previously every 401 (including transient upstream-service
+    // 401s leaking through endpoints like address validation) ended up
+    // here and could kick the user to Sign-In even when their session
+    // was still valid.
     @MainActor
     private func handleUnauthorized(data: Data) {
         guard !UserDefaults.accessToken.isEmpty,
               UserDefaults.accessToken != "",
               !APIManager.isShowingUnauthorizedAlert else {
+            return
+        }
+
+        // Decode early to gate on error_type before touching any UI.
+        let preview = (try? jsonDecoder.decode(ApiError.self, from: data)) ?? ApiError()
+        let recognizedAuthFailure = preview.error_type == "UNAUTHORIZED"
+            || preview.error_type == "invalid_token"
+            || preview.error_type == "expired_token"
+            || preview.error_type == "account_deleted"
+        guard recognizedAuthFailure else {
+            // Not a session-expired condition; do nothing here. The
+            // calling layer's thrown DataError will surface the message
+            // to the screen without forcing a logout.
             return
         }
         
@@ -589,7 +622,12 @@ private lazy var optimizedSession: URLSession = {
         do {
             let dataObj = try jsonDecoder.decode(ApiError.self, from: data)
             
-            if dataObj.error_type == "UNAUTHORIZED" || dataObj.error_type == "invalid_token" {
+            // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): also accept the
+        // expired_token and account_deleted variants emitted by
+        // JWTMiddleware (see app/Http/Middleware/JWTMiddleware.php in
+        // the backend repo); previously these silently dropped into the
+        // catch arm and isShowingUnauthorizedAlert was never reset.
+        if dataObj.error_type == "UNAUTHORIZED" || dataObj.error_type == "invalid_token" || dataObj.error_type == "expired_token" || dataObj.error_type == "account_deleted" {
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
                     
