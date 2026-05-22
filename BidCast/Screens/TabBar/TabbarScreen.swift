@@ -202,7 +202,25 @@ struct TabbarScreen: View {
                     // collapses any stale pushed stack without destroying the
                     // view tree, keeping the live content visible and
                     // eliminating the flash.
-                    resetNavigation(for: previousTab)
+                    //
+                    // FOLLOWUP — MC cmpewtofs000msahgns50t4yk (Robin
+                    // 2026-05-22): the v1 "keep arriving tab's UUID" fix
+                    // wasn't enough. The leaving-tab UUID regen STILL
+                    // resets the leaving tab's @State, so when the user
+                    // tabs BACK to that tab later, its view rebuilds from
+                    // scratch, .onFirstAppear fires again, fetchCategory
+                    // re-runs, isLoadingAPI=true + categoryList.removeAll()
+                    // — producing the 12-empty-rectangle shimmer skeleton
+                    // Larry sees for a split second on every tab visit
+                    // (Frame A in the 12:58 screenshot).
+                    //
+                    // Switch both sides to path-only reset. Toolbar-bleed
+                    // from Explore drill-in is already handled by
+                    // `.toolbar(.visible, for: .tabBar)` on the
+                    // destination (cmp49377u00mb3mx117bl0r4x). If any
+                    // residual bleed shows up on QA we re-introduce a
+                    // narrower fix scoped to just that destination.
+                    resetNavigationPath(for: previousTab)
                     resetNavigationPath(for: newTab)
                     previousTab = newTab
                     // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): when we
