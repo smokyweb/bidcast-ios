@@ -220,8 +220,13 @@ struct AddCardScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
-            showError = true
+        // MC cmpfokf75001foohg7l8jcno4 (2026-05-22): same self-referential
+        // onDismiss bug as TrustedBuyerScreen — setting showError = true on
+        // dismiss creates a present/dismiss loop. Collapse to a clean
+        // showError = false; the explicit onPrimaryClick/onSecondaryClick
+        // handlers below already drive the close behavior.
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+            showError = false
         }) {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -300,6 +305,20 @@ struct AddCardScreen: View {
     private func addCard() {
         hideKeyboard()
         guard validateAndShowToast() else { return }
+        // MC cmpfokf75001foohg7l8jcno4 (2026-05-22): the body below
+        // splits `expiryDate` on '-' and indexes `date[1]` / `date[0]`
+        // without bounds-checking. If a malformed expiry leaks through
+        // validation (e.g. the picker emits an unexpected separator or
+        // a single component) this would crash on subscript-out-of-bounds
+        // — which matches Trey's report of "app crashes when entering
+        // card info on the verified-buyer flow". Validate the expiry
+        // shape up front and surface a friendly error instead.
+        let expiryComponents = expiryDate.split(separator: "-")
+        guard expiryComponents.count >= 2 else {
+            hudMsg = "Please enter a valid expiry date"
+            showhud = true
+            return
+        }
         Task {
             await performAPICalls(
                 isConcurrent: false,
@@ -326,7 +345,13 @@ struct AddCardScreen: View {
                 }
             ) {
                 // Create mock card text field
+                // MC cmpfokf75001foohg7l8jcno4 (2026-05-22): expiry shape
+                // is now pre-validated above (count >= 2), so this is
+                // safe. Keeping the guard local here too for defensive
+                // depth in case future refactors call into this closure
+                // from a different validation path.
                 let date = expiryDate.split(separator: "-")
+                guard date.count >= 2 else { return }
                 let month = date[1]
                 let year = date[0]
                 
@@ -336,15 +361,15 @@ struct AddCardScreen: View {
                                                       expirationMonth: UInt(month) ?? 0,
                                                       expirationYear: UInt(year) ?? 0,
                                                       cvc: cvv)
-                    
+
                     // Get token
                     let token = try await viewModel.getStripeToken(from: cardTextField)
-                    
+
                     // Add card
                     try await viewModel.addCard(request: AddCardRequest(card_token: token.tokenId))
                 }
                 else  {
-                    try await viewModel.updateCard(request: UpdateCardRequest(card_id: cardId, name: cardHolderName, exp_month: "\(month)", exp_year: "\(year)"
+                    try await viewModel.updateCard(request: UpdateCardRequest(card_id: cardId, name: cardHolderName, exp_month: "\(String(month))", exp_year: "\(String(year))"
                                                                             ))
                 }
                 
