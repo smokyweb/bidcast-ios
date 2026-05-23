@@ -810,22 +810,22 @@ struct ProfileHeaderView: View {
             .allowsHitTesting(false)
             
             // Back Button
+            // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 18:39 EDT):
+            // For headers that have images, the back button needs to be consistent.
+            // Matches the ProductDetailView pattern: solid black circle (chevron.left.circle.fill)
+            // at .padding(.top, 60) so it clears the status bar / clock.
             Button(action: {
                 onTapBack()
             }) {
-                Image(systemName: "chevron.left")
-                    .font(.custom(poppinsBold, size: 16))
-                    .foregroundColor(.black)
-                    .frame(width: 20, height: 20)
-                    .padding(12)
-                    .background(Color.white.opacity(0.6))
-                    .clipShape(Circle())
-                    .shadow(radius: 4)
+                Image(systemName: "chevron.left.circle.fill")
+                    .font(.custom(poppinsBold, size: 24))
+                    .foregroundColor(.primary)
+                    .frame(width: 48, height: 48)
             }
             .buttonStyle(.plain)
             .contentShape(Circle())
-            .padding(.top, 30)
-            .padding(.leading, 16)
+            .padding(.top, 60)
+            .padding(.leading, 8)
             .zIndex(10)
             
             // Profile Image
