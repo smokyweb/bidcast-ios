@@ -119,9 +119,18 @@ struct OrderTrackingView: View {
             
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
             
+            // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 17:36 EDT):
+            // Receipt & shipping details was opening OrderStatusScreen with orderId hardcoded to 0,
+            // which made getMyOrderList fail with a blank "Error" modal. Wire the real order id
+            // from selectedOrderDetails (MyOrderModel.id: Int?) — fall back to 0 only when nil so
+            // we keep the original Binding<Int> contract.
             CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
                 productDetail: $selectedOrderDetails,
-                comeFrom: "myOrder", orderId:.constant(0)
+                comeFrom: "myOrder",
+                orderId: Binding<Int>(
+                    get: { selectedOrderDetails?.id ?? 0 },
+                    set: { _ in /* read-only here; OrderStatusScreen mutates its own copy if needed */ }
+                )
             ))
             CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
 
