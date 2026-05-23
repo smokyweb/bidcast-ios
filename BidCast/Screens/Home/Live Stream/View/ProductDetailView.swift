@@ -202,13 +202,20 @@ struct ProductDetailView: View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
         }) {
-            Image(systemName: "chevron.left.circle.fill")
-                .font(.custom(poppinsBold, size: 24))
-                .foregroundColor(.primary)
-                .frame(width: 48, height: 48)
+            // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 19:10 EDT):
+            // Match the standard floating-on-image back button used on ProfileScreen.
+            // Previously was chevron.left.circle.fill / .primary which disappeared
+            // against dark product images.
+            Image(systemName: "chevron.left")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(width: 36, height: 36)
+                .background(Color.black.opacity(0.45))
+                .clipShape(Circle())
+                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
         }
         .padding(.top, 60) // clear status bar / clock
-        .padding(.leading, 8)
+        .padding(.leading, 16)
         .zIndex(10)
         } // end outer ZStack for QA #22 pinned back button
     }

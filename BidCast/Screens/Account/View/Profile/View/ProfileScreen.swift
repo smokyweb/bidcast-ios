@@ -810,22 +810,27 @@ struct ProfileHeaderView: View {
             .allowsHitTesting(false)
             
             // Back Button
-            // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 18:39 EDT):
-            // For headers that have images, the back button needs to be consistent.
-            // Matches the ProductDetailView pattern: solid black circle (chevron.left.circle.fill)
-            // at .padding(.top, 60) so it clears the status bar / clock.
+            // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 19:10 EDT):
+            // Standard floating-on-image back button — white chevron on a
+            // semi-transparent dark circle, with a subtle shadow. Visible against
+            // BOTH light AND dark image backgrounds (studio lighting on Marko's
+            // profile was dark in the top-left and a black chevron disappeared).
+            // .padding(.top, 60) clears the status bar / clock.
             Button(action: {
                 onTapBack()
             }) {
-                Image(systemName: "chevron.left.circle.fill")
-                    .font(.custom(poppinsBold, size: 24))
-                    .foregroundColor(.primary)
-                    .frame(width: 48, height: 48)
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(width: 36, height: 36)
+                    .background(Color.black.opacity(0.45))
+                    .clipShape(Circle())
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
             }
             .buttonStyle(.plain)
             .contentShape(Circle())
             .padding(.top, 60)
-            .padding(.leading, 8)
+            .padding(.leading, 16)
             .zIndex(10)
             
             // Profile Image
