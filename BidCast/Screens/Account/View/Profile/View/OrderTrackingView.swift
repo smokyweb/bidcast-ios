@@ -282,15 +282,28 @@ struct OrderTrackingView: View {
                 .foregroundColor(.darkGray)
                 .lineSpacing(2)
             
-            Button(action: {}) {
-                HStack {
-                    Text("Bundled with 5 other items")
-                        .font(.custom(poppinsSemiBold, size: 12))
-                        .foregroundColor(.defaultTheme)
-                    Image(systemName: "chevron.down")
-                        .font(.custom(poppinsSemiBold, size: 12))
+            // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 19:29 EDT):
+            // Larry reported tapping 'Bundled with N other items' did nothing.
+            // Root cause: the Order model has no bundle/related-orders field
+            // exposed from the backend, AND the button's action was empty {},
+            // AND the '5' was hardcoded. Hide the button entirely until the
+            // backend ships a bundle-items field and we have a spec for what
+            // tapping should reveal (likely a sheet listing the other items
+            // in the same package).
+            // To re-enable: replace `if false` with `if let bundleItems =
+            // orderResponse?.order?.bundleItems, !bundleItems.isEmpty`
+            // and wire the button's action to present a bundle-detail sheet.
+            if false {
+                Button(action: {}) {
+                    HStack {
+                        Text("Bundled with 5 other items")
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.defaultTheme)
+                        Image(systemName: "chevron.down")
+                            .font(.custom(poppinsSemiBold, size: 12))
+                    }
+                    .foregroundColor(.blue)
                 }
-                .foregroundColor(.blue)
             }
             
             Text("Order placed \(formattedDate(orderResponse?.order?.createdAt))") // dynamic update
