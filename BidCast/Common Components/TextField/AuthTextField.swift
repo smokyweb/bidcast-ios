@@ -9,6 +9,10 @@ import SwiftUI
 
 struct AuthTextField: View {
     
+    enum FocusableField: Hashable {
+      case field
+    }
+    
     @State var floatingLabel: String = ""
     @State private var rawPriceDigits: String = ""
     @State var isRequired: Bool = false
@@ -37,6 +41,9 @@ struct AuthTextField: View {
     var custPlaceHolderName : String = robotoRegular
      var custPlaceHolderFontSize : Double = placeHolder
     
+    // New optional properties for keyboard navigation
+    var submitLabel: SubmitLabel = .next
+    var onSubmit: (() -> Void)?
     
     var enteredText: ((String) -> Void)?
     var body: some View {
@@ -102,14 +109,18 @@ struct AuthTextField: View {
                                 .autocorrectionDisabled(true)
                                 .autocapitalization(.none)
                                 .foregroundStyle(.text)
-                                .submitLabel(.next)
+                                .submitLabel(submitLabel)
                                 .accentColor(.text)
                                 .focused($isFocused)
                                 .onChange(of: text, perform: { value in
                                     self.enteredText?(value)
                                 })
                                 .onSubmit {
-                                    self.enteredText?(text)
+                                    if let onSubmit = onSubmit {
+                                        onSubmit()
+                                    } else {
+                                        self.enteredText?(text)
+                                    }
                                 }
                                 .ignoresSafeArea(.keyboard, edges: .bottom)
                         }
@@ -128,7 +139,7 @@ struct AuthTextField: View {
                                     .autocapitalization(.none)
 //                                    .padding(.leading, isIconDisplay ? 16 : 8)
                                     .foregroundStyle(.text)
-                                    .submitLabel(.next)
+                                    .submitLabel(submitLabel)
                                     .accentColor(.text)
                                     .focused($isFocused)
                                     .frame(height: height)
@@ -246,7 +257,11 @@ struct AuthTextField: View {
                                         
                                     } )
                                     .onSubmit {
-                                        self.enteredText?(text)
+                                        if let onSubmit = onSubmit {
+                                            onSubmit()
+                                        } else {
+                                            self.enteredText?(text)
+                                        }
                                     }
                                     .onAppear {
                                     if isForPrice {
