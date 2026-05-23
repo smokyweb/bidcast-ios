@@ -12,6 +12,10 @@ struct OrderTrackingView: View {
     @State private var showCopied = false
     @State private var bounceAnimation = false
     @State private var showProductDetails = false
+    // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 18:09 EDT):
+    // Shipping to tile now opens a detail sheet showing the full address
+    // (previously the tap-handler was empty {}).
+    @State private var showShippingToSheet: Bool = false
     
     @State private var navigateToProfile: Bool = false
     @State private var navigateToChat: Bool = false
@@ -190,6 +194,13 @@ struct OrderTrackingView: View {
         //                }
         //
         //            }
+        // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 18:09 EDT):
+        // Sheet for the Shipping to tile.
+        .sheet(isPresented: $showShippingToSheet) {
+            ShippingToDetailSheet(address: orderResponse?.shippingAddress)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+        }
         .edgesIgnoringSafeArea(.bottom)
         .background(.backGround)
         .onAppear {
@@ -293,7 +304,8 @@ struct OrderTrackingView: View {
                     title: "Shipping to",
                     subtitle: formattedShippingAddress(orderResponse?.shippingAddress)
                 ) {
-                    
+                    // MC cmpaj2fex0000w5hgq64jp9k4: open shipping address detail sheet.
+                    showShippingToSheet = true
                 }
                 
                 ActionButtonView(
@@ -951,6 +963,84 @@ extension OrderTrackingView {
             return error?.localizedDescription ?? "Something went wrong"
         }
         return msg
+    }
+}
+
+// MARK: - MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 18:09 EDT)
+// Shipping address detail sheet shown when the buyer taps the "Shipping to"
+// tile on OrderTrackingView ("Preparing Package" view).
+struct ShippingToDetailSheet: View {
+    let address: ShippingAddressModel?
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Shipping to")
+                    .font(.custom("Poppins-Bold", size: 18))
+                    .foregroundColor(.black)
+                Spacer()
+            }
+            .padding(.top, 8)
+
+            if let address {
+                VStack(alignment: .leading, spacing: 10) {
+                    if let name = address.name, !name.isEmpty {
+                        addressRow(label: "Name", value: name)
+                    }
+                    if let street = address.streetAddress, !street.isEmpty {
+                        addressRow(label: "Address", value: street)
+                    }
+                    let cityState = [address.city, address.state]
+                        .compactMap { $0 }
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", ")
+                    if !cityState.isEmpty {
+                        addressRow(label: "City / State", value: cityState)
+                    }
+                    if let pin = address.pincode, !pin.isEmpty {
+                        addressRow(label: "Zip / Postal", value: pin)
+                    }
+                    if let phone = address.phoneNumber, !phone.isEmpty {
+                        addressRow(label: "Phone", value: phone)
+                    }
+                }
+                .padding(16)
+                .background(Color.gray.opacity(0.05))
+                .cornerRadius(12)
+            } else {
+                Text("No shipping address on file.")
+                    .font(.custom("Poppins-Regular", size: 14))
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            Button(action: { dismiss() }) {
+                Text("Close")
+                    .font(.custom("Poppins-SemiBold", size: 16))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .background(Color.defaultTheme)
+                    .cornerRadius(24)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 16)
+    }
+
+    private func addressRow(label: String, value: String) -> some View {
+        HStack(alignment: .top) {
+            Text(label)
+                .font(.custom("Poppins-Regular", size: 13))
+                .foregroundColor(.gray)
+                .frame(width: 110, alignment: .leading)
+            Text(value)
+                .font(.custom("Poppins-Medium", size: 14))
+                .foregroundColor(.black)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }
 

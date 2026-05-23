@@ -37,6 +37,13 @@ struct ChatScreen: View {
     }
     
     var body: some View {
+        // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 18:09 EDT):
+        // When ChatScreen is reached via a non-NavigationView entry point
+        // (e.g. CusNavLink from OrderTrackingView), the system status bar
+        // would overlap the header avatar/back chevron because the VStack
+        // anchored at y=0 with no safe-area inset. Adding ignoresSafeArea(.container, edges: .bottom)
+        // keeps the keyboard handling working AND lets the default safe-area
+        // top inset push the header below the notch/status-bar.
         VStack(spacing: 0) {
 
             headerView
@@ -49,6 +56,7 @@ struct ChatScreen: View {
         }
         .background(.backGround)
         .navigationBarHidden(true)
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 
     // MARK: - Header
@@ -333,7 +341,11 @@ struct ChatHeaderView: View {
             }
         }
         .padding(.horizontal, 16)
-//        .padding(.top, 12)
+        // MC cmpaj2fex0000w5hgq64jp9k4 (Larry 2026-05-23 18:09 EDT):
+        // restored top padding (was commented out 2025-08-05) so the header
+        // doesn't sit under the iOS status bar / notch when ChatScreen is
+        // reached from OrderTrackingView → "Message the seller".
+        .padding(.top, 12)
         .frame(height: 50)
         .padding(.bottom, 8)
         .background(Color.white)
