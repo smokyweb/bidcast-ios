@@ -1390,6 +1390,21 @@ struct LiveStream: View {
         }
     }
     private func handleBidding() -> Bool {
+        // MC cmpaj2fex0000w5hgq64jp9k4 / Basecamp 9922137425 (2026-05-24):
+        // Refuse to let the logged-in user place a bid or Buy Now on their
+        // own product. Previously there was no client-side guard — the host
+        // of a live stream could place bids on their own auctioned items,
+        // and a buyer could end up auto-buying their own listed product
+        // through the Buy-It-Now socket flow. Backend may also reject but
+        // surfacing it as a toast here is the better UX.
+        if let hostIdStr = liveShowsData[safe: currentIndex]?.seller?.id,
+           let hostId = Int(hostIdStr),
+           hostId == UserDefaults.userId {
+            toastMessage = "You can't bid on your own items."
+            showToast = true
+            return false
+        }
+
         if UserDefaults.buyerVerafied != "verified" {
             showVerificationSheet = true
             return false

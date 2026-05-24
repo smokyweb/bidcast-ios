@@ -267,7 +267,27 @@ extension MyOrdersScreen{
             if viewModel.errorMessage?.isEmpty ?? true {
                 handleSuccess(isPagination: !isInitialLoad)
             } else {
-                showError = true
+                // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): Don't surface a
+                // bottom-sheet on every My Orders page load. Previously this
+                // branch set `showError = true` without populating `alertType`,
+                // resulting in an empty sheet (just the alert icon, no title,
+                // message, or OK button) that appeared on load and on every
+                // pagination call. Empty error messages are a transient state
+                // (initial load while viewModel boots) and shouldn't disrupt UX.
+                //
+                // Only surface the sheet when we have an actual error message,
+                // and populate alertType so the user can see what went wrong
+                // and dismiss it.
+                if let msg = viewModel.errorMessage, !msg.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Failed",
+                        message: msg,
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText: ""
+                    )
+                    showError = true
+                }
             }
         }
     }
