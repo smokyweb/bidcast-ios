@@ -747,6 +747,32 @@ struct HomeViewScreen: View {
     }
     
     /// Processes the API response and updates pagination state
+    // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): parse a show's `date` +
+    // `time` (both wall-clock strings from the backend) into a Date in the
+    // device's current time zone. Used by success() to drop past-time
+    // shows from the Coming Soon feed. Mirrors the parsing logic in
+    // LiveShowView.upcomingBadgeText for consistency.
+    private func parseShowStart(date: String?, time: String?) -> Date? {
+        let d = (date ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let t = (time ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !d.isEmpty else { return nil }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+
+        if !t.isEmpty {
+            for fmt in ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm"] {
+                formatter.dateFormat = fmt
+                if let parsed = formatter.date(from: "\(d) \(t)") {
+                    return parsed
+                }
+            }
+        }
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: d)
+    }
+
     func success() {
         let response = viewModel.liveShowsResponse
         
@@ -773,9 +799,43 @@ struct HomeViewScreen: View {
         totalItems = response.total ?? 0
         print("📊 Total items: \(totalItems), Current loaded: \(liveShowsData.count)")
         
-        // Add new shows, avoiding duplicates
+        // Add new shows, avoiding duplicates.
+        //
+        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): when the user is on
+        // the "Coming Soon" tab (selectedTab == "upcoming"), filter out any
+        // show whose computed start time is already in the past. Backend
+        // currently returns shows with `date >= today()` regardless of
+        // time, which leaves shows scheduled for earlier today still
+        // showing in upcoming even after their start time has elapsed.
+        // Defensive client-side filter until the backend gets the proper
+        // `(date > today OR (date = today AND time > now))` clause.
+        // Shows with no time set (00:00:00) are KEPT through the end of
+        // their scheduled day so we don't accidentally hide same-day
+        // "time TBD" listings.
+        let nowDate = Date()
+        let filteredShows: [HomeModel]
+        if selectedTab == "upcoming" {
+            filteredShows = newShows.filter { show in
+                guard let start = parseShowStart(date: show.date, time: show.time) else {
+                    return true // unparseable → keep, don't accidentally hide
+                }
+                let t = (show.time ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+                if t.isEmpty || t == "00:00:00" || t == "00:00" {
+                    // Time wasn't set — keep until end of that day.
+                    let endOfDay = Calendar.current.startOfDay(for: start).addingTimeInterval(24 * 60 * 60)
+                    return endOfDay > nowDate
+                }
+                return start > nowDate
+            }
+            if filteredShows.count != newShows.count {
+                print("🔎 Coming Soon filter: hid \(newShows.count - filteredShows.count) past-time shows")
+            }
+        } else {
+            filteredShows = newShows
+        }
+
         var addedCount = 0
-        for show in newShows {
+        for show in filteredShows {
             if let roomId = show.room_id, !loadedRoomIDs.contains(roomId) {
                 liveShowsData.append(show)
                 loadedRoomIDs.insert(roomId)
