@@ -22,6 +22,17 @@ struct OrderStatusScreen: View {
     @State private var recieptUrl : String?
     // QA #8 — Open receipt PDF inside the app via in-app Safari sheet, not the Files download flow.
     @State private var showReceiptSheet = false
+    // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): SwiftUI was rendering the
+    // receipt sheet body with `recieptUrl` still nil even though we'd set it
+    // BEFORE flipping `showReceiptSheet = true` (state batching race — NSLog
+    // captured `[Receipt-Sheet] presenting with recieptUrl=nil` even though
+    // the prior line showed `data=https://...`). Use `.sheet(item:)` with an
+    // Identifiable wrapper so the sheet only presents once the URL exists,
+    // atomically. Eliminates the empty-state-flash race.
+    @State private var receiptSheetItem: ReceiptSheetItem? = nil
+    // Drives the explicit "receipt isn't ready" empty-state sheet so it can
+    // coexist with the .sheet(item:) URL-only flow above without colliding.
+    @State private var showReceiptEmptyState = false
     // QA #5 — Shipping Details should navigate to the dedicated screen (or, if not present in this branch, show a sheet with tracking info).
     @State private var showShippingDetailsSheet = false
     // QA #33 — share / preview shipping label PDF after createLabel returns.
@@ -170,43 +181,42 @@ struct OrderStatusScreen: View {
         // Now: validate the URL at the sheet-trigger boundary AND give the
         // fallback a proper modal layout with a Close button so users aren't
         // stuck staring at unstyled centered text.
-        .sheet(isPresented: $showReceiptSheet) {
-            if let urlString = recieptUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
-               !urlString.isEmpty,
-               let url = URL(string: urlString),
-               url.scheme == "http" || url.scheme == "https" {
-                ReceiptSafariView(url: url)
-                    .ignoresSafeArea()
-            } else {
-                VStack(spacing: 16) {
-                    HStack {
-                        Spacer()
-                        Button(action: { showReceiptSheet = false }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(.gray)
-                        }
-                        .padding(.trailing, 16)
-                        .padding(.top, 16)
+        // Receipt sheet — only presents when we have a validated URL (atomic).
+        .sheet(item: $receiptSheetItem) { item in
+            let _ = { NSLog("[Receipt-Sheet] presenting with url=\(item.url.absoluteString)") }()
+            ReceiptSafariView(url: item.url)
+                .ignoresSafeArea()
+        }
+        // Separate empty-state sheet — shown when receipt truly isn't ready.
+        .sheet(isPresented: $showReceiptEmptyState) {
+            VStack(spacing: 16) {
+                HStack {
+                    Spacer()
+                    Button(action: { showReceiptEmptyState = false }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.gray)
                     }
-                    Spacer()
-                    Image(systemName: "doc.text")
-                        .font(.system(size: 40))
-                        .foregroundColor(.gray.opacity(0.6))
-                    Text("Receipt not available yet")
-                        .font(.custom(poppinsSemiBold, size: 16))
-                        .foregroundColor(.primary)
-                    Text("The receipt for this order isn't ready yet. Please check back once the order is processed.")
-                        .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                    Spacer()
-                    Spacer()
+                    .padding(.trailing, 16)
+                    .padding(.top, 16)
                 }
-                .presentationDetents([.medium])
-                .presentationDragIndicator(.visible)
+                Spacer()
+                Image(systemName: "doc.text")
+                    .font(.system(size: 40))
+                    .foregroundColor(.gray.opacity(0.6))
+                Text("Receipt not available yet")
+                    .font(.custom(poppinsSemiBold, size: 16))
+                    .foregroundColor(.primary)
+                Text("The receipt for this order isn't ready yet. Please check back once the order is processed.")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+                Spacer()
+                Spacer()
             }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
         }
         // QA #5 — Present Shipping Details (tracking info) in a sheet.
         .sheet(isPresented: $showShippingDetailsSheet) {
@@ -301,6 +311,8 @@ struct OrderStatusScreen: View {
         // the first response comes back success-but-empty (the backend is
         // generating the PDF and it's not ready yet).
         recieptUrl = nil
+        receiptSheetItem = nil
+        showReceiptEmptyState = false
         showReceiptSheet = false
         viewModel.errorMessage = nil
 
@@ -316,8 +328,10 @@ struct OrderStatusScreen: View {
                 return
             }
             SVProgressHUD.show(withStatus: "Loading receipt...")
+            NSLog("[Receipt-Screen] sending order_id=\(orderId) (productDetail?.id=\(orderID))")
             let param = getOrderReceiptRequest(order_id: orderId)
             await viewModel.getReceipt(parameters: param)
+            NSLog("[Receipt-Screen] after first call status=\(viewModel.recieptResponse.status ?? "nil") data=\(viewModel.recieptResponse.data ?? "nil") errorMessage=\(viewModel.errorMessage ?? "nil")")
 
             // First-attempt error — surface immediately, don't retry.
             if let errorMsg = viewModel.errorMessage {
@@ -358,7 +372,7 @@ struct OrderStatusScreen: View {
                     showhud = true
                     return
                 }
-                print("[Receipt] attempt \(attempts) status=\(viewModel.recieptResponse.status ?? "nil") data=\(viewModel.recieptResponse.data ?? "nil")")
+                NSLog("[Receipt-Screen] retry attempt \(attempts) status=\(viewModel.recieptResponse.status ?? "nil") data=\(viewModel.recieptResponse.data ?? "nil")")
             }
 
             await SVProgressHUD.dismiss()
@@ -421,13 +435,16 @@ struct OrderStatusScreen: View {
                 guard let u = URL(string: trimmed) else { return false }
                 return u.scheme == "http" || u.scheme == "https"
             }()
-            if !trimmed.isEmpty && lower != "null" && isValidScheme {
+            if !trimmed.isEmpty && lower != "null" && isValidScheme,
+               let url = URL(string: trimmed) {
+                // QA #8 — Open in-app sheet via .sheet(item:) so presentation
+                // is atomic with the URL value. No more state-batching race.
                 recieptUrl = trimmed
-                // QA #8 — Open in-app sheet rather than downloading to Files.
-                showReceiptSheet = true
+                receiptSheetItem = ReceiptSheetItem(url: url)
+                NSLog("[Receipt-Screen] setting receiptSheetItem with url=\(trimmed)")
             } else {
-                hudMsg = "Receipt isn't available yet for this order."
-                showhud = true
+                NSLog("[Receipt-Screen] empty-or-invalid URL after success: trimmed='\(trimmed)', lower='\(lower)', isValidScheme=\(isValidScheme) — showing empty-state sheet")
+                showReceiptEmptyState = true
             }
         } else {
             // Same ticket: was a silent failure. Now surface server error or
@@ -466,6 +483,16 @@ struct OrderStatusScreen: View {
         let now = Date()
         return String(Int(now.timeIntervalSince1970))
     }
+}
+
+// MARK: - Receipt sheet item wrapper
+// MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): wraps the validated receipt URL
+// so `.sheet(item:)` can present atomically (avoids the state-batching race
+// where `recieptUrl` would log as nil even though we set it before flipping
+// the boolean sheet trigger).
+struct ReceiptSheetItem: Identifiable {
+    let id = UUID()
+    let url: URL
 }
 
 // MARK: - QA #8 ReceiptSafariView

@@ -44,13 +44,16 @@ final class OrderStatusViewModel: ObservableObject {
     // MARK: - getReceipt.
     func getReceipt(parameters: getOrderReceiptRequest) async {
         self.errorMessage = nil // Clear previous error
+        NSLog("[Receipt-VM] request order_id=\(parameters.order_id)")
         do {
             let response: ResponseModel<String> = try await APIManager.shared.request(
                 type: APIEndPoint.orderReceipt(param: parameters),
                 header: true
             )
+            NSLog("[Receipt-VM] response status=\(response.status ?? "nil") message=\(response.message ?? "nil") data=\(response.data ?? "nil")")
             self.recieptResponse = response
         } catch {
+            NSLog("[Receipt-VM] threw error: \(error)")
             self.handle(error: error)
         }
     }
