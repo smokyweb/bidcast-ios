@@ -198,15 +198,27 @@ struct LiveAuctionCardView: View {
                         .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
                 )
                 
-                // Live Badge
+                // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): Larry caught
+                // the "Live • 0" red badge appearing on shows that are
+                // SCHEDULED (Coming Soon tab) but not yet live. Now:
+                //   - is_live == true → red "Live • N" (unchanged)
+                //   - otherwise → dark-gray "Upcoming" (or formatted start
+                //     time if we have both date and time on the model)
+                // so the Coming Soon feed reads as scheduled, not active.
                 HStack(spacing: 5) {
-                    Text("Live • \(auction.latest_viewer_count ?? 0)")
-                        .font(.custom(poppinsSemiBold, size: 12))
-                        .foregroundColor(.white)
+                    if auction.is_live == true {
+                        Text("Live • \(auction.latest_viewer_count ?? 0)")
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.white)
+                    } else {
+                        Text(upcomingBadgeText(date: auction.date, time: auction.time))
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.white)
+                    }
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
-                .background(Color.red)
+                .background(auction.is_live == true ? Color.red : Color.black.opacity(0.65))
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 2)
                 .padding(10)
@@ -235,6 +247,41 @@ struct LiveAuctionCardView: View {
             .padding(.vertical, 5)
         }
         .background(Color.clear)
+    }
+
+    // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): badge text for a
+    // not-yet-live show. Tries to combine the API date (yyyy-MM-dd) +
+    // time (HH:mm[:ss]) into a friendly format like "Jun 1 · 3:00 PM".
+    // Falls back to "Upcoming" when either field is missing or unparseable.
+    private func upcomingBadgeText(date: String?, time: String?) -> String {
+        let d = (date ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let t = (time ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !d.isEmpty || !t.isEmpty else { return "Upcoming" }
+
+        let inFormatter = DateFormatter()
+        inFormatter.locale = Locale(identifier: "en_US_POSIX")
+        inFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+        // Try a few common shapes
+        var parsed: Date? = nil
+        if !d.isEmpty && !t.isEmpty {
+            let combined = "\(d) \(t)"
+            for fmt in ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm"] {
+                inFormatter.dateFormat = fmt
+                if let p = inFormatter.date(from: combined) { parsed = p; break }
+            }
+        }
+        if parsed == nil && !d.isEmpty {
+            inFormatter.dateFormat = "yyyy-MM-dd"
+            parsed = inFormatter.date(from: d)
+        }
+        guard let when = parsed else { return "Upcoming" }
+
+        let outFormatter = DateFormatter()
+        outFormatter.locale = Locale.current
+        // "Jun 1 • 3:00 PM" — short date + short time
+        outFormatter.dateFormat = (t.isEmpty ? "MMM d" : "MMM d • h:mm a")
+        return outFormatter.string(from: when)
     }
 }
 
