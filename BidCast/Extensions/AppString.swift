@@ -87,7 +87,7 @@ struct AppString{
     static let Payout = "Payout".localized
     static let SellerHub = "Seller Hub".localized
     static let MyAccount = "My Account".localized
-    static let CompleteProfile = "Complete Profile".localized
+    static let CompleteProfile = "Edit Profile".localized
     static let CompleteYourProfile = "Complete Your Profile".localized
     static let Username = "Username".localized
     static let EnterUserName = "Enter User Name".localized

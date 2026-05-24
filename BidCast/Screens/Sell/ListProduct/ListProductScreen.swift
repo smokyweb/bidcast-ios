@@ -467,7 +467,7 @@ struct ListProductScreen: View {
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
-                        AuthTextField(floatingLabel: "Buy it Now Price".localized,
+                        AuthTextField(floatingLabel: "Buy It Now Price".localized,
                                       placeholder: "$0.0",
                                       icon: .menuProfile,
                                       text: $request.pricing,
@@ -1314,7 +1314,7 @@ struct HazardousLabel: View {
                 .font(.custom(poppinsMedium, size: 16))
                 .foregroundColor(.primary)
 
-            Text("Carries restrict shipping items that may pose risk to safety, like lithium batteries.")
+            Text("Carriers restrict shipping of items that may pose a safety risk, like lithium batteries.")
                 .font(.custom(poppinsRegular, size: 14))
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -1323,7 +1323,7 @@ struct HazardousLabel: View {
 }
 
 enum lisProductScreenSegment : String, CaseIterable, CustomStringConvertible {
-    case Buyit = "Buy it Now"
+    case Buyit = "Buy It Now"
     case Auction = "Auction"
 
     var description: String {

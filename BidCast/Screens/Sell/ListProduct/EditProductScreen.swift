@@ -397,7 +397,7 @@ struct EditProductScreen: View {
                         .padding([.leading, .trailing], 16.0)
                     
                     AuthTextField(
-                        floatingLabel: "Buy it Now Price".localized,
+                        floatingLabel: "Buy It Now Price".localized,
                         placeholder: "$0.0",
                         icon: .menuProfile,
                         text: $request.pricing,

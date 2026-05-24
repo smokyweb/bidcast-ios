@@ -836,7 +836,7 @@ struct SellerHubSection: View {
         HStack(spacing: 12) {
             StatCardView(
                 value: isLoadingStats ? "" : "\(itemsCount)",
-                label: "Itemss",
+                label: "Items",
                 isLoading: isLoadingStats
             )
             .onTapGesture {

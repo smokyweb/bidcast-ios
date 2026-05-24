@@ -12,7 +12,7 @@ struct SellScreen: View {
     var onTap: (SellTabOption) -> Void
     var onTapCancel :() -> Void? 
     var imageName =  ["tag","stream","shop"]
-    var tabName = ["List a Product","Scheduled a show","Seller Hub"]
+    var tabName = ["List a Product","Schedule a show","Seller Hub"]
     var subLabel = ["Create a listing for your item","Go live and sell to your audience","Manage your store and listings"]
     @State var navigateToLisProduct : Bool = false
     @State var navigateTolesson : Bool = false
