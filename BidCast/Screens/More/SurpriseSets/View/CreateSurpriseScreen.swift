@@ -137,7 +137,7 @@ struct CreateSurpriseScreen: View {
                         options: $shippingProfileNames, floatingLabel:"Shipping Profile",
                         hint: "Select",
                         selected: $selectedShippingProfileName,
-                        anchor: .top,
+                        anchor: .bottom,
                         custFontName: robotoMedium,
                         custFontSize:  14.0,
                         custCategory : robotoRegular,
