@@ -31,8 +31,17 @@ struct MyOrderModel: Codable {
     var userID: Int?
     var productID: Int?
     var shippingAddress: String?
-    var cardID: Int?
-    var customerPaymentProfileID: Int?
+    // MC cmpaj2fex0000w5hgq64jp9k4 / Basecamp 9922137475 follow-up (2026-05-24):
+    // Backend serializes these IDs as STRINGS in the my-order-listing
+    // response (Authorize.Net customer/payment profile IDs are documented as
+    // strings, not numerics). Decoding as Int? produced:
+    //   typeMismatch at data -> [3] -> customer_payment_profile_id
+    //   (expected Int): Expected to decode Int but found a string instead.
+    // which blocked the entire My Orders page load. Mirroring the type used in
+    // OffersModel.swift (`String?`) and the existing converter call sites that
+    // already do `Int(order.cardID ?? "")` / `Int(order.customerPaymentProfileID ?? "")`.
+    var cardID: String?
+    var customerPaymentProfileID: String?
     var promoCode: String?
     var sendAsGift: Bool?
     var giftUserID: Int?
@@ -197,8 +206,10 @@ extension MyOrderModel {
             userID: order.userID,
             productID: order.productID,
             shippingAddress: order.shippingAddress,
-            cardID: Int(order.cardID ?? ""),
-            customerPaymentProfileID: Int(order.customerPaymentProfileID ?? ""),
+            // Pass through as String? to match the model and the data the
+            // backend actually returns (these are Authorize.Net profile IDs).
+            cardID: order.cardID,
+            customerPaymentProfileID: order.customerPaymentProfileID,
             promoCode: order.promoCode,
             sendAsGift: order.sendAsGift,
             giftUserID: Int(order.giftUserID ?? "0") ?? 0,
@@ -307,8 +318,11 @@ extension MyOrderModel {
         userID = try c.decodeIfPresent(Int.self, forKey: .userID)
         productID = try c.decodeIfPresent(Int.self, forKey: .productID)
         shippingAddress = try c.decodeIfPresent(String.self, forKey: .shippingAddress)
-        cardID = try c.decodeIfPresent(Int.self, forKey: .cardID)
-        customerPaymentProfileID = try c.decodeIfPresent(Int.self, forKey: .customerPaymentProfileID)
+        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): backend returns these as
+        // STRINGS (Authorize.Net profile IDs). Decode as String? — was Int.self
+        // before and that triggered the My Orders empty-sheet runtime crash.
+        cardID = try c.decodeIfPresent(String.self, forKey: .cardID)
+        customerPaymentProfileID = try c.decodeIfPresent(String.self, forKey: .customerPaymentProfileID)
         promoCode = try c.decodeIfPresent(String.self, forKey: .promoCode)
         sendAsGift = try decodeBoolFlexible(c, forKey: .sendAsGift)
         giftUserID = try c.decodeIfPresent(Int.self, forKey: .giftUserID)
