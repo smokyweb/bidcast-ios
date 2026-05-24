@@ -120,6 +120,12 @@ struct ProfileScreen: View {
                                           following: "\(profileData.following_count ?? 0)" ,
                                           bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
                                           isOwnProfile: isOwnProfile,
+                                          // Basecamp 9922137525 / MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24):
+                                          // disable inner back button — ProfileScreen now renders
+                                          // the back button as an outer .overlay so it stays
+                                          // pinned and doesn't scroll with content. Matches the
+                                          // QA #22 fix on ProductDetailView.
+                                          showBackButton: false,
                                           onTapBack: {
                             dismiss()
                         },
@@ -516,6 +522,28 @@ struct ProfileScreen: View {
         .padding(.bottom,12)
         .background(.backGround)
         .edgesIgnoringSafeArea(.bottom)
+        // Basecamp 9922137525 / MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24):
+        // Pinned back button overlay — stays in place when user scrolls the
+        // profile content. Matches QA #22 fix already applied to
+        // ProductDetailView. .padding(.top, 60) clears the status bar / clock.
+        .overlay(alignment: .topLeading) {
+            Button(action: {
+                dismiss()
+            }) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(width: 36, height: 36)
+                    .background(Color.black.opacity(0.45))
+                    .clipShape(Circle())
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
+            }
+            .buttonStyle(.plain)
+            .contentShape(Circle())
+            .padding(.top, 60)
+            .padding(.leading, 16)
+            .zIndex(20)
+        }
         
         .onFirstAppear{
             
@@ -785,7 +813,12 @@ struct ProfileHeaderView: View {
     var following : String
     var bio : String
     var isOwnProfile: Bool = false
-    
+    // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): when false, ProfileHeaderView
+    // skips rendering its internal back button so the parent screen can draw
+    // a pinned back button as an .overlay outside the ScrollView (fix for
+    // Basecamp 9922137525 "Back button scrolls with screen").
+    var showBackButton: Bool = true
+
     var onTapBack: () -> () = {}
     var onTapNotify: () -> () = {}
     var onTapMore: () -> () = {}
@@ -816,6 +849,7 @@ struct ProfileHeaderView: View {
             // BOTH light AND dark image backgrounds (studio lighting on Marko's
             // profile was dark in the top-left and a black chevron disappeared).
             // .padding(.top, 60) clears the status bar / clock.
+            if showBackButton {
             Button(action: {
                 onTapBack()
             }) {
@@ -832,6 +866,7 @@ struct ProfileHeaderView: View {
             .padding(.top, 60)
             .padding(.leading, 16)
             .zIndex(10)
+            }
             
             // Profile Image
             VStack(alignment: .leading, spacing: 4) {
