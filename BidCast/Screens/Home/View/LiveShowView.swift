@@ -250,9 +250,16 @@ struct LiveAuctionCardView: View {
     }
 
     // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): badge text for a
-    // not-yet-live show. Tries to combine the API date (yyyy-MM-dd) +
-    // time (HH:mm[:ss]) into a friendly format like "Jun 1 · 3:00 PM".
-    // Falls back to "Upcoming" when either field is missing or unparseable.
+    // not-yet-live show. Combines the API `date` (yyyy-MM-dd) + `time`
+    // (HH:mm[:ss]) into a friendly format like "Jun 1 · 3:00 PM".
+    // Falls back to "Upcoming" when either field is missing/unparseable.
+    //
+    // (2026-05-24 19:00): The backend sends `date` + `time` as wall-clock
+    // values the SELLER typed in — NOT UTC. Earlier impl parsed them with
+    // `TimeZone(secondsFromGMT: 0)` which made "2026-05-24 00:00:00" land
+    // at midnight UTC = 8 PM EDT on the 23rd. Larry saw "May 23 • 8:00 PM"
+    // for shows scheduled on the 24th. Now we parse AND format in
+    // `TimeZone.current` so the wall-clock value round-trips.
     private func upcomingBadgeText(date: String?, time: String?) -> String {
         let d = (date ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let t = (time ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -260,7 +267,7 @@ struct LiveAuctionCardView: View {
 
         let inFormatter = DateFormatter()
         inFormatter.locale = Locale(identifier: "en_US_POSIX")
-        inFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        inFormatter.timeZone = TimeZone.current
 
         // Try a few common shapes
         var parsed: Date? = nil
@@ -279,8 +286,12 @@ struct LiveAuctionCardView: View {
 
         let outFormatter = DateFormatter()
         outFormatter.locale = Locale.current
-        // "Jun 1 • 3:00 PM" — short date + short time
-        outFormatter.dateFormat = (t.isEmpty ? "MMM d" : "MMM d • h:mm a")
+        outFormatter.timeZone = TimeZone.current
+        // "Jun 1 • 3:00 PM" — short date + short time.
+        // Hide the time portion entirely when the API gave us "00:00:00"
+        // (no time supplied by seller — just show the date).
+        let hasMeaningfulTime = !t.isEmpty && t != "00:00:00" && t != "00:00"
+        outFormatter.dateFormat = hasMeaningfulTime ? "MMM d • h:mm a" : "MMM d"
         return outFormatter.string(from: when)
     }
 }
