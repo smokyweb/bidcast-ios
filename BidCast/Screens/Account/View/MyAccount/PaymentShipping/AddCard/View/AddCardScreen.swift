@@ -9,6 +9,8 @@ import SwiftUI
 import SVProgressHUD
 import AlertToast
 import Stripe
+import IQKeyboardManagerSwift
+import IQKeyboardToolbarManager
 
 enum FormValidationResult: Equatable{
     case valid
@@ -287,6 +289,16 @@ struct AddCardScreen: View {
         }
         
         .onAppear {
+            // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): disable
+            // IQKeyboardManager's auto-toolbar on this screen so the
+            // SwiftUI `.toolbar(placement: .keyboard)` we set above is
+            // the only keyboard accessory bar shown. IQ's auto-toolbar
+            // walks the responder chain in an order that jumps from CVV
+            // back to Card Holder before reaching Expiry (Larry caught
+            // this on 2026-05-24 18:41 EDT). Re-enable in onDisappear so
+            // other screens that rely on IQ's auto-toolbar keep working.
+            IQKeyboardToolbarManager.shared.isEnabled = false
+
             if let selectedCard = viewModel.selectedCard {
                 self.cardId = selectedCard.cardID ?? ""
                 isEditMode = true
@@ -298,6 +310,9 @@ struct AddCardScreen: View {
                 let y = (selectedCard.expYear ?? 0) % 100 // take last 2 digits
                 expiryDate = String(format: "%02d/%02d", m, y)
             }
+        }
+        .onDisappear {
+            IQKeyboardToolbarManager.shared.isEnabled = true
         }
     }
     
