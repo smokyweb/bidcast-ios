@@ -293,6 +293,18 @@ struct OrderStatusScreen: View {
     }
     
     func fetchReciept(){
+        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): Larry's QA caught the
+        // Receipt button being flaky — first tap sometimes showed the empty
+        // "Receipt not available" modal, second tap showed the real receipt.
+        // Root cause: stale `recieptUrl` state + the sheet could be presented
+        // before the response arrived. Clear the URL and dismiss any open
+        // sheet at the start of each fetch so SwiftUI doesn't render stale
+        // data, and explicitly clear viewModel.errorMessage so a previous
+        // attempt's error doesn't bleed into this one.
+        recieptUrl = nil
+        showReceiptSheet = false
+        viewModel.errorMessage = nil
+
         Task {
             guard let orderID = productDetail?.id else {
                 hudMsg = "Order Id is not present"
@@ -652,9 +664,14 @@ struct SellerOrderWorkflowSection: View {
                     onActionFeedback("Shipping label created. Tracking: \(data.trackingNumber ?? "—")")
                 }
             } else {
-                await MainActor.run {
-                    onActionFeedback(workflowVM.lastError ?? "Label creation failed.")
-                }
+                // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): the inline
+                // `workflowVM.lastError` text below the button already shows
+                // this same message in red. Firing onActionFeedback() here
+                // would surface a duplicate toast at the top of the screen
+                // for the same failure (Larry's QA caught the duplicate).
+                // Inline error stays as the canonical feedback; skip the toast.
+                // We also intentionally skip fetchOrderDetail() on failure
+                // since the order didn't change.
             }
         }
     }
