@@ -15,11 +15,25 @@ enum FormValidationResult: Equatable{
     case invalid(message: String)
 }
 
+// MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): explicit focus order
+// for the AddCard form so the keyboard accessory bar's previous/next
+// arrows walk fields in visual top-to-bottom + left-to-right order:
+// Holder → Number → CVV → Expiry. Previously IQKeyboardManager's
+// auto-toolbar walked the view hierarchy in an order that jumped from
+// CVV (inside the HStack) BACK to Holder before reaching Expiry.
+private enum AddCardField: Hashable {
+    case holder
+    case number
+    case cvv
+    case expiry
+}
+
 struct AddCardScreen: View {
     @State private var cardHolderName = ""
     @State private var cardNumber = ""
     @State private var cvv = ""
     @State private var expiryDate = ""
+    @FocusState private var focusedField: AddCardField?
     var isNavFrom: String = ""
 //    @State var viewModel = AddCardViewModel()
     var onSuccess: ((String) async -> Void)?
@@ -107,6 +121,7 @@ struct AddCardScreen: View {
                     }
                 )
                 .keyboardType(.alphabet)
+                .focused($focusedField, equals: .holder)
                 //                .textContentType(.name)
                 
                 AuthTextField(
@@ -121,6 +136,7 @@ struct AddCardScreen: View {
                     }
                 )
                 .keyboardType(.numberPad)
+                .focused($focusedField, equals: .number)
                 .disabled(isEditMode)
                 //                .textContentType(.name)
                 
@@ -137,6 +153,7 @@ struct AddCardScreen: View {
                         }
                     )
                     .keyboardType(.numberPad)
+                    .focused($focusedField, equals: .cvv)
                     .disabled(isEditMode)
                     //                    .textContentType(.name)
                     AuthTextField(
@@ -151,10 +168,29 @@ struct AddCardScreen: View {
                         }
                     )
                     .keyboardType(.numberPad)
+                    .focused($focusedField, equals: .expiry)
                     //                    .textContentType(.name)
                 }
             }
             .padding(.horizontal,16)
+            // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): SwiftUI-native
+            // previous/next toolbar above the keyboard so tab order is
+            // explicit (Holder → Number → CVV → Expiry) instead of
+            // letting IQKeyboardManager guess from the view hierarchy.
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Button(action: { moveFocus(direction: -1) }) {
+                        Image(systemName: "chevron.up")
+                    }
+                    .disabled(focusedField == nil || focusedField == .holder)
+                    Button(action: { moveFocus(direction: 1) }) {
+                        Image(systemName: "chevron.down")
+                    }
+                    .disabled(focusedField == nil || focusedField == .expiry)
+                    Spacer()
+                    Button("Done") { focusedField = nil }
+                }
+            }
             
             Spacer()
             
@@ -416,6 +452,18 @@ struct AddCardScreen: View {
         }
     }
     
+    // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): explicit prev/next walk
+    // for the AddCard focus chain so the keyboard toolbar arrows step in
+    // visual order (Holder → Number → CVV → Expiry).
+    private func moveFocus(direction: Int) {
+        let order: [AddCardField] = [.holder, .number, .cvv, .expiry]
+        guard let current = focusedField,
+              let idx = order.firstIndex(of: current) else { return }
+        let next = idx + direction
+        guard next >= 0 && next < order.count else { return }
+        focusedField = order[next]
+    }
+
     func formatCardNumber(_ cardNumber: String) -> String {
         // Remove all non-digit characters
         let cleaned = cardNumber.filter { $0.isNumber }
