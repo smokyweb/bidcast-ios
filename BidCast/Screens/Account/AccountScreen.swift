@@ -95,6 +95,15 @@ struct AccountScreen: View {
                             }
                         }
                         .padding(.horizontal, 8)
+                        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): bottom
+                        // padding so the last tile in the My Account grid
+                        // (Clips) doesn't sit behind the bottom tab bar. The
+                        // outer container ignores the bottom safe area to
+                        // make the off-white background extend under the tab
+                        // bar, but that also lets ScrollView content paint
+                        // there. 100pt clears the tab bar + a little breathing
+                        // room for the home-indicator on devices that have one.
+                        .padding(.bottom, 100)
                    
                 }
                 

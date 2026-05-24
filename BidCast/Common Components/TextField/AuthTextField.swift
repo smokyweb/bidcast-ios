@@ -190,14 +190,20 @@ struct AuthTextField: View {
                                             text = filtered
                                             self.enteredText?(text)
                                         } else if isForExpiry {
-                                            filtered = String(filtered.prefix(6)) // only keep YYYYMM
-                                            
-                                            if filtered.count == 6 {
-                                                let year = filtered.prefix(4)
-                                                let month = filtered.suffix(2)
-                                                filtered = "\(year)-\(month)"
+                                            // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24):
+                                            // Format expiry as MM/YY (industry-standard
+                                            // credit-card display). User types 4 digits
+                                            // (MMYY); we insert the slash after the 2nd.
+                                            // Was: YYYYMM → YYYY-MM which was inconsistent
+                                            // with the card preview that already showed MM/YY.
+                                            filtered = String(filtered.prefix(4)) // MMYY
+
+                                            if filtered.count >= 3 {
+                                                let month = filtered.prefix(2)
+                                                let year = filtered.suffix(filtered.count - 2)
+                                                filtered = "\(month)/\(year)"
                                             }
-                                            
+
                                             text = filtered
                                             self.enteredText?(text)
                                         } else if isForCardNumber {

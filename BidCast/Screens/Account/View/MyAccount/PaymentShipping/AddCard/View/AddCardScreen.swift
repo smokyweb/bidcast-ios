@@ -75,14 +75,19 @@ struct AddCardScreen: View {
                         .foregroundColor(.white)
                         .font(.headline)
                     
+                    // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): preview text
+                    // is gray when empty (placeholder), white when the user
+                    // has actually entered a value. Was previously always
+                    // gray which made the filled CVV/expiry look faded next
+                    // to the white card number + name.
                     HStack {
                         Text(cvv.isEmpty ? "CVV" : cvv)
                             .font(.custom(poppinsMedium, size: 13.0))
-                            .foregroundColor(.gray)
+                            .foregroundColor(cvv.isEmpty ? .gray : .white)
                         Spacer()
                         Text(expiryDate.isEmpty ? "MM/YY" : expiryDate)
                             .font(.custom(poppinsMedium, size: 13.0))
-                            .foregroundColor(.gray)
+                            .foregroundColor(expiryDate.isEmpty ? .gray : .white)
                     }
                 }
                 .padding()
@@ -136,7 +141,7 @@ struct AddCardScreen: View {
                     //                    .textContentType(.name)
                     AuthTextField(
                         floatingLabel: "Expiry Date",
-                        placeholder: "YYYY-MM",
+                        placeholder: "MM/YY",
                         icon: .icMail,
                         text: $expiryDate,
                         isIconDisplay : false,
@@ -250,7 +255,12 @@ struct AddCardScreen: View {
                 self.cardId = selectedCard.cardID ?? ""
                 isEditMode = true
                 cardHolderName = selectedCard.cardHolderName ?? ""
-                expiryDate = "\(selectedCard.expYear ?? 0)-\(selectedCard.expMonth ?? 0)"
+                // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): MM/YY format
+                // to match the new input style. Backend ints → zero-padded
+                // strings so "5/27" → "05/27".
+                let m = selectedCard.expMonth ?? 0
+                let y = (selectedCard.expYear ?? 0) % 100 // take last 2 digits
+                expiryDate = String(format: "%02d/%02d", m, y)
             }
         }
     }
@@ -306,14 +316,16 @@ struct AddCardScreen: View {
         hideKeyboard()
         guard validateAndShowToast() else { return }
         // MC cmpfokf75001foohg7l8jcno4 (2026-05-22): the body below
-        // splits `expiryDate` on '-' and indexes `date[1]` / `date[0]`
-        // without bounds-checking. If a malformed expiry leaks through
-        // validation (e.g. the picker emits an unexpected separator or
-        // a single component) this would crash on subscript-out-of-bounds
-        // — which matches Trey's report of "app crashes when entering
-        // card info on the verified-buyer flow". Validate the expiry
-        // shape up front and surface a friendly error instead.
-        let expiryComponents = expiryDate.split(separator: "-")
+        // splits expiryDate and indexes the two components without
+        // bounds-checking. Validate the shape up front so a malformed
+        // expiry surfaces as a friendly error instead of crashing on
+        // subscript-out-of-bounds.
+        //
+        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): format is now MM/YY
+        // (was YYYY-MM). Accept both for backwards-compat in case any
+        // saved-card / draft state still carries the old format.
+        let expirySeparator: Character = expiryDate.contains("/") ? "/" : "-"
+        let expiryComponents = expiryDate.split(separator: expirySeparator)
         guard expiryComponents.count >= 2 else {
             hudMsg = "Please enter a valid expiry date"
             showhud = true
@@ -350,10 +362,31 @@ struct AddCardScreen: View {
                 // safe. Keeping the guard local here too for defensive
                 // depth in case future refactors call into this closure
                 // from a different validation path.
-                let date = expiryDate.split(separator: "-")
+                //
+                // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): format is now
+                // MM/YY (was YYYY-MM); month comes first, year second. Year
+                // arrives as 2 digits — normalize to a 4-digit year for the
+                // Stripe / backend payload so "27" → 2027 not 27. Also keep
+                // backwards-compat with any lingering YYYY-MM by detecting
+                // 4-digit first component.
+                let sep: Character = expiryDate.contains("/") ? "/" : "-"
+                let date = expiryDate.split(separator: sep)
                 guard date.count >= 2 else { return }
-                let month = date[1]
-                let year = date[0]
+                let firstLen = date[0].count
+                let month: Substring
+                let yearShort: Substring
+                if firstLen == 4 {
+                    // Legacy YYYY-MM: date[0]=year, date[1]=month
+                    yearShort = Substring(String(date[0]).suffix(2))
+                    month = date[1]
+                } else {
+                    // New MM/YY: date[0]=month, date[1]=year (2-digit)
+                    month = date[0]
+                    yearShort = date[1]
+                }
+                // Expand 2-digit year to 4-digit (assume 21st century).
+                let yearFull = "20\(yearShort)"
+                let year = Substring(yearFull)
                 
                 if !isEditMode {
                     var cardTextField = StripeRequest(cardHolderName: cardHolderName,
