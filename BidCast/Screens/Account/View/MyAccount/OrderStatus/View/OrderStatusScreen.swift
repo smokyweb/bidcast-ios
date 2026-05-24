@@ -331,10 +331,25 @@ struct OrderStatusScreen: View {
             // is most likely still generating the PDF. Wait briefly and
             // retry once before giving up. This eliminates the "first tap
             // shows empty, second tap shows real receipt" race Larry caught.
-            let firstUrl = viewModel.recieptResponse.data?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            if viewModel.recieptResponse.status == "success" && firstUrl.isEmpty {
-                SVProgressHUD.show(withStatus: "Generating receipt...")
-                try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5s
+            //
+            // (2026-05-24 17:10 EDT): 1.5s wasn't enough — Larry still saw
+            // empty on first tap. Now we retry up to 3 times with 2s waits
+            // (total ≤7s) before giving up. Also treat the literal string
+            // "null" as empty (backend has been observed serializing missing
+            // URLs as the string "null" rather than a real null/nil).
+            func isUsableUrl(_ raw: String?) -> Bool {
+                let trimmed = (raw ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmed.isEmpty { return false }
+                if trimmed.lowercased() == "null" { return false }
+                guard let url = URL(string: trimmed) else { return false }
+                return url.scheme == "http" || url.scheme == "https"
+            }
+
+            var attempts = 0
+            while viewModel.recieptResponse.status == "success" && !isUsableUrl(viewModel.recieptResponse.data) && attempts < 3 {
+                attempts += 1
+                SVProgressHUD.show(withStatus: "Generating receipt (\(attempts)/3)...")
+                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2s
                 viewModel.errorMessage = nil
                 await viewModel.getReceipt(parameters: param)
                 if let errorMsg = viewModel.errorMessage {
@@ -343,6 +358,7 @@ struct OrderStatusScreen: View {
                     showhud = true
                     return
                 }
+                print("[Receipt] attempt \(attempts) status=\(viewModel.recieptResponse.status ?? "nil") data=\(viewModel.recieptResponse.data ?? "nil")")
             }
 
             await SVProgressHUD.dismiss()
@@ -393,8 +409,20 @@ struct OrderStatusScreen: View {
             // a successful response with an empty/missing data URL used to
             // silently no-op, leaving the user with a blank screen. Surface a
             // clear message so they know the receipt isn't available yet.
-            if let url = response.data, !url.isEmpty {
-                recieptUrl = url
+            //
+            // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24 17:10): tightened the
+            // empty check — backend has been observed serializing missing
+            // URLs as the literal string "null" (and sometimes URLs without
+            // an http(s) scheme). Treat all of those as empty so we show the
+            // proper empty-state modal instead of an invalid-URL sheet.
+            let trimmed = (response.data ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            let lower = trimmed.lowercased()
+            let isValidScheme: Bool = {
+                guard let u = URL(string: trimmed) else { return false }
+                return u.scheme == "http" || u.scheme == "https"
+            }()
+            if !trimmed.isEmpty && lower != "null" && isValidScheme {
+                recieptUrl = trimmed
                 // QA #8 — Open in-app sheet rather than downloading to Files.
                 showReceiptSheet = true
             } else {
