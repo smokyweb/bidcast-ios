@@ -9,6 +9,7 @@ import SwiftUI
 import SVProgressHUD
 import AlertToast
 import SafariServices
+import WebKit
 
 struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -294,13 +295,11 @@ struct OrderStatusScreen: View {
     
     func fetchReciept(){
         // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): Larry's QA caught the
-        // Receipt button being flaky — first tap sometimes showed the empty
-        // "Receipt not available" modal, second tap showed the real receipt.
-        // Root cause: stale `recieptUrl` state + the sheet could be presented
-        // before the response arrived. Clear the URL and dismiss any open
-        // sheet at the start of each fetch so SwiftUI doesn't render stale
-        // data, and explicitly clear viewModel.errorMessage so a previous
-        // attempt's error doesn't bleed into this one.
+        // Receipt button being flaky — first tap returned empty URL (lazy
+        // server-side PDF generation), second tap returned the real URL.
+        // Clear stale state up front AND retry once after a short delay if
+        // the first response comes back success-but-empty (the backend is
+        // generating the PDF and it's not ready yet).
         recieptUrl = nil
         showReceiptSheet = false
         viewModel.errorMessage = nil
@@ -316,15 +315,37 @@ struct OrderStatusScreen: View {
                 showhud = true
                 return
             }
-            SVProgressHUD.show()
+            SVProgressHUD.show(withStatus: "Loading receipt...")
             let param = getOrderReceiptRequest(order_id: orderId)
             await viewModel.getReceipt(parameters: param)
-            await SVProgressHUD.dismiss()
+
+            // First-attempt error — surface immediately, don't retry.
             if let errorMsg = viewModel.errorMessage {
+                await SVProgressHUD.dismiss()
                 hudMsg = errorMsg
                 showhud = true
                 return
             }
+
+            // If the first response came back success-but-empty, the backend
+            // is most likely still generating the PDF. Wait briefly and
+            // retry once before giving up. This eliminates the "first tap
+            // shows empty, second tap shows real receipt" race Larry caught.
+            let firstUrl = viewModel.recieptResponse.data?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if viewModel.recieptResponse.status == "success" && firstUrl.isEmpty {
+                SVProgressHUD.show(withStatus: "Generating receipt...")
+                try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5s
+                viewModel.errorMessage = nil
+                await viewModel.getReceipt(parameters: param)
+                if let errorMsg = viewModel.errorMessage {
+                    await SVProgressHUD.dismiss()
+                    hudMsg = errorMsg
+                    showhud = true
+                    return
+                }
+            }
+
+            await SVProgressHUD.dismiss()
             getRecieptSuccess()
         }
     }
@@ -421,17 +442,42 @@ struct OrderStatusScreen: View {
 
 // MARK: - QA #8 ReceiptSafariView
 // In-app PDF / web viewer for the receipt URL returned by the order-receipt API.
-struct ReceiptSafariView: UIViewControllerRepresentable {
+//
+// MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): switched from SFSafariViewController
+// to a WKWebView wrapper because SFSafariViewController honors the receipt
+// HTML's `<meta name="apple-itunes-app">` tag and renders Apple's Smart App
+// Banner ("Open in the BidSwipe app" with an OPEN button). Tapping OPEN is a
+// no-op since the user is already in BidSwipe. WKWebView ignores that meta
+// tag, so no spurious banner. Includes a Done button + URL bar via a wrapping
+// NavigationStack so the user can dismiss the sheet.
+struct ReceiptSafariView: View {
     let url: URL
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        let config = SFSafariViewController.Configuration()
-        config.entersReaderIfAvailable = false
-        config.barCollapsingEnabled = true
-        let vc = SFSafariViewController(url: url, configuration: config)
-        vc.dismissButtonStyle = .close
-        return vc
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ReceiptWebView(url: url)
+                .ignoresSafeArea(edges: .bottom)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+                .navigationTitle("Receipt")
+                .navigationBarTitleDisplayMode(.inline)
+        }
     }
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+}
+
+struct ReceiptWebView: UIViewRepresentable {
+    let url: URL
+    func makeUIView(context: Context) -> WKWebView {
+        let config = WKWebViewConfiguration()
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.load(URLRequest(url: url))
+        return webView
+    }
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
 }
 
 // MARK: - QA #5 ShippingDetailsSheet
@@ -626,9 +672,21 @@ struct SellerOrderWorkflowSection: View {
             }
             
             if let err = workflowVM.lastError, !err.isEmpty {
-                Text(err)
-                    .font(.custom(poppinsRegular, size: 12))
-                    .foregroundColor(.red)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(err)
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.red)
+                    // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): When the
+                    // backend returns the missing-shipping-details error,
+                    // tell the seller WHERE to fix it. The fields live on
+                    // the Product (EditProductScreen), not on the order.
+                    if err.lowercased().contains("shipping details are missing") ||
+                       err.lowercased().contains("weight") && err.lowercased().contains("mail class") {
+                        Text("→ Open Inventory → tap this product → Edit to add weight, dimensions, mail class, and processing category.")
+                            .font(.custom(poppinsRegular, size: 11))
+                            .foregroundColor(.gray)
+                    }
+                }
             }
         }
         .padding(14)
