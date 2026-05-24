@@ -142,37 +142,42 @@ struct AddCardScreen: View {
                 .disabled(isEditMode)
                 //                .textContentType(.name)
                 
-                HStack {
-                    AuthTextField(
-                        floatingLabel: "CVV",
-                        placeholder: "xxx",
-                        icon: .icMail,
-                        text: $cvv,
-                        isIconDisplay : false,
-                        isForCVV: true,
-                        enteredText: {
-                            cvv = $0
-                        }
-                    )
-                    .keyboardType(.numberPad)
-                    .focused($focusedField, equals: .cvv)
-                    .disabled(isEditMode)
-                    //                    .textContentType(.name)
-                    AuthTextField(
-                        floatingLabel: "Expiry Date",
-                        placeholder: "MM/YY",
-                        icon: .icMail,
-                        text: $expiryDate,
-                        isIconDisplay : false,
-                        isForExpiry : true,
-                        enteredText: {
-                            expiryDate = $0
-                        }
-                    )
-                    .keyboardType(.numberPad)
-                    .focused($focusedField, equals: .expiry)
-                    //                    .textContentType(.name)
-                }
+                // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): vertical
+                // stack instead of HStack. The previous side-by-side layout
+                // kept the responder chain walking CVV → Holder → Expiry
+                // even after both IQKeyboardManager and IQKeyboardToolbar-
+                // Manager were disabled. The simplest robust fix is to put
+                // CVV and Expiry on their own rows so there's no HStack
+                // sibling confusion. Slight UI tradeoff (taller form) but
+                // matches the field width of the other inputs.
+                AuthTextField(
+                    floatingLabel: "CVV",
+                    placeholder: "xxx",
+                    icon: .icMail,
+                    text: $cvv,
+                    isIconDisplay : false,
+                    isForCVV: true,
+                    enteredText: {
+                        cvv = $0
+                    }
+                )
+                .keyboardType(.numberPad)
+                .focused($focusedField, equals: .cvv)
+                .disabled(isEditMode)
+
+                AuthTextField(
+                    floatingLabel: "Expiry Date",
+                    placeholder: "MM/YY",
+                    icon: .icMail,
+                    text: $expiryDate,
+                    isIconDisplay : false,
+                    isForExpiry : true,
+                    enteredText: {
+                        expiryDate = $0
+                    }
+                )
+                .keyboardType(.numberPad)
+                .focused($focusedField, equals: .expiry)
             }
             .padding(.horizontal,16)
             // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): SwiftUI-native
@@ -290,13 +295,14 @@ struct AddCardScreen: View {
         
         .onAppear {
             // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): disable
-            // IQKeyboardManager's auto-toolbar on this screen so the
+            // IQKeyboardManager + its auto-toolbar on this screen so the
             // SwiftUI `.toolbar(placement: .keyboard)` we set above is
-            // the only keyboard accessory bar shown. IQ's auto-toolbar
-            // walks the responder chain in an order that jumps from CVV
-            // back to Card Holder before reaching Expiry (Larry caught
-            // this on 2026-05-24 18:41 EDT). Re-enable in onDisappear so
-            // other screens that rely on IQ's auto-toolbar keep working.
+            // the only keyboard accessory bar shown. Toolbar-only disable
+            // (18:41 EDT attempt) wasn't enough — IQ still rebuilt the
+            // toolbar walking the wrong order. Disabling the whole IQ
+            // manager forces iOS / SwiftUI to use our explicit @FocusState
+            // chain. Re-enable in onDisappear so other screens keep IQ.
+            IQKeyboardManager.shared.isEnabled = false
             IQKeyboardToolbarManager.shared.isEnabled = false
 
             if let selectedCard = viewModel.selectedCard {
@@ -312,6 +318,7 @@ struct AddCardScreen: View {
             }
         }
         .onDisappear {
+            IQKeyboardManager.shared.isEnabled = true
             IQKeyboardToolbarManager.shared.isEnabled = true
         }
     }
