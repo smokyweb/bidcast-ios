@@ -183,7 +183,6 @@ struct OrderStatusScreen: View {
         // stuck staring at unstyled centered text.
         // Receipt sheet — only presents when we have a validated URL (atomic).
         .sheet(item: $receiptSheetItem) { item in
-            let _ = { NSLog("[Receipt-Sheet] presenting with url=\(item.url.absoluteString)") }()
             ReceiptSafariView(url: item.url)
                 .ignoresSafeArea()
         }
@@ -328,10 +327,8 @@ struct OrderStatusScreen: View {
                 return
             }
             SVProgressHUD.show(withStatus: "Loading receipt...")
-            NSLog("[Receipt-Screen] sending order_id=\(orderId) (productDetail?.id=\(orderID))")
             let param = getOrderReceiptRequest(order_id: orderId)
             await viewModel.getReceipt(parameters: param)
-            NSLog("[Receipt-Screen] after first call status=\(viewModel.recieptResponse.status ?? "nil") data=\(viewModel.recieptResponse.data ?? "nil") errorMessage=\(viewModel.errorMessage ?? "nil")")
 
             // First-attempt error — surface immediately, don't retry.
             if let errorMsg = viewModel.errorMessage {
@@ -372,7 +369,6 @@ struct OrderStatusScreen: View {
                     showhud = true
                     return
                 }
-                NSLog("[Receipt-Screen] retry attempt \(attempts) status=\(viewModel.recieptResponse.status ?? "nil") data=\(viewModel.recieptResponse.data ?? "nil")")
             }
 
             await SVProgressHUD.dismiss()
@@ -441,9 +437,7 @@ struct OrderStatusScreen: View {
                 // is atomic with the URL value. No more state-batching race.
                 recieptUrl = trimmed
                 receiptSheetItem = ReceiptSheetItem(url: url)
-                NSLog("[Receipt-Screen] setting receiptSheetItem with url=\(trimmed)")
             } else {
-                NSLog("[Receipt-Screen] empty-or-invalid URL after success: trimmed='\(trimmed)', lower='\(lower)', isValidScheme=\(isValidScheme) — showing empty-state sheet")
                 showReceiptEmptyState = true
             }
         } else {

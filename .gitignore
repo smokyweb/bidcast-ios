@@ -1,0 +1,28 @@
+# Xcode build output / DerivedData
+build/
+DerivedData/
+*.xcuserstate
+*.xcuserdatad/
+xcuserdata/
+
+# Swift Package Manager — local checkouts/cache (do NOT commit; Package.resolved IS committed)
+.swiftpm/
+.build/
+
+# OS / editor noise
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Logs and tmp
+*.log
+/tmp/
+
+# Local environment / secrets
+*.env
+*.keys
+
+# Gradle (this repo has an .gradle/ leftover from an earlier Android-shared experiment)
+.gradle/
+local.properties
