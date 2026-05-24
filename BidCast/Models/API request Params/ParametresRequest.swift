@@ -990,3 +990,16 @@ struct TrackUSPSOrderRequest : Encodable {
     var tracking_number : String
 }
 
+// MARK: - QA Wave 4 #41 — Sales tax exemption application.
+// Mirrors POST /api/tax-exemption/apply on the Laravel backend.
+// MC cmpbefoaj00033ghgs38av42u; cherry-picked back from `989c7ffd2` on 2026-05-24 via
+// MC cmpaj2fex0000w5hgq64jp9k4 after Larry found SalesTaxScreen still showing the
+// hardcoded placeholder UI (Tax_Exemption_2025.pdf, Active status, etc.).
+// Backend stores certificate uploads via a separate multipart endpoint; this body
+// only carries the form data.
+struct TaxExemptionApplyRequest : Encodable {
+    var business_name : String
+    var tax_id : String
+    var business_type : String
+}
+

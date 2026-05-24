@@ -462,3 +462,28 @@ struct ResponseModelOrder<T: Codable>: Codable {
     var total,totalPage,currentPage,perPage : Int?
 }
 
+
+
+// MARK: - QA Wave 4 #41 — Tax exemption response payload
+// MC cmpbefoaj00033ghgs38av42u; cherry-picked back from `989c7ffd2` on 2026-05-24
+// via MC cmpaj2fex0000w5hgq64jp9k4. Mirrors the response body the Laravel backend
+// returns after POST /api/tax-exemption/apply.
+struct TaxExemptionApplicationData : Codable {
+    var id : Int?
+    var userId : Int?
+    var businessName : String?
+    var taxId : String?
+    var businessType : String?
+    var status : String?  // "pending" | "approved" | "rejected"
+    var createdAt : String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case businessName = "business_name"
+        case taxId = "tax_id"
+        case businessType = "business_type"
+        case status
+        case createdAt = "created_at"
+    }
+}

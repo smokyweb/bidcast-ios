@@ -163,6 +163,11 @@ enum APIEndPoint{
     case createUSPSLabel(param: CreateUSPSLabelRequest)
     case trackUSPSOrder(param: TrackUSPSOrderRequest)
 
+    // MARK: - QA Wave 4 #41 — Sales tax exemption
+    // MC cmpbefoaj00033ghgs38av42u; cherry-picked back via
+    // MC cmpaj2fex0000w5hgq64jp9k4 on 2026-05-24.
+    case taxExemptionApply(param: TaxExemptionApplyRequest)
+
 }
 
 extension APIEndPoint: EndPointType {
@@ -552,6 +557,9 @@ extension APIEndPoint: EndPointType {
             return "usps/create-label"
         case .trackUSPSOrder:
             return "usps/track-order"
+        // QA Wave 4 #41 — Sales tax exemption
+        case .taxExemptionApply:
+            return "tax-exemption/apply"
         }
     }
     
@@ -868,6 +876,9 @@ extension APIEndPoint: EndPointType {
         case .createUSPSLabel:
             return .post
         case .trackUSPSOrder:
+            return .post
+        // QA Wave 4 #41 — Sales tax exemption
+        case .taxExemptionApply:
             return .post
         }
     }
@@ -1192,6 +1203,9 @@ extension APIEndPoint: EndPointType {
             return param
         case .trackUSPSOrder(param: let param):
             return param
+        // QA Wave 4 #41 — Sales tax exemption
+        case .taxExemptionApply(param: let param):
+            return param
         }
     }
     
@@ -1497,6 +1511,9 @@ extension APIEndPoint: EndPointType {
         case .createUSPSLabel:
             return nil
         case .trackUSPSOrder:
+            return nil
+        // QA Wave 4 #41 — Sales tax exemption (no url-query params; body handled above)
+        case .taxExemptionApply:
             return nil
         }
     }
