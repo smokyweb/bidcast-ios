@@ -156,13 +156,55 @@ struct OrderStatusScreen: View {
         }
         .background(Color.backGround.ignoresSafeArea())
         // QA #8 — Present the receipt PDF in an in-app Safari sheet.
+        //
+        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): Larry's QA caught the
+        // sheet opening with a bare "Receipt URL is not available." text in
+        // the middle of an otherwise empty modal. Two issues:
+        //   1) The fallback UI looked broken (no header, no dismiss button).
+        //   2) Reaching this branch at all means `recieptUrl` was nil/invalid
+        //      AFTER `showReceiptSheet` was set to true — a state that
+        //      should never happen via the normal `getRecieptSuccess()` flow
+        //      (which only sets the sheet true when the URL is non-empty),
+        //      but apparently does happen sometimes (race / stale state).
+        // Now: validate the URL at the sheet-trigger boundary AND give the
+        // fallback a proper modal layout with a Close button so users aren't
+        // stuck staring at unstyled centered text.
         .sheet(isPresented: $showReceiptSheet) {
-            if let urlString = recieptUrl, let url = URL(string: urlString) {
+            if let urlString = recieptUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+               !urlString.isEmpty,
+               let url = URL(string: urlString),
+               url.scheme == "http" || url.scheme == "https" {
                 ReceiptSafariView(url: url)
                     .ignoresSafeArea()
             } else {
-                Text("Receipt URL is not available.")
-                    .padding()
+                VStack(spacing: 16) {
+                    HStack {
+                        Spacer()
+                        Button(action: { showReceiptSheet = false }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.trailing, 16)
+                        .padding(.top, 16)
+                    }
+                    Spacer()
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray.opacity(0.6))
+                    Text("Receipt not available yet")
+                        .font(.custom(poppinsSemiBold, size: 16))
+                        .foregroundColor(.primary)
+                    Text("The receipt for this order isn't ready yet. Please check back once the order is processed.")
+                        .font(.custom(poppinsRegular, size: 13))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                    Spacer()
+                    Spacer()
+                }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
             }
         }
         // QA #5 — Present Shipping Details (tracking info) in a sheet.
