@@ -15,7 +15,11 @@ struct PaymentAndShippingInfoSheet: View {
     // override the headline so seller-context surfaces (Sell tab,
     // SellerHub → Inventory) can read "To list products in live shows..."
     // while the buyer-context surfaces keep the existing copy.
-    var titleText: String = "To purchase in lives we need your payment and shipping info"
+    //
+    // Heath QA (Basecamp todo 9915808894, 2026-05-21): "in lives" → "in
+    // live shows". "Lives" was awkward and read as the noun (lives, as in
+    // "nine lives"), not the adjective-noun for a live show.
+    var titleText: String = "To purchase in live shows we need your payment and shipping info"
 
     var body: some View {
         ScrollView {
