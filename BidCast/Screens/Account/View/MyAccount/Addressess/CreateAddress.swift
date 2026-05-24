@@ -260,8 +260,13 @@ struct CreateAddress: View {
             .background(Color.white)
 //            .padding(.all)
         }
-        .toast(isPresenting: $showhud) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): switch validation
+        // feedback from `.hud` (which pops at the top of the screen and
+        // looks like a system notification — wrong surface for inline
+        // form-validation errors) to `.banner(.pop)` (slides in from below
+        // the nav bar, less intrusive, matches the in-app feedback pattern).
+        .toast(isPresenting: $showhud, duration: 2.5, tapToDismiss: true) {
+            AlertToast(displayMode: .banner(.pop), type: .regular, title: hudMsg, style: alertStlye)
         }
         // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): the onDismiss
         // handler used to set `showError = true` when errorMessage was
@@ -314,7 +319,14 @@ struct CreateAddress: View {
                 await SVProgressHUD.dismiss()
                 if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
                     if let response = viewModel.stateResponse.data {
-                        self.stateArr = response.map { "\($0.name ?? "") - \($0.iso2 ?? "")" }
+                        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): sort states
+                        // alphabetically so they're findable in the dropdown.
+                        // Backend returned them in DB-insertion order which was
+                        // not predictable. Sorting by the display string
+                        // ("Name - ISO2") groups alphabetically by name.
+                        self.stateArr = response
+                            .map { "\($0.name ?? "") - \($0.iso2 ?? "")" }
+                            .sorted()
                     }
                 }else{
                     // MC cmpfoke6n0013oohgg2x74cdg (2026-05-22): use the
