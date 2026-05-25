@@ -27,29 +27,12 @@ workflows:
           xcode-project use-profiles --project BidCast.xcodeproj
       - name: Build iOS
         script: |
-          # Find the manual provisioning profile downloaded by the prior
-          # `app-store-connect fetch-signing-files` step. Codemagic places
-          # them at ~/Library/MobileDevice/Provisioning\ Profiles/.
-          # Read the embedded plist to get the profile's Name field.
-          PROFILE_FILE=$(/bin/ls -t ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision 2>/dev/null | /usr/bin/head -1)
-          if [ -z "$PROFILE_FILE" ]; then
-            /bin/echo "ERROR: no .mobileprovision file found after signing step"
-            /bin/ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ 2>&1 || true
-            exit 1
-          fi
-          PROFILE_NAME=$(/usr/bin/security cms -D -i "$PROFILE_FILE" 2>/dev/null | /usr/libexec/PlistBuddy -c "Print :Name" /dev/stdin)
-          /bin/echo "Using PROFILE_FILE: $PROFILE_FILE"
-          /bin/echo "Using PROFILE_NAME: $PROFILE_NAME"
           xcodebuild \
             -project BidCast.xcodeproj \
             -scheme BidCast \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
             -destination "generic/platform=iOS" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM=$TEAM_ID \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             -allowProvisioningUpdates \
             archive
       - name: Export IPA
