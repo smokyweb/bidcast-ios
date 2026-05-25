@@ -161,7 +161,10 @@ struct ActivityScreen: View {
                         
                     case .bid:
                         if offerList.isEmpty {
-                            NoDataView(message: "No bids Found")
+                            // Basecamp #9922137463 (Trey 2026-05-20): tell the user this tab shows
+                            // INCOMING bids on their items so they know to look here. Old empty
+                            // state "No bids Found" was ambiguous (bids placed? bids received?).
+                            NoDataView(message: "No bids on your items yet.\nWhen buyers bid on your products, they'll show up here.")
                         } else {
                             ForEach(offerList.indices, id: \.self) { i in
                                 let offer = offerList[i]
@@ -191,7 +194,9 @@ struct ActivityScreen: View {
                         )
                         
                         if offerList.isEmpty {
-                            NoDataView(message: "No offers Found")
+                            // Basecamp #9922137463 (Trey 2026-05-20): clearer empty-state copy so
+                            // users understand this tab shows INCOMING offers on their items.
+                            NoDataView(message: "No offers on your items yet.\nWhen buyers make offers on your products, they'll show up here.")
                         } else {
                             ForEach(offerList.indices, id: \.self) { i in
                                 let offer = offerList[i]
