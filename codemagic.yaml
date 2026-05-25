@@ -33,6 +33,7 @@ workflows:
             -configuration Release \
             -archivePath $CM_BUILD_DIR/BidCast.xcarchive \
             -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
             archive
       - name: Export IPA
         script: |
