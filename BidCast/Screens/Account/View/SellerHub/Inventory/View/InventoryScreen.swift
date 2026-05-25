@@ -422,6 +422,18 @@ struct InventoryScreen: View {
             }
             
         }
+        // Basecamp #9904579913 + #9922137437 (Trey 2026-05-21): when an order
+        // is placed anywhere in the app, the seller's inventory quantities for
+        // their products can change. Refetch the current inventory page so
+        // the seller sees the updated quantity / sold count without having to
+        // navigate away and back.
+        .onReceive(NotificationCenter.default.publisher(for: .bidcastOrderPlaced)) { _ in
+            Task {
+                guard Reachability.isConnectedToNetwork() else { return }
+                currentPage = 1
+                _ = try? await fetchInventory(for: segment, page: currentPage)
+            }
+        }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }

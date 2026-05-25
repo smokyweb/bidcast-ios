@@ -39,6 +39,18 @@ final class BuyNowViewModel: ObservableObject {
                 header: true
             )
             self.productOrderResponse = response
+            // Basecamp #9904579913 + #9922137437 (Trey 2026-05-21): broadcast
+            // an order-placed event on successful Buy Now so product detail +
+            // inventory screens can refetch and reflect the post-purchase
+            // quantity immediately (backend decrements correctly, but the
+            // client-side caches were stale until app restart).
+            if response.status == "success" {
+                NotificationCenter.default.post(
+                    name: .bidcastOrderPlaced,
+                    object: nil,
+                    userInfo: ["productId": parameters.product_id]
+                )
+            }
         } catch {
             self.handle(error: error)
         }

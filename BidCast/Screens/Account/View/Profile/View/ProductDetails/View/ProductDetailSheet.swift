@@ -189,8 +189,21 @@ struct ProductDetailSheet: View {
 
         .onAppear {
             UIScrollView.appearance().bounces = false
-           
-            
+        }
+        // Basecamp #9904579913 + #9922137437 (Trey 2026-05-21): refetch when an
+        // order is placed anywhere in the app so the quantity displayed here
+        // reflects the post-purchase state. We only refetch if the event was
+        // for THIS product (or if no product id was in the userInfo — fall back
+        // to refetching to be safe).
+        .onReceive(NotificationCenter.default.publisher(for: .bidcastOrderPlaced)) { note in
+            let postedId = note.userInfo?["productId"] as? Int
+            if postedId == nil || postedId == productID {
+                Task {
+                    guard Reachability.isConnectedToNetwork(), productID != 0 else { return }
+                    let param = FetchProductRequest(product_id: productID)
+                    await viewModel.getProductDetails(parameters: param)
+                }
+            }
         }
         .onChange(of: productID) { newValue in
         

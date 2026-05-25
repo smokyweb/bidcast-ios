@@ -289,6 +289,28 @@ struct OrderStatusScreen: View {
         let response = viewModel.myOrderResponse
         if response.status == "success"{
             productDetail = response.data
+            // Basecamp #9904579913 + #9922137437 (Trey 2026-05-21): inventory
+            // quantity wasn't decrementing in product detail / inventory views
+            // because those screens cache the product locally and only refetch
+            // on productID change. Broadcast an order-placed event so any
+            // visible product/inventory screen can refetch and reflect the
+            // post-purchase quantity immediately.
+            //
+            // The backend itself decrements correctly (ApiController.php:759-760)
+            // — this is purely a client-side cache-staleness fix.
+            //
+            // Pass the product id (and the quantity delta if we have it) in
+            // userInfo so observers can target-refetch instead of refetching
+            // everything they show.
+            var userInfo: [String: Any] = [:]
+            if let productId = response.data?.productID {
+                userInfo["productId"] = productId
+            }
+            NotificationCenter.default.post(
+                name: .bidcastOrderPlaced,
+                object: nil,
+                userInfo: userInfo
+            )
         }else{
             alertType = .sheetType(
                 icon: .alert,
