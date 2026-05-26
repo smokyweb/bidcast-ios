@@ -30,8 +30,10 @@ struct ShowTitleTips: View {
     @Binding var showId : Int
     
     @State private var titleCharCount: Int = 0
-    
-    
+    @State private var showingTemplatePicker = false
+    @State private var selectedTemplateId: Int? = nil
+    @State private var selectedTemplateName: String? = nil
+
     private let maxTitleCharCount: Int = 100
     
     @EnvironmentObject var coordinator: LetsPrepareCoordinator
@@ -75,8 +77,47 @@ struct ShowTitleTips: View {
                     }
                     .padding(.trailing, 16)
                     .padding(.top, -10)
-                   
-                   
+
+                    // MARK: - Randomizer Template Picker (Build 313)
+                    Button {
+                        showingTemplatePicker = true
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "dice")
+                                .font(.system(size: 16))
+                                .foregroundColor(.defaultTheme)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Randomizer Template")
+                                    .font(.custom(poppinsBold, size: 13))
+                                    .foregroundColor(.primary)
+                                Text(selectedTemplateName ?? "None – tap to add one")
+                                    .font(.custom(poppinsRegular, size: 12))
+                                    .foregroundColor(selectedTemplateName != nil ? .defaultTheme : .gray)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray.opacity(0.5))
+                                .font(.system(size: 12))
+                        }
+                        .padding(12)
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+                    }
+                    .buttonStyle(.plain)
+                    .sheet(isPresented: $showingTemplatePicker) {
+                        RandomizerTemplatePickerSheet(selectedTemplateId: Binding(
+                            get: { selectedTemplateId },
+                            set: { newId in
+                                selectedTemplateId = newId
+                                request.randomizer_template_id = newId
+                            }
+                        ))
+                    }
+
                     VStack(alignment:.leading,spacing: 24){
                         let tipsData = tip.tips ?? [TipsData]()
                         let example = tip.example ?? [String]()

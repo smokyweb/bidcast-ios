@@ -684,6 +684,8 @@ struct StoreScheduleShowRequest: Encodable {
     var is_repeat : Bool
     var language : String
     var thumbnail : String?
+    /// Randomizer template to attach to this show (nil = no randomizer)
+    var randomizer_template_id: Int?
     
     enum CodingKeys: String, CodingKey {
         case title
@@ -692,6 +694,7 @@ struct StoreScheduleShowRequest: Encodable {
         case category_id
         case auction_type_id
         case product_ids = "product_ids[]"
+        case randomizer_template_id
 //        case thumbnail = "thumbnail[]"
     }
 }

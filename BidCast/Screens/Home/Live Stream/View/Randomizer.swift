@@ -788,6 +788,17 @@ struct RandomizerEnterTopView: View {
     @State private var isShuffling = false
     @State private var currentIndex: Int = 0
     @State private var shuffleTimer: Timer?
+
+    // MARK: - Template wheel state (Build 313)
+    @State private var templateSlots: [TemplateWheelSlot] = []
+    @State private var templateType: RandomizerType? = nil
+    @State private var templateEntryCost: Double? = nil
+    @State private var wheelRotation: Double = 0
+    @State private var wheelIsSpinning = false
+    @StateObject private var socketManager = SocketManagerService.shared
+    private let wheelAnimDuration: Double = 4.0
+
+    private var hasTemplateData: Bool { !templateSlots.isEmpty }
     
     var onShuffleEnd: ((FreebieUser) -> Void)? = nil
 
@@ -837,8 +848,38 @@ struct RandomizerEnterTopView: View {
                         }
                     }
 
-                    // 🎰 VERTICAL SHUFFLE VIEW
-                    if isShuffling && winnerUser != nil {
+                    // 🎰 WHEEL / SHUFFLE VIEW (Build 313: template wheel when available)
+                    if hasTemplateData {
+                        let wSize = UIScreen.main.bounds.width / 1.5
+                        ZStack(alignment: .top) {
+                            ZStack(alignment: .center) {
+                                TemplateWheelCanvas(
+                                    slots: templateSlots,
+                                    size: wSize,
+                                    rotationDegrees: wheelRotation
+                                )
+                                .frame(width: wSize, height: wSize)
+                                .overlay(RoundedRectangle(cornerRadius: wSize/2).stroke(Color.white, lineWidth: 5))
+                                .shadow(radius: 6)
+                                .animation(.timingCurve(0.51, 0.97, 0.56, 0.99, duration: wheelAnimDuration), value: wheelRotation)
+                                SpinWheelBolt()
+                            }
+                            SpinWheelPointer(pointerColor: Color(hex: "DA4533"))
+                        }
+                        .padding(.vertical, 8)
+                        if let type = templateType {
+                            Text(type.displayName)
+                                .font(.custom(poppinsBold, size: 12))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 10).padding(.vertical, 4)
+                                .background(Color.defaultTheme).cornerRadius(10)
+                        }
+                        if let cost = templateEntryCost, cost > 0 {
+                            Text(String(format: "Entry: $%.2f", cost))
+                                .font(.custom(poppinsBold, size: 13))
+                                .foregroundColor(.defaultTheme)
+                        }
+                    } else if isShuffling && winnerUser != nil {
                         VerticalShuffleView(
                             names: usersName,
                             currentIndex: currentIndex,
@@ -891,10 +932,27 @@ struct RandomizerEnterTopView: View {
             }
         }
         .onChange(of: winnerId) { _,_ in
-//                if let winner = winnerUser {
                     startShuffle(winner: winnerUser)
-//                }
             }
+        .onAppear {
+            // Subscribe to template-based freebie events (Build 313)
+            socketManager.listenForTemplateFreebieData { payload in
+                guard payload.freebie?.room_id == roomId else { return }
+                if let typeStr = payload.template_type {
+                    templateType = RandomizerType(rawValue: typeStr)
+                }
+                templateEntryCost = payload.entry_cost
+                if let rawSlots = payload.slots {
+                    templateSlots = rawSlots.map { s in
+                        TemplateWheelSlot(id: s.id, position: s.position, color: s.color, icon: s.icon, product_id: s.product_id, product: s.product)
+                    }
+                }
+            }
+            socketManager.listenForFreebieSpinning { rid in
+                guard rid == roomId else { return }
+                spinTemplateWheel(targetIndex: nil)
+            }
+        }
         .transition(.move(edge: .top))
         .animation(.easeInOut, value: isPresented)
     }
@@ -928,6 +986,25 @@ struct RandomizerEnterTopView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 dismiss()
             }
+        }
+    }
+
+    // MARK: - Template wheel spin (Build 313)
+    func spinTemplateWheel(targetIndex: Int?) {
+        guard !wheelIsSpinning else { return }
+        wheelIsSpinning = true
+        let slotCount = max(1, templateSlots.count)
+        let fullRotations = 5 * 360.0
+        let slotAngle = 360.0 / Double(slotCount)
+        let base = wheelRotation
+        if let idx = targetIndex {
+            let offset = Double(idx) * slotAngle + slotAngle / 2
+            wheelRotation = base + fullRotations + (360.0 - offset)
+        } else {
+            wheelRotation = base + fullRotations + Double.random(in: 0..<360)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + wheelAnimDuration + 0.5) {
+            wheelIsSpinning = false
         }
     }
 
