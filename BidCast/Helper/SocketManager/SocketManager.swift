@@ -1918,4 +1918,38 @@ extension SocketManagerService {
         
         logger.info("🧹 SocketManagerService fully reset.")
     }
+
+    // MARK: - 🎡 Randomizer template-based socket events (Build 313)
+
+    /// `freebie-spinning` — seller initiated a spin; buyer pre-animates
+    func listenForFreebieSpinning(completion: @escaping (_ roomId: String) -> Void) {
+        socket.on("freebie-spinning") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any],
+                  let rid = json["room_id"] as? String else {
+                self.logger.warning("⚠️ Invalid freebie-spinning payload")
+                return
+            }
+            DispatchQueue.main.async { completion(rid) }
+            self.logger.info("🎡 freebie-spinning received | roomId=\(rid)")
+        }
+    }
+
+    /// `get-freebie` with template metadata (slots, template_type, entry_cost)
+    func listenForTemplateFreebieData(completion: @escaping (_ payload: RandomizerFreebiePayload) -> Void) {
+        socket.on("get-freebie") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any] else { return }
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let payload = try JSONDecoder().decode(RandomizerFreebiePayload.self, from: decoded)
+                // Only forward if template data is present
+                guard payload.template_type != nil || payload.slots != nil else { return }
+                DispatchQueue.main.async { completion(payload) }
+                self.logger.info("🎡 get-freebie (template) received | type=\(payload.template_type ?? "-")")
+            } catch {
+                self.logger.error("❌ get-freebie template decode error: \(error.localizedDescription)")
+            }
+        }
+    }
 }
