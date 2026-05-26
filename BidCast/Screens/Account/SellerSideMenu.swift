@@ -17,6 +17,7 @@ struct SellerMenuScreen: View {
     @Environment(\.presentationMode) var presentationMode
     
     // Navigation states
+    @State private var navigateToRandomizerTemplates = false
     @State private var navigateToInventory = false
     @State private var navigateToShows = false
     @State private var navigateToPayouts = false
@@ -111,6 +112,13 @@ struct SellerMenuScreen: View {
                     title: "Shows"
                 ) {
                     navigateToShows = true
+                }
+
+                MenuSubsectionCard(
+                    icon: .system("dice"),
+                    title: "Randomizer"
+                ) {
+                    navigateToRandomizerTemplates = true
                 }
             }
         }
@@ -252,6 +260,7 @@ struct SellerMenuScreen: View {
     // MARK: - Navigation Links
     private var navigationLinks: some View {
         Group {
+            CusNavLink(doNavigate: $navigateToRandomizerTemplates, destination: RandomizerTemplatesView())
             CusNavLink(doNavigate: $navigateToInventory, destination: InventoryScreen())
             CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
             CusNavLink(doNavigate: $navigateToPayouts, destination: WalletPayoutView())
