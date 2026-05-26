@@ -895,6 +895,14 @@ struct RandomizerEnterTopView: View {
                     startShuffle(winner: winnerUser)
 //                }
             }
+        .onAppear {
+            // Bug fix #9929848961: SwiftUI presents this view with winnerUser.id
+            // already set (LiveStream sets freebieWinner before navigateToRandomizer=true),
+            // so .onChange never fires for the initial value. Trigger shuffle here too.
+            if winnerUser.id != nil {
+                startShuffle(winner: winnerUser)
+            }
+        }
         .transition(.move(edge: .top))
         .animation(.easeInOut, value: isPresented)
     }
