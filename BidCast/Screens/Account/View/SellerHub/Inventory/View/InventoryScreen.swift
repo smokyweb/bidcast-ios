@@ -168,14 +168,14 @@ struct InventoryScreen: View {
             // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: InventorySegment.allCases)
                 .onChange(of: segment) { newSegment in
-                    // MC cmpdqpgof000nc9kp6f0xtti6 — Orders tab hidden per PM (2026-05-20).
-                    // Original QA #10 navigation logic preserved below; restore by
-                    // un-commenting the `case orders` line in InventorySegment.
-//                    if newSegment == .orders {
-//                        navigateToMyOrders = true
-//                        DispatchQueue.main.async { segment = .active }
-//                        return
-//                    }
+                    // Basecamp #9930423421 — Sold tab wired to MyOrdersScreen (2026-05-26).
+                    // Tapping "Sold" pushes to the orders page and resets the segment
+                    // back to .active so the inventory list stays consistent.
+                    if newSegment == .sold {
+                        navigateToMyOrders = true
+                        DispatchQueue.main.async { segment = .active }
+                        return
+                    }
                     clearFilter()
                     Task {
                         await performAPICalls(
@@ -930,9 +930,10 @@ struct InventoryScreen: View {
     
     // MARK: - ✅ CORRECTED Fetch Inventory
     func fetchInventory(for segment: InventorySegment, page: Int) async throws {
+        // Sold tab is navigation-only (Basecamp #9930423421); onChange intercepts it
+        // before this is called, but guard here defensively.
+        if segment == .sold { return }
         // MC cmpdqpgof000nc9kp6f0xtti6 — Orders tab hidden per PM (2026-05-20).
-        // Original QA #10 short-circuit preserved below; restore alongside the
-        // `case orders` line in InventorySegment.
 //        if segment == .orders { return }
         // Build request
         request.status = segment.rawValue.lowercased()
@@ -1033,8 +1034,8 @@ enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     case active = "Active"
     case draft = "Draft"
     case inactive = "Inactive"
-//    case sold = "Sold"      // MC cmpdqpgof000nc9kp6f0xtti6 — hidden per PM (2026-05-20)
-//    case orders = "Orders"  // MC cmpdqpgof000nc9kp6f0xtti6 — hidden per PM (2026-05-20)
+    case sold = "Sold"         // Basecamp #9930423421 — re-enabled (2026-05-26); tapping navigates to MyOrdersScreen
+//    case orders = "Orders"   // MC cmpdqpgof000nc9kp6f0xtti6 — hidden per PM (2026-05-20)
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")

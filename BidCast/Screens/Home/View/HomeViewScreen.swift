@@ -446,10 +446,26 @@ struct HomeViewScreen: View {
                         )
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                selectedButton = categoryList[ind].name ?? ""
-                                resetPagination()
-                                Task {
-                                    await fetchLiveShow()
+                                let chipName = categoryList[ind].name ?? ""
+                                // Bug #9928575535: tapping a non-"For You" chip on the
+                                // root Home screen should navigate INTO the category
+                                // detail view (which sets comeFromExploreScreen=true and
+                                // hides the For You row), consistent with tapping a
+                                // category badge on a show card or navigating from Browse.
+                                // Previously this only filtered in-place, leaving the
+                                // For You row visible regardless of which category was
+                                // selected — it only disappeared when coming from Browse
+                                // (via tabBarRouter), never from Home chips.
+                                if !comeFromExploreScreen && chipName != "For You" {
+                                    category = chipName
+                                    subCategory = ""
+                                    navigateToCategoryDetailScreen = true
+                                } else {
+                                    selectedButton = chipName
+                                    resetPagination()
+                                    Task {
+                                        await fetchLiveShow()
+                                    }
                                 }
                             }
                         }
