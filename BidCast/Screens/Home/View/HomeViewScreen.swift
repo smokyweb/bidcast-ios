@@ -54,6 +54,13 @@ struct HomeViewScreen: View {
     @State var subCategory : String = ""
     @State private var isActiveOnHomeScreen = false
     @State var navigateToCategoryDetailScreen : Bool = false
+    // Bug #9928575535 redux: tracks whether user tapped a non-"For You" chip on
+    // the root Home screen so we can hide the For You row immediately in-place.
+    // The previous fix (build 311) pushed a new HomeViewScreen via NavigationLink,
+    // but the slide-in animation kept the parent (For You row visible) briefly
+    // on real devices, making it appear broken. This approach hides the row
+    // directly — matching the instant disappearance the Browse path produces.
+    @State private var isInCategoryMode: Bool = false
     @State var upCommingSheet : Bool = false
     @State var navigateToAllCategoryScreen : Bool = false
     @State var isNavFrom : String = ""
@@ -91,7 +98,7 @@ struct HomeViewScreen: View {
     var body: some View {
         VStack(spacing:0){
             HStack(spacing: 12) {
-                if comeFromExploreScreen {
+                if comeFromExploreScreen || isInCategoryMode {
                     //back button
                     // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14):
                     // Filtered Home was previously reached via a
@@ -102,11 +109,23 @@ struct HomeViewScreen: View {
                     // push to pop. Back now switches the tab selection
                     // back to Explore (tag 1) and clears the Explore
                     // filter so re-entering Home shows the plain feed.
+                    //
+                    // Bug #9928575535 redux: also show back button when
+                    // isInCategoryMode (user tapped a category chip from root
+                    // Home). Back clears the filter and restores the For You row.
                     Button {
-                        comeFromExploreScreen = false
-                        showCategory = ""
-                        showSubCategory = ""
-                        tabBarRouter.selectedTab = 1
+                        if comeFromExploreScreen {
+                            comeFromExploreScreen = false
+                            showCategory = ""
+                            showSubCategory = ""
+                            tabBarRouter.selectedTab = 1
+                        } else {
+                            // isInCategoryMode — return to full For You view
+                            isInCategoryMode = false
+                            selectedButton = "For You"
+                            resetPagination()
+                            Task { await fetchLiveShow() }
+                        }
                     } label: {
                         Image(systemName:"chevron.left")
                             .font(.custom(poppinsBold, size: 16))
@@ -127,6 +146,12 @@ struct HomeViewScreen: View {
                         Text(showCategory)
                             .font(.custom(poppinsSemiBold, size: 16))
                             .foregroundColor(.black)
+                    } else if isInCategoryMode {
+                        // Bug #9928575535 redux: show selected category name
+                        // as subtitle when in category mode from Home chip tap.
+                        Text(selectedButton)
+                            .font(.custom(poppinsSemiBold, size: 16))
+                            .foregroundColor(.black)
                     }
                 }
                 
@@ -144,7 +169,12 @@ struct HomeViewScreen: View {
             .background(.white)
             
             // MARK: - Category Horizontal Scrolls
-            if !comeFromExploreScreen {
+            // Bug #9928575535 redux: hide the For You chip row whenever the
+            // user is viewing a specific category — either via the
+            // Browse/Explore path (comeFromExploreScreen) OR via a Home chip
+            // tap (isInCategoryMode). This mirrors Browse behaviour exactly:
+            // the row disappears immediately with no navigation animation.
+            if !comeFromExploreScreen && !isInCategoryMode {
                 categoryScrollView
             }
             
@@ -333,6 +363,10 @@ struct HomeViewScreen: View {
                     await refreshLiveShows()
                     if !comeFromExploreScreen {
                         selectedButton = "For You"
+                        // Bug #9928575535 redux: reset category mode so the
+                        // For You row reappears after returning from a live stream,
+                        // consistent with selectedButton also resetting to "For You".
+                        isInCategoryMode = false
                     }
                 }
             }
@@ -350,6 +384,9 @@ struct HomeViewScreen: View {
             resetPagination()
             if !nowFromExplore {
                 selectedButton = "For You"
+                // Bug #9928575535 redux: reset isInCategoryMode whenever the
+                // explore-derived filter clears, so we return to plain Home.
+                isInCategoryMode = false
             }
             Task {
                 await fetchCategory(for: "for_you")
@@ -446,7 +483,17 @@ struct HomeViewScreen: View {
                         )
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                selectedButton = categoryList[ind].name ?? ""
+                                let chipName = categoryList[ind].name ?? ""
+                                selectedButton = chipName
+                                // Bug #9928575535 redux: toggle isInCategoryMode so
+                                // the For You row is hidden immediately when user
+                                // taps a non-"For You" chip on the root Home screen.
+                                // Tapping "For You" or a sub-category chip while
+                                // already in comeFromExploreScreen mode leaves the
+                                // flag as-is (subcategory filter stays visible).
+                                if !comeFromExploreScreen {
+                                    isInCategoryMode = (chipName != "For You")
+                                }
                                 resetPagination()
                                 Task {
                                     await fetchLiveShow()
