@@ -562,6 +562,14 @@ extension AddProductsScreen {
                 params["is_repeat"] = 0
             }
 
+            // Browse-filter bundle (Basecamp #9928367737): attach tags as `tags[i]` keys
+            // so the multipart body posts a real array to /api/v1/store-schedule-show.
+            if let tags = request.tags, !tags.isEmpty {
+                for (i, tag) in tags.enumerated() {
+                    params["tags[\(i)]"] = tag
+                }
+            }
+
             // Convert product IDs
 //            let prodIds = Array(productManager.selectedProductIDs)
 //            for (index, product) in prodIds.enumerated() {
@@ -632,6 +640,13 @@ extension AddProductsScreen {
                 params["is_repeat"] = 1
             } else {
                 params["is_repeat"] = 0
+            }
+            // Browse-filter bundle (Basecamp #9928367737): attach tags as `tags[i]` keys
+            // so the multipart body posts a real array to /api/v1/store-schedule-show.
+            if let tags = request.tags, !tags.isEmpty {
+                for (i, tag) in tags.enumerated() {
+                    params["tags[\(i)]"] = tag
+                }
             }
 //            let prodIds = productManager.selectedProductIDs.compactMap { Int($0) }
 //            params["product_ids"] = prodIds

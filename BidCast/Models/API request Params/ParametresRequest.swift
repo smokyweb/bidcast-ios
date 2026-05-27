@@ -686,7 +686,10 @@ struct StoreScheduleShowRequest: Encodable {
     var thumbnail : String?
     /// Randomizer template to attach to this show (nil = no randomizer)
     var randomizer_template_id: Int?
-    
+    /// Browse-filter bundle (Basecamp #9928367737): show tags entered as comma-separated string in UI.
+    /// Sent to backend (/api/v1/store-schedule-show) as `tags[]` array.
+    var tags: [String]? = nil
+
     enum CodingKeys: String, CodingKey {
         case title
         case date
@@ -731,6 +734,20 @@ struct GetLiveShowsRequest : Encodable{
     var sub_category : String? = ""
     var search : String? = ""
     var page : String
+
+    // Todo #9933301500 (2026-05-27): browse filter fields — port of the 5
+    // PWA filters (Show Format, Tags, Premier Shops, Shipped From,
+    // Reduced Shipping) to iOS. Server-side validation lives in
+    // ApiController::getLiveShow on bidcast-gitlab; these all map 1:1 to
+    // the request fields it already accepts. All optional — when nil the
+    // JSON encoder writes JSON null which Laravel's `nullable` rules
+    // treat as absent.
+    var show_format : String?  = nil   // surprise_sets | live_auction | buy_it_now
+    var tag          : String?  = nil   // single tag string
+    var ship_country : String?  = nil   // 2-letter ISO
+    var ship_state   : String?  = nil   // optional state/region
+    var premier_shop : Int?     = nil   // 1 when on
+    var shipping     : String?  = nil   // free | reduced
 }
 
 struct LiveShowUpdateRequest : Encodable {

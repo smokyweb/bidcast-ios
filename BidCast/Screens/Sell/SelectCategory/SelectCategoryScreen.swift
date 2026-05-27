@@ -59,6 +59,9 @@ struct SelectCategoryScreen: View {
     @State var subCategoryName : [String] = [""]
     @State var extraFields: [ExtraFieldModel] = []
     @State var selectedOption: Set<String> = []
+    // Browse-filter bundle (Basecamp #9928367737): comma-separated tags entered by the seller.
+    // PWA splits on ",", trims, drops empties, sends as `tags[]` array. Same shape here.
+    @State var tagsInput: String = ""
     
     var viewModel = SelectCategoryViewModel()
     @EnvironmentObject var coordinator: LetsPrepareCoordinator
@@ -294,12 +297,42 @@ struct SelectCategoryScreen: View {
                     }
                   
                     .padding(.vertical, 12)
-                    
+
+                    // Browse-filter bundle (Basecamp #9928367737): Tags input.
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Tags (optional, comma-separated)")
+                            .font(.custom(poppinsBold, size: 18))
+                            .foregroundColor(.primary)
+                            .padding(.horizontal, 20)
+                        Text("Add tags to help shoppers find your show (e.g. vintage, pokemon, jewelry).")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.primary)
+                            .padding(.horizontal, 20)
+                        AuthTextField(
+                            floatingLabel: "",
+                            placeholder: "vintage, pokemon, jewelry",
+                            icon: .alert,
+                            text: $tagsInput,
+                            isIconDisplay: false,
+                            enteredText: { value in
+                                tagsInput = value
+                            }
+                        )
+                        .padding(.horizontal, 4)
+                    }
+                    .padding(.vertical, 12)
+
                     Spacer()
                     PrimaryButton(title: AppString.continueBtn.localized, isOutLine: false, onButtonClick: {
 //                        request.title = title
                         print("Store title,category,auction,repeat \(request)")
                         request.is_explicit = isExplicitContent
+                        // Parse comma-separated tags, trim, drop empties (mirrors PWA behavior).
+                        let parsedTags = tagsInput
+                            .split(separator: ",")
+                            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                            .filter { !$0.isEmpty }
+                        request.tags = parsedTags.isEmpty ? nil : parsedTags
                         guard !request.title.isEmpty else {
                             hudMsg = "Please enter title"
                             showhud = true
@@ -483,6 +516,11 @@ struct SelectCategoryScreen: View {
                 selectedDiscoverability = .publicMode
             } else if request.show_discoverability.lowercased() == "private" {
                 selectedDiscoverability = .privateMode
+            }
+
+            // 7. Set Tags (Basecamp #9928367737) — prefill from request when editing
+            if let existingTags = request.tags, !existingTags.isEmpty {
+                tagsInput = existingTags.joined(separator: ", ")
             }
             
             print("✅ Data populated:")

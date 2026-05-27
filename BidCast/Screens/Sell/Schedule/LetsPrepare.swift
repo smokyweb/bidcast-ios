@@ -361,6 +361,12 @@ struct LetsPrepare: View {
                     "category_id": request.category_id,
                     "auction_type_id": request.auction_type_id,
                 ]
+                // Browse-filter bundle (Basecamp #9928367737): attach tags as `tags[i]` keys.
+                if let tags = request.tags, !tags.isEmpty {
+                    for (i, tag) in tags.enumerated() {
+                        param["tags[\(i)]"] = tag
+                    }
+                }
 //                let products = request.product_ids.toIntArray()
 //                for (index, id) in productIds.enumerated() {
 //                    param["product_ids[\(index)]"] = id
