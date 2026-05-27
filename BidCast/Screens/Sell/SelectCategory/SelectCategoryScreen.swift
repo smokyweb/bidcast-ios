@@ -138,9 +138,12 @@ struct SelectCategoryScreen: View {
                     .zIndex(1201.0)
                     .padding([.leading,.trailing],16)
                     
+                    // Todo #9933256802 (2026-05-27): user-facing rename only. The
+                    // underlying request field stays auction_type_id; the backend
+                    // derives show_format from it at save time so the browse filter works.
                     DropDownSelection(
-                        options: $auctionTypeNames, floatingLabel:"Auction",
-                        hint: "Select Auction",
+                        options: $auctionTypeNames, floatingLabel:"Show Format",
+                        hint: "Select Show Format",
                         selected: $selectedAuctionType,
                         anchor: .bottom,
                         custFontName: poppinsSemiBold,

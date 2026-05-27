@@ -229,7 +229,7 @@ struct ShowDetailsScreen: View {
             
             VStack(spacing: 8) {
                 InfoRowView(
-                    label: "Auction Type",
+                    label: "Show Format",
                     value: show.auction?.name?.capitalizingFirstLetter()  ?? "Live Auction"
                 )
                 
