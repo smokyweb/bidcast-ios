@@ -144,18 +144,24 @@ struct HomeViewScreen: View {
             .background(.white)
             
             // MARK: - Category Horizontal Scrolls
+            //
+            // Bug #9928575535 (build 318): the For You chip row must be hidden
+            // entirely whenever the user has drilled into a specific category —
+            // regardless of which entry path they used (Home chip tap, Explore
+            // tile tap, category badge on a show card, deep link, etc.).
+            //
+            // Previously two render blocks fought each other: this !comeFromExploreScreen
+            // block tried to hide the row, and a second block (now removed) explicitly
+            // re-rendered the SAME categoryScrollView when comeFromExploreScreen was true,
+            // mislabelled in a comment as a "subcategory filter strip" but actually
+            // rendering the full category card row. That second block was the
+            // reason Trey kept seeing the For You row across builds 311-317 after
+            // tapping a tile in Explore.
+            //
+            // Only this single guard remains: hide the row whenever we're in any
+            // category-filtered mode. categoryScrollView only renders on the
+            // root For You view.
             if !comeFromExploreScreen {
-                categoryScrollView
-            }
-            
-            // FIX cmp5czpw900jo56kdn739kkjp: removed `&& showSubCategory == ""`
-            // guard — the home row (subcategory filter strip) must stay visible
-            // after the user taps any category on the Explore page, whether or
-            // not a specific subcategory was pre-selected. The old condition hid
-            // the row the moment showSubCategory was non-empty, making the
-            // filter strip disappear and leaving users stuck on one subcategory
-            // with no way to switch. Now it shows whenever data is ready.
-            if comeFromExploreScreen && categoryList.count != 0 {
                 categoryScrollView
             }
           
