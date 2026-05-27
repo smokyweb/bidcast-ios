@@ -60,6 +60,10 @@ struct RoomModel: Codable {
     var auction_type_id: Int?
     var category_id: String?
     var date: String?
+    // Basecamp #9933883175 / #9933877362 (2026-05-27): seller-controlled
+    // verified-buyers-only gate. Hydrated from the join_room payload that the
+    // node socket server broadcasts (server-side patch deployed 2026-05-27).
+    var is_verified_only: Bool?
     var id: String { room_id ?? "" }
 }
 
