@@ -1373,8 +1373,19 @@ struct LiveStream: View {
         }
     }
     
+    // Basecamp #9933877362 (2026-05-27): verified-buyer becomes optional.
+    // Returns true when the currently-viewed show requires the buyer to be
+    // verified. Sellers can opt their show in with #9933883175's toggle.
+    // When false, the only requirement to interact (bid/tip/purchase/wallet)
+    // is having a verified payment method on file.
+    private var currentShowRequiresVerification: Bool {
+        return liveShowsData[safe: currentIndex]?.is_verified_only == true
+    }
+
     private func handleWalletAction() {
-        if UserDefaults.buyerVerafied != "verified" {
+        // Basecamp #9933877362 (2026-05-27): only enforce identity verification
+        // when the seller has opted this show into verified-buyers-only.
+        if currentShowRequiresVerification && UserDefaults.buyerVerafied != "verified" {
             showVerificationSheet = true
         } else {
             if UserDefaults.sellerAddress == false {
@@ -1405,7 +1416,9 @@ struct LiveStream: View {
             return false
         }
 
-        if UserDefaults.buyerVerafied != "verified" {
+        // Basecamp #9933877362 (2026-05-27): identity verification only required
+        // when the seller has opted this show into verified-buyers-only.
+        if currentShowRequiresVerification && UserDefaults.buyerVerafied != "verified" {
             showVerificationSheet = true
             return false
         } else {
@@ -2812,7 +2825,13 @@ extension LiveStream {
         }
         
 //        fetchProducts(for: roomId)
-        handleBuyerVerification()
+        // Basecamp #9933877362 (2026-05-27): only pop the verification reminder
+        // on join when the show is gated to verified buyers only. For open
+        // shows, do NOT block the viewer with an identity-verification modal
+        // — they only need a verified payment method later, at bid/tip/buy time.
+        if currentShowRequiresVerification {
+            handleBuyerVerification()
+        }
         socketManagerChat.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
 //            guard let self else { return }
             print("AUCtioned data")

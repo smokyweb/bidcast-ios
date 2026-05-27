@@ -31,6 +31,12 @@ struct HomeModel: Codable, Identifiable {
     var repeat_value: String?
     var is_repeat: Bool?
     var is_explicit: Bool?
+    // Basecamp #9933883175 / #9933877362 (2026-05-27): seller-controlled
+    // verified-buyers-only gate. When true the client should enforce the
+    // verified-buyer requirement on join / bid / tip / purchase; when
+    // false or nil the new default applies (open to all viewers with a
+    // verified payment method).
+    var is_verified_only: Bool?
     var user_id: Int?
     var show_discoverability: String?
     var category_id: Int?
@@ -91,6 +97,8 @@ extension HomeModel {
         repeat_value = try c.decodeIfPresent(String.self, forKey: .repeat_value)
         is_repeat = try decodeBoolFlexible(c, forKey: .is_repeat)
         is_explicit = try decodeBoolFlexible(c, forKey: .is_explicit)
+        // Basecamp #9933883175 (2026-05-27): decode the seller's verified-only flag.
+        is_verified_only = try decodeBoolFlexible(c, forKey: .is_verified_only)
         user_id = try c.decodeIfPresent(Int.self, forKey: .user_id)
         show_discoverability = try c.decodeIfPresent(String.self, forKey: .show_discoverability)
         category_id = try c.decodeIfPresent(Int.self, forKey: .category_id)
