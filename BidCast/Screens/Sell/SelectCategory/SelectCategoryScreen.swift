@@ -28,6 +28,10 @@ struct SelectCategoryScreen: View {
     @State private var repeatsOptions: [String] = ["Does Not Repeat", "Daily", "Weekly"]
     @State private var selectedRepeatOptions = "Does Not Repeat"
     @State private var isExplicitContent: Bool = false
+    // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only
+    // gate. When on, only verified buyers can join / bid / tip / purchase
+    // in this show. Defaults off.
+    @State private var isVerifiedBuyersOnly: Bool = false
     
     @State private var selectedDiscoverability: Discoverability? = .publicMode
     
@@ -219,6 +223,35 @@ struct SelectCategoryScreen: View {
                         )
                     }
                     .padding([.leading,.trailing],16)
+
+                    // Basecamp #9933883175 (2026-05-27): Verified Buyers Only toggle
+                    VStack(alignment: .leading, spacing: 16) {
+                        Toggle(isOn: $isVerifiedBuyersOnly) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Verified Buyers Only")
+                                    .font(.custom(poppinsBold, size: 18))
+                                    .foregroundColor(.primary)
+
+                                Text("Restrict joining, bidding, tipping, and purchasing in this show to verified buyers only.")
+                                    .font(.custom(poppinsRegular, size: 14))
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(.systemBackground))
+                                .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(isVerifiedBuyersOnly ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: isVerifiedBuyersOnly ? 2 : 1)
+                                .animation(.easeInOut(duration: 0.2), value: isVerifiedBuyersOnly)
+                        )
+                    }
+                    .padding([.leading,.trailing],16)
                     
                     SectionHeaderView(title: "Primary Language")
                         .padding([.leading,.trailing],16)
@@ -327,6 +360,9 @@ struct SelectCategoryScreen: View {
 //                        request.title = title
                         print("Store title,category,auction,repeat \(request)")
                         request.is_explicit = isExplicitContent
+                        // Basecamp #9933883175 (2026-05-27): persist seller's
+                        // verified-buyers-only choice into the schedule request.
+                        request.is_verified_only = isVerifiedBuyersOnly
                         // Parse comma-separated tags, trim, drop empties (mirrors PWA behavior).
                         let parsedTags = tagsInput
                             .split(separator: ",")
@@ -505,6 +541,9 @@ struct SelectCategoryScreen: View {
             
             // 4. Set Explicit Content
             isExplicitContent = request.is_explicit
+            // Basecamp #9933883175 (2026-05-27): restore verified-buyers-only
+            // when re-opening a draft.
+            isVerifiedBuyersOnly = request.is_verified_only ?? false
             
             // 5. Set Language
             if !request.language.isEmpty {

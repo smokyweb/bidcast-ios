@@ -689,6 +689,10 @@ struct StoreScheduleShowRequest: Encodable {
     /// Browse-filter bundle (Basecamp #9928367737): show tags entered as comma-separated string in UI.
     /// Sent to backend (/api/v1/store-schedule-show) as `tags[]` array.
     var tags: [String]? = nil
+    /// Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
+    /// When true, only verified buyers can join / bid / tip / purchase in this show.
+    /// Optional so legacy call sites that don't set it default to nil (backend treats nil as false).
+    var is_verified_only: Bool? = nil
 
     enum CodingKeys: String, CodingKey {
         case title
@@ -698,6 +702,7 @@ struct StoreScheduleShowRequest: Encodable {
         case auction_type_id
         case product_ids = "product_ids[]"
         case randomizer_template_id
+        case is_verified_only
 //        case thumbnail = "thumbnail[]"
     }
 }
