@@ -78,6 +78,13 @@ struct HomeViewScreen: View {
     @State private var scrollTimer: Timer?
     
     @State private var loadedRoomIDs = Set<String>()
+
+    // Todo #9933301500 (2026-05-27): browse-filter state. `appliedFilters`
+    // is what we ship to the API; `showFiltersSheet` toggles the sheet.
+    // Filters live on this screen so they survive pagination /
+    // refresh / pill changes and only reset on Clear.
+    @State private var appliedFilters: BrowseFilters = .empty
+    @State private var showFiltersSheet: Bool = false
     @State var agoraToken: String = ""
     
     // MARK: - Pagination Properties
@@ -167,20 +174,51 @@ struct HomeViewScreen: View {
           
             ScrollView(showsIndicators:false){
                 VStack(alignment: .leading, spacing: 8){
-                    // MARK: - Filter Pills
-                    PillsSelectorView(
-                        titles: categoryFilterTitles,
-                        selectedIndex: $selectedCategoryIndex,
-                        backgroundStyle: .none,
-                        underlineEnabled: false,
-                        onSelectionChanged: { index, data in
-                            let selectedCategory = categoryFilterTitles[index]
-                            selectedTab = getCategoryName(for: selectedCategory)
-                            resetPagination()
-                            Task {
-                                await fetchLiveShow()
+                    // MARK: - Filter Pills + Browse Filters button
+                    HStack(spacing: 8) {
+                        PillsSelectorView(
+                            titles: categoryFilterTitles,
+                            selectedIndex: $selectedCategoryIndex,
+                            backgroundStyle: .none,
+                            underlineEnabled: false,
+                            onSelectionChanged: { index, data in
+                                let selectedCategory = categoryFilterTitles[index]
+                                selectedTab = getCategoryName(for: selectedCategory)
+                                resetPagination()
+                                Task {
+                                    await fetchLiveShow()
+                                }
+                            })
+
+                        Spacer(minLength: 0)
+
+                        // Todo #9933301500 (2026-05-27): Filters button.
+                        // Tapping opens BrowseFiltersSheet with the 5
+                        // PWA filters; the dot turns purple when at
+                        // least one is active so it's clear at a glance.
+                        Button(action: { showFiltersSheet = true }) {
+                            ZStack(alignment: .topTrailing) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "slider.horizontal.3")
+                                    Text("Filters")
+                                        .font(.custom(poppinsSemiBold, size: 12))
+                                }
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.gray.opacity(0.3), lineWidth: 1))
+                                .cornerRadius(20)
+
+                                if appliedFilters.isActive {
+                                    Circle()
+                                        .fill(Color.defaultTheme)
+                                        .frame(width: 8, height: 8)
+                                        .offset(x: 2, y: -2)
+                                }
                             }
-                        })
+                        }
+                    }
                    
                     // MARK: - Live Auction View with Pagination
                     LiveAuctionView(
@@ -361,6 +399,21 @@ struct HomeViewScreen: View {
                 await fetchCategory(for: "for_you")
                 await fetchLiveShow()
             }
+        }
+        // Todo #9933301500 (2026-05-27): browse filters sheet. Lives as a
+        // full-screen .sheet so the user can scroll through all 5
+        // sections comfortably; on Apply we cache the snapshot, reset
+        // pagination and re-fetch.
+        .sheet(isPresented: $showFiltersSheet) {
+            BrowseFiltersSheet(
+                isPresented: $showFiltersSheet,
+                draft: appliedFilters,
+                onApply: { newFilters in
+                    appliedFilters = newFilters
+                    resetPagination()
+                    Task { await fetchLiveShow() }
+                }
+            )
         }
         // Also refresh when the actual category/subCategory binding changes
         // (defensive — covers an Explore -> different category re-tap that
@@ -625,12 +678,21 @@ struct HomeViewScreen: View {
             apiCategory = (selectedButton == "For You") ? "" : selectedButton
         }
         
+        // Todo #9933301500 (2026-05-27): merge active browse filters into
+        // the get-live-show request. All 6 fields are optional and the
+        // backend treats nil/empty as absent so we can just pass through.
         let params = GetLiveShowsRequest(
             type: selectedTab,
             category: apiCategory,
             sub_category: subCategory,
             search: searchText,
-            page: "\(currentPage)"
+            page: "\(currentPage)",
+            show_format: appliedFilters.showFormat,
+            tag: appliedFilters.tag.isEmpty ? nil : appliedFilters.tag,
+            ship_country: appliedFilters.shipCountry,
+            ship_state: appliedFilters.shipState.isEmpty ? nil : appliedFilters.shipState,
+            premier_shop: appliedFilters.premierShop ? 1 : nil,
+            shipping: appliedFilters.shipping
         )
         await viewModel.getLiveShows(param: params)
 

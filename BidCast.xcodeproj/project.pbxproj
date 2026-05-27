@@ -551,6 +551,7 @@
 		D64A2C1E2EE1B24B00D0F2B6 /* FilterPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64A2C1D2EE1B24B00D0F2B6 /* FilterPageView.swift */; };
 		D65B7EE12ED579CB000B52EC /* ProductDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */; };
 		D65B7EE32ED5CABC000B52EC /* SortByBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65B7EE22ED5CABC000B52EC /* SortByBottomSheet.swift */; };
+		BF09933015000001 /* BrowseFiltersSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF09933015000002 /* BrowseFiltersSheet.swift */; };
 		D65B7EE52ED5D8A4000B52EC /* ReportSellerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65B7EE42ED5D8A4000B52EC /* ReportSellerView.swift */; };
 		D65F96BC2EBC682B00EAAD49 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */; };
 		D66070A72ED02CAE00B81251 /* PipFrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */; };
@@ -1166,6 +1167,7 @@
 		D64A2C1D2EE1B24B00D0F2B6 /* FilterPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPageView.swift; sourceTree = "<group>"; };
 		D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailView.swift; sourceTree = "<group>"; };
 		D65B7EE22ED5CABC000B52EC /* SortByBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortByBottomSheet.swift; sourceTree = "<group>"; };
+		BF09933015000002 /* BrowseFiltersSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseFiltersSheet.swift; sourceTree = "<group>"; };
 		D65B7EE42ED5D8A4000B52EC /* ReportSellerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSellerView.swift; sourceTree = "<group>"; };
 		D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipFrameProcessor.swift; sourceTree = "<group>"; };
@@ -1782,6 +1784,7 @@
 				D66070AE2ED06EE500B81251 /* StackedImageView.swift */,
 				D4D048262ECC39E40033B647 /* LiveStreamV1.swift */,
 				D65B7EE22ED5CABC000B52EC /* SortByBottomSheet.swift */,
+				BF09933015000002 /* BrowseFiltersSheet.swift */,
 				D65B7EE42ED5D8A4000B52EC /* ReportSellerView.swift */,
 				D4C47A2B2F1E347C002983FF /* ClipsScreen.swift */,
 				F568AFEBE7EB6E84B43C68D8 /* RandomizerWheelView.swift */,
@@ -4762,6 +4765,7 @@
 				D698ACB32EF54FC800D47058 /* AccountScreen 2.swift in Sources */,
 				99C9080F2DC8CD6A0054620B /* AlertPopUp.swift in Sources */,
 				D65B7EE32ED5CABC000B52EC /* SortByBottomSheet.swift in Sources */,
+				BF09933015000001 /* BrowseFiltersSheet.swift in Sources */,
 				3576EAD22DDDD5DD00177C7D /* TipsCardView.swift in Sources */,
 				99C908102DC8CD6A0054620B /* HeaderWithImage.swift in Sources */,
 				99C908112DC8CD6A0054620B /* HeaderWithImageTitle.swift in Sources */,
