@@ -322,6 +322,10 @@ struct RoomModel: Codable {
     let allow_bid_for_all: Bool?
     let bid_count_down: String?
     let show_timer: String?
+    // Basecamp #9933883175 / #9933877362 (2026-05-27): seller-controlled
+    // verified-buyers-only gate. Hydrated from the join_room payload that the
+    // node socket server now broadcasts (commit on prod node box 2026-05-27).
+    let is_verified_only: Bool?
     
     var id: String { room_id ?? "" }
 }
