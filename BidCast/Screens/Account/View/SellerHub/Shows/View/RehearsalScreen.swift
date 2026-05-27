@@ -1193,6 +1193,14 @@ struct RehearsalScreen: View {
                 Spacer()
                 
                 // MARK: - Freebie (Trailing)
+                // Basecamp #9931107836 (2026-05-27): standalone Freebie button
+                // removed — all freebie/raffle flows are consolidated into the
+                // new randomizer template builder (Randomizer.swift). Sellers
+                // now create + manage giveaways from there. Matches what
+                // already shipped on Android in commit f001755d. Keeping the
+                // button source in place behind `#if false` so the visual
+                // layout reference is preserved for any follow-up styling work.
+                #if false
                 Button(action: {
                     showFreeBie = true
                 }) {
@@ -1224,6 +1232,7 @@ struct RehearsalScreen: View {
                         .fill(Color.black.opacity(0.4))
                     )
                 }
+                #endif
             }
             .padding(.horizontal, 0)
             .padding(.top, 10)
