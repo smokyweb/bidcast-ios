@@ -480,6 +480,8 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToBlockedList, destination: BlockedUserScreen())
             CusNavLink(doNavigate: $navigationState.navigateToCoupons, destination: CouponListScreen(showApplyButton: false))
             CusNavLink(doNavigate: $navigationState.navigateToClips, destination: ClipsScreen())
+            // Basecamp #9933801536 (2026-05-27): saved searches
+            CusNavLink(doNavigate: $navigationState.navigateToSavedSearches, destination: SavedSearchesScreen())
 //            CusNavLink(doNavigate: $navigationState.navigateToClips, destination:  CreateAddress())
             CusNavLink(doNavigate: $navigateToSeller, destination:  SellerVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigationToNotification, destination: NotificationScreen())
@@ -527,6 +529,8 @@ extension AccountScreen {
             case 4: navigationState.navigateToPreference = true
             case 5: navigationState.navigateToCategory = true
             case 6: navigationState.navigateToClips = true
+            // Basecamp #9933801536 (2026-05-27)
+            case 7: navigationState.navigateToSavedSearches = true
             default: break
             }
         }
@@ -1366,6 +1370,8 @@ struct NavigationState {
     var navigateToBlockedList = false
     var navigateToCoupons = false
     var navigateToClips = false
+    // Basecamp #9933801536 (2026-05-27): saved searches
+    var navigateToSavedSearches = false
     // Seller Hub
     var navigateToShows = false
     var navigateToInventry = false
@@ -1423,6 +1429,8 @@ enum AccountTabSection: String, CaseIterable, CustomStringConvertible {
     case preference = "Preference"
     case favCategory = "Favorite"
     case clips = "Clips"
+    // Basecamp #9933801536 (2026-05-27): saved searches
+    case savedSearches = "Saved Searches"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
@@ -1437,6 +1445,7 @@ enum AccountTabSection: String, CaseIterable, CustomStringConvertible {
         case .preference: return .offers
         case .favCategory: return .favourites
         case .clips : return .shows
+        case .savedSearches: return .notifications
         }
     }
 }
