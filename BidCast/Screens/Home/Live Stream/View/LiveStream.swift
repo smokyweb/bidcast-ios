@@ -2331,6 +2331,17 @@ extension LiveStream {
         socketManagerChat.listenForViewerCount()
         socketManagerChat.listenForBidTimer(roomId: roomId)
 
+        // Basecamp #9933402746 (2026-05-27): wire the buyer-side show-notes
+        // listener. Previously this was only called in RehearsalScreen (seller),
+        // so iOS buyers received the initial show_notes on join (via the
+        // get_show_note broadcast that fires on every join_room) but never
+        // received subsequent updates when the seller edited notes mid-stream.
+        // Now the listener stays subscribed for the full duration of the
+        // viewer session and updates `showNotes` whenever the seller updates.
+        socketManagerChat.listenForGetShowNote { notes in
+            showNotes = notes
+        }
+
         // MC cmpfokeza001doohgkt8xc8d0 (2026-05-22): wire the viewer-side
         // poll listeners. Previously this screen declared `showPollView`
         // and `currentPollModel` but never subscribed to the socket
