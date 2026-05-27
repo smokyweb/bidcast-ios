@@ -1115,6 +1115,13 @@ struct RehearsalScreen: View {
         // viewer list sheet for kick actions. Only useful for the host
         // (this is the seller's RehearsalScreen / live screen).
         Button {
+            // Basecamp #9934003774 round 2: defensive on-demand fetch so the
+            // list is fresh when the sheet opens. The standard broadcast can
+            // race against listener registration; this guarantees we have
+            // the current state.
+            if !roomId.isEmpty {
+                socketManager.requestActiveShowUsers(roomId: roomId)
+            }
             showViewerListSheet = true
         } label: {
             HStack(spacing: 4) {

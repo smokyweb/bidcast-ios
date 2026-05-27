@@ -635,14 +635,46 @@ extension SocketManagerService {
 extension SocketManagerService {
 
     func sendAddShowNote(roomId: String, showNote: String) {
-        let payload: [String: Any] = [
+        // Basecamp #9933402746 (2026-05-27 round 2): server-side add_show_note
+        // performs an ownership check using payload.user_id — if user_id is
+        // missing, the check fails String(owner) !== String(undefined) and
+        // the update is silently dropped, so buyers never see the new note.
+        // Include user_id from UserDefaults.userId.
+        var payload: [String: Any] = [
             "room_id": roomId,
             "show_note": showNote
         ]
+        if UserDefaults.userId > 0 {
+            payload["user_id"] = UserDefaults.userId
+        }
 
         performIfConnected {
             socket.emit("add_show_note", payload)
             logger.info("📤 Sent add_show_note: \(payload)")
+        }
+    }
+
+    // Basecamp #9933402746 (2026-05-27 round 2): explicit on-demand request
+    // for current show notes. Buyer side emits this after join_room to
+    // ensure they get the current value even if the join_room broadcast was
+    // missed (race / ordering / silent listener registration failure).
+    func requestShowNote(roomId: String) {
+        performIfConnected {
+            socket.emit("request_show_note", ["room_id": roomId])
+            logger.info("📤 Sent request_show_note for room \(roomId)")
+        }
+    }
+
+    // Basecamp #9934003774 (2026-05-27 round 2): seller-side explicit fetch
+    // for current viewer list. Trey reports the viewer-list sheet says "no
+    // viewers" even when buyers are in the room. The standard active_show_users
+    // broadcast only fires on join_show — if any buyer joined before the
+    // seller's listener was registered, the seller has stale empty state.
+    // Emitting this triggers the server to re-broadcast the current list.
+    func requestActiveShowUsers(roomId: String) {
+        performIfConnected {
+            socket.emit("request_active_show_users", ["room_id": roomId])
+            logger.info("📤 Sent request_active_show_users for room \(roomId)")
         }
     }
     

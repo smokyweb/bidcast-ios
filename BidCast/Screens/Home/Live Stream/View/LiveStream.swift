@@ -2362,6 +2362,14 @@ extension LiveStream {
         socketManagerChat.listenForGetShowNote { notes in
             showNotes = notes
         }
+        // Basecamp #9933402746 (2026-05-27 round 2): defensive explicit fetch
+        // for show notes. The join_room broadcast can race against listener
+        // registration; this guarantees the buyer pulls the current notes
+        // even if the initial broadcast was missed.
+        socketManagerChat.requestShowNote(roomId: roomId)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            socketManagerChat.requestShowNote(roomId: roomId)
+        }
 
         // MC cmpfokeza001doohgkt8xc8d0 (2026-05-22): wire the viewer-side
         // poll listeners. Previously this screen declared `showPollView`
