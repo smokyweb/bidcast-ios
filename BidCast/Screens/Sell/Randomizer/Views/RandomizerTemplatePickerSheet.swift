@@ -15,6 +15,10 @@ struct RandomizerTemplatePickerSheet: View {
     @State private var templates: [RandomizerTemplate] = []
     @State private var isLoading = true
     @State private var errorMessage: String? = nil
+    // Basecamp #9929871140 / #9931107836 (2026-05-27 round 2): in-flow
+    // template builder. Pushing onto navigation stack instead of opening
+    // a separate screen keeps the show-create / live-show flow intact.
+    @State private var showBuilder: Bool = false
 
     var body: some View {
         NavigationView {
@@ -42,6 +46,15 @@ struct RandomizerTemplatePickerSheet: View {
             }
             .navigationTitle("Randomizer Template")
             .navigationBarTitleDisplayMode(.inline)
+            // Basecamp #9929871140 / #9931107836 (2026-05-27 round 2): inline
+            // builder so the seller can create a template without leaving
+            // the show-create / live flow.
+            .background(
+                NavigationLink(isActive: $showBuilder, destination: {
+                    RandomizerTemplateBuilderView(editingTemplate: nil)
+                        .onDisappear { loadTemplates() }
+                }, label: { EmptyView() })
+            )
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
@@ -56,6 +69,10 @@ struct RandomizerTemplatePickerSheet: View {
     // MARK: - Template List
     private var templateListView: some View {
         List {
+            // Basecamp #9929871140 / #9931107836 (2026-05-27 round 2):
+            // always-visible create-new entry point.
+            createNewRow
+
             // "None" option — detach template
             Button {
                 selectedTemplateId = nil
@@ -126,6 +143,34 @@ struct RandomizerTemplatePickerSheet: View {
             }
         }
         .listStyle(.plain)
+    }
+
+    // Basecamp #9929871140 / #9931107836 (2026-05-27 round 2):
+    // "+ Create new template" row at the top of the picker.
+    @ViewBuilder
+    private var createNewRow: some View {
+        Button {
+            showBuilder = true
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(.defaultTheme)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Build a new randomizer")
+                        .font(.custom(poppinsBold, size: 14))
+                        .foregroundColor(.primary)
+                    Text("Pick slot colors, icons, and products")
+                        .font(.custom(poppinsRegular, size: 11))
+                        .foregroundColor(.gray)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray.opacity(0.6))
+            }
+            .padding(.vertical, 8)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Load

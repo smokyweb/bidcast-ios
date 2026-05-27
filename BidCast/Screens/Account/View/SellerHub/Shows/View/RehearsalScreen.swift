@@ -58,6 +58,11 @@ struct RehearsalScreen: View {
     
     @State private var navigateToProductList : Bool = false
     @State private var navigateToRandomizer : Bool = false
+    // Basecamp #9931107836 / #9929871140 (2026-05-27 round 2): show the
+    // template picker (which now has a Build New row) BEFORE the wheel-spin
+    // sheet so hosts can build a custom randomizer mid-stream.
+    @State private var showRandomizerPicker: Bool = false
+    @State private var selectedRandomizerTemplateId: Int? = nil
     
 
     @State private var showPollSheet : Bool = false
@@ -263,6 +268,12 @@ struct RehearsalScreen: View {
         )
         
         .sheet(isPresented: $navigateToRandomizer) { randomizerSheet }
+        .sheet(isPresented: $showRandomizerPicker) {
+            // Basecamp #9931107836 / #9929871140 (2026-05-27 round 2):
+            // pre-wheel template picker. Includes a Build New row that
+            // opens the existing RandomizerTemplateBuilderView inline.
+            RandomizerTemplatePickerSheet(selectedTemplateId: $selectedRandomizerTemplateId)
+        }
        
  
         .sheet(isPresented: $showPollSheet) { createPollSheet }
@@ -954,7 +965,11 @@ struct RehearsalScreen: View {
                 onAddCoupons: { print("Add Coupons") },
                 onClickRandomizer: {
                     showSellSheet = false
-                    navigateToRandomizer = true
+                    // Basecamp #9931107836 / #9929871140 (2026-05-27 round 2):
+                    // open the picker first so the host can choose an existing
+                    // template OR build a new one. After they confirm with a
+                    // template, navigateToRandomizer kicks off the wheel.
+                    showRandomizerPicker = true
                 },
                 onRaid: {
                     print("Raid")
