@@ -21,11 +21,17 @@ struct RichTextView: UIViewRepresentable {
     
     @Binding var textViewRef: UITextView? // <-- reference for immediate update
 
+    // Basecamp #9929880315 (2026-05-26): allow caller to render read-only.
+    // Buyer-side show-notes viewer passes false so the UITextView blocks
+    // editing and keyboard input.
+    var isEditable: Bool = true
+
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
         textView.font = UIFont.systemFont(ofSize: 16)
         textView.delegate = context.coordinator
-        textView.isEditable = true
+        textView.isEditable = isEditable
+        textView.isSelectable = true
         textView.isScrollEnabled = true
         textView.backgroundColor = .clear
         textView.keyboardDismissMode = .interactive
@@ -40,6 +46,10 @@ struct RichTextView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UITextView, context: Context) {
         uiView.attributedText = attributedText
+        // Basecamp #9929880315: keep editability in sync if it changes.
+        if uiView.isEditable != isEditable {
+            uiView.isEditable = isEditable
+        }
     }
 
     func makeCoordinator() -> Coordinator {

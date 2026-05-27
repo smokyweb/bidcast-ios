@@ -1725,6 +1725,34 @@ extension SocketManagerService {
             }
         }
     }
+
+    // Basecamp #9889548312 + #9929848961 (2026-05-26): Android already listens
+    // for `freebie-spinning` and shows the buyer wheel during the spin phase.
+    // iOS was missing this listener entirely, so buyers never saw the wheel
+    // animate — only the static enter card and then the winner. Add a generic
+    // listener that hands the raw payload (room_id, show_id, optional
+    // winning_position) to the caller so the buyer UI can present the
+    // shuffle / wheel animation on the same trigger.
+    func listenForFreebieSpinning(
+        completion: @escaping (_ roomId: String, _ showId: String, _ winningPosition: Int?) -> Void
+    ) {
+        socket.on("freebie-spinning") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any] else {
+                self.logger.warning("⚠️ Invalid freebie-spinning payload: \(data)")
+                return
+            }
+            let roomId = json["room_id"] as? String ?? ""
+            let showId = (json["show_id"] as? String)
+                      ?? (json["show_id"].flatMap { "\($0)" })
+                      ?? ""
+            let winningPos = json["winning_position"] as? Int
+            DispatchQueue.main.async {
+                completion(roomId, showId, winningPos)
+            }
+            self.logger.info("🎡 freebie-spinning | roomId=\(roomId) winningPos=\(winningPos.map { "\($0)" } ?? "nil")")
+        }
+    }
    
 
 }

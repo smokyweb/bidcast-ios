@@ -55,50 +55,55 @@ struct ShowNotesSheet: View {
             
             Divider()
             
-            // Text Editor
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    formattingButton("B", isBold) {
-                        isBold.toggle()
-                        textViewRef?.applyCurrentStylesImmediately()
+            // Basecamp #9929880315 (2026-05-26): only sellers see the formatting
+            // toolbar. Buyers see a read-only viewer (no toolbar, no Post button,
+            // RichTextView.isEditable=false below).
+            if forHost {
+                // Text Editor toolbar
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        formattingButton("B", isBold) {
+                            isBold.toggle()
+                            textViewRef?.applyCurrentStylesImmediately()
+                        }
+                        .bold()
+                        formattingButton("I", isItalic) {
+                            isItalic.toggle()
+                            textViewRef?.applyCurrentStylesImmediately()
+                        }
+                        .italic()
+                        formattingButton("U", isUnderline) {
+                            isUnderline.toggle()
+                            textViewRef?.applyCurrentStylesImmediately()
+                        }
+                        formattingButton("S", isStrikethrough) {
+                            isStrikethrough.toggle()
+                            textViewRef?.applyCurrentStylesImmediately()
+                        }
+                        
+                        Divider().frame(height: 30)
+                        
+                        formattingButton("•", isBullet) {
+                            toggleBullet()
+                            textViewRef?.applyCurrentStylesImmediately()
+                        }
+                        formattingButton("1.", isNumbered) {
+                            toggleNumbered()
+                            textViewRef?.applyCurrentStylesImmediately()
+                        }
                     }
-                    .bold()
-                    formattingButton("I", isItalic) {
-                        isItalic.toggle()
-                        textViewRef?.applyCurrentStylesImmediately()
-                    }
-                    .italic()
-                    formattingButton("U", isUnderline) {
-                        isUnderline.toggle()
-                        textViewRef?.applyCurrentStylesImmediately()
-                    }
-                    formattingButton("S", isStrikethrough) {
-                        isStrikethrough.toggle()
-                        textViewRef?.applyCurrentStylesImmediately()
-                    }
-                    
-                    Divider().frame(height: 30)
-                    
-                    formattingButton("•", isBullet) {
-                        toggleBullet()
-                        textViewRef?.applyCurrentStylesImmediately()
-                    }
-                    formattingButton("1.", isNumbered) {
-                        toggleNumbered()
-                        textViewRef?.applyCurrentStylesImmediately()
-                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 6)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 6)
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
-                .padding(.horizontal)
+                .frame(height: 50)
+                
+                Divider()
             }
-            .frame(height: 50)
             
-            Divider()
-            
-            // Editor
+            // Editor (Basecamp #9929880315: read-only for buyers)
             RichTextView(
                 attributedText: $attributedText,
                 isBold: $isBold,
@@ -107,7 +112,8 @@ struct ShowNotesSheet: View {
                 isStrikethrough: $isStrikethrough,
                 isBullet: $isBullet,
                 isNumbered: $isNumbered,
-                textViewRef: $textViewRef
+                textViewRef: $textViewRef,
+                isEditable: forHost
             )
             .padding()
             .background(Color.white)

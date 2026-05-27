@@ -2442,7 +2442,26 @@ extension LiveStream {
             self.viewModelFreebie.options.removeAll()
             viewModelFreebie.options.append(contentsOf: title)
             usersCount = user.count
+            // Basecamp #9889548312 + #9929848961 (2026-05-26): show the buyer
+            // randomizer overlay immediately on get-freebie. Previously the
+            // overlay only appeared after get-freebie-winner, so buyers had
+            // no way to enter or see the wheel animate. Matches Android,
+            // which shows the freebieLayout + sets up the wheel here.
+            DispatchQueue.main.async {
+                navigateToRandomizer = true
+            }
             print("Freebie user data \(wheelTitles) for showId : \(freebie.show_id ?? "")")
+        }
+
+        // Basecamp #9889548312 + #9929848961 (2026-05-26): listen for the
+        // mid-flight spin event. When it arrives, the overlay is already
+        // visible (set in listenForFreebie above); we just confirm it stays
+        // up so the shuffle animation in RandomizerEnterTopView keeps running.
+        socketManagerChat.listenForFreebieSpinning { roomId, _, _ in
+            guard self.currentRoomID == roomId else { return }
+            DispatchQueue.main.async {
+                if !navigateToRandomizer { navigateToRandomizer = true }
+            }
         }
        
 
