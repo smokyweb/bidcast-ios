@@ -367,6 +367,14 @@ struct LiveStream: View {
             setupInitialState()
             loadInitialData()
             listenForRaidEvents()
+            // Basecamp #9934003774 (2026-05-27): listen for the host kicking us.
+            socketManagerChat.listenForKickedFromShow { msg in
+                toastMessage = msg
+                showToast = true
+                // Exit the room — host removed us, can't rejoin.
+                logoutRoom()
+                presentationMode.wrappedValue.dismiss()
+            }
         }
        
     }

@@ -104,6 +104,9 @@ final class SocketManagerService: NSObject, ObservableObject {
     @Published var isConnected = false
     @Published var rooms: [RoomModel] = []
     @Published var chats: [CommentModel] = []
+    // Basecamp #9934003774 (2026-05-27): live viewer list for the host kick-UI.
+    // Updated whenever active_show_users fires.
+    @Published var liveViewers: [FreebieUser] = []
     @Published var viewerCount: Int = 0
     @Published var showTime: String = "00:00:00"
     @Published var bidTime: String = "00:00"
@@ -1658,11 +1661,17 @@ extension SocketManagerService {
                 let payload = try JSONDecoder().decode(FreebieLiveUser.self, from: rawData)
 
                 DispatchQueue.main.async {
-                    completion?(payload,payload.users ?? [])
+                    // Basecamp #9934003774 (2026-05-27): mirror the active
+                    // viewer list onto liveViewers so the host kick-UI has a
+                    // reactive @Published source without needing a per-view
+                    // listener wiring. SocketManagerService is the single
+                    // source of truth for who's currently in the room.
+                    self.liveViewers = payload.users ?? []
+                    completion?(payload, payload.users ?? [])
                 }
 
                 self.logger.info(
-                    "🏆 Freebie users | showId=\(payload.show_id ?? "") "
+                    "🏆 Freebie users | showId=\(payload.show_id ?? "") count=\(payload.users?.count ?? 0)"
                 )
             } catch {
                 self.logger.error("❌ get-freebie decode error: \(error.localizedDescription)")
@@ -1670,6 +1679,41 @@ extension SocketManagerService {
         }
     }
 
+
+    // MARK: - Kick User (Basecamp #9934003774, 2026-05-27)
+    // Emits kick_user — host only. The socket server verifies the caller is
+    // the show's owner before persisting + executing the kick.
+    func kickUser(roomId: String, targetUserId: Int) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "room_id": roomId,
+                "target_user_id": targetUserId,
+            ]
+            socket.emit("kick_user", payload)
+            logger.info("📤 Emitted kick_user: room=\(roomId) target=\(targetUserId)")
+        }
+    }
+
+    // Listens for kick confirmation sent back to the host.
+    func listenForKickSuccess(completion: @escaping (_ targetUserId: Int) -> Void) {
+        socket.on("kick_user_success") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any],
+                  let targetId = json["target_user_id"] as? Int else { return }
+            DispatchQueue.main.async { completion(targetId) }
+            logger.info("✅ kick_user_success: removed \(targetId)")
+        }
+    }
+
+    // Listens for the kicked_from_show event (sent to the buyer who was kicked).
+    func listenForKickedFromShow(completion: @escaping (_ message: String) -> Void) {
+        socket.on("kicked_from_show") { [weak self] data, _ in
+            guard let self else { return }
+            let msg = (data.first as? [String: Any])?["message"] as? String ?? "You have been removed from this show."
+            DispatchQueue.main.async { completion(msg) }
+            logger.info("⚡ kicked_from_show: \(msg)")
+        }
+    }
 
     func enterInFreebie(room_id: String, userId: Int) {
         performIfConnected {

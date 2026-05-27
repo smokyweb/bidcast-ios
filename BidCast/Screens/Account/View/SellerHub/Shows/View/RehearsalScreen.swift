@@ -97,6 +97,9 @@ struct RehearsalScreen: View {
     @State var showFreebieSheet = false
     @State var showRaidSheet = false
     @State var showUserSheet = false
+    // Basecamp #9934003774 (2026-05-27): host viewer-list / kick sheet.
+    @State var showViewerListSheet = false
+    @State private var kickConfirmUser: FreebieUser? = nil
     
     @State private var selectedSellers: Int?
     
@@ -270,6 +273,8 @@ struct RehearsalScreen: View {
         .sheet(isPresented: $showNotesEditorSheet) { notesEditorSheet }
         
         .sheet(isPresented: $showNotesSheet) { notesSheet }
+        // Basecamp #9934003774 (2026-05-27): host viewer-list sheet for kick.
+        .sheet(isPresented: $showViewerListSheet) { viewerListSheetContent }
         .bottomSheet(
             isPresented: $showShopSheet,
             height: screenHeight * 0.85,
@@ -1106,12 +1111,117 @@ struct RehearsalScreen: View {
     }
     
     private var viewerCountView: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "eye.fill")
-            Text("\(socketManager.viewerCount)")
-                .font(.custom(poppinsSemiBold, size: 13))
+        // Basecamp #9934003774 (2026-05-27): tap viewer count to open the
+        // viewer list sheet for kick actions. Only useful for the host
+        // (this is the seller's RehearsalScreen / live screen).
+        Button {
+            showViewerListSheet = true
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "eye.fill")
+                Text("\(socketManager.viewerCount)")
+                    .font(.custom(poppinsSemiBold, size: 13))
+            }
+            .foregroundColor(.black)
         }
-        .foregroundColor(.black)
+    }
+
+    // Basecamp #9934003774 (2026-05-27): viewer list sheet content. Renders
+    // socketManager.liveViewers and lets the host tap Remove on any row.
+    @ViewBuilder
+    private var viewerListSheetContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("Viewers in this show")
+                    .font(.custom(poppinsSemiBold, size: 18))
+                Spacer()
+                Text("\(socketManager.liveViewers.count)")
+                    .font(.custom(poppinsSemiBold, size: 14))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 8)
+
+            Divider()
+
+            if socketManager.liveViewers.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "person.3")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary.opacity(0.5))
+                    Text("No viewers yet")
+                        .font(.custom(poppinsRegular, size: 14))
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(40)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 8) {
+                        ForEach(socketManager.liveViewers) { user in
+                            HStack(spacing: 12) {
+                                CustomProfileImage(
+                                    url: user.profile_image ?? "",
+                                    isCircular: true
+                                )
+                                .frame(width: 40, height: 40)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(user.username ?? user.name ?? "User")
+                                        .font(.custom(poppinsSemiBold, size: 14))
+                                        .foregroundColor(.primary)
+                                    if let name = user.name, !name.isEmpty, name != user.username {
+                                        Text(name)
+                                            .font(.custom(poppinsRegular, size: 12))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+
+                                Spacer()
+
+                                Button {
+                                    kickConfirmUser = user
+                                } label: {
+                                    Text("Remove")
+                                        .font(.custom(poppinsSemiBold, size: 12))
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color.red.opacity(0.1))
+                                        .foregroundColor(.red)
+                                        .cornerRadius(8)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemBackground))
+        .alert(
+            "Remove this viewer?",
+            isPresented: Binding(
+                get: { kickConfirmUser != nil },
+                set: { newValue in if !newValue { kickConfirmUser = nil } }
+            ),
+            presenting: kickConfirmUser
+        ) { user in
+            Button("Remove", role: .destructive) {
+                if let uid = user.id {
+                    socketManager.kickUser(roomId: roomId, targetUserId: uid)
+                }
+                kickConfirmUser = nil
+            }
+            Button("Cancel", role: .cancel) {
+                kickConfirmUser = nil
+            }
+        } message: { user in
+            Text("\(user.username ?? user.name ?? "This viewer") will be removed from your show and won't be able to rejoin until you end the show.")
+        }
     }
 
     private var liveBadge: some View {
