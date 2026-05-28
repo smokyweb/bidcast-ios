@@ -183,18 +183,26 @@ private struct ShowResultCard: View {
             }
 
             // Thumbnail (3:4 aspect)
-            ZStack(alignment: .topLeading) {
-                AsyncImage(url: thumbnailURL) { phase in
-                    switch phase {
-                    case .success(let img): img.resizable().scaledToFill()
-                    default: Color.gray.opacity(0.15)
+            // Basecamp #9935356432 (2026-05-28 round 2): the previous
+            // .scaledToFill + .aspectRatio(3/4, contentMode: .fill) + .clipped()
+            // chain produced thumbnails that overflowed their grid cell
+            // boundary, causing the show cards to visibly overlap each other
+            // and overlap the section header on iOS. Fix: anchor the aspect
+            // ratio on a transparent Color rectangle (which sets the cell
+            // height correctly), then overlay the AsyncImage filling that
+            // rectangle. .clipped() now actually constrains the image.
+            Color.gray.opacity(0.15)
+                .aspectRatio(3/4, contentMode: .fit)
+                .overlay(
+                    AsyncImage(url: thumbnailURL) { phase in
+                        switch phase {
+                        case .success(let img): img.resizable().scaledToFill()
+                        default: Color.gray.opacity(0.15)
+                        }
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .aspectRatio(3/4, contentMode: .fill)
+                )
                 .clipped()
                 .cornerRadius(12)
-            }
 
             // Title + date
             VStack(alignment: .leading, spacing: 2) {
