@@ -56,6 +56,12 @@ struct ProductDetailView: View {
     @State  var taxAmount : Int = 0
     @State var showBuyNowSheet = false
     @State var makeOfferSheet = false
+    // Basecamp #9933847997 (2026-05-27): pre-bid state.
+    @State private var showPreBidAlert: Bool = false
+    @State private var preBidAmountText: String = ""
+    @State private var preBidLoading: Bool = false
+    @State private var preBidExistingId: Int? = nil
+    @State private var preBidExistingAmount: Double? = nil
     
     @Binding var sellerInfo: SellerInfoResponse?
     
@@ -100,6 +106,14 @@ struct ProductDetailView: View {
                         PrimaryButton(title: "Buy Now",onButtonClick: {
                             showBuyNowSheet = true
                         })
+
+                        // Basecamp #9933847997 (2026-05-27): pre-bid button.
+                        // Shown on every product detail. Server-side validates
+                        // the product is in a pre-biddable state.
+                        PrimaryButton(title: preBidExistingId != nil ? "Update Pre-Bid" : "Pre-Bid", isOutLine: true, onButtonClick: {
+                            preBidAmountText = preBidExistingAmount.map { String(format: "%.2f", $0) } ?? ""
+                            showPreBidAlert = true
+                        }, btnTextColor: .orange, btnColor: .white)
                         
                     }
                     .padding(.horizontal, 16)
@@ -148,6 +162,21 @@ struct ProductDetailView: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: style)
             
         }
+        // Basecamp #9933847997 (2026-05-27): pre-bid alert with text-field input.
+        .alert(preBidExistingId != nil ? "Update Pre-Bid" : "Place Pre-Bid", isPresented: $showPreBidAlert) {
+            TextField("Amount in USD", text: $preBidAmountText)
+                .keyboardType(.decimalPad)
+            Button("Cancel", role: .cancel) { }
+            Button(preBidExistingId != nil ? "Update" : "Place") {
+                placePreBid()
+            }
+            if preBidExistingId != nil {
+                Button("Withdraw", role: .destructive) { withdrawPreBid() }
+            }
+        } message: {
+            Text("Lock in your bid before the auction starts. Applied automatically as the opening bid.")
+        }
+        .onAppear { loadCurrentPreBid() }
         .sheet(isPresented: $makeOfferSheet)   {
             MakeOfferBottomSheet(isPresented: $makeOfferSheet, listedPrice: "\(productPrice)", offerOptions: offerArr, onSendOffer: { text in
                 let text = "\(text ?? 0.0)"
@@ -311,6 +340,85 @@ struct ProductDetailView: View {
          
            
             
+        }
+    }
+
+    // MARK: - Basecamp #9933847997 (2026-05-27): Pre-Bid
+    private func loadCurrentPreBid() {
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "GET"
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            do {
+                let (data, _) = try await URLSession.shared.data(for: req)
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let rows = (json?["data"] as? [[String: Any]]) ?? []
+                let mine = rows.first { ($0["product_id"] as? Int) == productID }
+                await MainActor.run {
+                    if let m = mine {
+                        preBidExistingId = (m["id"] as? Int)
+                        if let amt = m["amount"] as? Double { preBidExistingAmount = amt }
+                        else if let amtS = m["amount"] as? String, let amt = Double(amtS) { preBidExistingAmount = amt }
+                    } else {
+                        preBidExistingId = nil
+                        preBidExistingAmount = nil
+                    }
+                }
+            } catch { /* no-op */ }
+        }
+    }
+
+    private func placePreBid() {
+        let amount = Double(preBidAmountText.replacingOccurrences(of: "$", with: "")) ?? 0
+        guard amount >= 1 else {
+            hudMsg = "Please enter $1 or more."; showhud = true; return
+        }
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            req.httpBody = try? JSONSerialization.data(withJSONObject: ["product_id": productID, "amount": amount])
+            do {
+                let (_, resp) = try await URLSession.shared.data(for: req)
+                let ok = (resp as? HTTPURLResponse)?.statusCode == 200
+                await MainActor.run {
+                    if ok {
+                        hudMsg = "Pre-bid placed."; showhud = true
+                        loadCurrentPreBid()
+                    } else {
+                        hudMsg = "Could not place pre-bid."; showhud = true
+                    }
+                }
+            } catch {
+                await MainActor.run { hudMsg = "Network error."; showhud = true }
+            }
+        }
+    }
+
+    private func withdrawPreBid() {
+        guard let id = preBidExistingId else { return }
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid/\(id)") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "DELETE"
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            do {
+                let (_, resp) = try await URLSession.shared.data(for: req)
+                let ok = (resp as? HTTPURLResponse)?.statusCode == 200
+                await MainActor.run {
+                    if ok {
+                        hudMsg = "Pre-bid withdrawn."; showhud = true
+                        preBidExistingId = nil
+                        preBidExistingAmount = nil
+                    }
+                }
+            } catch { /* no-op */ }
         }
     }
 }
