@@ -292,15 +292,17 @@ extension APIEndPoint: EndPointType {
         case .deleteAddress:
             return "delete-shipping-address"
         case .getLiveShows:
-            // Basecamp #9929113636 round 4 (2026-05-28): the seller-hub Past /
-            // Upcoming tabs were hitting /api/get-live-show which only accepts
-            // type "live|upcoming|popular" and rejects type=past with a 403
-            // validation error. That endpoint is the GLOBAL live feed. The
-            // correct one for "the seller's OWN shows" is /api/get-my-schedule-show
-            // — same as Android. Past tab has been silently broken until now;
-            // a 403 was getting parsed as an empty list so users saw "No past
-            // shows" or a stuck WatchVODCard.
-            return "get-my-schedule-show"
+            // Basecamp #9929113636 round 5 / Dom turreto BidSwipe error popup
+            // (2026-05-28 evening): REVERTED round 4 which incorrectly switched
+            // this endpoint to /api/get-my-schedule-show. The seller-hub Past
+            // tab actually uses .getScheduledShow (which already points at
+            // /api/get-my-schedule-show), NOT .getLiveShows. .getLiveShows is
+            // the GLOBAL Home-tab live feed (selectedTab="live|upcoming|popular")
+            // and MUST hit /api/get-live-show because /api/get-my-schedule-show
+            // rejects type=live with HTTP 403, causing an immediate error modal
+            // on Home-screen load. Dom hit this exact error popup post-login
+            // on TF340 because Home defaults to selectedTab="live".
+            return "get-live-show"
         case .getProfileById:
             return "get-profile-by-id"
             
