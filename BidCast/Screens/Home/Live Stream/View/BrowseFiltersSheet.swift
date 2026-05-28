@@ -27,6 +27,9 @@ struct BrowseFilters: Equatable {
     var shipCountry: String? = nil   // 2-letter ISO; nil = Any country
     var shipState: String = ""       // optional state/region free text
     var shipping: String? = nil      // free | reduced | nil(All)
+    // Basecamp #9938023997 (2026-05-28): multi-select category + subcategory filters.
+    var categoryIds: [Int] = []
+    var subCategoryIds: [Int] = []
 
     /// Returns true when at least one filter is set; used to render the
     /// little badge on the Filter button so the user can tell at a glance
@@ -38,9 +41,118 @@ struct BrowseFilters: Equatable {
         || shipCountry != nil
         || !shipState.trimmingCharacters(in: .whitespaces).isEmpty
         || shipping != nil
+        || !categoryIds.isEmpty
+        || !subCategoryIds.isEmpty
     }
 
     static let empty = BrowseFilters()
+}
+
+// MARK: - Category / Subcategory filter value types
+//
+// Thin wrappers so BrowseFiltersSheet doesn't import or depend on
+// SelectCategoryViewModel or any ObservableObject — the sheet is
+// deliberately self-contained (same pattern as tag autocomplete above).
+struct BrowseFilterCategory: Identifiable, Hashable {
+    let id: Int
+    let name: String
+}
+
+struct BrowseFilterSubcategory: Identifiable, Hashable {
+    let id: Int
+    let name: String
+    let categoryId: Int
+}
+
+// MARK: - FlowLayout helper (chip wrapping)
+//
+// iOS 16+ has Layout protocol; this simple version works on iOS 15+ too.
+// Chips wrap to the next line when they don't fit the available width.
+private struct FlowLayout<Content: View>: View {
+    let spacing: CGFloat
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        // Use a ZStack + GeometryReader approach for backward compat.
+        _VariadicView.Tree(FlowLayoutRoot(spacing: spacing), content: content)
+    }
+}
+
+private struct FlowLayoutRoot: _VariadicView_MultiViewRoot {
+    let spacing: CGFloat
+
+    @ViewBuilder
+    func body(children: _VariadicView.Children) -> some View {
+        GeometryReader { geo in
+            // Two-pass: first measure, then place.
+            // For simplicity we use a VStack+HStack wrapping approach that
+            // works without a custom Layout (iOS 15 compat).
+            // We use a ZStack + PreferenceKey trick to measure chip widths.
+            FlowLayoutImpl(items: children, spacing: spacing, totalWidth: geo.size.width)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+private struct FlowLayoutImpl: View {
+    let items: _VariadicView.Children
+    let spacing: CGFloat
+    let totalWidth: CGFloat
+    @State private var sizes: [CGSize] = []
+
+    var body: some View {
+        var width: CGFloat = 0
+        var rowHeights: [CGFloat] = [0]
+        var rowIndex = 0
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var positions: [CGPoint] = []
+
+        // Compute sizes based on cached measurements, fall back to a dummy
+        // 80×34 estimate so the first render isn't empty.
+        let measured = sizes.count == items.count ? sizes : Array(repeating: CGSize(width: 80, height: 34), count: items.count)
+
+        for (i, size) in measured.enumerated() {
+            if x + size.width > totalWidth && x > 0 {
+                x = 0
+                rowIndex += 1
+                rowHeights.append(0)
+                y += (rowHeights[rowIndex - 1]) + spacing
+            }
+            positions.append(CGPoint(x: x, y: y))
+            x += size.width + spacing
+            rowHeights[rowIndex] = max(rowHeights[rowIndex], size.height)
+        }
+        let totalHeight = y + (rowHeights.last ?? 0)
+
+        return ZStack(alignment: .topLeading) {
+            ForEach(Array(zip(items.indices, items)), id: \.0) { idx, child in
+                child
+                    .fixedSize()
+                    .background(
+                        GeometryReader { g -> Color in
+                            DispatchQueue.main.async {
+                                let s = g.size
+                                if self.sizes.count <= idx {
+                                    var arr = self.sizes
+                                    while arr.count <= idx { arr.append(.zero) }
+                                    self.sizes = arr
+                                }
+                                if self.sizes[idx] != s {
+                                    var arr = self.sizes
+                                    arr[idx] = s
+                                    self.sizes = arr
+                                }
+                            }
+                            return .clear
+                        }
+                    )
+                    .offset(x: idx < positions.count ? positions[idx].x : 0,
+                            y: idx < positions.count ? positions[idx].y : 0)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: totalHeight, alignment: .topLeading)
+    }
 }
 
 // MARK: - Hardcoded country list
@@ -94,6 +206,14 @@ struct BrowseFiltersSheet: View {
     @State private var allTags: [String] = []
     @State private var isLoadingTags: Bool = false
 
+    // Basecamp #9938023997 (2026-05-28): category + subcategory filter state.
+    @State private var allCategories: [BrowseFilterCategory] = []
+    @State private var isLoadingCategories: Bool = false
+    // subcatCache: category_id → flat list of its subcategories (populated lazily
+    // as the user selects categories; avoids redundant network calls).
+    @State private var subcatCache: [Int: [BrowseFilterSubcategory]] = [:]
+    @State private var isFetchingSubcats: Bool = false
+
     var body: some View {
         VStack(spacing: 0) {
             // Header — mirrors SortByBottomSheet's PrimarySheetHeader so the
@@ -104,7 +224,81 @@ struct BrowseFiltersSheet: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
-                    EmptyView().onAppear { fetchAllTags() }
+                    EmptyView().onAppear {
+                        fetchAllTags()
+                        fetchAllCategories()
+                    }
+
+                    // MARK: 0a) Categories ---------------------------
+                    filterSection(title: "Categories") {
+                        if isLoadingCategories {
+                            ProgressView().frame(maxWidth: .infinity, alignment: .center)
+                        } else if allCategories.isEmpty {
+                            Text("No categories available")
+                                .font(.custom(poppinsRegular, size: 13))
+                                .foregroundColor(.gray)
+                        } else {
+                            FlowLayout(spacing: 8) {
+                                ForEach(allCategories) { cat in
+                                    let selected = draft.categoryIds.contains(cat.id)
+                                    Button(action: {
+                                        toggleCategory(cat.id)
+                                    }) {
+                                        Text(cat.name)
+                                            .font(.custom(poppinsRegular, size: 13))
+                                            .foregroundColor(selected ? .white : .black)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 7)
+                                            .background(selected ? Color.defaultTheme : Color.white)
+                                            .cornerRadius(20)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(selected ? Color.defaultTheme : Color.gray.opacity(0.35), lineWidth: 1)
+                                            )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                        }
+                    }
+
+                    // MARK: 0b) Subcategories (only when ≥1 cat selected)
+                    if !draft.categoryIds.isEmpty {
+                        filterSection(title: "Subcategories") {
+                            if isFetchingSubcats {
+                                ProgressView().frame(maxWidth: .infinity, alignment: .center)
+                            } else {
+                                let subs = availableSubcategories
+                                if subs.isEmpty {
+                                    Text("No subcategories for selected categories")
+                                        .font(.custom(poppinsRegular, size: 13))
+                                        .foregroundColor(.gray)
+                                } else {
+                                    FlowLayout(spacing: 8) {
+                                        ForEach(subs) { sub in
+                                            let selected = draft.subCategoryIds.contains(sub.id)
+                                            Button(action: {
+                                                toggleSubcategory(sub.id)
+                                            }) {
+                                                Text(sub.name)
+                                                    .font(.custom(poppinsRegular, size: 13))
+                                                    .foregroundColor(selected ? .white : .black)
+                                                    .padding(.horizontal, 12)
+                                                    .padding(.vertical, 7)
+                                                    .background(selected ? Color.defaultTheme : Color.white)
+                                                    .cornerRadius(20)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 20)
+                                                            .stroke(selected ? Color.defaultTheme : Color.gray.opacity(0.35), lineWidth: 1)
+                                                    )
+                                            }
+                                            .buttonStyle(PlainButtonStyle())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     // MARK: 1) Show Format ----------------------------
                     filterSection(title: "Show Format") {
@@ -279,6 +473,8 @@ struct BrowseFiltersSheet: View {
                         .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.gray.opacity(0.4), lineWidth: 1))
                         .cornerRadius(24)
                 }
+                // Note: Clear button action already resets draft = .empty which
+                // includes the new categoryIds / subCategoryIds (both default []).
 
                 Button(action: {
                     onApply(normalized(draft))
@@ -379,6 +575,108 @@ struct BrowseFiltersSheet: View {
             DispatchQueue.main.async {
                 allTags = parsed
             }
+        }.resume()
+    }
+
+    // MARK: - Category / Subcategory helpers -------------------------
+
+    /// Flat list of subcategories across all currently selected categories,
+    /// built by unioning the per-category cache entries.
+    private var availableSubcategories: [BrowseFilterSubcategory] {
+        var seen = Set<Int>()
+        var result: [BrowseFilterSubcategory] = []
+        for catId in draft.categoryIds {
+            for sub in (subcatCache[catId] ?? []) {
+                if seen.insert(sub.id).inserted {
+                    result.append(sub)
+                }
+            }
+        }
+        return result
+    }
+
+    private func toggleCategory(_ id: Int) {
+        if let idx = draft.categoryIds.firstIndex(of: id) {
+            draft.categoryIds.remove(at: idx)
+            // Drop any selected subcats that belong to the deselected category
+            let removedSubs = Set((subcatCache[id] ?? []).map { $0.id })
+            draft.subCategoryIds.removeAll { removedSubs.contains($0) }
+        } else {
+            draft.categoryIds.append(id)
+            // Fetch subcats for this newly-selected category (if not cached)
+            if subcatCache[id] == nil {
+                fetchSubcategories(for: draft.categoryIds)
+            }
+        }
+    }
+
+    private func toggleSubcategory(_ id: Int) {
+        if let idx = draft.subCategoryIds.firstIndex(of: id) {
+            draft.subCategoryIds.remove(at: idx)
+        } else {
+            draft.subCategoryIds.append(id)
+        }
+    }
+
+    private func fetchAllCategories() {
+        guard allCategories.isEmpty else { return }
+        isLoadingCategories = true
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/get-category?get_count=false") else {
+            isLoadingCategories = false; return
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        let token = UserDefaults.standard.string(forKey: "access_token1") ?? ""
+        if !token.isEmpty { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        URLSession.shared.dataTask(with: req) { data, _, _ in
+            DispatchQueue.main.async { self.isLoadingCategories = false }
+            guard let data else { return }
+            struct Item: Decodable { let id: Int?; let name: String? }
+            struct Envelope: Decodable { let data: [Item]? }
+            let parsed: [BrowseFilterCategory]
+            if let env = try? JSONDecoder().decode(Envelope.self, from: data) {
+                parsed = (env.data ?? []).compactMap { item in
+                    guard let id = item.id, let name = item.name else { return nil }
+                    return BrowseFilterCategory(id: id, name: name)
+                }
+            } else { parsed = [] }
+            DispatchQueue.main.async { self.allCategories = parsed }
+        }.resume()
+    }
+
+    /// POST /api/get-subcategories with `category_ids` and union-merge results
+    /// into the per-category cache so we can quickly rebuild the available list.
+    private func fetchSubcategories(for categoryIds: [Int]) {
+        let uncached = categoryIds.filter { subcatCache[$0] == nil }
+        guard !uncached.isEmpty else { return }
+        isFetchingSubcats = true
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/get-subcategories") else {
+            isFetchingSubcats = false; return
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let token = UserDefaults.standard.string(forKey: "access_token1") ?? ""
+        if !token.isEmpty { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        req.httpBody = try? JSONSerialization.data(withJSONObject: ["category_ids": categoryIds])
+        URLSession.shared.dataTask(with: req) { data, _, _ in
+            DispatchQueue.main.async { self.isFetchingSubcats = false }
+            guard let data else { return }
+            // Response: { data: [{ id, name, subcategories: [{ id, name, category_id }] }] }
+            struct SubItem: Decodable { let id: Int?; let name: String?; let category_id: Int? }
+            struct CatItem: Decodable { let id: Int?; let subcategories: [SubItem]? }
+            struct Envelope: Decodable { let data: [CatItem]? }
+            guard let env = try? JSONDecoder().decode(Envelope.self, from: data) else { return }
+            var newCache = self.subcatCache
+            for cat in (env.data ?? []) {
+                guard let catId = cat.id else { continue }
+                let subs: [BrowseFilterSubcategory] = (cat.subcategories ?? []).compactMap { s in
+                    guard let sid = s.id, let sname = s.name else { return nil }
+                    return BrowseFilterSubcategory(id: sid, name: sname, categoryId: s.category_id ?? catId)
+                }
+                newCache[catId] = subs
+            }
+            DispatchQueue.main.async { self.subcatCache = newCache }
         }.resume()
     }
 

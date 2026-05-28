@@ -753,6 +753,11 @@ struct GetLiveShowsRequest : Encodable{
     var ship_state   : String?  = nil   // optional state/region
     var premier_shop : Int?     = nil   // 1 when on
     var shipping     : String?  = nil   // free | reduced
+    // Basecamp #9938023997 (2026-05-28): multi-select category + subcategory
+    // filters. Nil / empty arrays are omitted from the request body; the server
+    // treats their absence as "no filter" (same nullable behaviour as above).
+    var category_ids     : [Int]? = nil
+    var sub_category_ids : [Int]? = nil
 }
 
 struct LiveShowUpdateRequest : Encodable {
@@ -988,6 +993,10 @@ struct AgoraTokenRequest : Encodable{
 struct UnifiedSearchRequest: Encodable {
     var search: String
     var page: String
+    // Basecamp #9938023997 (2026-05-28): category + subcategory filter params
+    // now accepted by POST /api/v1/search.
+    var category_ids     : [Int]? = nil
+    var sub_category_ids : [Int]? = nil
 }
 
 // MARK: - QA #31 / #32 / #34 — USPS Order Workflow request bodies.

@@ -692,7 +692,10 @@ struct HomeViewScreen: View {
             ship_country: appliedFilters.shipCountry,
             ship_state: appliedFilters.shipState.isEmpty ? nil : appliedFilters.shipState,
             premier_shop: appliedFilters.premierShop ? 1 : nil,
-            shipping: appliedFilters.shipping
+            shipping: appliedFilters.shipping,
+            // Basecamp #9938023997 (2026-05-28): category + subcategory filter
+            category_ids: appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds,
+            sub_category_ids: appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
         )
         await viewModel.getLiveShows(param: params)
 
