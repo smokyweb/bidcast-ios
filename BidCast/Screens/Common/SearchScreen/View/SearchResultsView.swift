@@ -30,6 +30,15 @@ struct SearchResultsView: View {
     @State private var savedAcknowledged: Bool = false
     @State private var showSavedToast: Bool = false
 
+    // Basecamp #9933301500 round 5 (2026-05-28): filter sheet on search
+    // results. Trey: "the filter options should also appear on the search
+    // results page of all 3 platforms, they currently do not." Re-uses the
+    // BrowseFiltersSheet that Home + Explore already use, so the UX is
+    // identical. Apply re-runs the unified-search with the selected
+    // category_ids + sub_category_ids.
+    @State private var showFiltersSheet: Bool = false
+    @State private var appliedFilters: BrowseFilters = .empty
+
     private let cardColumns = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12),
@@ -98,6 +107,17 @@ struct SearchResultsView: View {
         }
         .navigationTitle("Search Results")
         .toolbar {
+            // Basecamp #9933301500 round 5: filter button on search results.
+            // Slotted to the LEFT of the bell so users hit Filter first, then
+            // bell to save the filtered query.
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: { showFiltersSheet = true }) {
+                    Image(systemName: appliedFilters.isActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(appliedFilters.isActive ? .orange : .primary)
+                }
+                .accessibilityLabel("Filter search results")
+            }
             // Basecamp #9933801536: save-search bell in the top-right corner.
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: saveCurrentSearch) {
@@ -108,6 +128,18 @@ struct SearchResultsView: View {
                 .accessibilityLabel("Save this search")
             }
         }
+        // Basecamp #9933301500 round 5: present the same BrowseFiltersSheet
+        // used by Home / Explore for consistency.
+        .sheet(isPresented: $showFiltersSheet) {
+            BrowseFiltersSheet(
+                isPresented: $showFiltersSheet,
+                draft: appliedFilters,
+                onApply: { newFilters in
+                    appliedFilters = newFilters
+                    rerunSearch()
+                }
+            )
+        }
         .toast(isPresenting: $showSavedToast) {
             AlertToast(
                 displayMode: .hud,
@@ -116,7 +148,18 @@ struct SearchResultsView: View {
                 style: alertStlyeSuccess
             )
         }
-        .onAppear { viewModel.search(query: initialQuery) }
+        .onAppear { rerunSearch() }
+    }
+
+    // Basecamp #9933301500 round 5: shared search runner so onAppear + filter
+    // apply both go through the same code path. Pulls category + subcategory
+    // ids out of BrowseFilters and hands them to the view model.
+    private func rerunSearch() {
+        let catIds = appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds
+        let subIds = appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
+        viewModel.search(query: initialQuery, page: 1,
+                         categoryIds: catIds,
+                         subCategoryIds: subIds)
     }
 
     // Basecamp #9933801536: POST the current query to /api/saved-searches
