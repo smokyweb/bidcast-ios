@@ -89,6 +89,10 @@ struct BrowseFiltersSheet: View {
     // keystroke.
     @State private var tagSuggestions: [String] = []
     @State private var tagDebounceTimer: Timer? = nil
+    // Basecamp #9933301500 (2026-05-27 round 3): all available tags for the
+    // dropdown picker — loaded once when the filter sheet opens.
+    @State private var allTags: [String] = []
+    @State private var isLoadingTags: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -100,6 +104,7 @@ struct BrowseFiltersSheet: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
+                    EmptyView().onAppear { fetchAllTags() }
 
                     // MARK: 1) Show Format ----------------------------
                     filterSection(title: "Show Format") {
@@ -120,20 +125,45 @@ struct BrowseFiltersSheet: View {
                     }
 
                     // MARK: 2) Tags -----------------------------------
+                    // Basecamp #9933301500 (2026-05-27 round 2/3): Trey reported
+                    // the tag field should be a dropdown of existing tags, not a
+                    // free-text input. Replaced with a Picker that loads all
+                    // popular tags on sheet open (no prefix needed).
                     filterSection(title: "Tag") {
                         VStack(alignment: .leading, spacing: 8) {
-                            TextField("Type a tag", text: $draft.tag)
-                                .font(.custom(poppinsRegular, size: 14))
-                                .padding(10)
-                                .background(Color.white)
-                                .cornerRadius(8)
-                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
-                                .onChange(of: draft.tag) { _, newValue in
-                                    scheduleTagFetch(prefix: newValue)
+                            if allTags.isEmpty && isLoadingTags {
+                                ProgressView().frame(maxWidth: .infinity, alignment: .center)
+                            } else if allTags.isEmpty {
+                                Text("No tags available yet")
+                                    .font(.custom(poppinsRegular, size: 13))
+                                    .foregroundColor(.gray)
+                            } else {
+                                // Picker-style menu of all available tags.
+                                Menu {
+                                    Button("Any tag") { draft.tag = "" }
+                                    Divider()
+                                    ForEach(allTags, id: \.self) { tag in
+                                        Button(tag) { draft.tag = tag }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Text(draft.tag.isEmpty ? "Any tag" : draft.tag)
+                                            .font(.custom(poppinsRegular, size: 14))
+                                            .foregroundColor(draft.tag.isEmpty ? .gray : .primary)
+                                        Spacer()
+                                        Image(systemName: "chevron.up.chevron.down")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding(10)
+                                    .background(Color.white)
+                                    .cornerRadius(8)
+                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
                                 }
+                            }
 
                             if !tagSuggestions.isEmpty {
-                                // Compact suggestion list — tap to fill.
+                                // legacy suggestion list kept for fallback
                                 VStack(alignment: .leading, spacing: 0) {
                                     ForEach(tagSuggestions, id: \.self) { suggestion in
                                         Button(action: {
@@ -326,6 +356,31 @@ struct BrowseFiltersSheet: View {
     }
 
     // MARK: - Tag autocomplete ----------------------------------------
+
+    // Basecamp #9933301500 (2026-05-27 round 3): fetch ALL popular tags
+    // (no prefix) to populate the dropdown picker on sheet open.
+    private func fetchAllTags() {
+        guard allTags.isEmpty else { return } // already loaded
+        isLoadingTags = true
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/tags/suggest") else {
+            isLoadingTags = false; return
+        }
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            DispatchQueue.main.async { isLoadingTags = false }
+            guard let data else { return }
+            struct TagItem: Decodable { let name: String? }
+            struct Envelope: Decodable { let data: [TagItem]? }
+            var parsed: [String] = []
+            if let env = try? JSONDecoder().decode(Envelope.self, from: data) {
+                parsed = (env.data ?? []).compactMap { $0.name }
+            } else if let arr = try? JSONDecoder().decode([String].self, from: data) {
+                parsed = arr
+            }
+            DispatchQueue.main.async {
+                allTags = parsed
+            }
+        }.resume()
+    }
 
     private func scheduleTagFetch(prefix: String) {
         // Debounce 250ms — long enough that a fast typist isn't fanning out
