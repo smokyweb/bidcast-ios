@@ -107,13 +107,18 @@ struct ProductDetailView: View {
                             showBuyNowSheet = true
                         })
 
-                        // Basecamp #9933847997 (2026-05-27): pre-bid button.
-                        // Shown on every product detail. Server-side validates
-                        // the product is in a pre-biddable state.
-                        PrimaryButton(title: preBidExistingId != nil ? "Update Pre-Bid" : "Pre-Bid", isOutLine: true, onButtonClick: {
-                            preBidAmountText = preBidExistingAmount.map { String(format: "%.2f", $0) } ?? ""
-                            showPreBidAlert = true
-                        }, btnTextColor: .orange, btnColor: .white)
+                        // Basecamp #9933847997 (2026-05-27) + #9938346351 (2026-05-28):
+                        // pre-bid button ONLY appears on live-auction products.
+                        // Buy-now products and products viewed from a profile page
+                        // (no show context) should never see the pre-bid button.
+                        // The `auction` flag on the product model is true when the
+                        // product is configured as a live-auction listing.
+                        if productDetail?.auction == true {
+                            PrimaryButton(title: preBidExistingId != nil ? "Update Pre-Bid" : "Pre-Bid", isOutLine: true, onButtonClick: {
+                                preBidAmountText = preBidExistingAmount.map { String(format: "%.2f", $0) } ?? ""
+                                showPreBidAlert = true
+                            }, btnTextColor: .orange, btnColor: .white)
+                        }
                         
                     }
                     .padding(.horizontal, 16)

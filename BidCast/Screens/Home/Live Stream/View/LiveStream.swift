@@ -385,8 +385,60 @@ struct LiveStream: View {
 
             mainContentView
                 .gesture(tapGesture)
-            
-          
+
+            // Basecamp #9938441753 (2026-05-28): if the show data never
+            // loads (socket room_create_get never fires, network issue,
+            // etc.), the previous behavior was a solid black screen with
+            // NO close button visible because the headerView lived inside
+            // mainContentView which only renders when liveShowsData has
+            // entries. Result: buyer is stuck and has to force-quit the app.
+            // Add a fallback overlay with a close button + status text so
+            // the buyer can ALWAYS exit the screen.
+            if liveShowsData.isEmpty {
+                liveStreamFallbackOverlay
+            }
+        }
+    }
+
+    // Fallback overlay shown when liveShowsData is empty. Provides a
+    // back/close button + a status message so the buyer can exit.
+    @ViewBuilder
+    private var liveStreamFallbackOverlay: some View {
+        VStack {
+            HStack {
+                Button(action: {
+                    // Tear down Agora + dismiss the screen.
+                    agoraManager.leaveChannel()
+                    SocketManagerService.shared.removeAllListeners()
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                        .background(Color.white.opacity(0.15))
+                        .clipShape(Circle())
+                }
+                .padding(.leading, 16)
+                Spacer()
+            }
+            .padding(.top, 50)
+            Spacer()
+            VStack(spacing: 12) {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(1.4)
+                Text("Loading show\u2026")
+                    .font(.system(size: 14))
+                    .foregroundColor(.white.opacity(0.7))
+                Text("If the show doesn't load in a few seconds, tap the X above to go back.")
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.5))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+            Spacer()
+            Spacer()
         }
     }
 
