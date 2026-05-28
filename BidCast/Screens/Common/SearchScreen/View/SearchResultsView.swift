@@ -50,11 +50,14 @@ struct SearchResultsView: View {
                     }
 
                     // MARK: - Products
+                    // Basecamp #9935356432 (2026-05-28 corrected): products render
+                    // as a single-column list of horizontal rows, NOT a 2-col grid.
+                    // Mirrors the seller-profile product list style from Trey's spec.
                     if !viewModel.products.isEmpty {
                         sectionHeader("Products", count: viewModel.products.count)
-                        LazyVGrid(columns: cardColumns, spacing: 12) {
+                        VStack(spacing: 8) {
                             ForEach(viewModel.products) { product in
-                                ProductResultCard(product: product)
+                                ProductResultRow(product: product)
                                     .onTapGesture { onProductTap?(product.id) }
                             }
                         }
@@ -166,9 +169,9 @@ private struct ShowResultCard: View {
     }
 }
 
-// MARK: - Product card (matches PWA product grid, includes seller username)
+// MARK: - Product row (single-column horizontal list, matches seller-profile product list)
 
-private struct ProductResultCard: View {
+private struct ProductResultRow: View {
     let product: SearchResultProduct
 
     private var thumbnailURL: URL? {
@@ -194,41 +197,48 @@ private struct ProductResultCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            // Square thumbnail
+        HStack(alignment: .top, spacing: 12) {
+            // Small square thumb LEFT
             AsyncImage(url: thumbnailURL) { phase in
                 switch phase {
                 case .success(let img): img.resizable().scaledToFill()
                 default: Color.gray.opacity(0.15)
                 }
             }
-            .frame(maxWidth: .infinity)
-            .aspectRatio(1, contentMode: .fill)
+            .frame(width: 72, height: 72)
             .clipped()
             .cornerRadius(8)
 
-            Text(product.title)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.black)
-                .lineLimit(1)
+            // Right-side stack
+            VStack(alignment: .leading, spacing: 2) {
+                Text(product.title)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.black)
+                    .lineLimit(2)
 
-            if !priceLabel.isEmpty {
-                Text(priceLabel)
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-            }
+                if !priceLabel.isEmpty {
+                    Text(priceLabel)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(.top, 2)
+                }
 
-            // Basecamp #9935356432 (2026-05-28): seller username on product cards.
-            if !sellerUsername.isEmpty {
-                Text("@\(sellerUsername)")
-                    .font(.system(size: 11))
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
+                // Basecamp #9935356432 (2026-05-28): seller username on product rows.
+                if !sellerUsername.isEmpty {
+                    Text("@\(sellerUsername)")
+                        .font(.system(size: 11))
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+                }
             }
+            Spacer()
         }
-        .padding(8)
-        .background(Color(.systemGray6))
+        .padding(10)
+        .background(Color.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color(.systemGray5), lineWidth: 1)
+        )
         .cornerRadius(10)
     }
 }
