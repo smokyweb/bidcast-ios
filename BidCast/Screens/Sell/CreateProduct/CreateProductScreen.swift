@@ -27,6 +27,10 @@ struct CreateProductScreen: View {
     @State var productTitle = ""
     @State var message = ""
     @State var isTappedFlash : Bool = false
+    // Basecamp #9933973683 (2026-05-27): flash sale state.
+    @State private var flashSalePriceText: String = ""
+    @State private var flashSaleStartsAt: Date = Date()
+    @State private var flashSaleEndsAt: Date = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
     @State var isTappedAccept : Bool = false
     @State var isTappedReserve: Bool = false
     @State var showhud: Bool = false
@@ -345,6 +349,56 @@ struct CreateProductScreen: View {
                     .padding(.horizontal, 12)
                     
                     VStack(alignment:.leading,spacing: 8){
+
+                        // Basecamp #9933973683 (2026-05-27): flash sale toggle + details.
+                        Toggle(isOn: $isTappedFlash) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Flash Sale")
+                                    .font(.custom(poppinsBold, size: 14))
+                                Text("Set a time-limited discount price")
+                                    .font(.custom(poppinsRegular, size: 11))
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .onChange(of: isTappedFlash) { _, on in
+                            request.flash_sale = on ? "1" : "0"
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+
+                        if isTappedFlash {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack(spacing: 6) {
+                                    Text("$")
+                                        .font(.custom(poppinsBold, size: 14))
+                                        .foregroundColor(.red)
+                                    TextField("Sale price (must be < regular price)", text: $flashSalePriceText)
+                                        .keyboardType(.decimalPad)
+                                        .font(.custom(poppinsRegular, size: 14))
+                                        .padding(8)
+                                        .background(Color.white)
+                                        .cornerRadius(8)
+                                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.orange.opacity(0.4), lineWidth: 1))
+                                }
+                                HStack(spacing: 8) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Starts at").font(.custom(poppinsBold, size: 11)).foregroundColor(.orange)
+                                        DatePicker("", selection: $flashSaleStartsAt).labelsHidden().datePickerStyle(.compact)
+                                    }
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Ends at").font(.custom(poppinsBold, size: 11)).foregroundColor(.orange)
+                                        DatePicker("", selection: $flashSaleEndsAt, in: Date()...).labelsHidden().datePickerStyle(.compact)
+                                    }
+                                }
+                                Text("Buyers see a flash-sale badge + countdown on this product during the window.")
+                                    .font(.custom(poppinsRegular, size: 11))
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(12)
+                            .background(Color.orange.opacity(0.06))
+                            .cornerRadius(10)
+                            .padding(.horizontal, 12)
+                        }
 
                         // Sales Options - Enhanced Toggle Cards
                         DropDownSelection(

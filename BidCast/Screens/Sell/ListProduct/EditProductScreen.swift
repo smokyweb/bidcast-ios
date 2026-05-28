@@ -24,6 +24,10 @@ struct EditProductScreen: View {
     @State var message = ""
     
     @State var isTappedFlash: Bool = false
+    // Basecamp #9933973683 (2026-05-27): flash sale price + window state.
+    @State private var flashSalePriceText: String = ""
+    @State private var flashSaleStartsAt: Date = Date()
+    @State private var flashSaleEndsAt: Date = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
     @State var isTappedAccept: Bool = false
     @State var isTappedReserve: Bool = false
     
@@ -438,6 +442,41 @@ struct EditProductScreen: View {
                                 isOn: $isTappedFlash
                             )
                             .padding(.horizontal, 12)
+
+                            // Basecamp #9933973683 (2026-05-27): flash sale price + window fields
+                            if isTappedFlash {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack(spacing: 6) {
+                                        Text("$")
+                                            .font(.custom(poppinsBold, size: 14))
+                                            .foregroundColor(.red)
+                                        TextField("Sale price (must be < regular price)", text: $flashSalePriceText)
+                                            .keyboardType(.decimalPad)
+                                            .font(.custom(poppinsRegular, size: 14))
+                                            .padding(8)
+                                            .background(Color.white)
+                                            .cornerRadius(8)
+                                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.orange.opacity(0.4), lineWidth: 1))
+                                    }
+                                    HStack(spacing: 8) {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Starts at").font(.custom(poppinsBold, size: 11)).foregroundColor(.orange)
+                                            DatePicker("", selection: $flashSaleStartsAt).labelsHidden().datePickerStyle(.compact)
+                                        }
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Ends at").font(.custom(poppinsBold, size: 11)).foregroundColor(.orange)
+                                            DatePicker("", selection: $flashSaleEndsAt, in: Date()...).labelsHidden().datePickerStyle(.compact)
+                                        }
+                                    }
+                                    Text("Buyers see a flash-sale badge + countdown during the window.")
+                                        .font(.custom(poppinsRegular, size: 11))
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(12)
+                                .background(Color.orange.opacity(0.06))
+                                .cornerRadius(10)
+                                .padding(.horizontal, 12)
+                            }
                             
                             EnhancedToggleCard(
                                 title: "Accept Offers",
@@ -863,11 +902,48 @@ struct EditProductScreen: View {
                 // 🔹 Call product update API
                 self.viewModel.errorMessage?.removeAll()
                 try await viewModel.storeProduct(productId: productId, param: productRequest)
+
+                // Basecamp #9933973683 (2026-05-27): if flash sale on, follow up
+                // with the dedicated flash-sale endpoint to set price + window.
+                if isTappedFlash, let price = Double(flashSalePriceText), price > 0 {
+                    await setFlashSale(productId: productId, price: price, startsAt: flashSaleStartsAt, endsAt: flashSaleEndsAt)
+                } else if !isTappedFlash {
+                    // Turned off → clear any existing flash sale terms server-side.
+                    await clearFlashSale(productId: productId)
+                }
                 storeSuccess()
             }
         }
     }
     
+    // Basecamp #9933973683 (2026-05-27): flash sale API helpers.
+    private func setFlashSale(productId: Int, price: Double, startsAt: Date, endsAt: Date) async {
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/flash-sale") else { return }
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+        let isoFmt = ISO8601DateFormatter()
+        let body: [String: Any] = [
+            "product_id": productId,
+            "flash_sale_price": price,
+            "starts_at": isoFmt.string(from: startsAt),
+            "ends_at": isoFmt.string(from: endsAt),
+        ]
+        req.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        do { _ = try await URLSession.shared.data(for: req) } catch { print("setFlashSale failed: \(error)") }
+    }
+
+    private func clearFlashSale(productId: Int) async {
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/flash-sale/\(productId)") else { return }
+        var req = URLRequest(url: url)
+        req.httpMethod = "DELETE"
+        req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        do { _ = try await URLSession.shared.data(for: req) } catch { print("clearFlashSale failed: \(error)") }
+    }
+
     func categorySuccess() {
         let response = viewModel.categoryResponse
         if response?.status == "success" {

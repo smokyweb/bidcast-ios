@@ -165,6 +165,10 @@ struct ProductDataModel1: Codable, Identifiable {
     var acceptOffers: Bool?
     var auction: Bool?
     var flashSale: Bool?
+    // Basecamp #9933973683 (2026-05-27): flash sale price + window.
+    var flashSalePrice: Double?
+    var flashSaleStartsAt: String?
+    var flashSaleEndsAt: String?
     var reserveForLive: Bool?
     var hazardousMaterial: Bool?
 
