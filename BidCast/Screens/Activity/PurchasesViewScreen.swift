@@ -12,9 +12,21 @@ struct PurchasesViewScreen: View {
     @State private var userId: String = ""
     @State private var userImage: String = ""
     @State private var userName: String = ""
+    // Basecamp #9934033253 (2026-05-27): buyer cancel-order state
+    @State private var showCancelConfirm: Bool = false
+    @State private var cancelLoading: Bool = false
+    @State private var cancelError: String? = nil
+    @State private var localStatusOverride: String? = nil
     
     var onTapOrderTracking: ((PurchasedOrderModel?) -> Void)?
     var onTapUserProfile: ((String, String, String) -> Void)?
+    var onOrderCancelled: ((Int) -> Void)? = nil
+
+    // Basecamp #9934033253 (2026-05-27): show cancel button when order status is cancellable.
+    private var canCancel: Bool {
+        let s = (localStatusOverride ?? purchaseList?.status ?? "").lowercased()
+        return s == "pending" || s == "processing"
+    }
     
     private var isProductSet: Bool {
         purchaseList?.productSet != nil
@@ -137,6 +149,32 @@ struct PurchasesViewScreen: View {
 
                    
                 }
+
+                // Basecamp #9934033253 (2026-05-27): cancel order button when status is pending/processing.
+                if canCancel {
+                    Button(action: {
+                        showCancelConfirm = true
+                    }) {
+                        HStack(spacing: 4) {
+                            if cancelLoading { ProgressView().scaleEffect(0.7) }
+                            Text(cancelLoading ? "Cancelling…" : "Cancel Order")
+                                .font(.custom(poppinsSemiBold, size: 11))
+                                .foregroundColor(.red)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.red.opacity(0.08))
+                        .clipShape(Capsule())
+                    }
+                    .disabled(cancelLoading)
+                    .padding(.top, 4)
+                }
+                if let err = cancelError {
+                    Text(err)
+                        .font(.custom(poppinsRegular, size: 11))
+                        .foregroundColor(.red)
+                        .padding(.top, 2)
+                }
             }
             .padding(.horizontal,isProductSet ? 12 : 0)
     
@@ -152,8 +190,54 @@ struct PurchasesViewScreen: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+        .alert("Cancel this order?", isPresented: $showCancelConfirm) {
+            Button("Cancel", role: .cancel) { }
+            Button("Confirm", role: .destructive) {
+                cancelOrder()
+            }
+        } message: {
+            Text("You can’t undo this. The seller will be notified.")
+        }
     }
-    
+
+    // Basecamp #9934033253 (2026-05-27): POST /api/product/cancel-order then update UI.
+    private func cancelOrder() {
+        guard let orderId = purchaseList?.id, orderId > 0 else { return }
+        cancelLoading = true
+        cancelError = nil
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/cancel-order") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            let body: [String: Any] = ["order_id": orderId]
+            req.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            do {
+                let (data, resp) = try await URLSession.shared.data(for: req)
+                let http = resp as? HTTPURLResponse
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let statusStr = (json?["status"] as? String) ?? ""
+                let msg = (json?["message"] as? String) ?? ""
+                await MainActor.run {
+                    cancelLoading = false
+                    if (http?.statusCode == 200 && statusStr == "success") {
+                        localStatusOverride = "cancelled"
+                        onOrderCancelled?(orderId)
+                    } else {
+                        cancelError = msg.isEmpty ? "Could not cancel order." : msg
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    cancelLoading = false
+                    cancelError = "Network error."
+                }
+            }
+        }
+    }
+
     func formattedDate(_ isoDate: String?) -> String {
         guard let isoDate = isoDate,
               let date = ISO8601DateFormatter().date(from: isoDate) else { return "N/A" }
