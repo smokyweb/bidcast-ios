@@ -14,6 +14,14 @@ struct SavedSearchesScreen: View {
     @State private var deletingId: Int? = nil
     var onItemTap: ((String) -> Void)? = nil
 
+    // Basecamp #9933801536 round 3 (2026-05-28): tapping a saved search must
+    // re-run the search. Previously this called an unset onItemTap closure +
+    // dismissed the page, so the user just saw the screen close with nothing
+    // happening. Now we push the SearchResultsView so the saved query is
+    // re-run in place.
+    @State private var navigateQuery: String? = nil
+    @State private var navigateActive: Bool = false
+
     var body: some View {
         VStack(spacing: 0) {
             // Top bar
@@ -69,8 +77,9 @@ struct SavedSearchesScreen: View {
                 List {
                     ForEach(items) { item in
                         SavedSearchRow(item: item, onRunQuery: { q in
-                            onItemTap?(q)
-                            presentationMode.wrappedValue.dismiss()
+                            // Basecamp #9933801536 round 3: route to results.
+                            navigateQuery = q
+                            navigateActive = true
                         }, onDelete: { id in
                             Task { await deleteRow(id: id) }
                         }, isDeleting: deletingId == item.id)
@@ -78,6 +87,14 @@ struct SavedSearchesScreen: View {
                 }
                 .listStyle(.plain)
             }
+
+            // Hidden NavigationLink that fires when a row is tapped.
+            NavigationLink(
+                destination: SearchResultsView(initialQuery: navigateQuery ?? ""),
+                isActive: $navigateActive,
+                label: { EmptyView() }
+            )
+            .hidden()
         }
         .navigationBarHidden(true)
         .onAppear { Task { await refresh() } }

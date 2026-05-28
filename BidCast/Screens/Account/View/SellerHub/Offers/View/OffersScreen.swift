@@ -58,6 +58,14 @@ struct OffersScreen: View {
                                          topLabel: { offer in offerCount(for: offer) },
                                          bottomLabel: { $0.description.localized})
                     if offerList.count != 0{
+                        // Basecamp #9938459971 round 2 (2026-05-28): SwiftUI was
+                        // not re-rendering ActivityCell after status changed
+                        // because ForEach used `id: \.element.id` (offer.id) which
+                        // stayed constant across the accept/decline refresh.
+                        // Combine offer id + status into the ForEach id so the
+                        // row identity changes when the status flips, forcing
+                        // a fresh render with the correct accept/accepted/rejected
+                        // button layout.
                         ForEach(Array(offerList.enumerated()), id: \.element.id) { i, txn in
                             ActivityCell(
                                 offerListing: txn,
@@ -70,6 +78,7 @@ struct OffersScreen: View {
                                 },
                                 status: txn.status ?? ""
                             )
+                            .id("\(txn.id ?? 0)-\(txn.status ?? "")")
                             .padding([.leading, .trailing], 15)
                             .onAppear {
                                 Task {
