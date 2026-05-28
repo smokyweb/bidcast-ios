@@ -10,6 +10,7 @@
 		084004A97DA7A27403BD5E87 /* RandomizerTemplatePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7B73BA9A2BE0441148029 /* RandomizerTemplatePickerSheet.swift */; };
 		0F7E84EC14120F1525CC55B2 /* SlotEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0140057707B48F3C77690B8D /* SlotEditorSheet.swift */; };
 		3504BCAC2E00040A0069182D /* RehearsalScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3504BCAB2E00040A0069182D /* RehearsalScreen.swift */; };
+		B1C2D3E4F5060001B1C2D3E4 /* CoHostPairingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5060002B1C2D3E4 /* CoHostPairingSheet.swift */; };
 		3504BCAF2E000A3D0069182D /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCAE2E000A3D0069182D /* FirebaseAI */; };
 		3504BCB12E000A3D0069182D /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCB02E000A3D0069182D /* FirebaseAnalytics */; };
 		3504BCB32E000A3D0069182D /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCB22E000A3D0069182D /* FirebaseAnalyticsCore */; };
@@ -656,6 +657,7 @@
 /* Begin PBXFileReference section */
 		0140057707B48F3C77690B8D /* SlotEditorSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SlotEditorSheet.swift; sourceTree = "<group>"; };
 		3504BCAB2E00040A0069182D /* RehearsalScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalScreen.swift; sourceTree = "<group>"; };
+		B1C2D3E4F5060002B1C2D3E4 /* CoHostPairingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoHostPairingSheet.swift; sourceTree = "<group>"; };
 		3504BCE42E000A610069182D /* FireBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBase.swift; sourceTree = "<group>"; };
 		3504BCE62E00418F0069182D /* ZegoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoManager.swift; sourceTree = "<group>"; };
 		35246EC92E7ABBFB009D7513 /* DolbyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DolbyManager.swift; sourceTree = "<group>"; };
@@ -3350,6 +3352,7 @@
 			children = (
 				D409725C2F0D33CE00165988 /* UserScreenFreeBie.swift */,
 				3504BCAB2E00040A0069182D /* RehearsalScreen.swift */,
+				B1C2D3E4F5060002B1C2D3E4 /* CoHostPairingSheet.swift */,
 				D6A27F972EF1716000CF5E7A /* ProductShopRehersalScreen.swift */,
 				D6631E6C2ECF429B00704ED1 /* PollPreviewCardView.swift */,
 				D6631E682ECF196D00704ED1 /* LivePollView.swift */,
@@ -5067,6 +5070,7 @@
 				99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */,
 				99C909B22DC8CD930054620B /* APIManager3.swift in Sources */,
 				3504BCAC2E00040A0069182D /* RehearsalScreen.swift in Sources */,
+				B1C2D3E4F5060001B1C2D3E4 /* CoHostPairingSheet.swift in Sources */,
 				D4CAEC5C2DE6F50600705CD7 /* ReferralCodeCardView.swift in Sources */,
 				35BA4A422DE86E8300EEC92A /* SendGiftScreen.swift in Sources */,
 				D4CAEC572DE6F11F00705CD7 /* AffiliateProgramViewModel.swift in Sources */,
@@ -5439,7 +5443,7 @@
 				CODE_SIGN_ENTITLEMENTS = BidCast/BidCast.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 329;
+				CURRENT_PROJECT_VERSION = 330;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -5496,7 +5500,7 @@
 				CODE_SIGN_ENTITLEMENTS = BidCast/BidCast.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 329;
+				CURRENT_PROJECT_VERSION = 330;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -5545,7 +5549,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 329;
+				CURRENT_PROJECT_VERSION = 330;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -5568,7 +5572,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 329;
+				CURRENT_PROJECT_VERSION = 330;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -5590,7 +5594,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 329;
+				CURRENT_PROJECT_VERSION = 330;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -5612,7 +5616,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 329;
+				CURRENT_PROJECT_VERSION = 330;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;

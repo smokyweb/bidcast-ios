@@ -63,6 +63,8 @@ struct RehearsalScreen: View {
     // sheet so hosts can build a custom randomizer mid-stream.
     @State private var showRandomizerPicker: Bool = false
     @State private var selectedRandomizerTemplateId: Int? = nil
+    // Basecamp #9934001770 (2026-05-27): co-host pairing sheet.
+    @State private var showCoHostPairing: Bool = false
     
 
     @State private var showPollSheet : Bool = false
@@ -273,6 +275,11 @@ struct RehearsalScreen: View {
             // pre-wheel template picker. Includes a Build New row that
             // opens the existing RandomizerTemplateBuilderView inline.
             RandomizerTemplatePickerSheet(selectedTemplateId: $selectedRandomizerTemplateId)
+        }
+        // Basecamp #9934001770 (2026-05-27): co-host pairing sheet.
+        // showId derived from roomId which has format live_room_<userId>_<showId>.
+        .sheet(isPresented: $showCoHostPairing) {
+            CoHostPairingSheet(scheduleShowId: Int(roomId.split(separator: "_").last ?? "0") ?? 0)
         }
        
  
@@ -980,6 +987,11 @@ struct RehearsalScreen: View {
                     print("Create Poll")
                     showPollSheet = true
                     showSellSheet = false
+                },
+                onPairSecondDevice: {
+                    // Basecamp #9934001770 (2026-05-27): open co-host pairing.
+                    showSellSheet = false
+                    showCoHostPairing = true
                 },
                 onZoomOut: {
                     print("Zoom Out")

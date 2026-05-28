@@ -23,6 +23,8 @@ struct MoreOptionsScreen: View {
     var onClickRandomizer: () -> Void
     var onRaid: () -> Void
     var onCreatePoll: () -> Void
+    // Basecamp #9934001770 (2026-05-27): co-host pairing.
+    var onPairSecondDevice: (() -> Void)? = nil
     var onZoomOut: () -> Void
     var onZoomIn: () -> Void
     var onMicToggle: () -> Void
@@ -172,6 +174,11 @@ struct MoreOptionsScreen: View {
                                 OptionGridButtonView(label: "Freebie", icon: "tag", isSelected: selectedOption == "Freebie", action: {
                                     selectedOption = "Freebie"
                                     onClickRandomizer()
+                                })
+                                // Basecamp #9934001770 (2026-05-27): pair a second device as co-host.
+                                OptionGridButtonView(label: "Pair Device", icon: "iphone.and.arrow.forward", isSelected: selectedOption == "Pair Device", action: {
+                                    selectedOption = "Pair Device"
+                                    onPairSecondDevice?()
                                 })
                             }
                             .padding(.horizontal, 16)
