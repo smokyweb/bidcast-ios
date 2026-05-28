@@ -20,6 +20,14 @@ struct CoHostPairingSheet: View {
     @State private var statusColor: Color = .secondary
     @State private var isGenerating: Bool = false
 
+    // Basecamp #9934001770 (2026-05-28 round 4): poll the backend every 3s
+    // while the pairing is pending so the host UI can flip the moment the
+    // second device claims the code. No socket plumbing required — just a
+    // Timer firing GET /api/product/co-host/{id}. Auto-stops on status
+    // change, on sheet dismiss, or after the code expires.
+    @State private var pollTimer: Timer? = nil
+    @State private var coHostJoinedName: String? = nil
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -106,6 +114,7 @@ struct CoHostPairingSheet: View {
             Spacer()
         }
         .onAppear { Task { await generateCode() } }
+        .onDisappear { stopPolling() }
     }
 
     private func generateCode() async {
@@ -135,6 +144,8 @@ struct CoHostPairingSheet: View {
                     }
                     statusMessage = "Share this code with your second device."
                     statusColor = .green
+                    // Start polling now that we have an id.
+                    startPolling()
                 } else {
                     statusMessage = (json?["message"] as? String) ?? "Could not generate code."
                     statusColor = .red
@@ -149,6 +160,68 @@ struct CoHostPairingSheet: View {
         }
     }
 
+    // MARK: - Status polling (Basecamp #9934001770 round 4)
+    private func startPolling() {
+        stopPolling() // belt-and-suspenders
+        // Capture the id once outside the closure so we don't re-read state
+        // each tick (avoids any race during dismiss).
+        guard pairingId != nil else { return }
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
+            Task { await pollStatus() }
+        }
+    }
+
+    private func stopPolling() {
+        pollTimer?.invalidate()
+        pollTimer = nil
+    }
+
+    private func pollStatus() async {
+        guard let id = pairingId else { stopPolling(); return }
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/\(id)") else { return }
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+        do {
+            let (data, _) = try await URLSession.shared.data(for: req)
+            let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            let status = (json?["status"] as? String) ?? ""
+            guard status == "success", let row = json?["data"] as? [String: Any] else { return }
+            let pairingStatus = (row["status"] as? String) ?? ""
+            await MainActor.run {
+                switch pairingStatus {
+                case "active":
+                    // Co-host joined — grab their name if available, stop
+                    // polling, show confirmation briefly, then dismiss.
+                    stopPolling()
+                    if let coHost = row["co_host_user"] as? [String: Any] {
+                        coHostJoinedName = (coHost["username"] as? String) ?? (coHost["name"] as? String)
+                    }
+                    statusMessage = "✅ \(coHostJoinedName ?? "Co-host") joined! Closing…"
+                    statusColor = .green
+                    // Brief delay so the host sees the success message.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                case "expired":
+                    stopPolling()
+                    statusMessage = "Code expired. Generate a new one."
+                    statusColor = .orange
+                case "revoked":
+                    stopPolling()
+                    statusMessage = "Pairing revoked."
+                    statusColor = .gray
+                default:
+                    // Still pending — keep polling.
+                    break
+                }
+            }
+        } catch {
+            // Transient network errors: don't stop polling, just skip this tick.
+        }
+    }
+
     private func revokeCode() async {
         guard let id = pairingId else { return }
         guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/\(id)") else { return }
@@ -159,6 +232,7 @@ struct CoHostPairingSheet: View {
         do {
             _ = try await URLSession.shared.data(for: req)
             await MainActor.run {
+                stopPolling()
                 pairingCode = "——————"
                 pairingId = nil
                 expiresAt = nil
