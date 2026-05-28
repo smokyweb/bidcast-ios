@@ -9,8 +9,13 @@
 //  square thumb, title, price, AND seller username. Users render as full-width
 //  rows with real profile images (unchanged behavior, just richer art).
 //
+//  Basecamp #9933801536 (2026-05-28): add save-search bell button to the
+//  navigation bar so users can save the current query from search results.
+//  Taps the same SavedSearchAPI.create() already used by CustomSearchBar.
+//
 
 import SwiftUI
+import AlertToast
 
 struct SearchResultsView: View {
     @StateObject private var viewModel = SearchViewModel()
@@ -19,6 +24,11 @@ struct SearchResultsView: View {
     var onShowTap: ((Int) -> Void)?
     var onUserTap: ((Int) -> Void)?
     var onProductTap: ((Int) -> Void)?
+
+    // Basecamp #9933801536: track whether the search was saved so the bell
+    // flips to filled + orange after a successful save.
+    @State private var savedAcknowledged: Bool = false
+    @State private var showSavedToast: Bool = false
 
     private let cardColumns = [
         GridItem(.flexible(), spacing: 12),
@@ -87,7 +97,40 @@ struct SearchResultsView: View {
             .padding(.bottom, 32)
         }
         .navigationTitle("Search Results")
+        .toolbar {
+            // Basecamp #9933801536: save-search bell in the top-right corner.
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: saveCurrentSearch) {
+                    Image(systemName: savedAcknowledged ? "bell.fill" : "bell")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(savedAcknowledged ? .orange : .primary)
+                }
+                .accessibilityLabel("Save this search")
+            }
+        }
+        .toast(isPresenting: $showSavedToast) {
+            AlertToast(
+                displayMode: .hud,
+                type: .regular,
+                title: "Search saved — you'll get notified when something matches",
+                style: alertStlyeSuccess
+            )
+        }
         .onAppear { viewModel.search(query: initialQuery) }
+    }
+
+    // Basecamp #9933801536: POST the current query to /api/saved-searches
+    // and flip the bell icon to filled on success.
+    private func saveCurrentSearch() {
+        let trimmed = initialQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        Task {
+            await SavedSearchAPI.create(query: trimmed, filters: nil)
+            await MainActor.run {
+                savedAcknowledged = true
+                showSavedToast = true
+            }
+        }
     }
 
     private func sectionHeader(_ title: String, count: Int) -> some View {

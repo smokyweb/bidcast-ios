@@ -411,7 +411,15 @@ struct InventoryScreen: View {
                 ) {
                     clearFilter()
                     request.search = searchText
-                    selectedCategoryId = navigatedFrom == .account ? [] : []
+                    // Basecamp #9937888275 (2026-05-28): when launched from the
+                    // "Add Products" flow, the caller already initialised
+                    // selectedCategoryId with the show's category ID so the API
+                    // only returns products in that category. DO NOT overwrite
+                    // it here — clearFilter() already preserves it for the
+                    // .addProduct navigation context.
+                    if navigatedFrom == .account {
+                        selectedCategoryId = []
+                    }
                     async let inventoryTask: () = fetchInventory(for: segment, page: currentPage)
                     // 👇 These run in parallel
                     async let categoryTask: () = categoryViewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
