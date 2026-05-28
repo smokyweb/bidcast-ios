@@ -16,6 +16,10 @@ struct ProductDetailsModel: Codable {
     var mailClass, processingCategory: String?
     var description, quantity, purchasedQuantity, pricing: String?
     var flashSale, acceptOffers, reserveForLive, auction: Bool?
+    // Basecamp #9933973683 (2026-05-27): flash sale price + window.
+    var flashSalePrice: Double?
+    var flashSaleStartsAt: String?
+    var flashSaleEndsAt: String?
     var shippingProfileID: Int?
     var status, productShow: String?
     var images: [String]?
@@ -41,6 +45,10 @@ struct ProductDetailsModel: Codable {
         case purchasedQuantity = "purchased_quantity"
         case pricing
         case flashSale = "flash_sale"
+        // Basecamp #9933973683 (2026-05-27)
+        case flashSalePrice = "flash_sale_price"
+        case flashSaleStartsAt = "flash_sale_starts_at"
+        case flashSaleEndsAt = "flash_sale_ends_at"
         case acceptOffers = "accept_offers"
         case reserveForLive = "reserve_for_live"
         case auction

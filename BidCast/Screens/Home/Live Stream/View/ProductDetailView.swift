@@ -560,9 +560,56 @@ extension View {
 
 // MARK: - PRODUCT HEADER INFO
 extension ProductDetailView {
+    // Basecamp #9933973683 (2026-05-27): is this product currently in an
+    // active flash sale window?
+    private var isFlashSaleActive: Bool {
+        guard productDetail?.flashSale == true,
+              let price = productDetail?.flashSalePrice, price > 0,
+              let endsRaw = productDetail?.flashSaleEndsAt,
+              let ends = ISO8601DateFormatter().date(from: endsRaw.replacingOccurrences(of: " ", with: "T") + "Z")
+                  ?? DateFormatter.bidcastISO.date(from: endsRaw),
+              ends > Date()
+        else { return false }
+        if let startsRaw = productDetail?.flashSaleStartsAt,
+           let starts = ISO8601DateFormatter().date(from: startsRaw.replacingOccurrences(of: " ", with: "T") + "Z")
+               ?? DateFormatter.bidcastISO.date(from: startsRaw),
+           starts > Date() {
+            return false
+        }
+        return true
+    }
+
+    private var flashSaleCountdownText: String {
+        guard let endsRaw = productDetail?.flashSaleEndsAt,
+              let ends = ISO8601DateFormatter().date(from: endsRaw.replacingOccurrences(of: " ", with: "T") + "Z")
+                  ?? DateFormatter.bidcastISO.date(from: endsRaw)
+        else { return "" }
+        let diff = max(0, Int(ends.timeIntervalSinceNow))
+        let h = diff / 3600
+        let m = (diff % 3600) / 60
+        let s = diff % 60
+        return h > 0 ? "\(h)h \(m)m \(s)s left" : "\(m)m \(s)s left"
+    }
+
     private var productHeaderSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            
+            // Basecamp #9933973683 (2026-05-27): flash sale badge + countdown.
+            if isFlashSaleActive {
+                HStack(spacing: 6) {
+                    Text("⚡ Flash Sale")
+                        .font(.custom(poppinsBold, size: 11))
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.red.opacity(0.1))
+                        .clipShape(Capsule())
+                    Text(flashSaleCountdownText)
+                        .font(.custom(poppinsSemiBold, size: 11))
+                        .foregroundColor(.red)
+                        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in /* triggers redraw */ }
+                }
+            }
+
             Text(productDetail?.title?.capitalizingFirstLetter() ?? "Product Title")
                 .font(.custom(poppinsBold, size: 22))
                 .foregroundColor(.black)
@@ -575,7 +622,21 @@ extension ProductDetailView {
             }
             
             // QA #7 — Only show "Starting at" for auction items. Buy Now items show just the price.
-            if productDetail?.auction == true {
+            // Basecamp #9933973683 (2026-05-27): show strikethrough regular price + flash sale price when active.
+            if isFlashSaleActive, let flashPrice = productDetail?.flashSalePrice {
+                HStack(spacing: 6) {
+                    Text(productPrice.compactCurrency())
+                        .font(.custom(poppinsRegular, size: 13))
+                        .foregroundColor(.gray)
+                        .strikethrough()
+                    Text(flashPrice.compactCurrency())
+                        .font(.custom(poppinsBold, size: 16))
+                        .foregroundColor(.red)
+                    Text("+ Shipping + taxes")
+                        .font(.custom(poppinsRegular, size: 11))
+                        .foregroundColor(.darkGray)
+                }
+            } else if productDetail?.auction == true {
                 Text("Starting at \(productPrice.compactCurrency()) + Shipping + taxes")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.darkGray)
@@ -586,6 +647,17 @@ extension ProductDetailView {
             }
         }
     }
+}
+
+extension DateFormatter {
+    // Basecamp #9933973683 (2026-05-27): Laravel returns ISO timestamps as
+    // "2026-05-27 22:00:00" without T separator. This formatter handles that.
+    static let bidcastISO: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        f.timeZone = TimeZone(identifier: "UTC")
+        return f
+    }()
 }
 
 
