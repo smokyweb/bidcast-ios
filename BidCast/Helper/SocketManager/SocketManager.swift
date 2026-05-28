@@ -1737,6 +1737,19 @@ extension SocketManagerService {
         }
     }
 
+    // Basecamp #9940079895 round 1 (2026-05-28): listener for the server's
+    // kick_user_error response (validation / permission / unknown failure).
+    // Host UI uses this to surface an explicit failure toast instead of the
+    // earlier behavior where a failed kick produced no UI feedback.
+    func listenForKickError(completion: @escaping (_ message: String) -> Void) {
+        socket.on("kick_user_error") { [weak self] data, _ in
+            guard let self else { return }
+            let msg = (data.first as? [String: Any])?["message"] as? String ?? "Could not remove buyer."
+            DispatchQueue.main.async { completion(msg) }
+            logger.warning("⚠️ kick_user_error: \(msg)")
+        }
+    }
+
     // Listens for the kicked_from_show event (sent to the buyer who was kicked).
     func listenForKickedFromShow(completion: @escaping (_ message: String) -> Void) {
         socket.on("kicked_from_show") { [weak self] data, _ in

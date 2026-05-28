@@ -626,9 +626,18 @@ struct BrowseFiltersSheet: View {
         }
         var req = URLRequest(url: url)
         req.httpMethod = "GET"
-        let token = UserDefaults.standard.string(forKey: "access_token1") ?? ""
+        // Basecamp #9940038345 round 1 (2026-05-28): Trey: "on ios category
+        // filter says No categories available." Root cause was the token
+        // read using a raw UserDefaults key path that doesn't always have
+        // the latest value depending on when the sheet was instantiated.
+        // Switch to UserDefaults.accessToken (the canonical extension that
+        // login + delete-account write to) so we always read the freshest
+        // logged-in token. Add an Accept header too — some Laravel
+        // middleware variants gate JSON output on it.
+        let token = UserDefaults.accessToken
         if !token.isEmpty { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
-        URLSession.shared.dataTask(with: req) { data, _, _ in
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        URLSession.shared.dataTask(with: req) { data, response, error in
             DispatchQueue.main.async { self.isLoadingCategories = false }
             guard let data else { return }
             struct Item: Decodable { let id: Int?; let name: String? }
@@ -656,8 +665,11 @@ struct BrowseFiltersSheet: View {
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let token = UserDefaults.standard.string(forKey: "access_token1") ?? ""
+        // Basecamp #9940038345 round 1: same UserDefaults.accessToken fix as
+        // fetchAllCategories above so subcategory fetch isn't broken either.
+        let token = UserDefaults.accessToken
         if !token.isEmpty { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
         req.httpBody = try? JSONSerialization.data(withJSONObject: ["category_ids": categoryIds])
         URLSession.shared.dataTask(with: req) { data, _, _ in
             DispatchQueue.main.async { self.isFetchingSubcats = false }

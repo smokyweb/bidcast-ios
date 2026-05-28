@@ -428,7 +428,7 @@ struct LiveStream: View {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     .scaleEffect(1.4)
-                Text("Loading show\u2026")
+                Text("Loading show…")
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.7))
                 Text("If the show doesn't load in a few seconds, tap the X above to go back.")

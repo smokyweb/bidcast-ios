@@ -292,7 +292,15 @@ extension APIEndPoint: EndPointType {
         case .deleteAddress:
             return "delete-shipping-address"
         case .getLiveShows:
-            return "get-live-show"
+            // Basecamp #9929113636 round 4 (2026-05-28): the seller-hub Past /
+            // Upcoming tabs were hitting /api/get-live-show which only accepts
+            // type "live|upcoming|popular" and rejects type=past with a 403
+            // validation error. That endpoint is the GLOBAL live feed. The
+            // correct one for "the seller's OWN shows" is /api/get-my-schedule-show
+            // — same as Android. Past tab has been silently broken until now;
+            // a 403 was getting parsed as an empty list so users saw "No past
+            // shows" or a stuck WatchVODCard.
+            return "get-my-schedule-show"
         case .getProfileById:
             return "get-profile-by-id"
             

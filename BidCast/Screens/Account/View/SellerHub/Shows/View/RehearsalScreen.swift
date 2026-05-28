@@ -1246,7 +1246,16 @@ struct RehearsalScreen: View {
         ) { user in
             Button("Remove", role: .destructive) {
                 if let uid = user.id {
-                    socketManager.kickUser(roomId: roomId, targetUserId: uid)
+                    // Basecamp #9940079895 round 1 (2026-05-28): if the socket
+                    // is not connected, kickUser silently no-ops inside
+                    // performIfConnected. Show an explicit error so Trey
+                    // doesn't wonder why nothing happened.
+                    if socketManager.isConnected {
+                        socketManager.kickUser(roomId: roomId, targetUserId: uid)
+                    } else {
+                        hudMsg = "Socket not connected — try again in a moment"
+                        showhud = true
+                    }
                 }
                 kickConfirmUser = nil
             }
@@ -2156,8 +2165,27 @@ struct RehearsalScreen: View {
         
         socketManager.listenForUserJoinedShows{ data , users in
             self.UsersList = users
-            
         }
+
+        // Basecamp #9934003774 + #9940079895 (2026-05-28): wire kick feedback
+        // so host sees confirmation when a buyer is removed. Previously kickUser()
+        // emitted the socket event and silently returned — no listener, no toast,
+        // no viewer-list refresh. Host tapped Remove and nothing appeared to happen.
+        // Use the public listener helpers (socket is private inside SocketManager).
+        // RehearsalScreen is a SwiftUI struct so [weak self] is illegal. The
+        // listener completion is dispatched to main inside the helper, so the
+        // closure runs after this method returns — but the @State storage is
+        // wrapper-owned so capturing `self` here mutates the live state.
+        socketManager.listenForKickSuccess { _ in
+            self.socketManager.requestActiveShowUsers(roomId: self.roomId)
+            self.hudMsg = "✅ Buyer removed from show"
+            self.showhud = true
+        }
+        socketManager.listenForKickError { msg in
+            self.hudMsg = msg
+            self.showhud = true
+        }
+
         FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
             DispatchQueue.main.async {
                 self.messageList = messages
