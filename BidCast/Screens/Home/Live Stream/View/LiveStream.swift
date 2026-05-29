@@ -325,7 +325,12 @@ struct LiveStream: View {
             CusNavLink(
                 doNavigate: $navigateToProductList,
                 destination: ProductShopListScreen(
-                    sellerId: $sellerId ,categoryIds : $categoryId
+                    sellerId: $sellerId,
+                    categoryIds: $categoryId,
+                    // Basecamp #9943369910 (2026-05-29): scope product list to
+                    // this show so the seller only sees items added to the show
+                    // instead of their entire catalog.
+                    scheduleShowId: showId
                 )
             )
             
