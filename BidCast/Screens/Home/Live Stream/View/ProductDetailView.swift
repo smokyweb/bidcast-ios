@@ -571,13 +571,11 @@ extension ProductDetailView {
         guard productDetail?.flashSale == true,
               let price = productDetail?.flashSalePrice, price > 0,
               let endsRaw = productDetail?.flashSaleEndsAt,
-              let ends = ISO8601DateFormatter().date(from: endsRaw.replacingOccurrences(of: " ", with: "T") + "Z")
-                  ?? DateFormatter.bidcastISO.date(from: endsRaw),
+              let ends = DateFormatter.parseBidcastDate(endsRaw),
               ends > Date()
         else { return false }
         if let startsRaw = productDetail?.flashSaleStartsAt,
-           let starts = ISO8601DateFormatter().date(from: startsRaw.replacingOccurrences(of: " ", with: "T") + "Z")
-               ?? DateFormatter.bidcastISO.date(from: startsRaw),
+           let starts = DateFormatter.parseBidcastDate(startsRaw),
            starts > Date() {
             return false
         }
@@ -586,8 +584,7 @@ extension ProductDetailView {
 
     private var flashSaleCountdownText: String {
         guard let endsRaw = productDetail?.flashSaleEndsAt,
-              let ends = ISO8601DateFormatter().date(from: endsRaw.replacingOccurrences(of: " ", with: "T") + "Z")
-                  ?? DateFormatter.bidcastISO.date(from: endsRaw)
+              let ends = DateFormatter.parseBidcastDate(endsRaw)
         else { return "" }
         let diff = max(0, Int(ends.timeIntervalSinceNow))
         let h = diff / 3600
@@ -663,6 +660,34 @@ extension DateFormatter {
         f.timeZone = TimeZone(identifier: "UTC")
         return f
     }()
+
+    // Basecamp #9933973683 (2026-05-29): ROOT-CAUSE FIX for the flash-sale price
+    // not showing. The Bidcast API's Product model overrides serializeDate() to
+    // emit ALL datetimes as "d-m-Y H:i:s" (e.g. "29-05-2026 10:47:00"), so the
+    // old yyyy-MM-dd / ISO8601 parsers always returned nil for the flash window.
+    // That made isFlashSaleActive false and suppressed the flash price entirely.
+    // parseBidcastDate tries every format the backend can actually return.
+    static let bidcastDMY: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "dd-MM-yyyy HH:mm:ss"
+        f.timeZone = TimeZone(identifier: "UTC")
+        return f
+    }()
+
+    static func parseBidcastDate(_ raw: String) -> Date? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return nil }
+        // 1. "d-m-Y H:i:s" — the real Product serializeDate() output.
+        if let d = bidcastDMY.date(from: trimmed) { return d }
+        // 2. "yyyy-MM-dd HH:mm:ss" (legacy assumption / some endpoints).
+        if let d = bidcastISO.date(from: trimmed) { return d }
+        // 3. ISO8601 with explicit zone or replacing the space with T.
+        let isoCandidate = trimmed.replacingOccurrences(of: " ", with: "T")
+        if let d = ISO8601DateFormatter().date(from: isoCandidate) { return d }
+        if let d = ISO8601DateFormatter().date(from: isoCandidate + "Z") { return d }
+        return nil
+    }
 }
 
 
