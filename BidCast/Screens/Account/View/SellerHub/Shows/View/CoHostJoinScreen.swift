@@ -382,30 +382,57 @@ struct CoHostJoinScreen: View {
 
             if status == "success" {
                 let row = json?["data"] as? [String: Any]
-                let showTitle = (row?["show_title"] as? String)
+
+                // Basecamp #9934001770 (2026-05-29): "missing show data" fix.
+                //
+                // ROOT CAUSE: the claim response `data` is the PAIRING ROW, not
+                // the show. The pairing row was created with `schedule_show_id`,
+                // so:
+                //   - the SHOW id lives under `schedule_show_id` (NOT `id`,
+                //     which is the pairing row's own primary key), and
+                //   - the HOST user id lives on the related show object
+                //     (`schedule_show.user_id` / `show.user_id`), NOT the
+                //     pairing row's `user_id` (which is the claimer / co-host).
+                // The old code read row["id"] (pairing id) as the show id and
+                // row["user_id"] (co-host) as the host — producing a wrong/zero
+                // channel name and tripping the "missing show data" guard.
+                //
+                // We now resolve both from the most-specific source first and
+                // fall back across every serialiser shape we've seen.
+                let showObj = (row?["schedule_show"] as? [String: Any])
+                    ?? (row?["show"] as? [String: Any])
+                    ?? (row?["scheduleShow"] as? [String: Any])
+
+                let showTitle = (showObj?["title"] as? String)
+                    ?? (row?["show_title"] as? String)
                     ?? (row?["title"] as? String)
                     ?? "Show paired"
 
-                // Extract host user_id and show id to build the channel name.
-                // The backend returns the full show object; user_id may be Int
-                // or String depending on serialiser version — handle both.
-                let hostUserId: Int
-                if let v = row?["user_id"] as? Int {
-                    hostUserId = v
-                } else if let s = row?["user_id"] as? String, let v = Int(s) {
-                    hostUserId = v
-                } else {
-                    hostUserId = 0
+                // Helper: coerce Int-or-String JSON values to Int.
+                func intValue(_ any: Any?) -> Int? {
+                    if let v = any as? Int { return v }
+                    if let s = any as? String, let v = Int(s) { return v }
+                    if let d = any as? Double { return Int(d) }
+                    return nil
                 }
 
-                let showId: Int
-                if let v = row?["id"] as? Int {
-                    showId = v
-                } else if let s = row?["id"] as? String, let v = Int(s) {
-                    showId = v
-                } else {
-                    showId = 0
-                }
+                // SHOW id: schedule_show_id (pairing FK) → nested show.id →
+                // explicit show_id → (last resort) top-level id.
+                let showId = intValue(row?["schedule_show_id"])
+                    ?? intValue(showObj?["id"])
+                    ?? intValue(row?["show_id"])
+                    ?? intValue(row?["scheduleShowId"])
+                    ?? intValue(row?["id"])
+                    ?? 0
+
+                // HOST user id: nested show.user_id → explicit host_user_id →
+                // (last resort) row.user_id.
+                let hostUserId = intValue(showObj?["user_id"])
+                    ?? intValue(row?["host_user_id"])
+                    ?? intValue(row?["hostUserId"])
+                    ?? intValue(showObj?["userId"])
+                    ?? intValue(row?["user_id"])
+                    ?? 0
 
                 await MainActor.run {
                     isJoining      = false

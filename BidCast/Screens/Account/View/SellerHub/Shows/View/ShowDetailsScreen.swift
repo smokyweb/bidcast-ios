@@ -25,6 +25,13 @@ struct ShowDetailsScreen: View {
     @State var isLive = false
     @State var navigateToshowTitle = false
     @State var showID = 0
+    // Basecamp #9934001770 (2026-05-29): co-host pairing ("take-over") popup.
+    // Previously only reachable from the view-all-shows list; Trey wants it on
+    // the show-details entry path too. `showCoHostPairing` presents the same
+    // CoHostPairingSheet the host uses in-show; `navigateToCoHostJoin` mirrors
+    // the ShowsScreen "Join as Co-Host (second device)" entry.
+    @State private var showCoHostPairing: Bool = false
+    @State private var navigateToCoHostJoin: Bool = false
     @State private var scheduleRequest = StoreScheduleShowRequest(
         title: "",
         date: "",
@@ -80,6 +87,14 @@ struct ShowDetailsScreen: View {
                                       fromPrepare:.constant(false),
 //                                      backToPrepare: $navigateToshowTitle,
                                       showId: $showID))
+            // Basecamp #9934001770 (2026-05-29): second-device co-host join.
+            CusNavLink(doNavigate: $navigateToCoHostJoin,
+                       destination: CoHostJoinScreen())
+        }
+        // Basecamp #9934001770 (2026-05-29): host-side pairing ("take-over")
+        // popup, now reachable from show-details (was view-all-shows only).
+        .sheet(isPresented: $showCoHostPairing) {
+            CoHostPairingSheet(scheduleShowId: show.id ?? (Int(showId) ?? 0))
         }
         .background(Color.backGround)
         .edgesIgnoringSafeArea(.bottom)
@@ -343,7 +358,24 @@ struct ShowDetailsScreen: View {
     private var bottomActionButtons: some View {
         VStack(spacing: 0) {
             Divider()
-            
+
+            // Basecamp #9934001770 (2026-05-29): co-host entry points on the
+            // show-details path (parity with the view-all-shows screen).
+            HStack(spacing: 12) {
+                Button {
+                    showCoHostPairing = true
+                } label: {
+                    coHostButtonLabel(icon: "iphone.and.arrow.forward", text: "Pair Second Device")
+                }
+                Button {
+                    navigateToCoHostJoin = true
+                } label: {
+                    coHostButtonLabel(icon: "person.2.fill", text: "Join as Co-Host")
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+
             HStack(spacing: 12) {
                 // Edit Show Button
                 Button(action: {
@@ -394,6 +426,27 @@ struct ShowDetailsScreen: View {
         }
     }
     
+    // Basecamp #9934001770: shared label for the co-host entry buttons.
+    private func coHostButtonLabel(icon: String, text: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 14))
+            Text(text)
+                .font(.custom(poppinsSemiBold, size: 13))
+        }
+        .foregroundColor(.defaultTheme)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.defaultTheme.opacity(0.07))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.defaultTheme.opacity(0.3), lineWidth: 1)
+                )
+        )
+    }
+
     // MARK: - Helper Functions
     private func formatDate(_ dateString: String) -> String {
         // Format: 12-25-2025
