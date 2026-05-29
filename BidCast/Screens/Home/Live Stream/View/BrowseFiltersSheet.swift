@@ -224,11 +224,6 @@ struct BrowseFiltersSheet: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
-                    EmptyView().onAppear {
-                        fetchAllTags()
-                        fetchAllCategories()
-                    }
-
                     // MARK: 0a) Categories ---------------------------
                     filterSection(title: "Categories") {
                         if isLoadingCategories {
@@ -495,6 +490,18 @@ struct BrowseFiltersSheet: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color.backGround)
+        // Basecamp #9938023997 / #9940038345 (2026-05-28): the category +
+        // tag fetches used to be triggered from an `EmptyView().onAppear`
+        // buried inside the ScrollView's VStack. SwiftUI treats EmptyView
+        // as a zero-size elided primitive and does NOT reliably deliver its
+        // .onAppear, so neither fetchAllCategories() nor fetchAllTags() ever
+        // ran on TestFlight (build 341) — leaving "No categories available"
+        // and "No tags available yet" even though the backend returns both.
+        // Move the trigger to the root view's .onAppear, which always fires.
+        .onAppear {
+            fetchAllTags()
+            fetchAllCategories()
+        }
     }
 
     // MARK: - Section helper -----------------------------------------
