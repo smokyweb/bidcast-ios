@@ -66,92 +66,75 @@ struct BrowseFilterSubcategory: Identifiable, Hashable {
 
 // MARK: - FlowLayout helper (chip wrapping)
 //
-// iOS 16+ has Layout protocol; this simple version works on iOS 15+ too.
-// Chips wrap to the next line when they don't fit the available width.
-private struct FlowLayout<Content: View>: View {
-    let spacing: CGFloat
-    @ViewBuilder let content: () -> Content
+// Basecamp #9938023997 / #9940038345 (2026-05-28, round 2): the previous
+// implementation wrapped a `GeometryReader` in `.fixedSize(vertical: true)`
+// and laid chips out with absolute `.offset(...)` inside a ZStack. A
+// `GeometryReader` has NO intrinsic content height — it greedily takes the
+// width its parent proposes and reports an ideal height of ~0 (and
+// `.fixedSize(vertical:)` can't fix a dimension the view has no intrinsic
+// value for). So the whole chip container reported height ≈ 0 to the
+// surrounding `VStack(spacing: 24)`, every section below Categories was
+// drawn starting at the chips' y-origin, and the offset chips painted on
+// top of Show Format / Tag / Premier Shops / Shipped from / Shipping.
+//
+// The app's deployment target is iOS 17.6, so we can use the native
+// SwiftUI `Layout` protocol. `sizeThatFits` returns the TRUE total wrapped
+// height, which is what propagates to the parent stack, so sibling
+// sections now flow below the chips with no overlap. Same fix covers both
+// the Categories and Subcategories chip areas (both use `FlowLayout`).
+private struct FlowLayout: Layout {
+    var spacing: CGFloat = 8
 
-    var body: some View {
-        // Use a ZStack + GeometryReader approach for backward compat.
-        _VariadicView.Tree(FlowLayoutRoot(spacing: spacing), content: content)
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) -> CGSize {
+        // Width to wrap within: the proposed width, falling back to a sane
+        // value if the proposal is nil/unbounded (shouldn't happen inside a
+        // VStack, but guard anyway).
+        let maxWidth = proposal.width ?? .infinity
+        let arrangement = arrange(subviews: subviews, maxWidth: maxWidth)
+        return CGSize(width: arrangement.width, height: arrangement.height)
     }
-}
 
-private struct FlowLayoutRoot: _VariadicView_MultiViewRoot {
-    let spacing: CGFloat
-
-    @ViewBuilder
-    func body(children: _VariadicView.Children) -> some View {
-        GeometryReader { geo in
-            // Two-pass: first measure, then place.
-            // For simplicity we use a VStack+HStack wrapping approach that
-            // works without a custom Layout (iOS 15 compat).
-            // We use a ZStack + PreferenceKey trick to measure chip widths.
-            FlowLayoutImpl(items: children, spacing: spacing, totalWidth: geo.size.width)
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) {
+        let arrangement = arrange(subviews: subviews, maxWidth: bounds.width)
+        for (index, point) in arrangement.points.enumerated() {
+            subviews[index].place(
+                at: CGPoint(x: bounds.minX + point.x, y: bounds.minY + point.y),
+                anchor: .topLeading,
+                proposal: ProposedViewSize(arrangement.sizes[index])
+            )
         }
-        .fixedSize(horizontal: false, vertical: true)
     }
-}
 
-private struct FlowLayoutImpl: View {
-    let items: _VariadicView.Children
-    let spacing: CGFloat
-    let totalWidth: CGFloat
-    @State private var sizes: [CGSize] = []
-
-    var body: some View {
-        var width: CGFloat = 0
-        var rowHeights: [CGFloat] = [0]
-        var rowIndex = 0
+    // Single pass that computes per-chip sizes, wrapped positions, and the
+    // total bounding size. Used by both sizeThatFits and placeSubviews so
+    // the measured height and the placed layout always agree.
+    private func arrange(subviews: Subviews, maxWidth: CGFloat) -> (points: [CGPoint], sizes: [CGSize], width: CGFloat, height: CGFloat) {
+        var points: [CGPoint] = []
+        var sizes: [CGSize] = []
         var x: CGFloat = 0
         var y: CGFloat = 0
-        var positions: [CGPoint] = []
+        var rowHeight: CGFloat = 0
+        var maxRowWidth: CGFloat = 0
 
-        // Compute sizes based on cached measurements, fall back to a dummy
-        // 80×34 estimate so the first render isn't empty.
-        let measured = sizes.count == items.count ? sizes : Array(repeating: CGSize(width: 80, height: 34), count: items.count)
-
-        for (i, size) in measured.enumerated() {
-            if x + size.width > totalWidth && x > 0 {
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            // Wrap to the next row when this chip would overflow the row and
+            // it isn't the first chip on the row.
+            if x > 0 && x + size.width > maxWidth {
                 x = 0
-                rowIndex += 1
-                rowHeights.append(0)
-                y += (rowHeights[rowIndex - 1]) + spacing
+                y += rowHeight + spacing
+                rowHeight = 0
             }
-            positions.append(CGPoint(x: x, y: y))
+            points.append(CGPoint(x: x, y: y))
+            sizes.append(size)
             x += size.width + spacing
-            rowHeights[rowIndex] = max(rowHeights[rowIndex], size.height)
+            maxRowWidth = max(maxRowWidth, x - spacing)
+            rowHeight = max(rowHeight, size.height)
         }
-        let totalHeight = y + (rowHeights.last ?? 0)
 
-        return ZStack(alignment: .topLeading) {
-            ForEach(Array(zip(items.indices, items)), id: \.0) { idx, child in
-                child
-                    .fixedSize()
-                    .background(
-                        GeometryReader { g -> Color in
-                            DispatchQueue.main.async {
-                                let s = g.size
-                                if self.sizes.count <= idx {
-                                    var arr = self.sizes
-                                    while arr.count <= idx { arr.append(.zero) }
-                                    self.sizes = arr
-                                }
-                                if self.sizes[idx] != s {
-                                    var arr = self.sizes
-                                    arr[idx] = s
-                                    self.sizes = arr
-                                }
-                            }
-                            return .clear
-                        }
-                    )
-                    .offset(x: idx < positions.count ? positions[idx].x : 0,
-                            y: idx < positions.count ? positions[idx].y : 0)
-            }
-        }
-        .frame(maxWidth: .infinity, minHeight: totalHeight, alignment: .topLeading)
+        let totalHeight = y + rowHeight
+        let totalWidth = maxWidth.isFinite ? maxWidth : maxRowWidth
+        return (points, sizes, totalWidth, totalHeight)
     }
 }
 
