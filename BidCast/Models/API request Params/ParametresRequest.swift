@@ -997,6 +997,20 @@ struct UnifiedSearchRequest: Encodable {
     // now accepted by POST /api/v1/search.
     var category_ids     : [Int]? = nil
     var sub_category_ids : [Int]? = nil
+    // Basecamp #9933301500 (2026-05-29): full filter-set parity with the
+    // BrowseFiltersSheet. The search-results filter sheet was collecting
+    // show_format / tag / shipping / premier_shop / ship_country / ship_state
+    // but rerunSearch() only forwarded category_ids + sub_category_ids — so
+    // applying any of the other 5 filters did NOTHING. unifiedSearch on the
+    // backend already validates + applies all of these, so wire them through.
+    // Encodable + Optionals: nil fields are simply omitted from the JSON body,
+    // which Laravel `nullable` treats as absent. No literal auth prefix here.
+    var tag          : String? = nil   // tag NAME or slug (category-scoped)
+    var show_format  : String? = nil   // surprise_sets | live_auction | buy_it_now
+    var shipping     : String? = nil   // free | reduced
+    var premier_shop : Bool?   = nil
+    var ship_country : String? = nil   // 2-letter ISO
+    var ship_state   : String? = nil
 }
 
 // MARK: - QA #31 / #32 / #34 — USPS Order Workflow request bodies.
