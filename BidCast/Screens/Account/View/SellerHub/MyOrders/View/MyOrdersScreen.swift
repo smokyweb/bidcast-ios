@@ -155,6 +155,8 @@ struct MyOrdersScreen: View {
                                     userImage = order.user?.profileImage ?? ""
                                     userName = order.user?.name ?? ""
                                     navigateToProfile = true
+                                }, onCancellationDecided: {
+                                    resetAndFetch()
                                 })
                                 .padding([.leading , .trailing] , 0)
                                 .padding(.bottom,4)

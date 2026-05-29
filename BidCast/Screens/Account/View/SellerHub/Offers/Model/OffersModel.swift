@@ -144,6 +144,9 @@ struct PurchasedOrderModel: Codable {
     var productSetItem: ProductSetItemModel?
     var productSetItemUnit: ProductSetItemUnitModel?
     var seller: UserDataModel?
+    // Basecamp cancel-flow 2026-05-29: buyer-visible cancellation fields
+    var cancellationStatus: String?
+    var cancellationRejectReason: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -166,5 +169,7 @@ struct PurchasedOrderModel: Codable {
         case seller
         case productSetItem = "product_set_item"
         case productSetItemUnit = "product_set_item_unit"
+        case cancellationStatus = "cancellation_status"
+        case cancellationRejectReason = "cancellation_reject_reason"
     }
 }

@@ -12,22 +12,37 @@ struct PurchasesViewScreen: View {
     @State private var userId: String = ""
     @State private var userImage: String = ""
     @State private var userName: String = ""
-    // Basecamp #9934033253 (2026-05-27): buyer cancel-order state
+    // Basecamp #9934033253 (2026-05-27 → 2026-05-29): buyer cancel-request state
     @State private var showCancelConfirm: Bool = false
     @State private var cancelLoading: Bool = false
     @State private var cancelError: String? = nil
     @State private var localStatusOverride: String? = nil
-    
+    @State private var localCancellationStatus: String? = nil
+
     var onTapOrderTracking: ((PurchasedOrderModel?) -> Void)?
     var onTapUserProfile: ((String, String, String) -> Void)?
     var onOrderCancelled: ((Int) -> Void)? = nil
 
-    // Basecamp #9934033253 (2026-05-27): show cancel button when order status is cancellable.
+    // Effective cancellation status: local override wins (set after a successful API call)
+    private var effectiveCancellationStatus: String? {
+        localCancellationStatus ?? purchaseList?.cancellationStatus
+    }
+
+    // Basecamp #9934033253 (2026-05-27 → 2026-05-29): show request button when order
+    // is cancellable and no cancellation is already pending/approved.
     private var canCancel: Bool {
         let s = (localStatusOverride ?? purchaseList?.status ?? "").lowercased()
-        return s == "pending" || s == "processing"
+        guard s == "pending" || s == "processing" else { return false }
+        return effectiveCancellationStatus?.lowercased() != "requested"
     }
-    
+
+    private var cancelRejectedNote: String {
+        if let reason = purchaseList?.cancellationRejectReason, !reason.isEmpty {
+            return "Your order could not be cancelled. \(reason)"
+        }
+        return "Your order could not be cancelled."
+    }
+
     private var isProductSet: Bool {
         purchaseList?.productSet != nil
     }
@@ -47,7 +62,7 @@ struct PurchasesViewScreen: View {
         }
         return ""
     }
-    
+
     private var displaySellerName: String {
         if let sellerName = purchaseList?.productSet?.seller?.name {
             return sellerName.capitalizingFirstLetter()
@@ -68,8 +83,8 @@ struct PurchasesViewScreen: View {
         }
         return purchaseList?.product?.user?.profileImage ?? ""
     }
-    
-    
+
+
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             // MARK: - Product Image
@@ -86,7 +101,7 @@ struct PurchasesViewScreen: View {
                     .padding(.trailing,4)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
             }
-            
+
             // MARK: - Order Details
             VStack(alignment: .leading, spacing: 2) {
                 // Status Badge
@@ -98,13 +113,13 @@ struct PurchasesViewScreen: View {
                     .background(.green.opacity(0.2))
 //                    .padding(.vertical, 2)
                     .clipShape(Capsule())
-                
+
                 // Product Name
                 Text(displayTitle)
                     .font(.custom(poppinsBold, size: 14.0))
                     .foregroundColor(.black)
                     .lineLimit(2)
-                
+
                 // Price
                 HStack(spacing: 4) {
                     Text("Price:")
@@ -116,18 +131,18 @@ struct PurchasesViewScreen: View {
                             .foregroundColor(.black)
 //                    }
                 }
-                
+
                 // Purchase Date
                 HStack(spacing: 4) {
                     Text("Purchased:")
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.gray)
-                    
+
                     Text(purchaseList?.createdAt?.formattedDateAndTimeString(input:"yyyy-MM-dd HH:mm:ss",output: " dd MMM yyyy") ?? "N/A")
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.black)
                 }
-                
+
                 // Seller
                 HStack(spacing: 4) {
                     Text("From:")
@@ -147,28 +162,11 @@ struct PurchasesViewScreen: View {
                             .foregroundColor(.blue)
                     }
 
-                   
+
                 }
 
-                // Basecamp #9934033253 (2026-05-27): cancel order button when status is pending/processing.
-                if canCancel {
-                    Button(action: {
-                        showCancelConfirm = true
-                    }) {
-                        HStack(spacing: 4) {
-                            if cancelLoading { ProgressView().scaleEffect(0.7) }
-                            Text(cancelLoading ? "Cancelling…" : "Cancel Order")
-                                .font(.custom(poppinsSemiBold, size: 11))
-                                .foregroundColor(.red)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.red.opacity(0.08))
-                        .clipShape(Capsule())
-                    }
-                    .disabled(cancelLoading)
-                    .padding(.top, 4)
-                }
+                // Basecamp #9934033253 (2026-05-27 → 2026-05-29): request-cancellation tri-state block.
+                cancellationStateBlock
                 if let err = cancelError {
                     Text(err)
                         .font(.custom(poppinsRegular, size: 11))
@@ -177,7 +175,7 @@ struct PurchasesViewScreen: View {
                 }
             }
             .padding(.horizontal,isProductSet ? 12 : 0)
-    
+
             Spacer()
         }
         .onTapGesture {
@@ -185,28 +183,28 @@ struct PurchasesViewScreen: View {
                 onTapOrderTracking?(purchaseList)
             }
         }
-        
+
         .padding(4)
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-        .alert("Cancel this order?", isPresented: $showCancelConfirm) {
-            Button("Cancel", role: .cancel) { }
-            Button("Confirm", role: .destructive) {
-                cancelOrder()
+        .alert("Request to cancel this order?", isPresented: $showCancelConfirm) {
+            Button("Keep Order", role: .cancel) { }
+            Button("Request Cancellation", role: .destructive) {
+                requestCancellation()
             }
         } message: {
-            Text("You can’t undo this. The seller will be notified.")
+            Text("Request to cancel this order? The seller will need to approve it.")
         }
     }
 
-    // Basecamp #9934033253 (2026-05-27): POST /api/product/cancel-order then update UI.
-    private func cancelOrder() {
+    // Basecamp #9934033253 (2026-05-29): POST /api/product/request-cancellation.
+    private func requestCancellation() {
         guard let orderId = purchaseList?.id, orderId > 0 else { return }
         cancelLoading = true
         cancelError = nil
         Task {
-            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/cancel-order") else { return }
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/request-cancellation") else { return }
             var req = URLRequest(url: url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -222,11 +220,10 @@ struct PurchasesViewScreen: View {
                 let msg = (json?["message"] as? String) ?? ""
                 await MainActor.run {
                     cancelLoading = false
-                    if (http?.statusCode == 200 && statusStr == "success") {
-                        localStatusOverride = "cancelled"
-                        onOrderCancelled?(orderId)
+                    if http?.statusCode == 200 && statusStr == "success" {
+                        localCancellationStatus = "requested"
                     } else {
-                        cancelError = msg.isEmpty ? "Could not cancel order." : msg
+                        cancelError = msg.isEmpty ? "Could not request cancellation." : msg
                     }
                 }
             } catch {
@@ -236,6 +233,49 @@ struct PurchasesViewScreen: View {
                 }
             }
         }
+    }
+
+    // MARK: - Cancellation state UI (buyer)
+    @ViewBuilder
+    private var cancellationStateBlock: some View {
+        if effectiveCancellationStatus?.lowercased() == "requested" {
+            Text("⏳ Cancellation requested — waiting for seller approval")
+                .font(.custom(poppinsRegular, size: 11))
+                .foregroundColor(.orange)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Color.orange.opacity(0.12))
+                .clipShape(Capsule())
+                .padding(.top, 4)
+        } else if effectiveCancellationStatus?.lowercased() == "rejected" && canCancel {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(cancelRejectedNote)
+                    .font(.custom(poppinsRegular, size: 11))
+                    .foregroundColor(.red)
+                requestCancelButton
+            }
+            .padding(.top, 4)
+        } else if canCancel {
+            requestCancelButton
+                .padding(.top, 4)
+        }
+    }
+
+    @ViewBuilder
+    private var requestCancelButton: some View {
+        Button(action: { showCancelConfirm = true }) {
+            HStack(spacing: 4) {
+                if cancelLoading { ProgressView().scaleEffect(0.7) }
+                Text(cancelLoading ? "Requesting…" : "Request Cancellation")
+                    .font(.custom(poppinsSemiBold, size: 11))
+                    .foregroundColor(.red)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Color.red.opacity(0.08))
+            .clipShape(Capsule())
+        }
+        .disabled(cancelLoading)
     }
 
     func formattedDate(_ isoDate: String?) -> String {
@@ -268,42 +308,42 @@ struct PurchasesViewScreen: View {
 struct PurchasesViewShimmerView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            
+
             // Image shimmer
             PulseShimmerView()
                 .frame(width: 80, height: 80)
                 .cornerRadius(14)
                 .padding(.horizontal, 6)
                 .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-            
+
             VStack(alignment: .leading, spacing: 8) {
-                
+
                 // Status shimmer
                 PulseShimmerView()
                     .frame(width: 60, height: 14)
                     .cornerRadius(6)
-                
+
                 // Product Name shimmer
                 PulseShimmerView()
                     .frame(width: 140, height: 14)
                     .cornerRadius(6)
-                
+
                 // Price shimmer
                 PulseShimmerView()
                     .frame(width: 100, height: 12)
                     .cornerRadius(6)
-                
+
                 // Date shimmer
                 PulseShimmerView()
                     .frame(width: 120, height: 12)
                     .cornerRadius(6)
-                
+
                 // Seller shimmer
                 PulseShimmerView()
                     .frame(width: 90, height: 12)
                     .cornerRadius(6)
             }
-            
+
             Spacer()
         }
         .padding(6)
@@ -337,10 +377,10 @@ struct SavedViewScreen: View {
     @State private var userId: String = ""
     @State private var userImage: String = ""
     @State private var userName: String = ""
-    
+
     var onTapOrderTracking: ((PurchasedOrderModel?) -> Void)?
     var onTapUserProfile: ((String, String, String) -> Void)?
-    
+
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             // MARK: - Product Image
@@ -358,7 +398,7 @@ struct SavedViewScreen: View {
                     .padding(.vertical,8)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
             }
-            
+
             // MARK: - Order Details
             VStack(alignment: .leading, spacing: 2) {
                 // Status Badge
@@ -370,7 +410,7 @@ struct SavedViewScreen: View {
 //                    .background(.green.opacity(0.2))
 ////                    .padding(.vertical, 2)
 //                    .clipShape(Capsule())
-//                
+//
                 // Product Name
                 Text(purchaseList?.product?.title?.capitalizingFirstLetter() ?? "")
                     .font(.custom(poppinsBold, size: 14.0))
@@ -380,7 +420,7 @@ struct SavedViewScreen: View {
                     .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(.darkGray)
                     .lineLimit(2)
-                
+
                 // Price
                 HStack(spacing: 4) {
                     Text("Price:")
@@ -392,18 +432,18 @@ struct SavedViewScreen: View {
                             .foregroundColor(.black)
                     }
                 }
-                
+
                 // Purchase Date
 //                HStack(spacing: 4) {
 //                    Text("Purchased:")
 //                        .font(.custom(poppinsMedium, size: 12.0))
 //                        .foregroundColor(.gray)
-//                    
+//
 //                    Text(purchaseList?.createdAt?.formattedDateAndTimeString(input:"yyyy-MM-dd HH:mm:ss",output: " dd MMM yyyy") ?? "N/A")
 //                        .font(.custom(poppinsMedium, size: 12.0))
 //                        .foregroundColor(.black)
 //                }
-                
+
                 // Seller
 //                HStack(spacing: 4) {
 //                    Text("From:")
@@ -420,10 +460,10 @@ struct SavedViewScreen: View {
 //                            .foregroundColor(.blue)
 //                    }
 //
-//                   
+//
 //                }
             }
-    
+
             Spacer()
         }
         .onTapGesture {
@@ -431,14 +471,14 @@ struct SavedViewScreen: View {
                 onTapOrderTracking?(purchaseList)
             }
         }
-        
+
         .padding(4)
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
     }
-    
-   
+
+
 }
 
 
@@ -446,18 +486,18 @@ struct SavedViewScreen: View {
 struct SavedShimmerView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            
+
             // Image shimmer
             PulseShimmerView()
                 .frame(width: 80, height: 80)
                 .cornerRadius(14)
                 .padding(.horizontal, 6)
                 .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-            
+
             VStack(alignment: .leading, spacing: 8) {
-                
-                
-                
+
+
+
                 // Product Name shimmer
                 PulseShimmerView()
                     .frame(width: 140, height: 14)
@@ -465,15 +505,15 @@ struct SavedShimmerView: View {
                 PulseShimmerView()
                     .frame(width: 140, height: 14)
                     .cornerRadius(6)
-                
+
                 // Price shimmer
                 PulseShimmerView()
                     .frame(width: 100, height: 12)
                     .cornerRadius(6)
-                
-               
+
+
             }
-            
+
             Spacer()
         }
         .padding(6)

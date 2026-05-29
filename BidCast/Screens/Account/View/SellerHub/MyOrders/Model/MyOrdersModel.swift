@@ -60,6 +60,10 @@ struct MyOrderModel: Codable {
     // Old responses won't include these, so both are optional with fallback.
     var statusLabel: String?
     var statusBucket: String?
+    // Cancel-flow 2026-05-29: seller-visible cancellation fields
+    var cancellationStatus: String?
+    var cancellationReason: String?
+    var cancellationRejectReason: String?
 
     var product: ProductDetails?
     var shippingTracking: [ShippingTrackingModel]?
@@ -99,6 +103,10 @@ struct MyOrderModel: Codable {
         // M2 (2026-05-28): additive getOrderListing labels
         case statusLabel = "status_label"
         case statusBucket = "status_bucket"
+        // Cancel-flow 2026-05-29
+        case cancellationStatus = "cancellation_status"
+        case cancellationReason = "cancellation_reason"
+        case cancellationRejectReason = "cancellation_reject_reason"
         case product
         case shippingTracking = "shipping_tracking"
         case user
@@ -343,6 +351,10 @@ extension MyOrderModel {
         // M2 (2026-05-28): additive labels — backward-compatible (optional).
         statusLabel = try c.decodeIfPresent(String.self, forKey: .statusLabel)
         statusBucket = try c.decodeIfPresent(String.self, forKey: .statusBucket)
+        // Cancel-flow 2026-05-29: backward-compatible optional fields.
+        cancellationStatus = try c.decodeIfPresent(String.self, forKey: .cancellationStatus)
+        cancellationReason = try c.decodeIfPresent(String.self, forKey: .cancellationReason)
+        cancellationRejectReason = try c.decodeIfPresent(String.self, forKey: .cancellationRejectReason)
         product = try c.decodeIfPresent(ProductDetails.self, forKey: .product)
         shippingTracking = try c.decodeIfPresent([ShippingTrackingModel].self, forKey: .shippingTracking)
         user = try c.decodeIfPresent(UserShortModel.self, forKey: .user)

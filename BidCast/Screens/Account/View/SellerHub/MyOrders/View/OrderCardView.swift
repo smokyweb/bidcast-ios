@@ -88,9 +88,15 @@ struct OrderCardView: View {
     
     @State private var isPressed: Bool = false
     @State private var imageLoaded: Bool = false
-    
+    @State private var showApproveConfirm: Bool = false
+    @State private var showDeclineConfirm: Bool = false
+    @State private var decisionLoading: Bool = false
+    @State private var decisionError: String? = nil
+
     var onTapCardView: (() -> Void)?
     var onTapBuyerView: (() -> Void)?
+    /// Called on successful approve or decline so the list can refresh.
+    var onCancellationDecided: (() -> Void)?
     
     var body: some View {
         HStack(spacing: 16) {
@@ -109,6 +115,18 @@ struct OrderCardView: View {
 //        .simultaneousGesture(pressGesture)
         .onTapGesture {
             onTapCardView?()
+        }
+        .alert("Approve cancellation?", isPresented: $showApproveConfirm) {
+            Button("Keep Order", role: .cancel) { }
+            Button("Approve & Cancel", role: .destructive) { approveCancellation() }
+        } message: {
+            Text("This will cancel the order and notify the buyer.")
+        }
+        .alert("Decline cancellation?", isPresented: $showDeclineConfirm) {
+            Button("Back", role: .cancel) { }
+            Button("Decline", role: .destructive) { declineCancellation() }
+        } message: {
+            Text("The buyer will be notified that their cancellation request was declined.")
         }
     }
     
@@ -159,6 +177,7 @@ struct OrderCardView: View {
             } label: {
                 buyerSection
             }
+            cancellationRequestBlock
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -352,6 +371,144 @@ struct OrderCardView: View {
 //        }
 //    }
 //    
+    // MARK: - Cancellation request block (seller)
+    @ViewBuilder
+    private var cancellationRequestBlock: some View {
+        if order.cancellationStatus?.lowercased() == "requested" {
+            VStack(alignment: .leading, spacing: 8) {
+                // Amber header with optional reason
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundColor(.orange)
+                        .font(.system(size: 14))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Cancellation requested by buyer")
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.orange)
+                        if let reason = order.cancellationReason, !reason.isEmpty {
+                            Text(reason)
+                                .font(.custom(poppinsRegular, size: 11))
+                                .foregroundColor(.secondary)
+                                .lineLimit(2)
+                        }
+                    }
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.orange.opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                // Approve / Decline buttons
+                if decisionLoading {
+                    ProgressView()
+                        .padding(.vertical, 4)
+                } else {
+                    HStack(spacing: 8) {
+                        Button(action: { showApproveConfirm = true }) {
+                            Text("Approve & Cancel")
+                                .font(.custom(poppinsSemiBold, size: 11))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(Color.red)
+                                .clipShape(Capsule())
+                        }
+                        Button(action: { showDeclineConfirm = true }) {
+                            Text("Decline")
+                                .font(.custom(poppinsSemiBold, size: 11))
+                                .foregroundColor(.orange)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(Color.orange.opacity(0.12))
+                                .clipShape(Capsule())
+                        }
+                    }
+                }
+
+                if let err = decisionError {
+                    Text(err)
+                        .font(.custom(poppinsRegular, size: 11))
+                        .foregroundColor(.red)
+                }
+            }
+            .padding(.top, 6)
+        }
+    }
+
+    // MARK: - Approve cancellation (seller)
+    private func approveCancellation() {
+        guard let orderId = order.id, orderId > 0 else { return }
+        decisionLoading = true
+        decisionError = nil
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/decide-cancellation") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            let body: [String: Any] = ["order_id": orderId, "decision": "approve"]
+            req.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            do {
+                let (data, resp) = try await URLSession.shared.data(for: req)
+                let http = resp as? HTTPURLResponse
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let statusStr = (json?["status"] as? String) ?? ""
+                let msg = (json?["message"] as? String) ?? ""
+                await MainActor.run {
+                    decisionLoading = false
+                    if http?.statusCode == 200 && statusStr == "success" {
+                        onCancellationDecided?()
+                    } else {
+                        decisionError = msg.isEmpty ? "Could not approve cancellation." : msg
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    decisionLoading = false
+                    decisionError = "Network error."
+                }
+            }
+        }
+    }
+
+    // MARK: - Decline cancellation (seller)
+    private func declineCancellation() {
+        guard let orderId = order.id, orderId > 0 else { return }
+        decisionLoading = true
+        decisionError = nil
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/decide-cancellation") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            let body: [String: Any] = ["order_id": orderId, "decision": "reject"]
+            req.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            do {
+                let (data, resp) = try await URLSession.shared.data(for: req)
+                let http = resp as? HTTPURLResponse
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let statusStr = (json?["status"] as? String) ?? ""
+                let msg = (json?["message"] as? String) ?? ""
+                await MainActor.run {
+                    decisionLoading = false
+                    if http?.statusCode == 200 && statusStr == "success" {
+                        onCancellationDecided?()
+                    } else {
+                        decisionError = msg.isEmpty ? "Could not decline cancellation." : msg
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    decisionLoading = false
+                    decisionError = "Network error."
+                }
+            }
+        }
+    }
+
     func formatISODateString(
         _ dateString: String,
         outputFormat: String = "MMM dd, yyyy"
