@@ -353,7 +353,7 @@ struct OrderStatusScreen: View {
         guard let id = productDetail?.id else { return }
         Task {
             SVProgressHUD.show()
-            let ok = await workflowVM.decideCancellation(orderId: id, decision: "approved")
+            let ok = await workflowVM.decideCancellation(orderId: id, decision: "approve")
             await SVProgressHUD.dismiss()
             hudMsg = ok ? "Cancellation approved." : (workflowVM.lastError ?? "Couldn't approve the cancellation.")
             showhud = true
@@ -368,7 +368,7 @@ struct OrderStatusScreen: View {
             let trimmed = reason.trimmingCharacters(in: .whitespacesAndNewlines)
             let ok = await workflowVM.decideCancellation(
                 orderId: id,
-                decision: "rejected",
+                decision: "reject",
                 rejectReason: trimmed.isEmpty ? nil : trimmed
             )
             await SVProgressHUD.dismiss()

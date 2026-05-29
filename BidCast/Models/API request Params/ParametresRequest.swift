@@ -1097,6 +1097,6 @@ struct RequestCancellationRequest : Encodable {
 
 struct DecideCancellationRequest : Encodable {
     var order_id : Int
-    var decision : String            // "approved" | "rejected"
+    var decision : String            // outbound value MUST be "approve" | "reject" (backend validates in:approve,reject); stored cancellation_status comes back as approved|rejected
     var reject_reason : String? = nil
 }
