@@ -173,6 +173,11 @@ enum APIEndPoint{
     // (time-windowed). Confirmed endpoint: GET /api/product/flash-sales.
     case listFlashSales
 
+    // Basecamp #9934033253 (2026-05-29): order cancellation request flow.
+    // Backend methods restored + LIVE. (POST, Bearer)
+    case requestCancellation(param: RequestCancellationRequest)
+    case decideCancellation(param: DecideCancellationRequest)
+
 }
 
 extension APIEndPoint: EndPointType {
@@ -584,6 +589,11 @@ extension APIEndPoint: EndPointType {
         // Basecamp #9933973683 (2026-05-29 RETURN)
         case .listFlashSales:
             return "product/flash-sales"
+        // Basecamp #9934033253 (2026-05-29)
+        case .requestCancellation:
+            return "product/request-cancellation"
+        case .decideCancellation:
+            return "product/decide-cancellation"
         }
     }
     
@@ -907,6 +917,11 @@ extension APIEndPoint: EndPointType {
         // Basecamp #9933973683 (2026-05-29 RETURN)
         case .listFlashSales:
             return .get
+        // Basecamp #9934033253 (2026-05-29)
+        case .requestCancellation:
+            return .post
+        case .decideCancellation:
+            return .post
         }
     }
     
@@ -1236,6 +1251,11 @@ extension APIEndPoint: EndPointType {
         // Basecamp #9933973683 (2026-05-29 RETURN)
         case .listFlashSales:
             return nil
+        // Basecamp #9934033253 (2026-05-29) — request bodies
+        case .requestCancellation(param: let param):
+            return param
+        case .decideCancellation(param: let param):
+            return param
         }
     }
     
@@ -1547,6 +1567,11 @@ extension APIEndPoint: EndPointType {
             return nil
         // Basecamp #9933973683 (2026-05-29 RETURN)
         case .listFlashSales:
+            return nil
+        // Basecamp #9934033253 (2026-05-29) — no url-query params; bodies handled above
+        case .requestCancellation:
+            return nil
+        case .decideCancellation:
             return nil
         }
     }

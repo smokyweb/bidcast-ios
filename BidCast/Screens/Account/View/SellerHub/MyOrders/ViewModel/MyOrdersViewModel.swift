@@ -156,6 +156,52 @@ final class OrderWorkflowViewModel: ObservableObject {
         }
     }
 
+    /// Basecamp #9934033253 (2026-05-29) — buyer requests an order cancellation
+    /// with a reason. Backend methods restored + LIVE.
+    /// POST /api/product/request-cancellation { order_id, reason }
+    func requestCancellation(orderId: Int, reason: String) async -> Bool {
+        isWorking = true
+        defer { isWorking = false }
+        do {
+            let param = RequestCancellationRequest(order_id: orderId, reason: reason)
+            let response: ResponseModel<OrderAnyJSON> = try await APIManager.shared.request(
+                type: APIEndPoint.requestCancellation(param: param),
+                header: true
+            )
+            let ok = (response.status?.lowercased() == "success")
+            if !ok { lastError = response.message ?? "Cancellation request failed." }
+            return ok
+        } catch {
+            lastError = (error as? DataError)?.getErrorMessage() ?? error.localizedDescription
+            return false
+        }
+    }
+
+    /// Basecamp #9934033253 (2026-05-29) — seller approves or rejects a pending
+    /// cancellation request.
+    /// POST /api/product/decide-cancellation { order_id, decision, reject_reason? }
+    func decideCancellation(orderId: Int, decision: String, rejectReason: String? = nil) async -> Bool {
+        isWorking = true
+        defer { isWorking = false }
+        do {
+            let param = DecideCancellationRequest(
+                order_id: orderId,
+                decision: decision,
+                reject_reason: rejectReason
+            )
+            let response: ResponseModel<OrderAnyJSON> = try await APIManager.shared.request(
+                type: APIEndPoint.decideCancellation(param: param),
+                header: true
+            )
+            let ok = (response.status?.lowercased() == "success")
+            if !ok { lastError = response.message ?? "Could not update the cancellation." }
+            return ok
+        } catch {
+            lastError = (error as? DataError)?.getErrorMessage() ?? error.localizedDescription
+            return false
+        }
+    }
+
     /// QA #32 / #34 — query USPS for current tracking state. Caller can compare the
     /// status string and call changeStatus(orderId:, status:'delivered') when USPS
     /// reports delivery, which lets the order flip into the Completed tab.

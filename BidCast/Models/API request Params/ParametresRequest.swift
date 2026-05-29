@@ -1084,3 +1084,19 @@ struct FlashSaleUser: Codable {
     let username: String?
     let profile_image: String?
 }
+
+// MARK: - Basecamp #9934033253 (2026-05-29): Order cancellation request flow.
+// Backend methods restored + LIVE. Buyer requests a cancellation with a reason;
+// seller approves/rejects. Endpoints (POST, Bearer):
+//   POST /api/product/request-cancellation  { order_id, reason }
+//   POST /api/product/decide-cancellation   { order_id, decision, reject_reason? }
+struct RequestCancellationRequest : Encodable {
+    var order_id : Int
+    var reason : String
+}
+
+struct DecideCancellationRequest : Encodable {
+    var order_id : Int
+    var decision : String            // "approved" | "rejected"
+    var reject_reason : String? = nil
+}

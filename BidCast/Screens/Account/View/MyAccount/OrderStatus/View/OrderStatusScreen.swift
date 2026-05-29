@@ -45,6 +45,11 @@ struct OrderStatusScreen: View {
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
     @State private var hudMsg = ""
+    // Basecamp #9934033253 (2026-05-29): order-cancellation reason-entry flow.
+    @State private var showCancelReasonSheet = false
+    @State private var cancelReasonText = ""
+    @State private var showRejectReasonSheet = false
+    @State private var rejectReasonText = ""
     var comeFrom: String = ""
     @Binding var orderId : Int
     
@@ -134,6 +139,18 @@ struct OrderStatusScreen: View {
                         )
                     }
                     
+                    // Basecamp #9934033253 (2026-05-29): order-cancellation flow.
+                    if let order = productDetail {
+                        OrderCancellationSection(
+                            order: order,
+                            isSeller: comeFrom == "myOrder",
+                            isWorking: workflowVM.isWorking,
+                            onRequestCancel: { showCancelReasonSheet = true },
+                            onApprove: { approveCancellation() },
+                            onReject: { showRejectReasonSheet = true }
+                        )
+                    }
+
                     // 🛡️ Buyer Protection (buyer-side only — not relevant to a seller managing their order)
                     if comeFrom != "myOrder" {
                         BuyerProtectionView()
@@ -217,6 +234,39 @@ struct OrderStatusScreen: View {
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
         }
+        // Basecamp #9934033253 (2026-05-29): buyer cancellation reason entry.
+        .sheet(isPresented: $showCancelReasonSheet) {
+            CancellationReasonSheet(
+                title: "Request Cancellation",
+                message: "Tell the seller why you'd like to cancel this order. They'll review your request.",
+                placeholder: "Reason for cancellation",
+                confirmTitle: "Submit Request",
+                text: $cancelReasonText,
+                onConfirm: { reason in
+                    showCancelReasonSheet = false
+                    submitCancellationRequest(reason: reason)
+                },
+                onCancel: { showCancelReasonSheet = false }
+            )
+            .presentationDetents([.medium])
+        }
+        // Basecamp #9934033253 (2026-05-29): seller reject reason entry.
+        .sheet(isPresented: $showRejectReasonSheet) {
+            CancellationReasonSheet(
+                title: "Reject Cancellation",
+                message: "Optionally tell the buyer why you're rejecting this cancellation request.",
+                placeholder: "Reason for rejection (optional)",
+                confirmTitle: "Reject Request",
+                text: $rejectReasonText,
+                allowEmpty: true,
+                onConfirm: { reason in
+                    showRejectReasonSheet = false
+                    rejectCancellation(reason: reason)
+                },
+                onCancel: { showRejectReasonSheet = false }
+            )
+            .presentationDetents([.medium])
+        }
         // QA #5 — Present Shipping Details (tracking info) in a sheet.
         .sheet(isPresented: $showShippingDetailsSheet) {
             ShippingDetailsSheet(order: productDetail)
@@ -285,6 +335,50 @@ struct OrderStatusScreen: View {
             orderSuccess()
         }
     }
+    // MARK: - Basecamp #9934033253 (2026-05-29) order-cancellation actions
+    private func submitCancellationRequest(reason: String) {
+        guard let id = productDetail?.id else { return }
+        Task {
+            SVProgressHUD.show()
+            let ok = await workflowVM.requestCancellation(orderId: id, reason: reason)
+            await SVProgressHUD.dismiss()
+            cancelReasonText = ""
+            hudMsg = ok ? "Cancellation request sent to the seller." : (workflowVM.lastError ?? "Couldn't send the cancellation request.")
+            showhud = true
+            if ok { fetchOrderDetail() }
+        }
+    }
+
+    private func approveCancellation() {
+        guard let id = productDetail?.id else { return }
+        Task {
+            SVProgressHUD.show()
+            let ok = await workflowVM.decideCancellation(orderId: id, decision: "approved")
+            await SVProgressHUD.dismiss()
+            hudMsg = ok ? "Cancellation approved." : (workflowVM.lastError ?? "Couldn't approve the cancellation.")
+            showhud = true
+            if ok { fetchOrderDetail() }
+        }
+    }
+
+    private func rejectCancellation(reason: String) {
+        guard let id = productDetail?.id else { return }
+        Task {
+            SVProgressHUD.show()
+            let trimmed = reason.trimmingCharacters(in: .whitespacesAndNewlines)
+            let ok = await workflowVM.decideCancellation(
+                orderId: id,
+                decision: "rejected",
+                rejectReason: trimmed.isEmpty ? nil : trimmed
+            )
+            await SVProgressHUD.dismiss()
+            rejectReasonText = ""
+            hudMsg = ok ? "Cancellation rejected." : (workflowVM.lastError ?? "Couldn't reject the cancellation.")
+            showhud = true
+            if ok { fetchOrderDetail() }
+        }
+    }
+
     func orderSuccess(){
         let response = viewModel.myOrderResponse
         if response.status == "success"{
@@ -875,4 +969,235 @@ struct ActivityShareSheet: UIViewControllerRepresentable {
         UIActivityViewController(activityItems: items, applicationActivities: nil)
     }
     func updateUIViewController(_ vc: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - Basecamp #9934033253 (2026-05-29) — Order Cancellation Section
+// Matches the PWA UX: buyer can request a cancellation (with a reason) only
+// while the order has NOT shipped/delivered/been cancelled. Once requested,
+// shows the pending/approved/rejected state. On the seller side
+// (isSeller == true) a pending request surfaces Approve / Reject controls.
+struct OrderCancellationSection: View {
+    let order: MyOrderModel
+    let isSeller: Bool
+    let isWorking: Bool
+    var onRequestCancel: () -> Void
+    var onApprove: () -> Void
+    var onReject: () -> Void
+
+    // Normalised order status (shipping_status preferred, falls back to status).
+    private var effectiveStatus: String {
+        let s = (order.shipping_status ?? order.status ?? "").lowercased()
+        return s
+    }
+
+    // Cancellation workflow status: nil/"" = none, "pending", "approved", "rejected".
+    private var cancelStatus: String {
+        (order.cancellationStatus ?? "").lowercased()
+    }
+
+    // Buyer may request cancellation only before the order has shipped /
+    // been delivered / already cancelled, and only when there isn't already
+    // a pending or decided request.
+    private var canRequestCancellation: Bool {
+        let blockedStatuses = ["shipped", "out_for_delivery", "delivered", "completed", "cancelled", "canceled"]
+        if blockedStatuses.contains(effectiveStatus) { return false }
+        // tracking_number present means a label was created / shipped.
+        if !(order.tracking_number ?? "").isEmpty { return false }
+        // No existing request in flight or decided.
+        if ["pending", "approved", "rejected", "requested"].contains(cancelStatus) { return false }
+        return true
+    }
+
+    private var hasPendingRequest: Bool {
+        cancelStatus == "pending" || cancelStatus == "requested"
+    }
+
+    var body: some View {
+        // Only render when there's something meaningful to show.
+        if canRequestCancellation || !cancelStatus.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "xmark.octagon")
+                        .foregroundColor(.defaultTheme)
+                    Text("Cancellation")
+                        .font(.custom(poppinsBold, size: 16))
+                        .foregroundColor(.black)
+                    Spacer()
+                }
+
+                // Existing request state (buyer + seller both see this).
+                if !cancelStatus.isEmpty {
+                    cancellationStateView
+                }
+
+                // Buyer: request button.
+                if !isSeller && canRequestCancellation {
+                    Button(action: onRequestCancel) {
+                        Text("Request Cancellation")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .foregroundColor(.defaultTheme)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.defaultTheme.opacity(0.10))
+                            )
+                    }
+                    .disabled(isWorking)
+                }
+
+                // Seller: approve / reject a pending request.
+                if isSeller && hasPendingRequest {
+                    HStack(spacing: 12) {
+                        Button(action: onApprove) {
+                            Text("Approve")
+                                .font(.custom(poppinsSemiBold, size: 14))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color.green))
+                        }
+                        .disabled(isWorking)
+
+                        Button(action: onReject) {
+                            Text("Reject")
+                                .font(.custom(poppinsSemiBold, size: 14))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Color.red))
+                        }
+                        .disabled(isWorking)
+                    }
+                }
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white)
+                    .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var cancellationStateView: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Text(stateLabel)
+                    .font(.custom(poppinsMedium, size: 12))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(Capsule().fill(stateColor))
+            }
+            if let reason = order.cancellationReason, !reason.isEmpty {
+                Text("Reason: \(reason)")
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.gray)
+            }
+            if cancelStatus == "rejected",
+               let rej = order.cancellationRejectReason, !rej.isEmpty {
+                Text("Seller's note: \(rej)")
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.gray)
+            }
+        }
+    }
+
+    private var stateLabel: String {
+        switch cancelStatus {
+        case "pending", "requested": return "Cancellation Requested"
+        case "approved":             return "Cancellation Approved"
+        case "rejected":             return "Cancellation Rejected"
+        default:                     return cancelStatus.capitalized
+        }
+    }
+
+    private var stateColor: Color {
+        switch cancelStatus {
+        case "pending", "requested": return .orange
+        case "approved":             return .green
+        case "rejected":             return .red
+        default:                     return .gray
+        }
+    }
+}
+
+// MARK: - Basecamp #9934033253 (2026-05-29) — Reason entry sheet
+// Reused for the buyer's cancellation reason and the seller's reject reason.
+struct CancellationReasonSheet: View {
+    let title: String
+    let message: String
+    let placeholder: String
+    let confirmTitle: String
+    @Binding var text: String
+    var allowEmpty: Bool = false
+    var onConfirm: (String) -> Void
+    var onCancel: () -> Void
+
+    @FocusState private var focused: Bool
+
+    private var trimmed: String {
+        text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    private var canConfirm: Bool {
+        allowEmpty || !trimmed.isEmpty
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text(title)
+                    .font(.custom(poppinsBold, size: 18))
+                Spacer()
+                Button(action: onCancel) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(.top, 16)
+
+            Text(message)
+                .font(.custom(poppinsRegular, size: 13))
+                .foregroundColor(.gray)
+
+            ZStack(alignment: .topLeading) {
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                if text.isEmpty {
+                    Text(placeholder)
+                        .font(.custom(poppinsRegular, size: 14))
+                        .foregroundColor(.gray.opacity(0.6))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 14)
+                }
+                TextEditor(text: $text)
+                    .focused($focused)
+                    .font(.custom(poppinsRegular, size: 14))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 8)
+                    .frame(height: 110)
+                    .scrollContentBackground(.hidden)
+            }
+            .frame(height: 110)
+
+            Button(action: { onConfirm(trimmed) }) {
+                Text(confirmTitle)
+                    .font(.custom(poppinsSemiBold, size: 16))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 28)
+                            .fill(canConfirm ? Color.defaultTheme : Color.gray.opacity(0.4))
+                    )
+            }
+            .disabled(!canConfirm)
+
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .onAppear { focused = true }
+    }
 }
