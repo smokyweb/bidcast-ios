@@ -157,9 +157,13 @@ struct SearchResultsView: View {
     private func rerunSearch() {
         let catIds = appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds
         let subIds = appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
+        // Basecamp #9933301500 (2026-05-29): pass the WHOLE filter set, not just
+        // categories. Show Format / Tag / Shipping / Premier Shop / ship country
+        // + state now actually reach POST /api/v1/search on Apply.
         viewModel.search(query: initialQuery, page: 1,
                          categoryIds: catIds,
-                         subCategoryIds: subIds)
+                         subCategoryIds: subIds,
+                         filters: appliedFilters)
     }
 
     // Basecamp #9933801536: POST the current query to /api/saved-searches

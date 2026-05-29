@@ -188,6 +188,11 @@ struct BrowseFiltersSheet: View {
     // dropdown picker — loaded once when the filter sheet opens.
     @State private var allTags: [String] = []
     @State private var isLoadingTags: Bool = false
+    // Basecamp #9933301500 (2026-05-29 round 7): category-scoped tag names for
+    // the currently selected (single) category. Reloaded whenever the category
+    // selection changes. tagCache avoids re-fetching the same category's tags.
+    @State private var categoryTags: [String] = []
+    @State private var tagCache: [Int: [String]] = [:]
 
     // Basecamp #9938023997 (2026-05-28): category + subcategory filter state.
     @State private var allCategories: [BrowseFilterCategory] = []
@@ -297,24 +302,36 @@ struct BrowseFiltersSheet: View {
                     }
 
                     // MARK: 2) Tags -----------------------------------
-                    // Basecamp #9933301500 (2026-05-27 round 2/3): Trey reported
-                    // the tag field should be a dropdown of existing tags, not a
-                    // free-text input. Replaced with a Picker that loads all
-                    // popular tags on sheet open (no prefix needed).
+                    // Basecamp #9933301500 (2026-05-29 round 7): the tag dropdown
+                    // must be SCOPED TO THE CURRENTLY SELECTED CATEGORY, matching
+                    // the PWA. Tags live in the show_tags pivot per-category, so a
+                    // global tag list (old /api/tags/suggest behavior) returned
+                    // tags that don't apply to the chosen category and matched
+                    // nothing. Now: enabled only when exactly ONE category is
+                    // selected; options come from GET /api/categories/{id}/tags
+                    // (BrowseFilterController::categoryTags). draft.tag holds the
+                    // tag NAME (backend matches name OR slug).
                     filterSection(title: "Tag") {
                         VStack(alignment: .leading, spacing: 8) {
-                            if allTags.isEmpty && isLoadingTags {
+                            if draft.categoryIds.count != 1 {
+                                // No single category context → tag is ambiguous.
+                                Text(draft.categoryIds.count > 1
+                                     ? "Tags are per-category — select just one category."
+                                     : "Pick one category to see its seller tags.")
+                                    .font(.custom(poppinsRegular, size: 13))
+                                    .foregroundColor(.gray)
+                            } else if categoryTags.isEmpty && isLoadingTags {
                                 ProgressView().frame(maxWidth: .infinity, alignment: .center)
-                            } else if allTags.isEmpty {
-                                Text("No tags available yet")
+                            } else if categoryTags.isEmpty {
+                                Text("No tags in this category yet")
                                     .font(.custom(poppinsRegular, size: 13))
                                     .foregroundColor(.gray)
                             } else {
-                                // Picker-style menu of all available tags.
+                                // Picker-style menu of tags scoped to the category.
                                 Menu {
                                     Button("Any tag") { draft.tag = "" }
                                     Divider()
-                                    ForEach(allTags, id: \.self) { tag in
+                                    ForEach(categoryTags, id: \.self) { tag in
                                         Button(tag) { draft.tag = tag }
                                     }
                                 } label: {
@@ -482,8 +499,10 @@ struct BrowseFiltersSheet: View {
         // and "No tags available yet" even though the backend returns both.
         // Move the trigger to the root view's .onAppear, which always fires.
         .onAppear {
-            fetchAllTags()
             fetchAllCategories()
+            // Basecamp #9933301500 (2026-05-29 round 7): tags are category-scoped
+            // now; load them for whatever single category is pre-selected (if any).
+            refreshCategoryTags()
         }
     }
 
@@ -543,27 +562,52 @@ struct BrowseFiltersSheet: View {
 
     // MARK: - Tag autocomplete ----------------------------------------
 
-    // Basecamp #9933301500 (2026-05-27 round 3): fetch ALL popular tags
-    // (no prefix) to populate the dropdown picker on sheet open.
-    private func fetchAllTags() {
-        guard allTags.isEmpty else { return } // already loaded
+    // Basecamp #9933301500 (2026-05-29 round 7): tags are CATEGORY-SCOPED.
+    // Load the tag names for the single selected category from
+    // GET /api/categories/{id}/tags (BrowseFilterController::categoryTags,
+    // response shape { data: { category, tags: [{id,name,slug,category_count}] } }).
+    // Disabled / cleared when 0 or >1 categories are selected. If the current
+    // draft.tag is no longer valid under the new category, it is cleared.
+    private func refreshCategoryTags() {
+        // Only meaningful with exactly one category selected.
+        guard draft.categoryIds.count == 1, let catId = draft.categoryIds.first else {
+            categoryTags = []
+            if !draft.tag.isEmpty { draft.tag = "" }
+            return
+        }
+        // Serve from cache when available.
+        if let cached = tagCache[catId] {
+            categoryTags = cached
+            if !draft.tag.isEmpty && !cached.contains(draft.tag) { draft.tag = "" }
+            return
+        }
         isLoadingTags = true
-        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/tags/suggest") else {
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/categories/\(catId)/tags") else {
             isLoadingTags = false; return
         }
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            DispatchQueue.main.async { isLoadingTags = false }
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        let token = UserDefaults.accessToken
+        if !token.isEmpty { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        URLSession.shared.dataTask(with: req) { data, _, _ in
+            DispatchQueue.main.async { self.isLoadingTags = false }
             guard let data else { return }
             struct TagItem: Decodable { let name: String? }
-            struct Envelope: Decodable { let data: [TagItem]? }
+            struct Payload: Decodable { let tags: [TagItem]? }
+            struct Envelope: Decodable { let data: Payload? }
             var parsed: [String] = []
             if let env = try? JSONDecoder().decode(Envelope.self, from: data) {
-                parsed = (env.data ?? []).compactMap { $0.name }
-            } else if let arr = try? JSONDecoder().decode([String].self, from: data) {
-                parsed = arr
+                parsed = (env.data?.tags ?? []).compactMap { $0.name }
             }
             DispatchQueue.main.async {
-                allTags = parsed
+                self.tagCache[catId] = parsed
+                // Guard against a stale response if the user changed selection
+                // while this request was in flight.
+                if self.draft.categoryIds.count == 1 && self.draft.categoryIds.first == catId {
+                    self.categoryTags = parsed
+                    if !self.draft.tag.isEmpty && !parsed.contains(self.draft.tag) { self.draft.tag = "" }
+                }
             }
         }.resume()
     }
@@ -598,6 +642,10 @@ struct BrowseFiltersSheet: View {
                 fetchSubcategories(for: draft.categoryIds)
             }
         }
+        // Basecamp #9933301500 (2026-05-29 round 7): tags are scoped to the
+        // single selected category — reload (or clear) the tag dropdown whenever
+        // the category selection changes.
+        refreshCategoryTags()
     }
 
     private func toggleSubcategory(_ id: Int) {
