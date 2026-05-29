@@ -13,6 +13,8 @@ final class HomeViewModel: ObservableObject {
     @Published var addressResponse = ResponseModel<AddressModel>()
     @Published var liveShowsResponse = ResponseModelPaginate<[HomeModel]>()
     @Published var accountInfo = ResponseModel<ProfileModel>()
+    // Basecamp #9933973683 (2026-05-29): flash-sale row data for the home page.
+    @Published var flashSalesResponse = ResponseModel<[FlashSaleProduct]>()
     @Published var errorMessage: String? = ""
     @Published var requestType = ""
 
@@ -31,6 +33,25 @@ final class HomeViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Get Flash Sales (Basecamp #9933973683)
+    // GET /api/product/flash-sales — cross-seller active flash items.
+    func getFlashSales() async {
+        do {
+            let response: ResponseModel<[FlashSaleProduct]> = try await APIManager.shared.request(
+                type: APIEndPoint.listFlashSales,
+                header: true
+            )
+            self.flashSalesResponse = response
+        } catch {
+            // Non-fatal: the home feed should still load even if flash sales fail.
+            if let dataError = error as? DataError {
+                print("⚠️ flash-sales fetch failed:", dataError.getErrorMessage())
+            } else {
+                print("⚠️ flash-sales fetch failed:", error.localizedDescription)
+            }
+        }
+    }
+
     func getProfile() async {
         requestType = "get"
         errorMessage = ""

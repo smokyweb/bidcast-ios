@@ -30,6 +30,8 @@ struct HomeViewScreen: View {
     var categoryViewModel = SelectCategoryViewModel()
     @State var categoryList = [CategoryDataModel]()
     @State var liveShowsData = [HomeModel]()
+    // Basecamp #9933973683 (2026-05-29): flash-sale row at top of home.
+    @State private var flashSales: [FlashSaleProduct] = []
     
     @State private var isLoadingCategoryAPI: Bool = true
     @State private var isLoadingShowAPI: Bool = true
@@ -177,6 +179,19 @@ struct HomeViewScreen: View {
           
             ScrollView(showsIndicators:false){
                 VStack(alignment: .leading, spacing: 8){
+                    // MARK: - Flash Sale Row (Basecamp #9933973683)
+                    // Surfaces cross-seller active flash items at the very top
+                    // of the home feed. Only renders on the root For-You view
+                    // (not in a category-filtered drill-down) and only when
+                    // there are active flash items to show.
+                    if !comeFromExploreScreen && !flashSales.isEmpty {
+                        FlashSaleRowView(items: flashSales) { item in
+                            self.searchSelectedProductId = item.id ?? 0
+                            self.searchSelectedSellerInfo = nil
+                            self.navigateToSearchProduct = true
+                        }
+                    }
+
                     // MARK: - Filter Pills + Browse Filters button
                     HStack(spacing: 8) {
                         PillsSelectorView(
@@ -391,6 +406,8 @@ struct HomeViewScreen: View {
                 Task {
                     await fetchCategory(for: "for_you")
                     await fetchLiveShow()
+                    // Basecamp #9933973683: load flash-sale row data.
+                    await fetchFlashSales()
                 }
             }
             getProfileData()
@@ -678,6 +695,16 @@ struct HomeViewScreen: View {
         }
     }
     
+    // MARK: - fetchFlashSales (Basecamp #9933973683)
+    func fetchFlashSales() async {
+        await viewModel.getFlashSales()
+        if viewModel.flashSalesResponse.status == "success" {
+            flashSales = viewModel.flashSalesResponse.data ?? []
+        } else {
+            flashSales = []
+        }
+    }
+
     func goToExplore() {
         tabBarRouter.exploreInitialTab = 2
         tabBarRouter.selectedTab = 1
@@ -1002,6 +1029,104 @@ struct HomeViewScreen: View {
         case "Popular": return "popular"
         default: return "upcoming"
         }
+    }
+}
+
+// MARK: - Flash Sale Row (Basecamp #9933973683 2026-05-29)
+// Horizontal carousel of active flash-sale products surfaced at the top of
+// the home feed. Data from GET /api/product/flash-sales. Tapping a card
+// opens ProductDetailView via the parent's product-tap handler.
+struct FlashSaleRowView: View {
+    let items: [FlashSaleProduct]
+    var onTap: (FlashSaleProduct) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "bolt.fill")
+                    .foregroundColor(.orange)
+                Text("Flash Sales")
+                    .font(.custom(poppinsBold, size: 16))
+                    .foregroundColor(.black)
+            }
+            .padding(.horizontal, 2)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(items) { item in
+                        FlashSaleCard(item: item)
+                            .onTapGesture { onTap(item) }
+                    }
+                }
+                .padding(.horizontal, 2)
+                .padding(.bottom, 4)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+struct FlashSaleCard: View {
+    let item: FlashSaleProduct
+
+    private var saleText: String? {
+        guard let p = item.flash_sale_price else { return nil }
+        return String(format: "$%.2f", p)
+    }
+    private var origText: String? {
+        guard let p = item.pricing else { return nil }
+        return String(format: "$%.2f", p)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ZStack(alignment: .topLeading) {
+                if let url = item.thumbUrl {
+                    CustomProfileImage(url: url, isCircular: false, size: 130)
+                        .frame(width: 130, height: 130)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                } else {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.gray.opacity(0.15))
+                        .frame(width: 130, height: 130)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .foregroundColor(.gray.opacity(0.5))
+                        )
+                }
+                HStack(spacing: 3) {
+                    Image(systemName: "bolt.fill").font(.system(size: 8))
+                    Text("FLASH").font(.system(size: 8, weight: .bold))
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 3)
+                .background(Capsule().fill(Color.orange))
+                .padding(6)
+            }
+
+            Text(item.title ?? "")
+                .font(.custom(poppinsSemiBold, size: 13))
+                .foregroundColor(.black)
+                .lineLimit(1)
+                .frame(width: 130, alignment: .leading)
+
+            HStack(spacing: 6) {
+                if let s = saleText {
+                    Text(s)
+                        .font(.custom(poppinsBold, size: 13))
+                        .foregroundColor(.orange)
+                }
+                if let o = origText, saleText != nil {
+                    Text(o)
+                        .font(.custom(poppinsRegular, size: 11))
+                        .foregroundColor(.gray)
+                        .strikethrough()
+                }
+            }
+            .frame(width: 130, alignment: .leading)
+        }
+        .frame(width: 130)
     }
 }
 
