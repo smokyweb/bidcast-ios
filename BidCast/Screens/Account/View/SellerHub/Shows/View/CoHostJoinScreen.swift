@@ -10,29 +10,29 @@
 // Entry point: ShowsScreen → "Join as Co-Host" button (bottom of the shows
 // list) for sellers, or via SellerHub menu.
 //
-// Agora multi-publisher note: this screen handles the CONTROL-PAIRING side
-// only (presence + status).  Full Agora multi-publisher video (two camera
-// feeds from two devices in the same channel with both as publishers) is
-// NOT implemented here — it requires:
-//   1. The host to invite the co-host's UID as a co-publisher via
-//      Agora's interactive live streaming audience→publisher role switch,
-//      OR both devices to join the same RTC channel directly.
-//   2. A new Agora token for the co-host device with a publisher role
-//      (the backend would need to expose a co-host token endpoint).
-//   3. AgoraKit integration in this screen (startPreview, joinChannel,
-//      setClientRole(.broadcaster)).
-// That work is estimated at ~1–2 days (backend token endpoint + iOS Agora
-// integration + UI for the co-host's local camera preview).
-// Tracking: Basecamp #9934001770 comment thread.
+// Agora multi-publisher (2026-05-29):
+// After the control-pairing claim succeeds we compute the channel name
+//   "live_room_\(show.user_id)_\(show.id)"
+// (identical format to RehearsalScreen.fetchAgoraToken), fetch an Agora
+// broadcaster token via the existing /api/agora-token endpoint with uid
+// omitted so Agora auto-assigns a distinct UID, then join the channel with
+// clientRoleType = .broadcaster so both camera feeds publish simultaneously.
+// The local camera feed is shown full-screen; the host's remote feed appears
+// as a compact PiP overlay once didJoinedOfUid fires.
 
 import SwiftUI
 import AlertToast
+import AVFoundation
 
 struct CoHostJoinScreen: View {
 
     @Environment(\.presentationMode) var presentationMode
 
-    // MARK: - State
+    // MARK: - Agora objects (reuse existing manager + view-model)
+    @StateObject private var agoraViewModel = AgoraViewModel()
+    @StateObject private var agoraManager   = AgoraManager(asHost: true)
+
+    // MARK: - Pairing State
     @State private var pairingCode: String = ""
     @State private var isJoining: Bool = false
     @State private var joinedShowTitle: String? = nil
@@ -40,10 +40,26 @@ struct CoHostJoinScreen: View {
     @FocusState private var codeFocused: Bool
 
     @State private var showhud = false
-    @State private var hudMsg = ""
+    @State private var hudMsg  = ""
+
+    // MARK: - Co-host Live State
+    @State private var isLive: Bool        = false
+    @State private var isJoiningAgora: Bool = false
+    @State private var agoraError: String? = nil
+    @State private var permissionDenied: Bool = false
 
     // MARK: - Body
     var body: some View {
+        if isLive {
+            coHostLiveView
+        } else {
+            pairingView
+        }
+    }
+
+    // MARK: - Pairing / Code Entry View
+    @ViewBuilder
+    private var pairingView: some View {
         VStack(spacing: 0) {
             PrimaryHeader(
                 title: "Join as Co-Host",
@@ -57,7 +73,7 @@ struct CoHostJoinScreen: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 28) {
 
-                    // Illustration / icon
+                    // Icon
                     Image(systemName: "iphone.and.arrow.forward")
                         .font(.system(size: 64, weight: .light))
                         .foregroundColor(.defaultTheme)
@@ -84,8 +100,10 @@ struct CoHostJoinScreen: View {
                             .textInputAutocapitalization(.characters)
                             .autocorrectionDisabled(true)
                             .onChange(of: pairingCode) { _, v in
-                                // Uppercase + limit to 6 chars
-                                let cleaned = String(v.uppercased().filter { $0.isLetter || $0.isNumber }.prefix(6))
+                                // Uppercase + limit to 6 alphanumeric chars
+                                let cleaned = String(v.uppercased()
+                                    .filter { $0.isLetter || $0.isNumber }
+                                    .prefix(6))
                                 if pairingCode != cleaned { pairingCode = cleaned }
                             }
                             .padding(.vertical, 16)
@@ -95,8 +113,10 @@ struct CoHostJoinScreen: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 16)
-                                    .stroke(codeFocused ? Color.defaultTheme.opacity(0.6) : Color.gray.opacity(0.2),
-                                            lineWidth: codeFocused ? 1.5 : 1)
+                                    .stroke(
+                                        codeFocused ? Color.defaultTheme.opacity(0.6) : Color.gray.opacity(0.2),
+                                        lineWidth: codeFocused ? 1.5 : 1
+                                    )
                             )
                             .padding(.horizontal, 48)
 
@@ -108,28 +128,60 @@ struct CoHostJoinScreen: View {
                         }
                     }
 
-                    if let showTitle = joinedShowTitle {
-                        // Joined confirmation
+                    // Agora connecting indicator
+                    if isJoiningAgora {
+                        VStack(spacing: 8) {
+                            ProgressView()
+                            Text("Connecting to live stream…")
+                                .font(.custom(poppinsRegular, size: 13))
+                                .foregroundColor(.gray)
+                        }
+                    }
+
+                    // Agora error
+                    if let agoraErr = agoraError {
+                        Text(agoraErr)
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 24)
+                    }
+
+                    // Permission denied warning
+                    if permissionDenied {
+                        Text("Camera and/or microphone access was denied. Please allow access in Settings to use co-host video.")
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(.orange)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 24)
+                    }
+
+                    // Pairing success confirmation (shown briefly while Agora connects)
+                    if let showTitle = joinedShowTitle, !isLive {
                         VStack(spacing: 12) {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 48))
                                 .foregroundColor(.green)
-                            Text("Co-host active")
+                            Text("Paired successfully")
                                 .font(.custom(poppinsBold, size: 18))
                                 .foregroundColor(.green)
                             Text(showTitle)
                                 .font(.custom(poppinsRegular, size: 13))
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
-                            Text("The primary device will now show you as the co-host. Full Agora camera sharing requires the host to grant publisher role — see in-app co-host controls.")
-                                .font(.custom(poppinsRegular, size: 12))
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 24)
+                            if !isJoiningAgora {
+                                Text("Joining live channel as broadcaster…")
+                                    .font(.custom(poppinsRegular, size: 12))
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 24)
+                            }
                         }
                         .padding(.horizontal, 24)
-                    } else {
-                        // Join button
+                    }
+
+                    // Join button — hidden once Agora join is in flight
+                    if joinedShowTitle == nil {
                         Button {
                             Task { await claimPairingCode() }
                         } label: {
@@ -162,23 +214,159 @@ struct CoHostJoinScreen: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
         .onAppear { codeFocused = true }
+        .onDisappear {
+            // Clean up Agora engine if user backs out before going live
+            if !isLive && agoraManager.isJoined {
+                agoraManager.leaveChannel()
+            }
+        }
     }
 
-    // MARK: - Claim endpoint
+    // MARK: - Co-host Live View
+    // Shows the co-host's own camera full-screen with the host's feed as a
+    // compact PiP overlay in the top-right corner once the remote stream arrives.
+    @ViewBuilder
+    private var coHostLiveView: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            // Main feed: co-host's own local camera (full screen)
+            VideoContainerView(uiView: agoraManager.localVideoView)
+                .ignoresSafeArea()
+
+            // PiP: host's remote video feed (top-right, appears once connected)
+            if agoraManager.remoteUserId != nil {
+                VStack {
+                    HStack {
+                        Spacer()
+                        ZStack(alignment: .bottomLeading) {
+                            VideoContainerView(uiView: agoraManager.remoteVideoView)
+                                .frame(width: 120, height: 160)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                )
+                                .shadow(radius: 8)
+
+                            Text("HOST")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .background(Color.black.opacity(0.6))
+                                .cornerRadius(4)
+                                .padding(6)
+                        }
+                        .padding(.top, 60)
+                        .padding(.trailing, 16)
+                    }
+                    Spacer()
+                }
+            }
+
+            // Controls overlay
+            VStack {
+                // Top bar: LIVE badge + mic + camera-flip
+                HStack(spacing: 12) {
+                    // CO-HOST LIVE badge
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                        Text("CO-HOST")
+                            .font(.custom(poppinsBold, size: 11))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.red.opacity(0.8))
+                    .cornerRadius(6)
+
+                    Spacer()
+
+                    // Mute / unmute
+                    Button {
+                        agoraManager.toggleAudioMute()
+                    } label: {
+                        Image(systemName: agoraManager.isAudioMuted ? "mic.slash.fill" : "mic.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+
+                    // Flip camera
+                    Button {
+                        agoraManager.switchCamera()
+                    } label: {
+                        Image(systemName: "camera.rotate.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 55)
+
+                Spacer()
+
+                // Waiting label when no remote yet
+                if agoraManager.remoteUserId == nil {
+                    Text("Waiting for host's stream…")
+                        .font(.custom(poppinsRegular, size: 13))
+                        .foregroundColor(.white.opacity(0.7))
+                        .padding(.bottom, 12)
+                }
+
+                // Leave co-host button
+                Button {
+                    leaveCoHost()
+                } label: {
+                    Text("Leave Co-Host")
+                        .font(.custom(poppinsBold, size: 15))
+                        .foregroundColor(.white)
+                        .frame(width: 180, height: 48)
+                        .background(Color.red.opacity(0.85))
+                        .cornerRadius(24)
+                }
+                .padding(.bottom, 44)
+            }
+        }
+        .navigationBarHidden(true)
+        .statusBar(hidden: true)
+    }
+
+    // MARK: - Leave Co-Host
+    private func leaveCoHost() {
+        agoraManager.leaveChannel()
+        isLive = false
+        // No pairing ID available on co-host side; host can revoke via
+        // CoHostPairingSheet → "Revoke" if needed (best-effort per spec).
+        presentationMode.wrappedValue.dismiss()
+    }
+
+    // MARK: - Claim pairing code
     // POST /api/product/co-host/claim
     // Body: { "pairing_code": "<6-char>" }
-    // Response (success): { status: "success", data: { show_title: "...", ... } }
+    // Response (success): { status: "success", data: { ...show... } }
     // Response (error):   { status: "error",   message: "..." }
     private func claimPairingCode() async {
         guard pairingCode.count == 6 else { return }
         await MainActor.run {
-            isJoining = true
-            joinError = nil
+            isJoining   = true
+            joinError   = nil
+            agoraError  = nil
         }
+
         guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/claim") else {
             await MainActor.run { isJoining = false; joinError = "Invalid URL." }
             return
         }
+
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -191,20 +379,52 @@ struct CoHostJoinScreen: View {
             let (data, _) = try await URLSession.shared.data(for: req)
             let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             let status = (json?["status"] as? String) ?? ""
-            await MainActor.run {
-                isJoining = false
-                if status == "success" {
-                    let row = json?["data"] as? [String: Any]
-                    let showTitle = (row?["show_title"] as? String)
-                                    ?? (row?["title"] as? String)
-                                    ?? "Show paired"
-                    joinedShowTitle = showTitle
-                    // ⚠️ Agora video TODO: here we would call
-                    //   agoraKit.setClientRole(.broadcaster)
-                    //   agoraKit.joinChannel(…) with a co-host token
-                    // from the backend. Tracking: Basecamp #9934001770.
+
+            if status == "success" {
+                let row = json?["data"] as? [String: Any]
+                let showTitle = (row?["show_title"] as? String)
+                    ?? (row?["title"] as? String)
+                    ?? "Show paired"
+
+                // Extract host user_id and show id to build the channel name.
+                // The backend returns the full show object; user_id may be Int
+                // or String depending on serialiser version — handle both.
+                let hostUserId: Int
+                if let v = row?["user_id"] as? Int {
+                    hostUserId = v
+                } else if let s = row?["user_id"] as? String, let v = Int(s) {
+                    hostUserId = v
                 } else {
-                    joinError = (json?["message"] as? String) ?? "Invalid or expired code. Please try again."
+                    hostUserId = 0
+                }
+
+                let showId: Int
+                if let v = row?["id"] as? Int {
+                    showId = v
+                } else if let s = row?["id"] as? String, let v = Int(s) {
+                    showId = v
+                } else {
+                    showId = 0
+                }
+
+                await MainActor.run {
+                    isJoining      = false
+                    joinedShowTitle = showTitle
+                }
+
+                // Proceed to Agora only when we have valid identifiers
+                if hostUserId > 0 && showId > 0 {
+                    await joinAgoraAsCoHost(hostUserId: hostUserId, showId: showId)
+                } else {
+                    await MainActor.run {
+                        agoraError = "Could not determine channel — missing show data in response."
+                    }
+                }
+            } else {
+                await MainActor.run {
+                    isJoining  = false
+                    joinError  = (json?["message"] as? String)
+                                 ?? "Invalid or expired code. Please try again."
                 }
             }
         } catch {
@@ -212,6 +432,49 @@ struct CoHostJoinScreen: View {
                 isJoining = false
                 joinError = error.localizedDescription
             }
+        }
+    }
+
+    // MARK: - Join Agora channel as second broadcaster
+    //
+    // Channel name: "live_room_\(hostUserId)_\(showId)" — matches RehearsalScreen.fetchAgoraToken exactly.
+    // Token:        fetched via existing AgoraViewModel / POST /api/agora-token.
+    // UID:          0 (let Agora auto-assign) so it is distinct from the host's UID.
+    // Role:         broadcaster (publishCameraTrack + publishMicrophoneTrack = true).
+    private func joinAgoraAsCoHost(hostUserId: Int, showId: Int) async {
+        await MainActor.run { isJoiningAgora = true }
+
+        // 1. Request camera and microphone permission
+        let cameraOK = await AVCaptureDevice.requestAccess(for: .video)
+        let audioOK  = await AVCaptureDevice.requestAccess(for: .audio)
+        guard cameraOK && audioOK else {
+            await MainActor.run {
+                isJoiningAgora   = false
+                permissionDenied = true
+            }
+            return
+        }
+
+        // 2. Build channel name — MUST match host's format exactly
+        let channelName = "live_room_\(hostUserId)_\(showId)"
+
+        // 3. Fetch broadcaster token (uid omitted → Agora auto-assigns distinct UID)
+        await agoraViewModel.getAgoraToken(param: ["channel": channelName])
+        let token = agoraViewModel.getAgoraDict?.data?.token ?? ""
+        guard !token.isEmpty else {
+            await MainActor.run {
+                isJoiningAgora = false
+                agoraError     = "Failed to obtain Agora token. Please try again."
+            }
+            return
+        }
+
+        // 4. Join as broadcaster (second publisher in same channel)
+        agoraManager.joinChannel(asHost: true, channelName: channelName, token: token)
+
+        await MainActor.run {
+            isJoiningAgora = false
+            isLive         = true
         }
     }
 }
