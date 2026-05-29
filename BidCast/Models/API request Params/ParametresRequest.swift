@@ -731,6 +731,15 @@ struct ProductRequest : Encodable {
     var sale_type: String? //buy_now, auction,accept_offers
     var sort_by: String? //title_asc, title_desc, newest, oldest, price_low_high, price_high_low
     var format: String? //asc, desc
+    // Basecamp #9943369910 (2026-05-29): scope product list to a specific
+    // scheduled show so the seller in-show product sheet only shows the
+    // items added to THAT show. When nil the server returns the user's
+    // full catalog (existing behaviour). Default nil so all existing
+    // call sites compile without change.
+    // NOTE: backend getProducts() (POST /api/get-product) filters on `show_id`
+    // (validated against schedule_shows.id), NOT schedule_show_id. Verified
+    // against live ApiController 2026-05-29 by Robin.
+    var show_id: String? = nil
 }
 
 struct GetLiveShowsRequest : Encodable{

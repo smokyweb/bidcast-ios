@@ -165,6 +165,12 @@ struct ProductShopListScreen: View {
 
     @Binding var sellerId: String
     @Binding var categoryIds: Int
+    // Basecamp #9943369910 (2026-05-29): numeric show ID (schedule_shows.id)
+    // used to scope the product query to only items added to THIS show.
+    // Default empty string so callers that don't have a show context (e.g.
+    // ProfileScreen → seller shop view) still compile and load the full
+    // catalog as before.
+    var scheduleShowId: String = ""
 
     private let options = ["Sort", "Auction", "Buy Now"]
 
@@ -335,7 +341,9 @@ extension ProductShopListScreen {
                     category_ids: categoryFilter,
                     page: currentPage,
                     sale_type: selectedOptions,
-                    sort_by: selectedSort
+                    sort_by: selectedSort,
+                    // Basecamp #9943369910: pass show scope when available.
+                    show_id: scheduleShowId.isEmpty ? nil : scheduleShowId
                 )
                 try await productViewModel.getProductsData1(parameters: request)
             }
