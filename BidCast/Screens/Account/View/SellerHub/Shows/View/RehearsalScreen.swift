@@ -669,35 +669,41 @@ struct RehearsalScreen: View {
         let size = geometry.size
         ZStack {
 
-            // 🔒 Remote video view (ALWAYS mounted)
-            VideoContainerView(uiView: agoraManager.remoteVideoView)
-                .frame(
-                    width: size.width,
-                    height: size.height
-                )
-                .opacity(agoraManager.remoteUserId != nil ? 1 : 0)
-
-            // 🔒 Local video view (ALWAYS mounted)
+            // 🎥 Host's own local camera — always full-screen main feed
             VideoContainerView(uiView: agoraManager.localVideoView)
-                .frame(
-                    width: size.width,
-                    height: size.height
-                )
-                .opacity(agoraManager.remoteUserId == nil ? 1 : 0)
+                .frame(width: size.width, height: size.height)
 
-            // ⏳ Waiting overlay
-//            if agoraManager.isJoined && agoraManager.remoteUserId == nil {
-//                VStack(spacing: 12) {
-//                    ProgressView()
-//                        .progressViewStyle(
-//                            CircularProgressViewStyle(tint: .white)
-//                        )
-//
-//                    Text("Waiting for stream…")
-//                        .font(.custom(poppinsRegular, size: 14))
-//                        .foregroundColor(.white.opacity(0.7))
-//                }
-//            }
+            // 📺 Co-host's remote feed — compact PiP overlay in top-right
+            // when a second broadcaster (co-host) has joined the channel.
+            if agoraManager.remoteUserId != nil {
+                VStack {
+                    HStack {
+                        Spacer()
+                        ZStack(alignment: .bottomLeading) {
+                            VideoContainerView(uiView: agoraManager.remoteVideoView)
+                                .frame(width: 120, height: 160)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                )
+                                .shadow(radius: 8)
+
+                            Text("CO-HOST")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .background(Color.black.opacity(0.6))
+                                .cornerRadius(4)
+                                .padding(6)
+                        }
+                        .padding(.top, 60)
+                        .padding(.trailing, 16)
+                    }
+                    Spacer()
+                }
+            }
         }
         .background(Color.black)
         .ignoresSafeArea()
