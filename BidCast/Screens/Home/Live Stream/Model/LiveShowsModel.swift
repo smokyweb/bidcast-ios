@@ -194,6 +194,11 @@ struct SellerCategoryDetailsModel: Codable {
 
 
 // MARK: - GetShowOverviewModel
+// Basecamp #9929113636 (2026-05-29): backend returns several fields as raw
+// numbers (integer 0 / decimal) when there is no data or when ffprobe fails.
+// Swift's synthesised Codable throws DecodingError.typeMismatch on those,
+// causing the ENTIRE model decode to fail → api = nil → fileURL lost →
+// videoURL = "" → blank AVPlayer. Custom init(from:) coerces flexibly.
 struct GetShowOverviewModel: Codable {
     var orderCount : Int?
     var videoDuration, totalSales: String?
@@ -212,6 +217,57 @@ struct GetShowOverviewModel: Codable {
         case contributionsCount = "contributions_count"
         case totalBids = "total_bids"
         case fileURL = "file_url"
+    }
+
+    // Decode a field that the backend may return as String or Number.
+    // Returns nil when the value is absent or numerically zero (no data).
+    private static func decodeFlexibleString<K: CodingKey>(
+        _ c: KeyedDecodingContainer<K>, forKey key: K
+    ) -> String? {
+        if let s = try? c.decodeIfPresent(String.self, forKey: key), !s.isEmpty { return s }
+        if let d = try? c.decodeIfPresent(Double.self, forKey: key) {
+            return d == 0 ? nil : String(format: "%g", d)
+        }
+        if let i = try? c.decodeIfPresent(Int.self, forKey: key) {
+            return i == 0 ? nil : String(i)
+        }
+        return nil
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        orderCount    = try c.decodeIfPresent(Int.self,    forKey: .orderCount)
+        videoDuration = Self.decodeFlexibleString(c, forKey: .videoDuration)
+        totalSales    = Self.decodeFlexibleString(c, forKey: .totalSales)
+        shareCount    = try c.decodeIfPresent(Int.self,    forKey: .shareCount)
+        viewerCount   = try c.decodeIfPresent(Int.self,    forKey: .viewerCount)
+        newFollowers  = try c.decodeIfPresent(Int.self,    forKey: .newFollowers)
+        contributionsCount = Self.decodeFlexibleString(c, forKey: .contributionsCount)
+        totalBids     = try c.decodeIfPresent(Int.self,    forKey: .totalBids)
+        fileURL       = try c.decodeIfPresent(String.self, forKey: .fileURL)
+    }
+
+    // Memberwise init used by MyShowsAnalyticsScreen.handleShowOverviewSuccess
+    init(
+        orderCount: Int? = nil,
+        videoDuration: String? = nil,
+        totalSales: String? = nil,
+        shareCount: Int? = nil,
+        viewerCount: Int? = nil,
+        newFollowers: Int? = nil,
+        contributionsCount: String? = nil,
+        totalBids: Int? = nil,
+        fileURL: String? = nil
+    ) {
+        self.orderCount        = orderCount
+        self.videoDuration     = videoDuration
+        self.totalSales        = totalSales
+        self.shareCount        = shareCount
+        self.viewerCount       = viewerCount
+        self.newFollowers      = newFollowers
+        self.contributionsCount = contributionsCount
+        self.totalBids         = totalBids
+        self.fileURL           = fileURL
     }
 }
 

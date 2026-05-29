@@ -83,7 +83,17 @@ struct VideoPlayerScreen: View {
         .navigationBarHidden(true)
         .background(Color.black)
         .onAppear {
+            // Guard: skip if URL not yet available (e.g. NavigationLink pre-load
+            // before the get-show-overview API returns). onChange below covers
+            // the case where the URL arrives after this fires.
+            guard !videoURL.isEmpty else { return }
             viewModel.setupPlayer(url: videoURL)
+        }
+        // Basecamp #9929113636 (2026-05-29): when the URL was empty at .onAppear
+        // time (pre-load or race), pick it up here as soon as it becomes available.
+        .onChange(of: videoURL) { newURL in
+            guard !newURL.isEmpty else { return }
+            viewModel.setupPlayer(url: newURL)
         }
         .onDisappear {
             viewModel.cleanup()
@@ -371,14 +381,11 @@ class VideoPlayerViewModel: ObservableObject {
     }
     
     func setupPlayer(url : String) {
-        let localURL = localFileURL()
+        // Bail out immediately on empty URL — the binding hasn't resolved yet.
+        guard !url.isEmpty else { return }
         let videoUrl = URL(string: url) ?? URL(fileURLWithPath: "")
-        if  !url.isEmpty{
-            // play local file
-            playVideo(url: videoUrl)
-        } else {
-            downloadVideo()
-        }
+        // play from remote URL (S3 recordings are direct HTTPS streams)
+        playVideo(url: videoUrl)
     }
     
     private func downloadVideo() {

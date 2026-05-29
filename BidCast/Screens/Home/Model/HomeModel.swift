@@ -65,6 +65,9 @@ struct HomeModel: Codable, Identifiable {
     var promotion_start_at: String?
     var promotion_end_at: String?
     var sub_category: SubCategoryDataModel?
+    // Basecamp #9929113636 (2026-05-29): backend now surfaces recording URL
+    // per-row on get-my-schedule-show so clients can skip a second API round-trip.
+    var file_url: String?
 }
 
 struct AuctionData : Codable {
@@ -127,5 +130,6 @@ extension HomeModel {
         promotion_start_at = try c.decodeIfPresent(String.self, forKey: .promotion_start_at)
         promotion_end_at = try c.decodeIfPresent(String.self, forKey: .promotion_end_at)
         sub_category = try c.decodeIfPresent(SubCategoryDataModel.self, forKey: .sub_category)
+        file_url = try c.decodeIfPresent(String.self, forKey: .file_url)
     }
 }
