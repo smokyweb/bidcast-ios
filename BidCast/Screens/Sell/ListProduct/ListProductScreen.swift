@@ -1109,7 +1109,7 @@ struct ListProductScreen: View {
                     // Basecamp #9933973683 (2026-05-29 RETURN): follow up with
                     // flash-sale endpoint. The main storeProduct call only sends
                     // flash_sale=1|0; the price + window go to a dedicated route.
-                    if let productId = viewModel.storeProductResponse?.data?.id ?? (isEditing ? editingProduct?.id : nil) {
+                    if let productId = viewModel.storeProductResponse?.data.id ?? (isEditing ? editingProduct?.id : nil) {
                         if isTappedFlash, let price = Double(flashSalePriceText), price > 0 {
                             await setFlashSaleForProduct(productId: productId, price: price,
                                                          startsAt: flashSaleStartsAt, endsAt: flashSaleEndsAt)
