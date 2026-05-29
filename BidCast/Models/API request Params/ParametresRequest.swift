@@ -736,7 +736,10 @@ struct ProductRequest : Encodable {
     // items added to THAT show. When nil the server returns the user's
     // full catalog (existing behaviour). Default nil so all existing
     // call sites compile without change.
-    var schedule_show_id: String? = nil
+    // NOTE: backend getProducts() (POST /api/get-product) filters on `show_id`
+    // (validated against schedule_shows.id), NOT schedule_show_id. Verified
+    // against live ApiController 2026-05-29 by Robin.
+    var show_id: String? = nil
 }
 
 struct GetLiveShowsRequest : Encodable{

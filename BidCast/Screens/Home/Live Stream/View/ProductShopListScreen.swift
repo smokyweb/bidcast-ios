@@ -343,7 +343,7 @@ extension ProductShopListScreen {
                     sale_type: selectedOptions,
                     sort_by: selectedSort,
                     // Basecamp #9943369910: pass show scope when available.
-                    schedule_show_id: scheduleShowId.isEmpty ? nil : scheduleShowId
+                    show_id: scheduleShowId.isEmpty ? nil : scheduleShowId
                 )
                 try await productViewModel.getProductsData1(parameters: request)
             }
