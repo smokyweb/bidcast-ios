@@ -612,12 +612,23 @@ struct HomeViewScreen: View {
             apiCategory = (selectedButton == "For You") ? "" : selectedButton
         }
         
+        // Basecamp #9933301500 (2026-05-29): mirror the filter params that
+        // fetchLiveShow() uses so a socket-triggered refresh doesn't wipe out
+        // the user's applied filters.
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
             type: selectedTab,
             category: apiCategory,
             sub_category: subCategory,
             search: searchText,
-            page: "1"
+            page: "1",
+            show_format: appliedFilters.showFormat,
+            tag: appliedFilters.tag.isEmpty ? nil : appliedFilters.tag,
+            ship_country: appliedFilters.shipCountry,
+            ship_state: appliedFilters.shipState.isEmpty ? nil : appliedFilters.shipState,
+            premier_shop: appliedFilters.premierShop ? 1 : nil,
+            shipping: appliedFilters.shipping,
+            category_ids: appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds,
+            sub_category_ids: appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
         ))
 
         await MainActor.run {

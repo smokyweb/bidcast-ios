@@ -62,6 +62,10 @@ struct ProductDetailView: View {
     @State private var preBidLoading: Bool = false
     @State private var preBidExistingId: Int? = nil
     @State private var preBidExistingAmount: Double? = nil
+    // Basecamp #9933847997 (2026-05-29): highest pre-bid on this product
+    // from GET /api/pre-bid/highest/{productId}. Shown below the price so
+    // buyers know the current leading pre-bid amount.
+    @State private var highestPreBid: Double? = nil
     
     @Binding var sellerInfo: SellerInfoResponse?
     
@@ -181,7 +185,10 @@ struct ProductDetailView: View {
         } message: {
             Text("Lock in your bid before the auction starts. Applied automatically as the opening bid.")
         }
-        .onAppear { loadCurrentPreBid() }
+        .onAppear {
+            loadCurrentPreBid()
+            loadHighestPreBid()
+        }
         .sheet(isPresented: $makeOfferSheet)   {
             MakeOfferBottomSheet(isPresented: $makeOfferSheet, listedPrice: "\(productPrice)", offerOptions: offerArr, onSendOffer: { text in
                 let text = "\(text ?? 0.0)"
@@ -349,9 +356,13 @@ struct ProductDetailView: View {
     }
 
     // MARK: - Basecamp #9933847997 (2026-05-27): Pre-Bid
+    // Endpoint corrections (2026-05-29): ROBIN_API_SPECS.md confirms the
+    // live routes are /api/pre-bid (NOT /api/product/pre-bid). All three
+    // methods below are updated accordingly.
     private func loadCurrentPreBid() {
         Task {
-            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid") else { return }
+            // GET /api/pre-bid — list the current user's pre-bids
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
             var req = URLRequest(url: url)
             req.httpMethod = "GET"
             req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
@@ -381,7 +392,8 @@ struct ProductDetailView: View {
             hudMsg = "Please enter $1 or more."; showhud = true; return
         }
         Task {
-            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid") else { return }
+            // POST /api/pre-bid  body: product_id, amount, schedule_show_id (nullable)
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
             var req = URLRequest(url: url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -395,6 +407,7 @@ struct ProductDetailView: View {
                     if ok {
                         hudMsg = "Pre-bid placed."; showhud = true
                         loadCurrentPreBid()
+                        loadHighestPreBid()
                     } else {
                         hudMsg = "Could not place pre-bid."; showhud = true
                     }
@@ -408,7 +421,8 @@ struct ProductDetailView: View {
     private func withdrawPreBid() {
         guard let id = preBidExistingId else { return }
         Task {
-            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid/\(id)") else { return }
+            // DELETE /api/pre-bid/{id}
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid/\(id)") else { return }
             var req = URLRequest(url: url)
             req.httpMethod = "DELETE"
             req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
@@ -421,8 +435,33 @@ struct ProductDetailView: View {
                         hudMsg = "Pre-bid withdrawn."; showhud = true
                         preBidExistingId = nil
                         preBidExistingAmount = nil
+                        highestPreBid = nil
+                        loadHighestPreBid()
                     }
                 }
+            } catch { /* no-op */ }
+        }
+    }
+
+    /// GET /api/pre-bid/highest/{productId} — fetch the leading pre-bid
+    /// amount so we can surface it to ALL viewers (not just the one who bid).
+    private func loadHighestPreBid() {
+        Task {
+            guard productID > 0 else { return }
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid/highest/\(productID)") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "GET"
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            do {
+                let (data, _) = try await URLSession.shared.data(for: req)
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                // Response shape: { status, data: { amount: "12.50" | 12.50 | nil } }
+                let payload = json?["data"] as? [String: Any]
+                var amt: Double? = nil
+                if let a = payload?["amount"] as? Double, a > 0 { amt = a }
+                else if let s = payload?["amount"] as? String, let a = Double(s), a > 0 { amt = a }
+                await MainActor.run { highestPreBid = amt }
             } catch { /* no-op */ }
         }
     }
@@ -642,6 +681,23 @@ extension ProductDetailView {
                 Text("Starting at \(productPrice.compactCurrency()) + Shipping + taxes")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.darkGray)
+                // Basecamp #9933847997 (2026-05-29): highest pre-bid pill.
+                // Shows the leading pre-bid amount from GET /api/pre-bid/highest/{id}
+                // so all viewers can see the current pre-bid level.
+                if let highest = highestPreBid {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.orange)
+                        Text("Highest pre-bid: \(highest.compactCurrency())")
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.orange)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.orange.opacity(0.1))
+                    .cornerRadius(8)
+                }
             } else {
                 Text("\(productPrice.compactCurrency()) + Shipping + taxes")
                     .font(.custom(poppinsRegular, size: 13))

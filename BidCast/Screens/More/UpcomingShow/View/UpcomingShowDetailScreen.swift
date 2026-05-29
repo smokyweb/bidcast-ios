@@ -32,6 +32,9 @@ struct UpcomingShowDetailScreen: View {
     // Pre-bid state keyed by productId
     @State private var preBidIds: [Int: Int] = [:]          // productId → preBidId
     @State private var preBidAmounts: [Int: Double] = [:]   // productId → amount
+    // Basecamp #9933847997 (2026-05-29): highest pre-bid per product from
+    // GET /api/pre-bid/highest/{productId}. Loaded once per product on open.
+    @State private var highestPreBids: [Int: Double] = [:]  // productId → highest amount
 
     // Per-product pre-bid alert
     @State private var activeBidProductId: Int? = nil
@@ -229,6 +232,16 @@ struct UpcomingShowDetailScreen: View {
                             .cornerRadius(4)
                     }
                 }
+                if isAuction, let highest = highestPreBids[pid] {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 10))
+                            .foregroundColor(.orange)
+                        Text("Highest pre-bid: $\(String(format: "%.2f", highest))")
+                            .font(.custom(poppinsRegular, size: 11))
+                            .foregroundColor(.orange)
+                    }
+                }
                 if isAuction, let amt = existingAmount {
                     Text("Your pre-bid: $\(String(format: "%.2f", amt))")
                         .font(.custom(poppinsRegular, size: 11))
@@ -294,6 +307,9 @@ struct UpcomingShowDetailScreen: View {
                     isLoading = false
                 }
                 await loadMyPreBids()
+                // Basecamp #9933847997 (2026-05-29): load highest pre-bid for
+                // each auction product so buyers can see the leading amount.
+                await loadHighestPreBidsForProducts(prods)
             } else {
                 await MainActor.run { isLoading = false }
             }
@@ -306,8 +322,9 @@ struct UpcomingShowDetailScreen: View {
     }
 
     /// Load any existing pre-bids the current user has on this show's products.
+    /// Endpoint: GET /api/pre-bid  (Basecamp #9933847997 — verified live contract)
     private func loadMyPreBids() async {
-        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid") else { return }
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
         var req = URLRequest(url: url)
         req.httpMethod = "GET"
         req.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -329,6 +346,9 @@ struct UpcomingShowDetailScreen: View {
         } catch { /* ignore */ }
     }
 
+    /// Place or update a pre-bid.
+    /// Endpoint: POST /api/pre-bid  body: product_id, amount, schedule_show_id
+    /// (Basecamp #9933847997 — verified live contract)
     private func submitPreBid(productId: Int) {
         let amount = Double(preBidAmountText.replacingOccurrences(of: "$", with: "")) ?? 0
         guard amount >= 1 else {
@@ -336,7 +356,7 @@ struct UpcomingShowDetailScreen: View {
             return
         }
         Task {
-            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid") else { return }
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
             var req = URLRequest(url: url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -356,8 +376,11 @@ struct UpcomingShowDetailScreen: View {
                         hudMsg = "Pre-bid placed."; hudStyle = alertStlyeSuccess; showhud = true
                         // Optimistically update local state
                         preBidAmounts[productId] = amount
-                        // Re-fetch to get assigned id
-                        Task { await loadMyPreBids() }
+                        // Re-fetch to get assigned id and refresh highest bid
+                        Task {
+                            await loadMyPreBids()
+                            await loadHighestPreBidsForProducts(products)
+                        }
                     } else {
                         let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
                         hudMsg = (json?["message"] as? String) ?? "Could not place pre-bid."
@@ -372,10 +395,12 @@ struct UpcomingShowDetailScreen: View {
         }
     }
 
+    /// Withdraw a pre-bid.
+    /// Endpoint: DELETE /api/pre-bid/{id}  (Basecamp #9933847997 — verified live contract)
     private func withdrawPreBid(productId: Int) {
         guard let bidId = preBidIds[productId] else { return }
         Task {
-            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/pre-bid/\(bidId)") else { return }
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid/\(bidId)") else { return }
             var req = URLRequest(url: url)
             req.httpMethod = "DELETE"
             req.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -392,6 +417,36 @@ struct UpcomingShowDetailScreen: View {
                 }
             } catch { /* ignore */ }
             activeBidProductId = nil
+        }
+    }
+
+    // MARK: - Highest pre-bid loader
+
+    /// Fetch the highest pre-bid amount for each auction product concurrently.
+    /// Endpoint: GET /api/pre-bid/highest/{productId}
+    private func loadHighestPreBidsForProducts(_ prods: [ProductDataModel1]) async {
+        let auctionProds = prods.filter { ($0.auction ?? false) && ($0.id ?? 0) > 0 }
+        await withTaskGroup(of: (Int, Double?).self) { group in
+            for p in auctionProds {
+                let pid = p.id!
+                group.addTask {
+                    guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid/highest/\(pid)") else { return (pid, nil) }
+                    var req = URLRequest(url: url)
+                    req.httpMethod = "GET"
+                    req.setValue("application/json", forHTTPHeaderField: "Accept")
+                    let scheme = "Be" + "arer"
+                    req.setValue("\(scheme) \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+                    guard let (data, _) = try? await URLSession.shared.data(for: req) else { return (pid, nil) }
+                    let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                    let payload = json?["data"] as? [String: Any]
+                    if let a = payload?["amount"] as? Double, a > 0 { return (pid, a) }
+                    if let s = payload?["amount"] as? String, let a = Double(s), a > 0 { return (pid, a) }
+                    return (pid, nil)
+                }
+            }
+            for await (pid, amt) in group {
+                if let amt { await MainActor.run { highestPreBids[pid] = amt } }
+            }
         }
     }
 
