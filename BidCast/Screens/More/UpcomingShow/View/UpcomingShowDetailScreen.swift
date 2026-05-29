@@ -332,7 +332,7 @@ struct UpcomingShowDetailScreen: View {
     private func submitPreBid(productId: Int) {
         let amount = Double(preBidAmountText.replacingOccurrences(of: "$", with: "")) ?? 0
         guard amount >= 1 else {
-            hudMsg = "Please enter $1 or more."; hudStyle = alertStlyeError; showhud = true
+            hudMsg = "Please enter $1 or more."; hudStyle = alertStlye; showhud = true
             return
         }
         Task {
@@ -361,12 +361,12 @@ struct UpcomingShowDetailScreen: View {
                     } else {
                         let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
                         hudMsg = (json?["message"] as? String) ?? "Could not place pre-bid."
-                        hudStyle = alertStlyeError
+                        hudStyle = alertStlye
                         showhud = true
                     }
                 }
             } catch {
-                await MainActor.run { hudMsg = "Network error."; hudStyle = alertStlyeError; showhud = true }
+                await MainActor.run { hudMsg = "Network error."; hudStyle = alertStlye; showhud = true }
             }
             activeBidProductId = nil
         }
