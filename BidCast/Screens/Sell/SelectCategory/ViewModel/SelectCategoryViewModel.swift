@@ -19,6 +19,9 @@ final class SelectCategoryViewModel: ObservableObject {
     @Published var storeFavCategoryResponse: ResponseModal<[FavCategoryDataModel]>?
     @Published var errorMessage: String? = nil
     @Published var request: String = ""
+    // Basecamp #9933973683 (2026-05-29 RETURN): flash sales list for Explore page.
+    @Published var flashSaleProducts: [FlashSaleProduct] = []
+    @Published var isLoadingFlashSales: Bool = false
 
     // MARK: - Fetch Categories
     func getCategoryList(param:CategoryRequest) async {
@@ -121,6 +124,22 @@ final class SelectCategoryViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
     }
-    
+
+    // Basecamp #9933973683 (2026-05-29 RETURN): fetch active flash-sale
+    // products from GET /api/product/flash-sales for the Explore page.
+    func fetchFlashSaleProducts() async {
+        isLoadingFlashSales = true
+        do {
+            let response: ResponseModel<[FlashSaleProduct]> = try await APIManager.shared.request(
+                type: APIEndPoint.listFlashSales,
+                header: true
+            )
+            self.flashSaleProducts = response.data ?? []
+        } catch {
+            self.flashSaleProducts = []
+            self.errorMessage = error.localizedDescription
+        }
+        isLoadingFlashSales = false
+    }
 
 }

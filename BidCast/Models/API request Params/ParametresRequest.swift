@@ -1051,3 +1051,27 @@ struct TaxExemptionApplyRequest : Encodable {
     var business_type : String
 }
 
+
+// Basecamp #9933973683 (2026-05-29 RETURN): model for GET /api/product/flash-sales.
+// Fields verified against backend listFlashSales controller response.
+struct FlashSaleProduct: Codable, Identifiable {
+    let id: Int?
+    let title: String?
+    let pricing: Double?          // original price (dollars)
+    let flash_sale_price: Double? // sale price (dollars)
+    let flash_sale_starts_at: String?
+    let flash_sale_ends_at: String?
+    let images: [String]?
+    let thumbnail: [String]?
+    let user_id: Int?
+    let user: FlashSaleUser?
+
+    var thumbUrl: String? { images?.first ?? thumbnail?.first }
+}
+
+struct FlashSaleUser: Codable {
+    let id: Int?
+    let name: String?
+    let username: String?
+    let profile_image: String?
+}

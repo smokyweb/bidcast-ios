@@ -144,44 +144,82 @@ struct AuthTextField: View {
                                     .focused($isFocused)
                                     .frame(height: height)
                                     .onAppear {
-                                        if isForPrice {
-                                            // Basecamp #9940184831 (2026-05-29): EDIT-product price was
-                                            // shifting two decimals LEFT (e.g. $25.00 -> $0.25, $2,000 -> $20.00).
-                                            //
-                                            // Root cause: the prefilled value here is a DOLLARS amount that the
-                                            // backend stores in `products.pricing` (a MySQL `double`) and the API
-                                            // returns verbatim - whole-dollar values come back WITHOUT a decimal
-                                            // point ("25", "2000"). The old code treated those digits as CENTS and
-                                            // inserted a decimal 2 places from the end, dividing the price by 100.
-                                            //
-                                            // The cents-as-you-type behavior is intentional ONLY for live user
-                                            // typing (handled in .onChange). On prefill we must interpret the
-                                            // incoming value as dollars and only normalize to 2 decimals - never
-                                            // re-scale it. This keeps the load->save round-trip price-identical and
-                                            // matches what the product cards / display screens already show.
-                                            if !text.isEmpty {
-                                                if let dollars = Double(text) {
-                                                    // Normalize to a 2-decimal dollars string ("25" -> "25.00",
-                                                    // "25.5" -> "25.50", "25.00" stays "25.00").
-                                                    text = String(format: "%.2f", dollars)
+                                        // Basecamp #9940184831 (2026-05-29 RETURN): gate the dollar-
+                                        // normalisation on synchronous prefill. onAppear only fires
+                                        // once so it handles values that were already set before the
+                                        // view appeared (sync prefill). Async prefill (value arrives
+                                        // after onAppear) is handled by the isFocused-gated onChange.
+                                        if isForPrice && !text.isEmpty {
+                                            if let dollars = Double(text) {
+                                                let normalized = String(format: "%.2f", dollars)
+                                                rawPriceDigits = normalized.filter { $0.isNumber }
+                                                if text != normalized {
+                                                    text = normalized
+                                                    self.enteredText?(text)
                                                 }
-                                                // Seed rawPriceDigits from the normalized dollars value so any
-                                                // subsequent .onChange edits keep formatting consistently.
-                                                rawPriceDigits = text.filter { $0.isNumber }
-                                                self.enteredText?(text)
                                             }
                                         }
                                     }
                                     .onChange(of: text, perform: { value in
-                                        if isForPrice && !value.isEmpty && !value.contains(".") {
-                                                   // Check if this looks like a plain number (not user typing)
-                                                   let filtered = value.filter { $0.isNumber }
-                                                   if filtered == value && value.count >= 1 {
-                                                       text = value + ".00"
-                                                       self.enteredText?(text)
-                                                       return
-                                                   }
-                                               }
+                                        // Basecamp #9940184831 (2026-05-29 RETURN): root-cause fix.
+                                        //
+                                        // The PREVIOUS fix (round 1) put the dollar-normalisation in
+                                        // onAppear. That only helped when text was already set at view
+                                        // creation time. When the product is fetched asynchronously
+                                        // (common path), onAppear fires while text is still empty, then
+                                        // `request.pricing` is set later → onChange fires. The old
+                                        // onChange ALWAYS ran the cents-accumulation formatter
+                                        // (strip decimal, treat all digits as cents) regardless of
+                                        // whether the field was focused. So "50.0" became "500" → "5.00".
+                                        //
+                                        // FIX: gate the cents-accumulation formatter on isFocused.
+                                        // • !isFocused  → programmatic write (async/sync prefill).
+                                        //                  Interpret value as dollars, normalise %.2f.
+                                        // • isFocused   → user is actively typing. Run cent-accumulation.
+                                        if isForPrice {
+                                            if !isFocused {
+                                                // Programmatic prefill — value is a dollar amount.
+                                                // Normalise without rescaling.
+                                                if let dollars = Double(value) {
+                                                    let normalized = String(format: "%.2f", dollars)
+                                                    rawPriceDigits = normalized.filter { $0.isNumber }
+                                                    if text != normalized {
+                                                        text = normalized
+                                                        self.enteredText?(text)
+                                                    }
+                                                }
+                                                // If Double(value) fails (e.g. empty string), leave it.
+                                                return
+                                            }
+                                            // isFocused == true → user is typing → cent-accumulation.
+                                            let newFiltered = value.filter { $0.isNumber }
+                                            if newFiltered != rawPriceDigits {
+                                                rawPriceDigits = newFiltered
+                                                var digitsToFormat = rawPriceDigits
+                                                while digitsToFormat.count > 1 && digitsToFormat.first == "0" {
+                                                    digitsToFormat.removeFirst()
+                                                }
+                                                let formattedText: String
+                                                if digitsToFormat.isEmpty {
+                                                    formattedText = ""
+                                                } else if digitsToFormat.count == 1 {
+                                                    formattedText = "0.0\(digitsToFormat)"
+                                                } else if digitsToFormat.count == 2 {
+                                                    formattedText = "0.\(digitsToFormat)"
+                                                } else {
+                                                    let idx = digitsToFormat.index(digitsToFormat.endIndex, offsetBy: -2)
+                                                    let beforeDecimal = digitsToFormat[..<idx]
+                                                    let afterDecimal = digitsToFormat[idx...]
+                                                    formattedText = "\(beforeDecimal).\(afterDecimal)"
+                                                }
+                                                if text != formattedText {
+                                                    text = formattedText
+                                                    self.enteredText?(text)
+                                                }
+                                            }
+                                            return
+                                        }
+                                        // Non-price field handling (CVV / expiry / card number / plain)
                                         var filtered = value.filter { $0.isNumber }
                                         if isForCVV {
                                             filtered = String(filtered.prefix(3))
@@ -195,71 +233,26 @@ struct AuthTextField: View {
                                             // Was: YYYYMM → YYYY-MM which was inconsistent
                                             // with the card preview that already showed MM/YY.
                                             filtered = String(filtered.prefix(4)) // MMYY
-
                                             if filtered.count >= 3 {
                                                 let month = filtered.prefix(2)
                                                 let year = filtered.suffix(filtered.count - 2)
                                                 filtered = "\(month)/\(year)"
                                             }
-
                                             text = filtered
                                             self.enteredText?(text)
                                         } else if isForCardNumber {
                                             filtered = String(filtered.prefix(16))
                                             var formatted = ""
-                                            for (index, char) in filtered.enumerated() {
-                                                //                                            if index != 0 && index % 4 == 0 {
-                                                //                                                formatted.append("-")
-                                                //                                            }
+                                            for (_, char) in filtered.enumerated() {
                                                 formatted.append(char)
                                             }
-                                            filtered = formatted
-                                            text = filtered
+                                            text = formatted
                                             self.enteredText?(text)
-                                        } else if isForPrice {
-                                            let newFiltered = value.filter { $0.isNumber }
-                                                   
-                                                   // Only update if the filtered digits actually changed
-                                                   // This prevents infinite loops and handles deletions properly
-                                                   if newFiltered != rawPriceDigits {
-                                                       rawPriceDigits = newFiltered
-                                                       
-                                                       // Remove leading zeros except if the number is just "0"
-                                                       var digitsToFormat = rawPriceDigits
-                                                       while digitsToFormat.count > 1 && digitsToFormat.first == "0" {
-                                                           digitsToFormat.removeFirst()
-                                                       }
-                                                       
-                                                       // Format with decimal point
-                                                       let formattedText: String
-                                                       if digitsToFormat.isEmpty {
-                                                           formattedText = ""
-                                                       } else if digitsToFormat.count == 1 {
-                                                           formattedText = "0.0\(digitsToFormat)"
-                                                       } else if digitsToFormat.count == 2 {
-                                                           formattedText = "0.\(digitsToFormat)"
-                                                       } else {
-                                                           // Insert decimal point 2 places from the end
-                                                           let index = digitsToFormat.index(digitsToFormat.endIndex, offsetBy: -2)
-                                                           let beforeDecimal = digitsToFormat[..<index]
-                                                           let afterDecimal = digitsToFormat[index...]
-                                                           formattedText = "\(beforeDecimal).\(afterDecimal)"
-                                                       }
-                                                       
-                                                       // Only update text if it actually changed to prevent recursion
-                                                       if text != formattedText {
-                                                           text = formattedText
-                                                           self.enteredText?(text)
-                                                       }
-                                                   }
-                                        }else{
+                                        } else {
                                             filtered = String(filtered.prefix(maxDigits))
                                             self.enteredText?(value)
                                         }
-                                        
-                                        
-                                        
-                                    } )
+                                    })
                                     .onSubmit {
                                         if let onSubmit = onSubmit {
                                             onSubmit()
@@ -267,10 +260,6 @@ struct AuthTextField: View {
                                             self.enteredText?(text)
                                         }
                                     }
-                                    // Basecamp #9940184831 (2026-05-29): prefill formatting is now
-                                    // handled by the single dollars-normalizing .onAppear above. The old
-                                    // second .onAppear here was redundant; removing it avoids two
-                                    // competing prefill formatters on the same field.
                                     .ignoresSafeArea(.keyboard, edges: .bottom)
                             }
                         }

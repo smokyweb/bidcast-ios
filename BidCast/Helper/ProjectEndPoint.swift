@@ -168,6 +168,11 @@ enum APIEndPoint{
     // MC cmpaj2fex0000w5hgq64jp9k4 on 2026-05-24.
     case taxExemptionApply(param: TaxExemptionApplyRequest)
 
+    // Basecamp #9933973683 (2026-05-29 RETURN): dedicated flash-sales listing
+    // endpoint for the Explore page. Returns cross-seller active flash items
+    // (time-windowed). Confirmed endpoint: GET /api/product/flash-sales.
+    case listFlashSales
+
 }
 
 extension APIEndPoint: EndPointType {
@@ -348,8 +353,14 @@ extension APIEndPoint: EndPointType {
             return "offer/make"
         case .makeOfferList(param:let param):
             return "offer/lists?page=\(param.page)"
-        case .offerUpdateStatus(param:let param):
-            return "offer/update-status=\(param.offer_id)&page=\(param.page)"
+        case .offerUpdateStatus:
+            // Basecamp #9938459971 (2026-05-29 RETURN): previous URL was
+            // "offer/update-status=<id>&page=<n>" — the `=` made it a
+            // malformed path segment rather than a query string, and `status`
+            // was never included in the URL. The body (OfferUpdateStatusRequest)
+            // already carries offer_id+status+page as JSON so the path just
+            // needs to be the clean endpoint name.
+            return "offer/update-status"
         case .searching:
             return "user/searching"
         case .promo:
@@ -570,6 +581,9 @@ extension APIEndPoint: EndPointType {
         // QA Wave 4 #41 — Sales tax exemption
         case .taxExemptionApply:
             return "tax-exemption/apply"
+        // Basecamp #9933973683 (2026-05-29 RETURN)
+        case .listFlashSales:
+            return "product/flash-sales"
         }
     }
     
@@ -890,6 +904,9 @@ extension APIEndPoint: EndPointType {
         // QA Wave 4 #41 — Sales tax exemption
         case .taxExemptionApply:
             return .post
+        // Basecamp #9933973683 (2026-05-29 RETURN)
+        case .listFlashSales:
+            return .get
         }
     }
     
@@ -1216,6 +1233,9 @@ extension APIEndPoint: EndPointType {
         // QA Wave 4 #41 — Sales tax exemption
         case .taxExemptionApply(param: let param):
             return param
+        // Basecamp #9933973683 (2026-05-29 RETURN)
+        case .listFlashSales:
+            return nil
         }
     }
     
@@ -1524,6 +1544,9 @@ extension APIEndPoint: EndPointType {
             return nil
         // QA Wave 4 #41 — Sales tax exemption (no url-query params; body handled above)
         case .taxExemptionApply:
+            return nil
+        // Basecamp #9933973683 (2026-05-29 RETURN)
+        case .listFlashSales:
             return nil
         }
     }

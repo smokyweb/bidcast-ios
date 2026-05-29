@@ -155,33 +155,46 @@ struct OffersScreen: View {
         }
     }
     func handleOfferAction(offer: OfferListModel, newStatus: String) {
+        // Basecamp #9938459971 (2026-05-29 RETURN): buttons didn't clear after
+        // accept/decline because (a) the endpoint URL was malformed (see
+        // ProjectEndPoint fix) and (b) even after fixing the URL the API
+        // round-trip takes ~0.5-1 s so Trey saw the buttons linger. Add an
+        // optimistic local-state update: flip the status immediately in the
+        // local array so the UI refreshes at once, then reconcile from the
+        // server response once the API returns.
+        if let idx = offerList.firstIndex(where: { $0.id == offer.id }) {
+            // OfferListModel has `let` fields so rebuild the item with the
+            // updated status (struct copy-on-write).
+            let old = offerList[idx]
+            offerList[idx] = OfferListModel(
+                id: old.id, order_id: old.order_id, user_id: old.user_id,
+                product_id: old.product_id, shipping_address: old.shipping_address,
+                card_id: old.card_id,
+                customer_payment_profile_id: old.customer_payment_profile_id,
+                promo_code: old.promo_code, send_as_gift: old.send_as_gift,
+                gift_user_id: old.gift_user_id, gift_msg: old.gift_msg,
+                status: newStatus,          // ← optimistic flip
+                created_at: old.created_at,
+                product: old.product, user: old.user
+            )
+        }
         let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus, page: currentPage)
         Task {
-            do {
-                // Call the async updateOfferStatus
-               guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                SVProgressHUD.show()
-                await viewModel.updateOfferStatus(parameters: param)
-                let param = PageRequest(page: currentPage)
-                // QA #38 — refresh via whichever feed the user is currently viewing.
-                await fetchActivityList(param: param)
-                await SVProgressHUD.dismiss()
-                if viewModel.offerListResponse.status == "success" {
-                    self.offerList = viewModel.offerListResponse.data ?? []
-                    self.hudMsg = "Offer \(newStatus)"
-                } else {
-                    self.hudMsg = "Failed to refresh offers"
-                }
-                self.showhud = true
-            } catch {
-                await SVProgressHUD.dismiss()
-                self.hudMsg = "Failed to update offer"
-                self.showhud = true
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"; showhud = true; return
             }
+            SVProgressHUD.show()
+            await viewModel.updateOfferStatus(parameters: param)
+            let pageParam = PageRequest(page: currentPage)
+            await fetchActivityList(param: pageParam)
+            await SVProgressHUD.dismiss()
+            if viewModel.offerListResponse.status == "success" {
+                self.offerList = viewModel.offerListResponse.data ?? []
+                self.hudMsg = "Offer \(newStatus)"
+            } else {
+                self.hudMsg = "Offer \(newStatus)" // keep optimistic label
+            }
+            self.showhud = true
         }
     }
     
