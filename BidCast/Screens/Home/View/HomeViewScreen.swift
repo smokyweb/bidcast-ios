@@ -72,6 +72,9 @@ struct HomeViewScreen: View {
     @State var selectedShowUserImage : String = ""
     @State var selectedShowStartAt : String = ""
     @State var selectedShowStartDate : String = ""
+    // Basecamp #9933847997: upcoming show detail navigation (replaces simple bottom sheet).
+    @State private var selectedUpcomingShowId: Int = 0
+    @State private var navigateToUpcomingDetail: Bool = false
     @State var categoryName : String = ""
     
     @State private var isCategoryScrolling: Bool = false
@@ -251,11 +254,20 @@ struct HomeViewScreen: View {
                             self.selectedButton = selectedButton == "For You" ? "" : selectedButton
                             
                             if selectedTab == "upcoming" {
-                                selectedShowUserName = item.user?.name ?? ""
+                                selectedShowUserName = item.user?.name ?? (item.user?.username ?? "")
                                 selectedShowUserImage = item.user?.profile_image ?? ""
                                 selectedShowStartAt = item.time ?? ""
                                 selectedShowStartDate = item.date ?? ""
-                                upCommingSheet = true
+                                // Basecamp #9933847997: navigate to full show-detail
+                                // page (product list + pre-bid) instead of the simple
+                                // "Okay" bottom sheet. Fall back to the old sheet if
+                                // the show id is unavailable.
+                                if let sid = item.id, sid > 0 {
+                                    selectedUpcomingShowId = sid
+                                    navigateToUpcomingDetail = true
+                                } else {
+                                    upCommingSheet = true
+                                }
                             } else if selectedTab == "popular" {
                                 if item.is_live == false {
                                     hudMsg = "This show is not live yet"
@@ -350,6 +362,18 @@ struct HomeViewScreen: View {
                 destination: ProductDetailView(
                     productID: $searchSelectedProductId,
                     sellerInfo: $searchSelectedSellerInfo
+                )
+            )
+            // Basecamp #9933847997: upcoming-show detail page with product
+            // list + pre-bid (replaces the bare UpcomingBottomSheet).
+            CusNavLink(
+                doNavigate: $navigateToUpcomingDetail,
+                destination: UpcomingShowDetailScreen(
+                    showId: selectedUpcomingShowId,
+                    sellerImage: selectedShowUserImage,
+                    sellerName: selectedShowUserName,
+                    showDate: selectedShowStartDate,
+                    showTime: selectedShowStartAt
                 )
             )
         }

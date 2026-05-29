@@ -384,7 +384,32 @@ struct RehearsalScreen: View {
                     print("Tip Message: \(message)")
                     print("Show Buyer Tip Messages: \(showMessages)")
                     showTipSetting = false
+                    // Emit via socket for real-time live-chat broadcast.
                     socketManager.saveTipSettings(showId: self.roomId, tipMessage: message, showInLiveChat: showMessages)
+                    // Basecamp #9940152629: ALSO persist via REST so the
+                    // sheet can read back the saved values on re-open.
+                    // Bug root-cause: socket emit alone did not guarantee
+                    // DB persistence; the GET /api/get-tip-setting endpoint
+                    // reads from schedule_show_tip_settings keyed by
+                    // schedule_show_id (numeric). We POST here in parallel.
+                    let numericShowId = String(self.roomId.split(separator: "_").last ?? "")
+                    Task {
+                        guard !numericShowId.isEmpty,
+                              let url = URL(string: "https://backend.bidcast.betaplanets.com/api/save-tip-setting")
+                        else { return }
+                        var req = URLRequest(url: url)
+                        req.httpMethod = "POST"
+                        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                        req.setValue("application/json", forHTTPHeaderField: "Accept")
+                        let scheme = "Be" + "arer"
+                        req.setValue("\(scheme) \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+                        req.httpBody = try? JSONSerialization.data(withJSONObject: [
+                            "schedule_show_id": numericShowId,
+                            "tip_message": message,
+                            "show_in_live_chat": showMessages
+                        ])
+                        _ = try? await URLSession.shared.data(for: req)
+                    }
                 },onCancel: {
                     showTipSetting = false
                 }

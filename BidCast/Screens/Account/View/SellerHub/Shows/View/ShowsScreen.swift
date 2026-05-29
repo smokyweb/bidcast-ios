@@ -45,6 +45,8 @@ struct ShowsScreen: View {
     @State var selectedShowTitle: String = ""
     @State var SHowId = 0
     @State var navigateToshowTitle = false
+    // Basecamp #9934001770: co-host join screen (second device).
+    @State private var navigateToCoHostJoin: Bool = false
     
     @State private var scheduleRequest = StoreScheduleShowRequest(
         title: "",
@@ -144,6 +146,32 @@ struct ShowsScreen: View {
                     Spacer().frame(height: 0)
                 }
                 .padding(.top)
+                // Basecamp #9934001770: "Join as Co-Host" entry point for the
+                // seller who is operating the second device.
+                Button {
+                    navigateToCoHostJoin = true
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "iphone.and.arrow.forward")
+                            .font(.system(size: 18))
+                            .foregroundColor(.defaultTheme)
+                        Text("Join as Co-Host (second device)")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .foregroundColor(.defaultTheme)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.defaultTheme.opacity(0.07))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.defaultTheme.opacity(0.3), lineWidth: 1)
+                            )
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
             }
             CusNavLink(doNavigate: $navigateToShowAnalytics,
                        destination:  MyShowsAnalyticsScreen(showId: $showID, showTitle: selectedShowTitle))
@@ -156,6 +184,9 @@ struct ShowsScreen: View {
                                       fromPrepare:.constant(false),
 //                                      backToPrepare: $navigateToshowTitle,
                                       showId: $SHowId))
+            // Basecamp #9934001770: second-device co-host join.
+            CusNavLink(doNavigate: $navigateToCoHostJoin,
+                       destination: CoHostJoinScreen())
            
         }
         .navigationBarHidden(true)

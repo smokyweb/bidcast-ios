@@ -39,6 +39,8 @@ struct LetsPrepare: View {
     @State var navigateForLive = false
     @State var productIds: [String] = []
     @State var showId : String = ""
+    // Basecamp #9929871140: randomizer template picker during show creation.
+    @State private var showRandomizerPickerInCreate: Bool = false
     
     private var currentProgress: Double {
         guard !coordinator.prepare.isEmpty else { return 0 }
@@ -102,6 +104,40 @@ struct LetsPrepare: View {
                         }
                     }
                     
+                    // Basecamp #9929871140: optional randomizer template picker row.
+                    Button {
+                        showRandomizerPickerInCreate = true
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: coordinator.randomizerTemplateId != nil
+                                  ? "dice.fill" : "dice")
+                                .font(.system(size: 22))
+                                .foregroundColor(coordinator.randomizerTemplateId != nil
+                                                 ? .defaultTheme : .gray)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Randomizer Template (optional)")
+                                    .font(.custom(poppinsBold, size: 13))
+                                    .foregroundColor(.primary)
+                                Text(coordinator.randomizerTemplateId != nil
+                                     ? "Template #\(coordinator.randomizerTemplateId!)  – tap to change"
+                                     : "None – attach a randomizer to this show")
+                                    .font(.custom(poppinsRegular, size: 11))
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray.opacity(0.6))
+                                .font(.system(size: 13))
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.white)
+                                .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 4)
                     
                 }
                 .padding(.top,4)
@@ -160,6 +196,10 @@ struct LetsPrepare: View {
         .padding(.bottom,-200)
         .background(.backGround)
         .toolbar(.hidden,for: .tabBar)
+        // Basecamp #9929871140: randomizer template picker sheet for show creation.
+        .sheet(isPresented: $showRandomizerPickerInCreate) {
+            RandomizerTemplatePickerSheet(selectedTemplateId: $coordinator.randomizerTemplateId)
+        }
         .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
             if let error = viewModel.errorMessage, !error.isEmpty {
                 showError = false
@@ -379,6 +419,11 @@ struct LetsPrepare: View {
                 
                 let prodIds = request.product_ids.joined(separator: ",")
                 param["product_ids"] = prodIds
+                // Basecamp #9929871140: attach randomizer template if the seller
+                // picked one via the optional picker row above the step cards.
+                if let tmplId = coordinator.randomizerTemplateId {
+                    param["randomizer_template_id"] = tmplId
+                }
                 viewModel.errorMessage?.removeAll()
                 try await viewModel.storeScheduleShow(param: param,images: [coordinator.thumbNAil],key: "thumbnail[]")
                 await SVProgressHUD.dismiss()
@@ -499,6 +544,8 @@ final class LetsPrepareCoordinator: ObservableObject {
     @Published var thumbNAil = ""
     @Published var currentIndex = 0
     @Published var prepare: [LessonModel] = []
+    /// Basecamp #9929871140: randomizer template to attach to the show on store.
+    @Published var randomizerTemplateId: Int? = nil
     @Published var shouldNavigateBackToPrepare = false
 
 //    func didUpdateRequest(_ request: StoreScheduleShowRequest, thumbNail: String) {
