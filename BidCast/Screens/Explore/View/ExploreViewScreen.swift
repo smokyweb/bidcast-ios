@@ -85,7 +85,17 @@ struct ExploreViewScreen: View {
                             await fetchCategory(for: selectedCategory)
                         }
                     })
-                    
+
+                    // Basecamp #9933973683 (2026-05-29 RETURN): Flash Sales
+                    // section. PWA shows a ⚡ Flash Sales row on explore;
+                    // iOS was missing it entirely. Fetches from the confirmed
+                    // GET /api/product/flash-sales endpoint (authed, returns
+                    // cross-seller time-windowed items).
+                    FlashSalesSectionView(
+                        products: viewModel.flashSaleProducts,
+                        isLoading: viewModel.isLoadingFlashSales
+                    )
+
                     if isLoadingAPI {
                         // FULL CARD SHIMMER
                         LazyVGrid(columns: columns, spacing: 16) {
@@ -250,6 +260,9 @@ struct ExploreViewScreen: View {
             }
             let selectedCategory = categoryTitles[selectedCategoryIndex]
             Task { await fetchCategory(for: selectedCategory) }
+            // Basecamp #9933973683 (2026-05-29 RETURN): load flash sales once
+            // on first appear so the section is populated immediately.
+            Task { await viewModel.fetchFlashSaleProducts() }
         }
         // MC cmp5czpw900jo56kdn739kkjp (Ankit 2026-05-14): also consume a
         // pending exploreInitialTab on every .onAppear (not just
@@ -600,3 +613,147 @@ struct SubCategoryShimmerRow: View {
     }
 }
 
+
+// MARK: - Flash Sales Section (Basecamp #9933973683, 2026-05-29 RETURN)
+// Displays a horizontal scroll row of active flash-sale products on the
+// Explore page, matching the PWA ⚡ Flash Sales section. Data source:
+// GET /api/product/flash-sales (listFlashSales controller).
+struct FlashSalesSectionView: View {
+    let products: [FlashSaleProduct]
+    let isLoading: Bool
+
+    var body: some View {
+        // Don't render the section if there's nothing (and not loading)
+        if isLoading || !products.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("⚡ Flash Sales")
+                        .font(.custom(poppinsSemiBold, size: 16))
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
+                .padding(.horizontal, 4)
+
+                if isLoading {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(0..<4, id: \.self) { _ in
+                                ShimmerView()
+                                    .frame(width: 140, height: 190)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                        }
+                    }
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(products) { product in
+                                FlashSaleProductCard(product: product)
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 4)
+        }
+    }
+}
+
+struct FlashSaleProductCard: View {
+    let product: FlashSaleProduct
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            // Product image
+            CustomProfileImage(
+                url: product.thumbUrl ?? "",
+                isCircular: false,
+                cornerRadius: 10,
+                size: 140
+            )
+            .frame(width: 140, height: 120)
+            .clipped()
+
+            // Title
+            Text(product.title ?? "")
+                .font(.custom(poppinsSemiBold, size: 12))
+                .foregroundColor(.primary)
+                .lineLimit(2)
+                .frame(width: 130, alignment: .leading)
+
+            // Pricing row
+            HStack(spacing: 4) {
+                if let salePrice = product.flash_sale_price, salePrice > 0 {
+                    Text(String(format: "$%.2f", salePrice))
+                        .font(.custom(poppinsBold, size: 13))
+                        .foregroundColor(.red)
+                    if let original = product.pricing, original > 0 {
+                        Text(String(format: "$%.2f", original))
+                            .font(.custom(poppinsRegular, size: 11))
+                            .foregroundColor(.gray)
+                            .strikethrough()
+                    }
+                } else if let price = product.pricing {
+                    Text(String(format: "$%.2f", price))
+                        .font(.custom(poppinsBold, size: 13))
+                        .foregroundColor(.primary)
+                }
+            }
+
+            // Countdown badge
+            if let endsStr = product.flash_sale_ends_at {
+                FlashCountdownBadge(endsAtISO: endsStr)
+            }
+        }
+        .frame(width: 140)
+        .padding(8)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.06), radius: 4, x: 0, y: 2)
+    }
+}
+
+// Small countdown badge that shows remaining time on a flash sale card.
+struct FlashCountdownBadge: View {
+    let endsAtISO: String
+    @State private var remaining: String = ""
+    @State private var timer: Timer? = nil
+
+    var body: some View {
+        Text(remaining.isEmpty ? "⚡ Sale" : "⏱ \(remaining)")
+            .font(.custom(poppinsRegular, size: 10))
+            .foregroundColor(.white)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Color.orange)
+            .cornerRadius(6)
+            .onAppear { startCountdown() }
+            .onDisappear { timer?.invalidate(); timer = nil }
+    }
+
+    private func startCountdown() {
+        updateRemaining()
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            updateRemaining()
+        }
+    }
+
+    private func updateRemaining() {
+        let fmt = ISO8601DateFormatter()
+        fmt.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let date = fmt.date(from: endsAtISO)
+            ?? ISO8601DateFormatter().date(from: endsAtISO)
+        guard let end = date else { remaining = "⚡ Sale"; return }
+        let diff = end.timeIntervalSinceNow
+        if diff <= 0 { remaining = "Ended"; return }
+        let hours = Int(diff) / 3600
+        let minutes = (Int(diff) % 3600) / 60
+        if hours >= 24 {
+            remaining = "\(hours / 24)d \(hours % 24)h"
+        } else if hours > 0 {
+            remaining = "\(hours)h \(minutes)m"
+        } else {
+            remaining = "\(minutes)m"
+        }
+    }
+}

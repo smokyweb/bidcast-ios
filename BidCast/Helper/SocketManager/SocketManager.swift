@@ -29,14 +29,51 @@ struct FreebieLiveUser: Codable {
     var room_id : String?
     var users: [FreebieUser]?
     var total: Int?
+    // memberwise init is synthesized; also expose a no-arg init for fallback
+    init(show_id: String? = nil, room_id: String? = nil, users: [FreebieUser]? = nil, total: Int? = nil) {
+        self.show_id = show_id; self.room_id = room_id; self.users = users; self.total = total
+    }
 }
 
-struct FreebieUser: Codable, Identifiable {
+struct FreebieUser: Identifiable {
     var id: Int?
     var name: String?
     var email: String?
     var username: String?
     var profile_image: String?
+}
+
+// Basecamp #9940079895 (2026-05-29 RETURN): flexible Codable for FreebieUser so
+// a string `id` from the server ("123" vs 123) doesn't blow up the whole
+// [FreebieUser] decode and leave liveViewers empty. This was the known
+// non-optional-type-mismatch pattern that silently drops whole arrays.
+extension FreebieUser: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id, name, email, username, profile_image
+    }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        // Accept id as Int or String
+        if let intId = try? c.decodeIfPresent(Int.self, forKey: .id) {
+            self.id = intId
+        } else if let strId = try? c.decodeIfPresent(String.self, forKey: .id) {
+            self.id = Int(strId)
+        } else {
+            self.id = nil
+        }
+        self.name          = try? c.decodeIfPresent(String.self, forKey: .name)
+        self.email         = try? c.decodeIfPresent(String.self, forKey: .email)
+        self.username      = try? c.decodeIfPresent(String.self, forKey: .username)
+        self.profile_image = try? c.decodeIfPresent(String.self, forKey: .profile_image)
+    }
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try? c.encodeIfPresent(id,            forKey: .id)
+        try? c.encodeIfPresent(name,          forKey: .name)
+        try? c.encodeIfPresent(email,         forKey: .email)
+        try? c.encodeIfPresent(username,      forKey: .username)
+        try? c.encodeIfPresent(profile_image, forKey: .profile_image)
+    }
 }
 
 // MARK: - 🎁 Room Model -
@@ -1681,32 +1718,51 @@ extension SocketManagerService {
     func listenForUserJoinedShows(
         completion: ((_ freebie: FreebieLiveUser, _ users: [FreebieUser]) -> Void)? = nil
     ) {
+        // Basecamp #9940079895 (2026-05-29 RETURN): the viewer-list sheet shows
+        // "No viewers" even with buyers in the room. Two root causes fixed here:
+        //
+        // 1. FreebieUser.id was `Int?` decoded by standard Codable. If the
+        //    server emits id as a JSON string ("123") instead of a number, the
+        //    whole `[FreebieUser]` decode throws and liveViewers stays []. Fixed
+        //    via the custom FreebieUser Codable extension above that handles
+        //    both Int and String id values.
+        //
+        // 2. The payload shape from the server may differ from FreebieLiveUser.
+        //    Added a multi-strategy decode: dict→FreebieLiveUser first, then
+        //    bare-array fallback, so the list populates regardless of shape.
+        //
+        // Residual risk: `request_active_show_users` must be handled on the
+        // Node server (emit `active_show_users` back to the room). If the
+        // server doesn't implement that event, the on-demand refresh when the
+        // host opens the sheet won't work; only viewers who join AFTER the
+        // listener is registered will appear. Robin to verify server-side.
         socket.on("active_show_users") { [weak self] data, _ in
             guard let self else { return }
-            guard let json = data.first as? [String: Any] else {
-                self.logger.warning("⚠️ Invalid active_show_users payload: \(data)")
-                return
+
+            var resolvedUsers: [FreebieUser] = []
+            var resolvedPayload = FreebieLiveUser()
+
+            // Strategy 1: dict payload → FreebieLiveUser
+            if let json = data.first as? [String: Any],
+               let rawData = try? JSONSerialization.data(withJSONObject: json),
+               let payload = try? JSONDecoder().decode(FreebieLiveUser.self, from: rawData) {
+                resolvedPayload = payload
+                resolvedUsers = payload.users ?? []
+                self.logger.info("active_show_users dict decode: \(resolvedUsers.count) viewer(s)")
+            }
+            // Strategy 2: bare array payload
+            else if let arr = data.first as? [[String: Any]],
+                    let rawData = try? JSONSerialization.data(withJSONObject: arr),
+                    let users = try? JSONDecoder().decode([FreebieUser].self, from: rawData) {
+                resolvedUsers = users
+                self.logger.info("active_show_users array decode: \(resolvedUsers.count) viewer(s)")
+            } else {
+                self.logger.warning("⚠️ active_show_users: unrecognised payload shape: \(data)")
             }
 
-            do {
-                let rawData = try JSONSerialization.data(withJSONObject: json)
-                let payload = try JSONDecoder().decode(FreebieLiveUser.self, from: rawData)
-
-                DispatchQueue.main.async {
-                    // Basecamp #9934003774 (2026-05-27): mirror the active
-                    // viewer list onto liveViewers so the host kick-UI has a
-                    // reactive @Published source without needing a per-view
-                    // listener wiring. SocketManagerService is the single
-                    // source of truth for who's currently in the room.
-                    self.liveViewers = payload.users ?? []
-                    completion?(payload, payload.users ?? [])
-                }
-
-                self.logger.info(
-                    "🏆 Freebie users | showId=\(payload.show_id ?? "") count=\(payload.users?.count ?? 0)"
-                )
-            } catch {
-                self.logger.error("❌ get-freebie decode error: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                self.liveViewers = resolvedUsers
+                completion?(resolvedPayload, resolvedUsers)
             }
         }
     }
