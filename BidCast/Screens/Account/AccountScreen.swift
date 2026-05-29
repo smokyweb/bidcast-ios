@@ -610,15 +610,21 @@ extension AccountScreen {
                 isConcurrent: false,
                 showLoader: !isRefreshing,
                 onError: { error in
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: menuViewModel.errorMessage ?? "",
-                        primaryBtnText: AppString.ok.localized,
-                        secondaryBtnText: ""
-                    )
-                    showError = true
+                    // MC (2026-05-28): Blank Seller Hub popup fix. This is the
+                    // Seller Hub LANDING; it fired an empty alert on every open
+                    // when the API returned a blank message. Only surface the
+                    // sheet when there is real text to show.
                     isLoading = true
+                    if !menuViewModel.errorMessage.isBlankMessage {
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: menuViewModel.errorMessage ?? "",
+                            primaryBtnText: AppString.ok.localized,
+                            secondaryBtnText: ""
+                        )
+                        showError = true
+                    }
                 },
                 onSuccess: {
                     isLoading = true

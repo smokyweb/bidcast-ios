@@ -28,14 +28,30 @@ extension DataError {
             if let data = data {
                 do {
                     let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
-                    return dataObj.message ?? ""
+                    // MC (2026-05-28): Blank Seller Hub popup fix. Normalize a
+                    // whitespace-only backend `message` to a true empty string
+                    // so the per-site `isBlankMessage` gates reliably detect a
+                    // "nothing to show" state and SUPPRESS the popup entirely
+                    // (rather than rendering a blank white alert). A genuinely
+                    // blank message means "no error worth surfacing"; callers
+                    // that still choose to show a sheet use errorDesc() which
+                    // substitutes a real fallback string.
+                    if let msg = dataObj.message {
+                        return msg.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "" : msg
+                    }
+                    return ""
                 } catch {
                     return "Invalid Response"
                 }
             }
             return "Invalid Response"
         case .invalidCode(let message):
-            return message ?? ""
+            // MC (2026-05-28): normalize whitespace-only to empty so the
+            // per-site isBlankMessage gates suppress the popup (see above).
+            if let message = message {
+                return message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "" : message
+            }
+            return ""
         case .invalidURL:
             return "Not a Valid URL"
         case .invalidData:

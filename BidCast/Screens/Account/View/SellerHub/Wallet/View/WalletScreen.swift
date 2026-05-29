@@ -304,10 +304,13 @@ struct WalletPayoutView: View {
                          topBarBackgroundColor: Color(.systemBackground),
                          showTopIndicator: false,
                          onDismiss: {
-                if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-                    //errorMessage not nil
+                // MC (2026-05-28): Previous guard `!= "" || != nil` was always
+                // true (a tautology), so the sheet re-presented itself even
+                // when there was no message. Only keep it open if there is a
+                // real, non-blank error message.
+                if !self.viewModel.errorMessage.isBlankMessage {
                     showError = true
-                }else{
+                } else {
                     showError = false
                 }
             }, content: {
@@ -446,15 +449,18 @@ struct WalletPayoutView: View {
             await performAPICalls(
                 isConcurrent: true,
                 onError: { error in
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: errorDesc(error: error, message: viewModel.errorMessage),
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
+                    // MC (2026-05-28): suppress blank Seller Hub popup.
                     isLoading = false
+                    if !viewModel.errorMessage.isBlankMessage {
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: viewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
                 }, onSuccess: {
                     // On success
                     isLoading = false
@@ -545,14 +551,17 @@ extension WalletPayoutView{
             await performAPICalls(
                 isConcurrent: false,
                 onError: { error in
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: errorDesc(error: error, message: viewModel.errorMessage),
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
+                    // MC (2026-05-28): suppress blank Seller Hub popup.
+                    if !viewModel.errorMessage.isBlankMessage {
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: viewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
                 },
                 onSuccess: {
                     transactionSuccess()
@@ -596,14 +605,17 @@ extension WalletPayoutView{
             await performAPICalls(
                 isConcurrent: false,
                 onError: { error in
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: errorDesc(error: error, message: viewModel.errorMessage),
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
+                    // MC (2026-05-28): suppress blank Seller Hub popup.
+                    if !viewModel.errorMessage.isBlankMessage {
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: viewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
                 },
                 onSuccess: {
                     transactionSuccess()
@@ -642,15 +654,17 @@ extension WalletPayoutView{
                 dataTransaction.append(contentsOf: newData)
             }
         } else {
-            
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: viewModel.errorMessage ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            showError = true
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            if !viewModel.errorMessage.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: viewModel.errorMessage ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
         }
     }
     
@@ -662,15 +676,18 @@ extension WalletPayoutView{
         if response.status == "success"{
             payoutHistory = response.data ?? []
         }else{
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            let _msg = response.message?.capitalized ?? ""
+            if !_msg.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: _msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
         }
     }
     
@@ -680,15 +697,18 @@ extension WalletPayoutView{
         if response.status == "success"{
             walletInfo = response.data ?? WalletInfoModel()
         }else{
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            let _msg = response.message?.capitalized ?? ""
+            if !_msg.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: _msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
         }
     }
 }

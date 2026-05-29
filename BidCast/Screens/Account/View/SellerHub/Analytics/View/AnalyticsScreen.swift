@@ -293,14 +293,17 @@ struct AnalyticsScreen: View {
             isConcurrent: true,
             showLoader: true,
             onError: { error in
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: "Error",
-                    message: errorDesc(error: error, message: viewModel.errorMessage),
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-                showError = true
+                // MC (2026-05-28): suppress blank Seller Hub popup.
+                if !(viewModel.errorMessage).isBlankMessage {
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
             }, onSuccess: {
                 // On success
                 visitorsSuccess()
@@ -317,14 +320,17 @@ struct AnalyticsScreen: View {
                 isConcurrent: true,
                 showLoader: true,
                 onError: { error in
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: errorDesc(error: error, message: viewModel.errorMessage),
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
+                    // MC (2026-05-28): suppress blank Seller Hub popup.
+                    if !(viewModel.errorMessage).isBlankMessage {
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: viewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
                 }, onSuccess: {
                     // On success
                     sellerSuccess()
@@ -406,14 +412,17 @@ struct AnalyticsScreen: View {
             isConcurrent: true,
             showLoader: true,
             onError: { error in
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: "Error",
-                    message: errorDesc(error: error, message: viewModel.errorMessage),
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-                showError = true
+                // MC (2026-05-28): suppress blank Seller Hub popup.
+                if !(viewModel.errorMessage).isBlankMessage {
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
             }, onSuccess: {
                 // On success
                 salesSuccess()
@@ -435,14 +444,18 @@ struct AnalyticsScreen: View {
                 }
             }
         }else{
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            let _msg = response?.message?.capitalized ?? ""
+            if !_msg.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response?.error_type?.capitalized ?? "",
+                    message: _msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
         }
     }
     
@@ -453,14 +466,18 @@ struct AnalyticsScreen: View {
             topBuyers = sellerAnalyticsData?.top_buyers_by_sales ?? []
             topOrders = sellerAnalyticsData?.top_buyers_by_orders ?? []
         }else{
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            let _msg = response?.message?.capitalized ?? ""
+            if !_msg.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: _msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
         }
     }
     
@@ -485,14 +502,18 @@ struct AnalyticsScreen: View {
                 }
             }
         }else{
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            let _msg = response?.message?.capitalized ?? ""
+            if !_msg.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response?.error_type?.capitalized ?? "",
+                    message: _msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
         }
     }
 

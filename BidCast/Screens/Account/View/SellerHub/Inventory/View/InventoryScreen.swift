@@ -127,14 +127,17 @@ struct InventoryScreen: View {
                             isConcurrent: true,
                             showLoader: false,
                             onError: { error in
-                                alertType = .sheetType(
-                                    icon: .alert,
-                                    title: "Error",
-                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
-                                    primaryBtnText: "",
-                                    secondaryBtnText: AppString.ok.localized
-                                )
-                                showError = true
+                                // MC (2026-05-28): suppress blank Seller Hub popup.
+                                if !(productViewModel.errorMessage).isBlankMessage {
+                                    alertType = .sheetType(
+                                        icon: .alert,
+                                        title: "Error",
+                                        message: errorDesc(error: error, message: productViewModel.errorMessage),
+                                        primaryBtnText: "",
+                                        secondaryBtnText: AppString.ok.localized
+                                    )
+                                    showError = true
+                                }
                                 canLoadMore = false
                                 isFetchingMore = false
                             }, onSuccess: {
@@ -182,14 +185,17 @@ struct InventoryScreen: View {
                             isConcurrent: true,
                             showLoader: false,
                             onError: { error in
-                                alertType = .sheetType(
-                                    icon: .alert,
-                                    title: "Error",
-                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
-                                    primaryBtnText: "",
-                                    secondaryBtnText: AppString.ok.localized
-                                )
-                                showError = true
+                                // MC (2026-05-28): suppress blank Seller Hub popup.
+                                if !(productViewModel.errorMessage).isBlankMessage {
+                                    alertType = .sheetType(
+                                        icon: .alert,
+                                        title: "Error",
+                                        message: errorDesc(error: error, message: productViewModel.errorMessage),
+                                        primaryBtnText: "",
+                                        secondaryBtnText: AppString.ok.localized
+                                    )
+                                    showError = true
+                                }
                                 canLoadMore = false
                                 isFetchingMore = false
                             }, onSuccess: {
@@ -358,14 +364,17 @@ struct InventoryScreen: View {
                         isConcurrent: true,
                         showLoader: false,
                         onError: { error in
-                            alertType = .sheetType(
-                                icon: .alert,
-                                title: "Error",
-                                message: errorDesc(error: error, message: productViewModel.errorMessage),
-                                primaryBtnText: "",
-                                secondaryBtnText: AppString.ok.localized
-                            )
-                            showError = true
+                            // MC (2026-05-28): suppress blank Seller Hub popup.
+                            if !(productViewModel.errorMessage).isBlankMessage {
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Error",
+                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
+                                    primaryBtnText: "",
+                                    secondaryBtnText: AppString.ok.localized
+                                )
+                                showError = true
+                            }
                             canLoadMore = false
                             isFetchingMore = false
                         }, onSuccess: {
@@ -392,14 +401,17 @@ struct InventoryScreen: View {
                     isConcurrent: true,
                     showLoader: false,
                     onError: { error in
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: "Error",
-                            message: errorDesc(error: error, message: productViewModel.errorMessage ?? categoryViewModel.errorMessage),
-                            primaryBtnText: "",
-                            secondaryBtnText: AppString.ok.localized
-                        )
-                        showError = true
+                        // MC (2026-05-28): suppress blank Seller Hub popup.
+                        if !(productViewModel.errorMessage ?? categoryViewModel.errorMessage).isBlankMessage {
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Error",
+                                message: errorDesc(error: error, message: productViewModel.errorMessage ?? categoryViewModel.errorMessage),
+                                primaryBtnText: "",
+                                secondaryBtnText: AppString.ok.localized
+                            )
+                            showError = true
+                        }
                         canLoadMore = false
                         isFetchingMore = false
                     }, onSuccess: {
@@ -595,14 +607,17 @@ struct InventoryScreen: View {
                 isConcurrent: false,
                 showLoader: true,
                 onError: { error in
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: errorDesc(error: error, message: viewModel.errorMessage),
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
+                    // MC (2026-05-28): suppress blank Seller Hub popup.
+                    if !(viewModel.errorMessage).isBlankMessage {
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: viewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
                 }, onSuccess: {
                     // On success
                     deleteProductSuccess()
@@ -634,14 +649,17 @@ struct InventoryScreen: View {
                     isConcurrent: true,
                     showLoader: false,
                     onError: { error in
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: "Error",
-                            message: errorDesc(error: error, message: productViewModel.errorMessage),
-                            primaryBtnText: "",
-                            secondaryBtnText: AppString.ok.localized
-                        )
-                        showError = true
+                        // MC (2026-05-28): suppress blank Seller Hub popup.
+                        if !(productViewModel.errorMessage).isBlankMessage {
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Error",
+                                message: errorDesc(error: error, message: productViewModel.errorMessage),
+                                primaryBtnText: "",
+                                secondaryBtnText: AppString.ok.localized
+                            )
+                            showError = true
+                        }
                         canLoadMore = false
                         isFetchingMore = false
                     }, onSuccess: {
@@ -654,14 +672,18 @@ struct InventoryScreen: View {
                 }
             }
         } else {
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            showError = true
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            let _msg = response.message?.capitalized ?? ""
+            if !_msg.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: _msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
         }
     }
     
@@ -671,14 +693,17 @@ struct InventoryScreen: View {
                 isConcurrent: false,
                 showLoader: true,
                 onError: { error in
-                    config = BottomSheetConfig(
-                        icon: "exclamationmark.circle",
-                        title: "Error",
-                        message: productViewModel.errorMessage ?? "",
-                        primaryButtonTitle: AppString.ok.localized,
-                        secondaryButtonTitle: nil
-                    )
-                    showErrorPopup = true
+                    // MC (2026-05-28): suppress blank Seller Hub popup.
+                    if !productViewModel.errorMessage.isBlankMessage {
+                        config = BottomSheetConfig(
+                            icon: "exclamationmark.circle",
+                            title: "Error",
+                            message: productViewModel.errorMessage ?? "",
+                            primaryButtonTitle: AppString.ok.localized,
+                            secondaryButtonTitle: nil
+                        )
+                        showErrorPopup = true
+                    }
                 }, onSuccess: {
                     // On success
                     hudMsg = "Product Status changed Successfully!"
@@ -688,14 +713,17 @@ struct InventoryScreen: View {
                             isConcurrent: true,
                             showLoader: false,
                             onError: { error in
-                                alertType = .sheetType(
-                                    icon: .alert,
-                                    title: "Error",
-                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
-                                    primaryBtnText: "",
-                                    secondaryBtnText: AppString.ok.localized
-                                )
-                                showError = true
+                                // MC (2026-05-28): suppress blank Seller Hub popup.
+                                if !(productViewModel.errorMessage).isBlankMessage {
+                                    alertType = .sheetType(
+                                        icon: .alert,
+                                        title: "Error",
+                                        message: errorDesc(error: error, message: productViewModel.errorMessage),
+                                        primaryBtnText: "",
+                                        secondaryBtnText: AppString.ok.localized
+                                    )
+                                    showError = true
+                                }
                             }, onSuccess: {
                                 // On success
                                 handleDataLoad()
@@ -719,14 +747,17 @@ struct InventoryScreen: View {
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
         } else {
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: categoryViewModel.errorMessage ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText:""
-            )
-            showError = true
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            if !categoryViewModel.errorMessage.isBlankMessage {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: categoryViewModel.errorMessage ?? "",
+                    primaryBtnText: AppString.ok.localized,
+                    secondaryBtnText:""
+                )
+                showError = true
+            }
         }
     }
     
@@ -889,14 +920,17 @@ struct InventoryScreen: View {
                     isFetchingMore = false
                     currentPage -= 1 // Rollback page increment
                     
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: errorDesc(error: error, message: productViewModel.errorMessage),
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
+                    // MC (2026-05-28): suppress blank Seller Hub popup.
+                    if !(productViewModel.errorMessage).isBlankMessage {
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: productViewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
                 },
                 onSuccess: {
                     // ✅ Handle successful data load
@@ -996,6 +1030,8 @@ struct InventoryScreen: View {
                 print("📄 Initial load: \(inventoryList.count) items | Total: \(totalItems)")
             }
         } else {
+            // MC (2026-05-28): suppress blank Seller Hub popup.
+            if !productViewModel.errorMessage.isBlankMessage {
             alertType = .sheetType(
                 icon: .alert,
                 title: "Error",
@@ -1004,6 +1040,7 @@ struct InventoryScreen: View {
                 secondaryBtnText: ""
             )
             showError = true
+            }
             
             // ✅ Reset pagination state
             canLoadMore = false

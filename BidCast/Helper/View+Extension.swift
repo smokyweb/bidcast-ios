@@ -77,10 +77,33 @@ extension View {
     }
 
     func errorDesc(error: Error?, message: String?) -> String {
-        guard let msg = message else {
-            return error?.localizedDescription ?? "Something went wrong"
+        // MC (2026-05-28): Blank Seller Hub popup fix. Treat an empty or
+        // whitespace-only message the same as nil so we never render a sheet
+        // with no text. Backend occasionally returns "" on benign states.
+        if let msg = message,
+           !msg.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return msg
         }
-        return msg
+        return error?.localizedDescription ?? "Something went wrong"
+    }
+}
+
+// MARK: - Blank-message guard (MC 2026-05-28)
+// Centralized helper so Seller Hub screens can decide whether an error/info
+// message is worth surfacing. A nil, empty, or whitespace-only message means
+// "nothing to show" — callers must NOT set showError = true in that case.
+extension Optional where Wrapped == String {
+    /// True when the wrapped string is nil, empty, or whitespace-only.
+    var isBlankMessage: Bool {
+        guard let s = self else { return true }
+        return s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+}
+
+extension String {
+    /// True when the string is empty or whitespace-only.
+    var isBlankMessage: Bool {
+        return trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }
 
