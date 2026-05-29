@@ -2131,6 +2131,16 @@ struct RehearsalScreen: View {
         socketManager.listenForChat(roomId: roomId)
         socketManager.listenForViewerCount()
         socketManager.listenForShowTimer(roomId: roomId)
+
+        // Basecamp #9944421790 + #9944417027 (2026-05-29): the host only emitted
+        // `room_create` and never joined the socket.io broadcast room, so the
+        // server never delivered `bid_timer_update` (seller saw a frozen 0
+        // timer) or `chat_get` (seller could send but saw no messages). Buyers
+        // worked because they call joinRoom. Join here so the host's socket is a
+        // member of the broadcast room and receives the same live stream of
+        // timer + chat events. Also pull existing chat history on entry.
+        socketManager.joinRoom(roomId: roomId) { }
+        socketManager.loadChatHistory(roomId: roomId)
         // Bid finalized listener
         SocketManagerService.shared.listenForBidFinalized { roomId, productId, winner in
             handleBidFinalized(for: roomId, winner: winner)

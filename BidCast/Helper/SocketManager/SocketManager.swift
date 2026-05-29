@@ -221,6 +221,12 @@ extension SocketManagerService {
                 
                 
                 logger.info("✅ Socket connected")
+                // Basecamp #9940079895 (2026-05-29): the connect handler never
+                // flipped `isConnected` to true, so every UI gate that checked
+                // `socketManager.isConnected` (e.g. the host kick-buyer button)
+                // saw `false` forever and silently no-op'd with
+                // "Socket not connected". Mark connected here.
+                self.isConnected = true
                 if socket.status == .connected{
                     
                     onConnected?()
@@ -230,6 +236,7 @@ extension SocketManagerService {
         }else{
             if socket.status == .connected{
                 logger.info("✅ Socket connected")
+                self.isConnected = true
                 onConnected?()
             }
         }
@@ -595,6 +602,49 @@ extension SocketManagerService {
     func removeChatListener() {
         socket.off("chat_get")
         print("🧹 Removed chat listener for 'chat_get'")
+    }
+
+    // MARK: - Load chat history (Basecamp #9944417027, 2026-05-29)
+    // The live `chat_get` socket event only delivers NEW messages after the
+    // client has joined the room. On entering a room (host AND buyer) we pull
+    // the existing transcript from REST so prior messages are visible.
+    // GET /api/live_chat/{room_id} -> { success, room_id, chats: [...] }
+    // Each chat element reuses CommentModel's coding keys (user_image,
+    // user_name, message, user_id, room_id).
+    func loadChatHistory(roomId: String) {
+        let encodedRoom = roomId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? roomId
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/live_chat/\(encodedRoom)") else {
+            logger.warning("⚠️ loadChatHistory: bad URL for room \(roomId)")
+            return
+        }
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+            guard let self else { return }
+            if let error = error {
+                self.logger.error("❌ loadChatHistory error: \(error.localizedDescription)")
+                return
+            }
+            guard let data = data,
+                  let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+                  let rawChats = root["chats"] as? [[String: Any]] else {
+                return
+            }
+            var history: [CommentModel] = []
+            for raw in rawChats {
+                if let chatData = try? JSONSerialization.data(withJSONObject: raw),
+                   let chat = try? JSONDecoder().decode(CommentModel.self, from: chatData) {
+                    history.append(chat)
+                }
+            }
+            guard !history.isEmpty else { return }
+            DispatchQueue.main.async {
+                // Prepend any history rows we don't already have, preserving order.
+                let existingIDs = Set(self.chats.map { $0.id })
+                let newOnes = history.filter { !existingIDs.contains($0.id) }
+                guard !newOnes.isEmpty else { return }
+                self.chats = newOnes + self.chats
+                self.logger.info("📜 Loaded \(newOnes.count) chat history rows for \(roomId)")
+            }
+        }.resume()
     }
 }
 
