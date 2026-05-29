@@ -145,32 +145,30 @@ struct AuthTextField: View {
                                     .frame(height: height)
                                     .onAppear {
                                         if isForPrice {
-                                            // If text is a plain number without decimal (e.g., "43" from database)
-                                            if !text.isEmpty && !text.contains(".") {
-                                                // Initialize rawPriceDigits and format it
+                                            // Basecamp #9940184831 (2026-05-29): EDIT-product price was
+                                            // shifting two decimals LEFT (e.g. $25.00 -> $0.25, $2,000 -> $20.00).
+                                            //
+                                            // Root cause: the prefilled value here is a DOLLARS amount that the
+                                            // backend stores in `products.pricing` (a MySQL `double`) and the API
+                                            // returns verbatim - whole-dollar values come back WITHOUT a decimal
+                                            // point ("25", "2000"). The old code treated those digits as CENTS and
+                                            // inserted a decimal 2 places from the end, dividing the price by 100.
+                                            //
+                                            // The cents-as-you-type behavior is intentional ONLY for live user
+                                            // typing (handled in .onChange). On prefill we must interpret the
+                                            // incoming value as dollars and only normalize to 2 decimals - never
+                                            // re-scale it. This keeps the load->save round-trip price-identical and
+                                            // matches what the product cards / display screens already show.
+                                            if !text.isEmpty {
+                                                if let dollars = Double(text) {
+                                                    // Normalize to a 2-decimal dollars string ("25" -> "25.00",
+                                                    // "25.5" -> "25.50", "25.00" stays "25.00").
+                                                    text = String(format: "%.2f", dollars)
+                                                }
+                                                // Seed rawPriceDigits from the normalized dollars value so any
+                                                // subsequent .onChange edits keep formatting consistently.
                                                 rawPriceDigits = text.filter { $0.isNumber }
-                                                
-                                                var digitsToFormat = rawPriceDigits
-                                                while digitsToFormat.count > 1 && digitsToFormat.first == "0" {
-                                                    digitsToFormat.removeFirst()
-                                                }
-                                                
-                                                if digitsToFormat.isEmpty {
-                                                    text = ""
-                                                } else if digitsToFormat.count == 1 {
-                                                    text = "0.0\(digitsToFormat)"
-                                                } else if digitsToFormat.count == 2 {
-                                                    text = "0.\(digitsToFormat)"
-                                                } else {
-                                                    let index = digitsToFormat.index(digitsToFormat.endIndex, offsetBy: -2)
-                                                    let beforeDecimal = digitsToFormat[..<index]
-                                                    let afterDecimal = digitsToFormat[index...]
-                                                    text = "\(beforeDecimal).\(afterDecimal)"
-                                                }
                                                 self.enteredText?(text)
-                                            } else if !text.isEmpty {
-                                                // Initialize rawPriceDigits from existing formatted text
-                                                rawPriceDigits = text.filter { $0.isNumber }
                                             }
                                         }
                                     }
@@ -269,18 +267,10 @@ struct AuthTextField: View {
                                             self.enteredText?(text)
                                         }
                                     }
-                                    .onAppear {
-                                    if isForPrice {
-                                        // Initialize rawPriceDigits from existing text
-                                        rawPriceDigits = text.filter { $0.isNumber }
-                                        
-                                        // Format initial value if needed
-                                        if !text.isEmpty && !text.contains(".") {
-                                            text = text + ".00"
-                                            self.enteredText?(text)
-                                        }
-                                    }
-                                }
+                                    // Basecamp #9940184831 (2026-05-29): prefill formatting is now
+                                    // handled by the single dollars-normalizing .onAppear above. The old
+                                    // second .onAppear here was redundant; removing it avoids two
+                                    // competing prefill formatters on the same field.
                                     .ignoresSafeArea(.keyboard, edges: .bottom)
                             }
                         }
