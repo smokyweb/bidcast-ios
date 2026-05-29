@@ -372,6 +372,14 @@ struct RehearsalScreen: View {
 //        }
         .sheet(isPresented: $showTipSetting) {
             TipSettingsSheet(
+                // M1 (2026-05-28): pass the schedule_shows.id so the sheet
+                // fetches get-tip-setting on open and prefills the saved
+                // message+toggle. roomId has the format
+                // live_room_<userId>_<showId>; the backend's get-tip-setting
+                // validates schedule_show_id against schedule_shows.id, so we
+                // extract the trailing numeric show id here (same derivation
+                // CoHostPairingSheet already uses above).
+                scheduleShowId: String(self.roomId.split(separator: "_").last ?? ""),
                 onSave: { message, showMessages in
                     print("Tip Message: \(message)")
                     print("Show Buyer Tip Messages: \(showMessages)")

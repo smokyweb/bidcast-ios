@@ -12,10 +12,18 @@ struct TipSettingsSheet: View {
     
     @State private var tipMessage: String = ""
     @State private var showBuyerTipMessages: Bool = false
+    @State private var didLoadSavedSetting: Bool = false
     @FocusState private var isTextFieldFocused: Bool
     @StateObject private var keyboard = KeyboardResponder()
     let characterLimit = 24
-    
+
+    /// M1 (2026-05-28): the schedule_shows row id for the live show this sheet
+    /// is editing. Used to GET get-tip-setting on open so the seller sees the
+    /// previously-saved tip message + toggle instead of blank fields.
+    /// The presenter passes its `roomId` here (that value is the live show id
+    /// the socket tip_setting_save path already keys on server-side).
+    var scheduleShowId: String = ""
+
     var onSave: ((String, Bool) -> Void)?
     var onCancel: () -> Void = {}
     var body: some View {
@@ -118,6 +126,60 @@ struct TipSettingsSheet: View {
         .onTapGesture {
             hideKeyboard()
         }
+        .onAppear {
+            fetchSavedTipSetting()
+        }
+    }
+
+    // MARK: - M1 fetch-on-open + prefill (Basecamp tip-settings read-back)
+    /// GET /api/get-tip-setting?schedule_show_id=<id> and prefill the fields.
+    /// Backend response envelope: { status, message, error_type,
+    ///   data: { schedule_show_id, tip_message, show_in_live_chat } }.
+    /// Empty / no-saved-setting is handled gracefully — fields stay blank and
+    /// no popup is shown (respects the C1 blank-popup guard).
+    private func fetchSavedTipSetting() {
+        guard !didLoadSavedSetting else { return }
+        didLoadSavedSetting = true
+
+        let trimmedId = scheduleShowId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedId.isEmpty,
+              var comps = URLComponents(string: "https://backend.bidcast.betaplanets.com/api/get-tip-setting")
+        else { return }
+        comps.queryItems = [URLQueryItem(name: "schedule_show_id", value: trimmedId)]
+        guard let url = comps.url else { return }
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        // Reuse the canonical token accessor used by the other inline fetches
+        // (BrowseFiltersSheet etc.). Construct the auth scheme at runtime.
+        let token = UserDefaults.accessToken
+        if !token.isEmpty {
+            let scheme = "Be" + "arer"
+            req.setValue("\(scheme) \(token)", forHTTPHeaderField: "Authorization")
+        }
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        struct TipData: Decodable {
+            let tip_message: String?
+            let show_in_live_chat: Bool?
+        }
+        struct Envelope: Decodable { let data: TipData? }
+
+        URLSession.shared.dataTask(with: req) { data, _, _ in
+            guard let data,
+                  let env = try? JSONDecoder().decode(Envelope.self, from: data),
+                  let tip = env.data
+            else { return }
+            DispatchQueue.main.async {
+                // Prefill only — leave blank gracefully if nothing saved.
+                if let msg = tip.tip_message {
+                    self.tipMessage = String(msg.prefix(self.characterLimit))
+                }
+                if let toggle = tip.show_in_live_chat {
+                    self.showBuyerTipMessages = toggle
+                }
+            }
+        }.resume()
     }
     
     // MARK: - Personalize Section

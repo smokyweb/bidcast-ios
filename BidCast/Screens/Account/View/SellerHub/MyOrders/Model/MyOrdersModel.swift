@@ -53,6 +53,13 @@ struct MyOrderModel: Codable {
     var tracking_number: String?
     var label_url: String?
     var shipping_status: String?
+    // M2 (2026-05-28): additive backend fields from getOrderListing —
+    // status_label is the human string ("Needs Processing", "Ready to Ship",
+    // "Shipped", "Out for Delivery", "Completed", "Pending", "Cancelled") and
+    // status_bucket is the machine key (needs_processing/ready_to_ship/...).
+    // Old responses won't include these, so both are optional with fallback.
+    var statusLabel: String?
+    var statusBucket: String?
 
     var product: ProductDetails?
     var shippingTracking: [ShippingTrackingModel]?
@@ -89,6 +96,9 @@ struct MyOrderModel: Codable {
         case tracking_number
         case label_url
         case shipping_status
+        // M2 (2026-05-28): additive getOrderListing labels
+        case statusLabel = "status_label"
+        case statusBucket = "status_bucket"
         case product
         case shippingTracking = "shipping_tracking"
         case user
@@ -330,6 +340,9 @@ extension MyOrderModel {
         status = try c.decodeIfPresent(String.self, forKey: .status)
         paymentStatus = try c.decodeIfPresent(String.self, forKey: .paymentStatus)
         createdAt = try c.decodeIfPresent(String.self, forKey: .createdAt)
+        // M2 (2026-05-28): additive labels — backward-compatible (optional).
+        statusLabel = try c.decodeIfPresent(String.self, forKey: .statusLabel)
+        statusBucket = try c.decodeIfPresent(String.self, forKey: .statusBucket)
         product = try c.decodeIfPresent(ProductDetails.self, forKey: .product)
         shippingTracking = try c.decodeIfPresent([ShippingTrackingModel].self, forKey: .shippingTracking)
         user = try c.decodeIfPresent(UserShortModel.self, forKey: .user)

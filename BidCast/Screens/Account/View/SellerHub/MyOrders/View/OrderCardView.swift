@@ -188,7 +188,12 @@ struct OrderCardView: View {
     private var statusBadges: some View {
         HStack(spacing: 8) {
             StatusBadge(
-                title: "\(order.status?.capitalizingFirstLetter() ?? "Pending") Review",
+                // M2 (2026-05-28): render the API-provided human status_label
+                // ("Needs Processing", "Ready to Ship", "Shipped", "Out for
+                // Delivery", "Completed", ...). Falls back to the legacy
+                // "<status> Review" string for old/cached responses that don't
+                // carry status_label.
+                title: displayStatusLabel,
                 backgroundColor: statusColor.opacity(0.15),
                 textColor: statusColor
             )
@@ -305,12 +310,25 @@ struct OrderCardView: View {
             .onEnded { _ in isPressed = false }
     }
     
+    // MARK: - Status label (M2)
+    /// Prefer the backend's human status_label; fall back to the legacy
+    /// "<status> Review" string when the field is absent (old/cached data).
+    private var displayStatusLabel: String {
+        if let label = order.statusLabel?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !label.isEmpty {
+            return label
+        }
+        return "\(order.status?.capitalizingFirstLetter() ?? "Pending") Review"
+    }
+
     // MARK: - Status Colors
     private var statusColor: Color {
-        switch order.status?.lowercased() {
+        // M2 (2026-05-28): prefer the machine status_bucket for coloring when
+        // present; fall back to the legacy raw status mapping otherwise.
+        switch (order.statusBucket ?? order.status)?.lowercased() {
         case "completed", "delivered":
             return .green
-        case "processing", "shipped":
+        case "processing", "shipped", "needs_processing", "ready_to_ship", "out_for_delivery":
             return .orange
         case "cancelled", "refunded":
             return .red
@@ -320,7 +338,7 @@ struct OrderCardView: View {
             return .gray
         }
     }
-    
+
 //    private var earningStatusColor: Color {
 //        switch order.earning_status?.lowercased() {
 //        case "earnings_completed", "completed":
