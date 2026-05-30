@@ -1066,8 +1066,14 @@ struct TaxExemptionApplyRequest : Encodable {
 struct FlashSaleProduct: Codable, Identifiable {
     let id: Int?
     let title: String?
-    let pricing: String?           // original price (dollars) — backend returns as JSON string e.g. "129"
-    let flash_sale_price: String?  // sale price (dollars) — backend returns as JSON string e.g. "99"
+    // waveD round 2 (2026-05-30): backend is INCONSISTENT about these fields —
+    // `pricing` comes back as a JSON string ("10") but `flash_sale_price` comes
+    // back as a JSON number (5). Decoding either as a fixed type throws
+    // typeMismatch and silently empties the whole flash-sales array (the row
+    // never renders). Normalize BOTH to String? via a tolerant decoder that
+    // accepts string OR number.
+    let pricing: String?           // original price (dollars); backend may send String or Number
+    let flash_sale_price: String?  // sale price (dollars); backend may send String or Number
     let flash_sale_starts_at: String?
     let flash_sale_ends_at: String?
     let images: [String]?
@@ -1076,6 +1082,39 @@ struct FlashSaleProduct: Codable, Identifiable {
     let user: FlashSaleUser?
 
     var thumbUrl: String? { images?.first ?? thumbnail?.first }
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, pricing, flash_sale_price
+        case flash_sale_starts_at, flash_sale_ends_at
+        case images, thumbnail, user_id, user
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(Int.self, forKey: .id)
+        title = try c.decodeIfPresent(String.self, forKey: .title)
+        pricing = FlashSaleProduct.decodeStringOrNumber(c, .pricing)
+        flash_sale_price = FlashSaleProduct.decodeStringOrNumber(c, .flash_sale_price)
+        flash_sale_starts_at = try c.decodeIfPresent(String.self, forKey: .flash_sale_starts_at)
+        flash_sale_ends_at = try c.decodeIfPresent(String.self, forKey: .flash_sale_ends_at)
+        images = try c.decodeIfPresent([String].self, forKey: .images)
+        thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
+        user_id = try c.decodeIfPresent(Int.self, forKey: .user_id)
+        user = try c.decodeIfPresent(FlashSaleUser.self, forKey: .user)
+    }
+
+    // Accepts a JSON value that may be a String, Int, or Double and returns its
+    // String form (or nil if absent/null). Keeps the rest of the app — which
+    // already does Double(pricing ?? "0") — working unchanged.
+    private static func decodeStringOrNumber(_ c: KeyedDecodingContainer<CodingKeys>, _ key: CodingKeys) -> String? {
+        if let s = try? c.decodeIfPresent(String.self, forKey: key) { return s }
+        if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return String(i) }
+        if let d = try? c.decodeIfPresent(Double.self, forKey: key) {
+            // Drop a trailing .0 so "5.0" reads as "5".
+            return d == d.rounded() ? String(Int(d)) : String(d)
+        }
+        return nil
+    }
 }
 
 struct FlashSaleUser: Codable {
