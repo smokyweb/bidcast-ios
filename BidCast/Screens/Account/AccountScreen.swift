@@ -482,6 +482,8 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToClips, destination: ClipsScreen())
             // Basecamp #9933801536 (2026-05-27): saved searches
             CusNavLink(doNavigate: $navigationState.navigateToSavedSearches, destination: SavedSearchesScreen())
+            // FIX-2 (2026-05-30): Account Security / Change Password
+            CusNavLink(doNavigate: $navigationState.navigateToAccountSecurity, destination: ChangePasswordScreen())
 //            CusNavLink(doNavigate: $navigationState.navigateToClips, destination:  CreateAddress())
             CusNavLink(doNavigate: $navigateToSeller, destination:  SellerVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigationToNotification, destination: NotificationScreen())
@@ -538,22 +540,25 @@ extension AccountScreen {
     }
     
     // MARK: - Handle Menu Selection
+    // FIX-2 (2026-05-30): Added accountSecurity at index 2; all subsequent indices shifted +1.
+    // New mapping: 0=About 1=Contact 2=AccountSecurity 3=SalesTax 4=Terms 5=Privacy 6=FAQ 7=BlockedUsers 8=DeleteAccount 9=Logout
     private func handleMenuSelection(index: Int) {
         print("Menu selection: \(index)")
         switch index {
         case 0: openURL("https://backend.bidcast.betaplanets.com/about-us")
         case 1: navigationState.navigateToContactus = true
-        case 2: navigationState.navigateToSales = true
-        case 3: openURL("https://backend.bidcast.betaplanets.com/terms-condition")
-        case 4: openURL("https://backend.bidcast.betaplanets.com/privacy-policy")
-        case 5: openURL("https://backend.bidcast.betaplanets.com/faq")
-        case 6: navigationState.navigateToBlockedList = true
-        case 7:
+        case 2: navigationState.navigateToAccountSecurity = true
+        case 3: navigationState.navigateToSales = true
+        case 4: openURL("https://backend.bidcast.betaplanets.com/terms-condition")
+        case 5: openURL("https://backend.bidcast.betaplanets.com/privacy-policy")
+        case 6: openURL("https://backend.bidcast.betaplanets.com/faq")
+        case 7: navigationState.navigateToBlockedList = true
+        case 8:
             print("Delete Account tapped")
             DispatchQueue.main.async {
                 navigateToDeleteAccount = true
             }
-        case 8:
+        case 9:
             print("Logout tapped - setting userLogOut to true")
             DispatchQueue.main.async {
                 userLogOut = true
@@ -1378,6 +1383,8 @@ struct NavigationState {
     var navigateToClips = false
     // Basecamp #9933801536 (2026-05-27): saved searches
     var navigateToSavedSearches = false
+    // FIX-2 (2026-05-30): Account Security / Change Password screen
+    var navigateToAccountSecurity = false
     // Seller Hub
     var navigateToShows = false
     var navigateToInventry = false
@@ -1460,6 +1467,7 @@ enum AccountTabSection: String, CaseIterable, CustomStringConvertible {
 enum AccountMenuSection: String, CaseIterable, CustomStringConvertible {
     case about = "About Us"
     case contact = "Contact Us"
+    case accountSecurity = "Account Security"  // FIX-2 (2026-05-30)
     case salesTax = "Sales tax Exemption"
     case termsAndCond = "Terms & Conditions"
     case privacy = "Privacy & Policy"
@@ -1477,6 +1485,8 @@ enum AccountMenuSection: String, CaseIterable, CustomStringConvertible {
         case .about: return .aboutUs
         case .contact:
             return .contactUs
+        case .accountSecurity:
+            return .ic_setting
         case .salesTax:
             return .terms
         case .termsAndCond:

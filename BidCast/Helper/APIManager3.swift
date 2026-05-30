@@ -664,8 +664,16 @@ private lazy var optimizedSession: URLSession = {
                             NotificationCenter.default.post(name: .userSessionExpired, object: nil)
                         }
                     }
+                    // FIX-4 (2026-05-30): Multi-device login — let the user keep their
+                    // current session on this device instead of being force-logged-out.
+                    // Tapping "Stay Here" clears the alert flag without wiping the token
+                    // or posting .userSessionExpired, so the user remains authenticated.
+                    let stayAction = UIAlertAction(title: "Stay Here", style: .cancel) { _ in
+                        APIManager.isShowingUnauthorizedAlert = false
+                    }
                     
                     alert.addAction(loginAction)
+                    alert.addAction(stayAction)
                     rootVC.topMostViewController.present(alert, animated: true, completion: nil)
                 }
             }

@@ -1066,8 +1066,8 @@ struct TaxExemptionApplyRequest : Encodable {
 struct FlashSaleProduct: Codable, Identifiable {
     let id: Int?
     let title: String?
-    let pricing: Double?          // original price (dollars)
-    let flash_sale_price: Double? // sale price (dollars)
+    let pricing: String?           // original price (dollars) — backend returns as JSON string e.g. "129"
+    let flash_sale_price: String?  // sale price (dollars) — backend returns as JSON string e.g. "99"
     let flash_sale_starts_at: String?
     let flash_sale_ends_at: String?
     let images: [String]?
