@@ -32,6 +32,14 @@ struct ShowDetailsScreen: View {
     // the ShowsScreen "Join as Co-Host (second device)" entry.
     @State private var showCoHostPairing: Bool = false
     @State private var navigateToCoHostJoin: Bool = false
+    // FIX-3 (2026-05-30): Add Products to an existing show from ShowDetailsScreen.
+    // AddProductsScreen requires LetsPrepareCoordinator + ProductManager environment objects.
+    @StateObject private var addProductsCoordinator = LetsPrepareCoordinator()
+    @StateObject private var addProductsManager = ProductManager()
+    @State private var addProductsThumb: String = ""
+    @State private var addProductsFromPrepare: Bool = false
+    @State private var addProductsNavFromLib: Bool = false
+    @State private var navigateToAddProducts: Bool = false
     @State private var scheduleRequest = StoreScheduleShowRequest(
         title: "",
         date: "",
@@ -90,6 +98,21 @@ struct ShowDetailsScreen: View {
             // Basecamp #9934001770 (2026-05-29): second-device co-host join.
             CusNavLink(doNavigate: $navigateToCoHostJoin,
                        destination: CoHostJoinScreen())
+            // FIX-3 (2026-05-30): Add Products navigation
+            CusNavLink(
+                doNavigate: $navigateToAddProducts,
+                destination: AddProductsScreen(
+                    request: $scheduleRequest,
+                    thumbNail: $addProductsThumb,
+                    fromPrepare: $addProductsFromPrepare,
+                    NavFromProductLibrary: $addProductsNavFromLib,
+                    backToCreateProduct: $navigateToAddProducts,
+                    didTapBack: { _, _, _ in },
+                    didTapEdit: { _, _ in }
+                )
+                .environmentObject(addProductsManager)
+                .environmentObject(addProductsCoordinator)
+            )
         }
         // Basecamp #9934001770 (2026-05-29): host-side pairing ("take-over")
         // popup, now reachable from show-details (was view-all-shows only).
@@ -375,6 +398,36 @@ struct ShowDetailsScreen: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
+
+            // FIX-3 (2026-05-30): Add Products button so sellers can add products to an
+            // already-created show without re-entering the full creation flow.
+            Button(action: {
+                // Pre-populate coordinator request from the existing show
+                addProductsCoordinator.request = scheduleRequest
+                // Seed the product manager from the products already on this show
+                addProductsManager.clearAll()
+                addProductsManager.addProducts(products)
+                navigateToAddProducts = true
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add Products")
+                        .font(.custom(poppinsSemiBold, size: 15))
+                }
+                .foregroundColor(.defaultTheme)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color.defaultThemeLight)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 32)
+                        .stroke(Color.defaultTheme, lineWidth: 1.5)
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 4)
 
             HStack(spacing: 12) {
                 // Edit Show Button

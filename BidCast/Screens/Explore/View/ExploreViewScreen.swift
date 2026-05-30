@@ -682,18 +682,22 @@ struct FlashSaleProductCard: View {
                 .frame(width: 130, alignment: .leading)
 
             // Pricing row
+            // waveD FIX-1 (2026-05-30): pricing / flash_sale_price are now String?
+            // (backend returns them as JSON strings). Parse to Double before compare/format.
             HStack(spacing: 4) {
-                if let salePrice = product.flash_sale_price, salePrice > 0 {
+                let saleVal = Double(product.flash_sale_price ?? "")
+                let origVal = Double(product.pricing ?? "")
+                if let salePrice = saleVal, salePrice > 0 {
                     Text(String(format: "$%.2f", salePrice))
                         .font(.custom(poppinsBold, size: 13))
                         .foregroundColor(.red)
-                    if let original = product.pricing, original > 0 {
+                    if let original = origVal, original > 0 {
                         Text(String(format: "$%.2f", original))
                             .font(.custom(poppinsRegular, size: 11))
                             .foregroundColor(.gray)
                             .strikethrough()
                     }
-                } else if let price = product.pricing {
+                } else if let price = origVal {
                     Text(String(format: "$%.2f", price))
                         .font(.custom(poppinsBold, size: 13))
                         .foregroundColor(.primary)

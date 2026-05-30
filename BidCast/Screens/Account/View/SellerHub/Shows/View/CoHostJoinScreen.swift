@@ -443,6 +443,9 @@ struct CoHostJoinScreen: View {
                 if hostUserId > 0 && showId > 0 {
                     await joinAgoraAsCoHost(hostUserId: hostUserId, showId: showId)
                 } else {
+                    // FIX-5 (2026-05-30): Log raw response bytes so we can diagnose
+                    // which fields the backend returned when channel resolution fails.
+                    print("⚠️ CoHost claim raw data:", String(data: data, encoding: .utf8) ?? "nil")
                     await MainActor.run {
                         agoraError = "Could not determine channel — missing show data in response."
                     }

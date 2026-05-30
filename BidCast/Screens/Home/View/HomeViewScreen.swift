@@ -1070,12 +1070,12 @@ struct FlashSaleCard: View {
     let item: FlashSaleProduct
 
     private var saleText: String? {
-        guard let p = item.flash_sale_price else { return nil }
-        return String(format: "$%.2f", p)
+        guard let p = item.flash_sale_price, let v = Double(p) else { return nil }
+        return String(format: "$%.2f", v)
     }
     private var origText: String? {
-        guard let p = item.pricing else { return nil }
-        return String(format: "$%.2f", p)
+        guard let p = item.pricing, let v = Double(p) else { return nil }
+        return String(format: "$%.2f", v)
     }
 
     var body: some View {

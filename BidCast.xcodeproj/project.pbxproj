@@ -453,6 +453,7 @@
 		D4D453D92E4CBC13005A2F63 /* BlockedUserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453D22E4CBC13005A2F63 /* BlockedUserListViewModel.swift */; };
 		D4D453DA2E4CBC13005A2F63 /* BlockedUserListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453D42E4CBC13005A2F63 /* BlockedUserListModel.swift */; };
 		D4D453DB2E4CBC13005A2F63 /* BlockedUserScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453D62E4CBC13005A2F63 /* BlockedUserScreen.swift */; };
+		425D000EC92E4906B62B725C /* ChangePasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73299597FD924E6189D4A8C4 /* ChangePasswordScreen.swift */; };
 		D4DAD3182E24E34A00738549 /* RateSellerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DAD3172E24E34A00738549 /* RateSellerView.swift */; };
 		D4DDE8022DDC5CC100A24973 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE8002DDC5CC000A24973 /* Poppins-ThinItalic.ttf */; };
 		D4DDE8032DDC5CC100A24973 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE7FA2DDC5CC000A24973 /* Poppins-Medium.ttf */; };
@@ -1067,6 +1068,7 @@
 		D4D453D22E4CBC13005A2F63 /* BlockedUserListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserListViewModel.swift; sourceTree = "<group>"; };
 		D4D453D42E4CBC13005A2F63 /* BlockedUserListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserListModel.swift; sourceTree = "<group>"; };
 		D4D453D62E4CBC13005A2F63 /* BlockedUserScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserScreen.swift; sourceTree = "<group>"; };
+		73299597FD924E6189D4A8C4 /* ChangePasswordScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordScreen.swift; sourceTree = "<group>"; };
 		D4DAD3172E24E34A00738549 /* RateSellerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSellerView.swift; sourceTree = "<group>"; };
 		D4DDE7EE2DDC5CC000A24973 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		D4DDE7EF2DDC5CC000A24973 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
@@ -2915,8 +2917,17 @@
 				D49A95662DD704BF006044A7 /* FAQ */,
 				D4A7F8F92DDD9A42001FC705 /* Addressess */,
 				D4B616172DE86C9700924A3D /* OrderStatus */,
+				801A7A9510C445F391ACFD5D /* ChangePassword */,
 			);
 			path = MyAccount;
+			sourceTree = "<group>";
+		};
+		801A7A9510C445F391ACFD5D /* ChangePassword */ = {
+			isa = PBXGroup;
+			children = (
+				73299597FD924E6189D4A8C4 /* ChangePasswordScreen.swift */,
+			);
+			path = ChangePassword;
 			sourceTree = "<group>";
 		};
 		D4A7F8FC2DDD9AE0001FC705 /* LogOut */ = {
@@ -4988,6 +4999,7 @@
 				D63C268E2EFEA30D00E1C27A /* ShowDetailsScreen.swift in Sources */,
 				35C202502DEEFFE300492F2D /* AddCardScreen.swift in Sources */,
 				D4D453DB2E4CBC13005A2F63 /* BlockedUserScreen.swift in Sources */,
+				425D000EC92E4906B62B725C /* ChangePasswordScreen.swift in Sources */,
 				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
 				D67BAE5C2ED82598002E9A6F /* OrderTrackingView.swift in Sources */,
 				D4CAECA82DE7360F00705CD7 /* ShowSummaryViewModel.swift in Sources */,
@@ -5451,7 +5463,7 @@
 				CODE_SIGN_ENTITLEMENTS = BidCast/BidCast.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 356;
+				CURRENT_PROJECT_VERSION = 358;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -5508,7 +5520,7 @@
 				CODE_SIGN_ENTITLEMENTS = BidCast/BidCast.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 356;
+				CURRENT_PROJECT_VERSION = 358;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -5557,7 +5569,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 356;
+				CURRENT_PROJECT_VERSION = 358;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -5580,7 +5592,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 356;
+				CURRENT_PROJECT_VERSION = 358;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -5602,7 +5614,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 356;
+				CURRENT_PROJECT_VERSION = 358;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
@@ -5624,7 +5636,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 356;
+				CURRENT_PROJECT_VERSION = 358;
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
