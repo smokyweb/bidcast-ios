@@ -1486,7 +1486,7 @@ enum AccountMenuSection: String, CaseIterable, CustomStringConvertible {
         case .contact:
             return .contactUs
         case .accountSecurity:
-            return .ic_setting
+            return .terms
         case .salesTax:
             return .terms
         case .termsAndCond:
