@@ -638,6 +638,11 @@
 		D6F4C7932EF28FB90082B45F /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = D6F4C7922EF28FB90082B45F /* RichText */; };
 		DA04A66900DBBEEFB066B41E /* RandomizerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBA6025F11D4BBBD32884A0 /* RandomizerService.swift */; };
 		E4E661A4FA802B01142E1768 /* RandomizerTemplateBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D6266FD3FB98457380544D /* RandomizerTemplateBuilderView.swift */; };
+		233654FCF0B74A2B892FD09A /* InquiryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56569F15EBEB469486F3F513 /* InquiryModels.swift */; };
+		62C4B4EFE5A545F1A81F939D /* InquiryInboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C384141DC0714658A43C7A0A /* InquiryInboxViewModel.swift */; };
+		84E5297574294B5F999165DB /* InquiryThreadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F153F3E449F54FFD9ABC6916 /* InquiryThreadViewModel.swift */; };
+		9BA604D450C948A1A0A570BD /* InquiryInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3C446E61944BBA82D62B5F /* InquiryInboxView.swift */; };
+		2C76E590CBD146B1B3A57CE2 /* InquiryThreadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8263628C11884F63B644055F /* InquiryThreadView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1260,6 +1265,11 @@
 		F568AFEBE7EB6E84B43C68D8 /* RandomizerWheelView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RandomizerWheelView.swift; sourceTree = "<group>"; };
 		FC910A35F9F24CD999CA0216 /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
 		FDBA6025F11D4BBBD32884A0 /* RandomizerService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RandomizerService.swift; sourceTree = "<group>"; };
+		56569F15EBEB469486F3F513 /* InquiryModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryModels.swift; sourceTree = "<group>"; };
+		C384141DC0714658A43C7A0A /* InquiryInboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryInboxViewModel.swift; sourceTree = "<group>"; };
+		F153F3E449F54FFD9ABC6916 /* InquiryThreadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryThreadViewModel.swift; sourceTree = "<group>"; };
+		4E3C446E61944BBA82D62B5F /* InquiryInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryInboxView.swift; sourceTree = "<group>"; };
+		8263628C11884F63B644055F /* InquiryThreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryThreadView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1466,6 +1476,11 @@
 			children = (
 				D45D7A332E389A79003A3842 /* Chat */,
 				355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */,
+				56569F15EBEB469486F3F513 /* InquiryModels.swift */,
+				C384141DC0714658A43C7A0A /* InquiryInboxViewModel.swift */,
+				F153F3E449F54FFD9ABC6916 /* InquiryThreadViewModel.swift */,
+				4E3C446E61944BBA82D62B5F /* InquiryInboxView.swift */,
+				8263628C11884F63B644055F /* InquiryThreadView.swift */,
 				D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */,
 				35BA4A4C2DE8805800EEC92A /* ReferAndEarn */,
 			);
@@ -5216,6 +5231,11 @@
 				99C9082E2DC8CD6A0054620B /* ButtonWithImage.swift in Sources */,
 				99C9082F2DC8CD6A0054620B /* DropDownSelection.swift in Sources */,
 				355AE9802DD1FC5600CD3D17 /* ActivityScreen.swift in Sources */,
+				233654FCF0B74A2B892FD09A /* InquiryModels.swift in Sources */,
+				62C4B4EFE5A545F1A81F939D /* InquiryInboxViewModel.swift in Sources */,
+				84E5297574294B5F999165DB /* InquiryThreadViewModel.swift in Sources */,
+				9BA604D450C948A1A0A570BD /* InquiryInboxView.swift in Sources */,
+				2C76E590CBD146B1B3A57CE2 /* InquiryThreadView.swift in Sources */,
 				3504BCE52E000A610069182D /* FireBase.swift in Sources */,
 				3546526E2DF2F51E00EB353F /* PaymentViewModel.swift in Sources */,
 				D613DBB62EB0F22000521D42 /* ImageCacheManager.swift in Sources */,

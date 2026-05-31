@@ -1139,3 +1139,23 @@ struct DecideCancellationRequest : Encodable {
     var decision : String            // outbound value MUST be "approve" | "reject" (backend validates in:approve,reject); stored cancellation_status comes back as approved|rejected
     var reject_reason : String? = nil
 }
+
+// MARK: - Inquiry Messaging (buyer↔seller REST system, NOT Firebase peer-DM)
+// Spec: /workspace/memory/bidcast-inquiry-messaging-spec.md
+// API: https://backend.bidcast.betaplanets.com/api/inquiries (no /v1/ prefix)
+// Verified against LIVE API 2026-05-31.
+
+/// POST /api/inquiries — buyer starts a thread (or appends if same buyer+seller+product exists).
+/// seller_id required; message required (≤5000 chars).
+struct StartInquiryRequest: Encodable {
+    var seller_id: Int
+    var message: String
+    var product_id: Int?  = nil
+    var order_id: Int?    = nil
+    var subject: String?  = nil
+}
+
+/// POST /api/inquiries/{thread}/reply — either party appends to an existing thread.
+struct InquiryReplyRequest: Encodable {
+    var message: String
+}

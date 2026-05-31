@@ -212,14 +212,41 @@ extension AppDelegate {
 
         switch type {
         case "message":
-            let senderID = userInfo["sender_id"] as? String ?? ""
-            let senderName = userInfo["sender_name"] as? String ?? ""
-            let senderImage = userInfo["sender_image"] as? String ?? ""
-            let body = userInfo["body"] as? String ?? ""
+            // Firebase peer-DM — existing handler (observer wiring is dead;
+            // left intact to avoid regression; real routing replaced by below).
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: NSNotification.Name("NavToActivityScreen"), object: nil)
+            }
 
-            if type == "message" {
+        case "inquiry_message":
+            // Trey QA 2026-05-31: buyer↔seller REST inquiry deep-link.
+            // Push payload carries data.type="inquiry_message" + data.thread_id (Int or String).
+            // Route to InquiryThreadView for that thread via DeepLinkManager.
+            let rawThreadId = userInfo["thread_id"]
+            let threadId: Int?
+            if let intId = rawThreadId as? Int {
+                threadId = intId
+            } else if let strId = rawThreadId as? String {
+                threadId = Int(strId)
+            } else {
+                threadId = nil
+            }
+            if let tid = threadId {
                 DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: NSNotification.Name("NavToActivityScreen"), object: nil)
+                    // Switch Activity tab + open thread via DeepLinkManager.
+                    // TabbarScreen observes deepLinkManager.$inquiryThreadId.
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("NavToInquiryThread"),
+                        object: tid
+                    )
+                }
+            } else {
+                // No thread_id in payload — fall back to inbox (Activity tab)
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("NavToInquiryInbox"),
+                        object: nil
+                    )
                 }
             }
 

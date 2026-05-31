@@ -24,6 +24,11 @@ struct NotificationScreen: View {
     
     @State var currentPage = 1
 
+    // Trey QA 2026-05-31: inquiry notification routing.
+    @State private var navigateToInquiryThread: Bool = false
+    @State private var navigateToInquiryInbox: Bool = false
+    @State private var selectedInquiryThreadId: Int? = nil
+
     var body: some View {
         VStack(spacing: 0) {
             PrimaryHeader(
@@ -52,6 +57,20 @@ struct NotificationScreen: View {
                                 type: notification.type,
                                 isUnread: (notification.isSeen ?? 1) == 0
                             )
+                            // Trey QA 2026-05-31: tap inquiry notification rows to open thread.
+                            // reference_id holds thread_id as a string (may be nil on older rows —
+                            // live API showed null on early inquiry notifications, so fall back to inbox).
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                guard notification.type == "inquiry_message" else { return }
+                                if let refId = notification.referenceId,
+                                   let tid = Int(refId) {
+                                    selectedInquiryThreadId = tid
+                                    navigateToInquiryThread = true
+                                } else {
+                                    navigateToInquiryInbox = true
+                                }
+                            }
                             .listRowSeparator(.hidden)
                             .swipeActions {
                                 Button(role: .destructive) {
@@ -116,6 +135,21 @@ struct NotificationScreen: View {
                 }
             }
         }
+        // Trey QA 2026-05-31: inquiry thread navigation (hidden CusNavLinks)
+        if let tid = selectedInquiryThreadId {
+            CusNavLink(
+                doNavigate: $navigateToInquiryThread,
+                destination: InquiryThreadView(
+                    threadId: tid,
+                    otherUserName: "Seller",
+                    subject: nil
+                )
+            )
+        }
+        CusNavLink(
+            doNavigate: $navigateToInquiryInbox,
+            destination: InquiryInboxView()
+        )
         .onAppear {
             fetchNotification(page: currentPage)
            

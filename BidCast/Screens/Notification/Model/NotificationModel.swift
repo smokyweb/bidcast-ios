@@ -24,6 +24,11 @@ struct NotificationListingModel: Codable {
     var title, message, type: String?
     var isSeen: Int?
     var createdAt, updatedAt: String?
+    // Trey QA 2026-05-31: inquiry notification deep-link.
+    // Backend stores reference_id = (string) thread_id for type=inquiry_message.
+    // NOTE: Live API showed reference_id=null on older inquiry notifications —
+    // gracefully fall back to inbox when nil.
+    var referenceId: String?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -33,5 +38,6 @@ struct NotificationListingModel: Codable {
         case isSeen = "is_seen"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case referenceId = "reference_id"
     }
 }

@@ -37,6 +37,11 @@ struct ProductDetailView: View {
     @State var isProductSaved : Bool = false
     
     @Binding var productID : Int
+    // Trey QA 2026-05-31: pre-bid scoping gate. Pre-bid is only valid when a
+    // buyer reaches this product through a live-show or upcoming-show detail
+    // flow (not via search results or seller profile). Set true only from
+    // LiveStream.swift; defaults false everywhere else.
+    var isFromShowContext: Bool = false
     
     @State  var productPrice: Double = 0.0
     @State  var condition: String = ""
@@ -71,6 +76,15 @@ struct ProductDetailView: View {
     
     @State private var isNavigatingToChat = false
     @State private var chatVM: ChatModel?
+
+    // Inquiry messaging (buyer↔seller REST, NOT Firebase peer-DM)
+    @State private var isNavigatingToInquiry: Bool = false
+    @State private var inquiryThreadId: Int? = nil
+    @State private var inquiryOtherUserName: String = ""
+    @State private var inquirySubject: String? = nil
+    @State private var showInquiryCompose: Bool = false
+    @State private var inquiryComposeText: String = ""
+    @StateObject private var inquiryVM = InquiryThreadViewModel()
     
     
     
@@ -115,9 +129,11 @@ struct ProductDetailView: View {
                         // pre-bid button ONLY appears on live-auction products.
                         // Buy-now products and products viewed from a profile page
                         // (no show context) should never see the pre-bid button.
-                        // The `auction` flag on the product model is true when the
-                        // product is configured as a live-auction listing.
-                        if productDetail?.auction == true {
+                        // Trey QA 2026-05-31: ALSO gate on isFromShowContext — pre-bid
+                        // must never appear when reaching the product via search results
+                        // or seller profile (only via show-details flow). isFromShowContext
+                        // is set true only by LiveStream.swift.
+                        if productDetail?.auction == true && isFromShowContext {
                             PrimaryButton(title: preBidExistingId != nil ? "Update Pre-Bid" : "Pre-Bid", isOutLine: true, onButtonClick: {
                                 preBidAmountText = preBidExistingAmount.map { String(format: "%.2f", $0) } ?? ""
                                 showPreBidAlert = true
@@ -163,6 +179,17 @@ struct ProductDetailView: View {
                     destination: ChatScreen(viewModel: chatVM)
                 )
             }
+            // Inquiry messaging — navigate to thread after start/find
+            if let tid = inquiryThreadId {
+                CusNavLink(
+                    doNavigate: $isNavigatingToInquiry,
+                    destination: InquiryThreadView(
+                        threadId: tid,
+                        otherUserName: inquiryOtherUserName,
+                        subject: inquirySubject
+                    )
+                )
+            }
         }
         .edgesIgnoringSafeArea(.all)
         .background(.backGround)
@@ -170,6 +197,24 @@ struct ProductDetailView: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: style)
             
+        }
+        // Inquiry compose: first-message prompt shown before POST /api/inquiries.
+        .alert("Message Seller", isPresented: $showInquiryCompose) {
+            TextField("Type your message…", text: $inquiryComposeText)
+            Button("Cancel", role: .cancel) { inquiryComposeText = "" }
+            Button("Send") {
+                let text = inquiryComposeText
+                inquiryComposeText = ""
+                // Resolve seller id from the same fall-back chain as the button
+                let sid = sellerInfo?.seller_details?.id
+                    ?? productDetail?.user?.id
+                    ?? productDetail?.userID
+                if let sid = sid, sid != UserDefaults.userId {
+                    startInquiry(sellerId: sid, message: text)
+                }
+            }
+        } message: {
+            Text("Send your first message to \(inquiryOtherUserName).")
         }
         // Basecamp #9933847997 (2026-05-27): pre-bid alert with text-field input.
         .alert(preBidExistingId != nil ? "Update Pre-Bid" : "Place Pre-Bid", isPresented: $showPreBidAlert) {
@@ -275,6 +320,35 @@ struct ProductDetailView: View {
         
         // Now, we can navigate to the chat screen
         isNavigatingToChat = true
+    }
+
+    // MARK: - Inquiry Messaging entry (replaces Firebase chat for product inquiries)
+    // Spec: memory/bidcast-inquiry-messaging-spec.md — “Message Seller” entry point.
+    // Shows a compose alert first; on send, POSTs /api/inquiries and opens the thread.
+    func prepareInquiryNavigation(sellerId: Int) {
+        inquiryOtherUserName = sellerInfo?.seller_details?.name
+            ?? sellerInfo?.seller_details?.username
+            ?? productDetail?.user?.name
+            ?? "Seller"
+        inquirySubject = productDetail?.title
+        showInquiryCompose = true
+    }
+
+    func startInquiry(sellerId: Int, message: String) {
+        Task {
+            let pid = productDetail?.id
+            let tid = await inquiryVM.startThread(sellerId: sellerId,
+                                                  productId: pid,
+                                                  message: message)
+            if let tid = tid {
+                inquiryThreadId = tid
+                isNavigatingToInquiry = true
+            } else if let err = inquiryVM.errorMessage {
+                hudMsg = err
+                style = alertStlye
+                showhud = true
+            }
+        }
     }
     
     func offerSuccess(){
@@ -485,20 +559,31 @@ extension ProductDetailView {
                 }
                 
                 Spacer()
-                if sellerInfo?.seller_details?.id != UserDefaults.userId{
+                // Inquiry messaging entry: visible for BOTH live-auction AND buy-it-now.
+                // Hidden only when viewing own product or no seller id is resolvable.
+                // Spec: message/bidcast-inquiry-messaging-spec.md — “Message Seller” button.
+                // Fall-back chain for seller id: sellerInfo → productDetail.user → productDetail.userID
+                let resolvedSellerId: Int? = {
+                    if let id = sellerInfo?.seller_details?.id, id != UserDefaults.userId { return id }
+                    if let id = productDetail?.user?.id, id != UserDefaults.userId { return id }
+                    if let id = productDetail?.userID, id != UserDefaults.userId { return id }
+                    return nil
+                }()
+                if let sellerId = resolvedSellerId {
                     Button {
-                        print("Chat tapped")
-                        prepareChatNavigation()
+                        prepareInquiryNavigation(sellerId: sellerId)
                     } label: {
                         HStack(spacing: 6) {
-                            Image(systemName: "text.bubble")
-                                .font(.custom(poppinsSemiBold, size: 16))
+                            Image(systemName: "bubble.left.and.bubble.right")
+                                .font(.system(size: 14))
+                            Text("Message")
+                                .font(.custom(poppinsSemiBold, size: 12))
                         }
                         .padding(.vertical, 6)
-                        .padding(.horizontal, 14)
+                        .padding(.horizontal, 10)
                         .background(Color.defaultTheme)
                         .foregroundColor(.white)
-                        .clipShape(Circle())
+                        .clipShape(Capsule())
                     }
                 }
             }

@@ -17,6 +17,35 @@ struct SearchResultData: Codable {
     let shows: [SearchResultShow]
     let products: [SearchResultProduct]
     let users: [SearchResultUser]
+    // Trey QA 2026-05-31: numbered pager — backend returns pagination alongside results.
+    // Shape verified against LIVE POST /api/v1/search 2026-05-31.
+    let pagination: SearchPagination?
+}
+
+// MARK: - SearchPagination (from POST /api/v1/search response)
+// Live shape: { page, per_page, shows:{total,last_page}, products:{total,last_page}, users:{total,last_page} }
+struct SearchPagination: Codable {
+    let page: Int
+    let perPage: Int
+    let shows: SearchSectionPagination
+    let products: SearchSectionPagination
+    let users: SearchSectionPagination
+
+    enum CodingKeys: String, CodingKey {
+        case page
+        case perPage = "per_page"
+        case shows, products, users
+    }
+}
+
+struct SearchSectionPagination: Codable {
+    let total: Int
+    let lastPage: Int
+
+    enum CodingKeys: String, CodingKey {
+        case total
+        case lastPage = "last_page"
+    }
 }
 
 // MARK: - SearchResultShow
