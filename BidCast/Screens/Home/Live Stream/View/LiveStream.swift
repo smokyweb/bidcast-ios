@@ -357,6 +357,9 @@ struct LiveStream: View {
                         self.productId = 0
                     },
                     productID: $productId,
+                    // Trey QA 2026-05-31: products opened from a live-show ARE
+                    // in a show context — pre-bid button should be visible here.
+                    isFromShowContext: true,
                     sellerInfo: $sellerInfo
                 )
             )

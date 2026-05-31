@@ -62,7 +62,13 @@ struct ActivityScreen: View {
     
     @State var navigateToNotification = false
     @Environment(\.presentationMode) var presentationMode
-    
+
+    // Trey QA 2026-05-31: inquiry messaging deep-link entry.
+    // TabbarScreen posts PushInquiryThread notification → we open the thread.
+    // Also exposes an Inquiries tab entry point via navigateToInquiryInbox.
+    @State private var navigateToInquiryInbox: Bool = false
+    @State private var navigateToInquiryThread: Bool = false
+    @State private var deepLinkInquiryThreadId: Int? = nil
     
     @State var sellerInfo : SellerInfoResponse? = nil
     
@@ -76,6 +82,15 @@ struct ActivityScreen: View {
                         .foregroundColor(.black)
                         .lineLimit(1)
                     Spacer()
+                    // Trey QA 2026-05-31: Inquiries button in Activity header.
+                    Button {
+                        navigateToInquiryInbox = true
+                    } label: {
+                        Image(systemName: "bubble.left.and.bubble.right")
+                            .font(.system(size: 18))
+                            .foregroundColor(.black)
+                    }
+                    .padding(.trailing, 4)
                     HeaderMenuIconView(
                         didTapMenuButton: {
                             navigateToNotification = true
@@ -317,6 +332,19 @@ struct ActivityScreen: View {
             }
             CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
             CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
+            // Trey QA 2026-05-31: inquiry deep-link navigation targets
+            CusNavLink(doNavigate: $navigateToInquiryInbox,
+                       destination: InquiryInboxView())
+            if let tid = deepLinkInquiryThreadId {
+                CusNavLink(
+                    doNavigate: $navigateToInquiryThread,
+                    destination: InquiryThreadView(
+                        threadId: tid,
+                        otherUserName: "Seller",
+                        subject: nil
+                    )
+                )
+            }
             CusNavLink(doNavigate: $navigateToBlockedList, destination: BlockedUserScreen())
             CusNavLink(doNavigate: $navigateToUserProfile,
                        destination: ProfileScreen(id:$userId,
@@ -358,6 +386,18 @@ struct ActivityScreen: View {
             UIScrollView.appearance().bounces = false
             Task {
                 await fetchData(for: selected)
+            }
+        }
+        // Trey QA 2026-05-31: inquiry deep-link — TabbarScreen posts
+        // PushInquiryThread after switching to Activity tab.
+        .onReceive(
+            NotificationCenter.default.publisher(for: NSNotification.Name("PushInquiryThread"))
+        ) { notification in
+            if let tid = notification.object as? Int {
+                deepLinkInquiryThreadId = tid
+                navigateToInquiryThread = true
+            } else {
+                navigateToInquiryInbox = true
             }
         }
         .padding(.bottom, -27)

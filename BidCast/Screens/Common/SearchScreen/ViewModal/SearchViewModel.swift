@@ -16,15 +16,22 @@ final class SearchViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
 
+    // Trey QA 2026-05-31: numbered pager. Tracks current page and backend
+    // pagination totals so SearchResultsView can render Prev/1…N/Next.
+    @Published var currentPage: Int = 1
+    @Published var pagination: SearchPagination? = nil
+
     // Basecamp #9933301500 (2026-05-29): accept the full BrowseFilters set so
     // the search-results filter sheet's Apply actually constrains results.
     // Previously only categoryIds + subCategoryIds were forwarded; show_format,
     // tag, shipping, premier_shop, ship_country, ship_state were silently
     // dropped, which is why "filter sheet appears but does nothing on apply."
+    // Trey QA 2026-05-31: page param now respected for numbered pager.
     func search(query: String, page: Int = 1,
                 categoryIds: [Int]? = nil,
                 subCategoryIds: [Int]? = nil,
                 filters: BrowseFilters? = nil) {
+        currentPage = page
         guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             shows = []; products = []; users = []
             return
@@ -64,9 +71,10 @@ final class SearchViewModel: ObservableObject {
                 type: APIEndPoint.unifiedSearch(param: searchRequest),
                 header: true
             )
-            shows    = response.data?.shows    ?? []
-            products = response.data?.products ?? []
-            users    = response.data?.users    ?? []
+            shows      = response.data?.shows    ?? []
+            products   = response.data?.products ?? []
+            users      = response.data?.users    ?? []
+            pagination = response.data?.pagination
         } catch {
             errorMessage = error.localizedDescription
         }

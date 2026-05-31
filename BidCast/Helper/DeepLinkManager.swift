@@ -11,6 +11,10 @@ final class DeepLinkManager: ObservableObject {
     
     @Published var destination: DeepLinkDestination? = nil
     @Published var liveShowId: String? = nil
+    // Trey QA 2026-05-31: inquiry deep-link. AppDelegate sets this when it
+    // receives a push with data.type=="inquiry_message" + data.thread_id.
+    // TabbarScreen + ActivityScreen observe it to route to InquiryThreadView.
+    @Published var inquiryThreadId: Int? = nil
     
     func handle(url: URL) {
         print("🔗 Received URL: \(url.absoluteString)")
@@ -58,6 +62,17 @@ final class DeepLinkManager: ObservableObject {
         func reset() {
             liveShowId = nil
         }
+
+    /// Called by AppDelegate when an inquiry_message push arrives.
+    func openInquiryThread(id: Int) {
+        DispatchQueue.main.async {
+            self.inquiryThreadId = id
+        }
+    }
+
+    func resetInquiryThread() {
+        inquiryThreadId = nil
+    }
     
     /// Clear current destination
     func clearDestination() {

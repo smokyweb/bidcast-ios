@@ -101,6 +101,26 @@ struct SearchResultsView: View {
                             .padding()
                             .frame(maxWidth: .infinity)
                     }
+
+                    // Trey QA 2026-05-31: numbered pager at bottom of results.
+                    // Shows Prev / 1 2 3 … N / Next. Each tap replaces results
+                    // (not appended). Hidden when only 1 page for ALL sections.
+                    if let pagination = viewModel.pagination {
+                        let productPages = max(1, pagination.products.lastPage)
+                        let showPages   = max(1, pagination.shows.lastPage)
+                        let userPages   = max(1, pagination.users.lastPage)
+                        let totalPages  = max(productPages, showPages, userPages)
+                        if totalPages > 1 {
+                            SearchNumberedPager(
+                                currentPage: viewModel.currentPage,
+                                totalPages: totalPages
+                            ) { page in
+                                runPagedSearch(page: page)
+                            }
+                            .padding(.top, 8)
+                            .padding(.bottom, 16)
+                        }
+                    }
                 }
             }
             .padding(.bottom, 32)
@@ -155,12 +175,14 @@ struct SearchResultsView: View {
     // apply both go through the same code path. Pulls category + subcategory
     // ids out of BrowseFilters and hands them to the view model.
     private func rerunSearch() {
+        runPagedSearch(page: 1)
+    }
+
+    // Trey QA 2026-05-31: pager taps call this; page 1 = first load / filter apply.
+    private func runPagedSearch(page: Int) {
         let catIds = appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds
         let subIds = appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
-        // Basecamp #9933301500 (2026-05-29): pass the WHOLE filter set, not just
-        // categories. Show Format / Tag / Shipping / Premier Shop / ship country
-        // + state now actually reach POST /api/v1/search on Apply.
-        viewModel.search(query: initialQuery, page: 1,
+        viewModel.search(query: initialQuery, page: page,
                          categoryIds: catIds,
                          subCategoryIds: subIds,
                          filters: appliedFilters)
@@ -378,5 +400,83 @@ private struct UserResultRow: View {
         .padding(10)
         .background(Color(.systemGray6))
         .cornerRadius(10)
+    }
+}
+
+// MARK: - Numbered Pager (Trey QA 2026-05-31)
+// Renders:  ‹ Prev   1  2  3  …  N   Next ›
+// • Current page highlighted in orange
+// • Ellipsis ("…") collapses long runs: always show first/last + ±2 around current
+// • Prev disabled on page 1, Next disabled on last page
+// • Hidden by caller when totalPages ≤ 1
+
+struct SearchNumberedPager: View {
+    let currentPage: Int
+    let totalPages: Int
+    let onPageTap: (Int) -> Void
+
+    private var visiblePages: [Int?] {
+        // Returns an array where nil = ellipsis separator
+        guard totalPages > 1 else { return [1] }
+        var pages = [Int?]()
+        let window = 2  // pages around current to always show
+        var included = Set<Int>()
+        included.insert(1)
+        included.insert(totalPages)
+        for p in max(1, currentPage - window)...min(totalPages, currentPage + window) {
+            included.insert(p)
+        }
+        let sorted = included.sorted()
+        var prev: Int? = nil
+        for p in sorted {
+            if let last = prev, p - last > 1 { pages.append(nil) }
+            pages.append(p)
+            prev = p
+        }
+        return pages
+    }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            // Prev
+            Button(action: { if currentPage > 1 { onPageTap(currentPage - 1) } }) {
+                Text("‹ Prev")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(currentPage > 1 ? .defaultTheme : Color.gray.opacity(0.4))
+            }
+            .disabled(currentPage <= 1)
+
+            // Page numbers / ellipsis
+            ForEach(Array(visiblePages.enumerated()), id: \.offset) { _, item in
+                if let page = item {
+                    Button(action: { onPageTap(page) }) {
+                        Text("\(page)")
+                            .font(.system(size: 13, weight: page == currentPage ? .bold : .regular))
+                            .frame(minWidth: 28, minHeight: 28)
+                            .background(page == currentPage ? Color.defaultTheme : Color.clear)
+                            .foregroundColor(page == currentPage ? .white : .primary)
+                            .clipShape(Circle())
+                    }
+                } else {
+                    Text("…")
+                        .font(.system(size: 13))
+                        .foregroundColor(.secondary)
+                        .frame(minWidth: 16)
+                }
+            }
+
+            // Next
+            Button(action: { if currentPage < totalPages { onPageTap(currentPage + 1) } }) {
+                Text("Next ›")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(currentPage < totalPages ? .defaultTheme : Color.gray.opacity(0.4))
+            }
+            .disabled(currentPage >= totalPages)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+        .padding(.horizontal)
     }
 }

@@ -66,6 +66,12 @@ struct TabbarScreen: View {
     @EnvironmentObject var deepLinkManager: DeepLinkManager
     @State private var navigateToShow = false
     @State private var selectedShowId: String?
+
+    // Trey QA 2026-05-31: inquiry deep-link state.
+    // When a push with type=inquiry_message arrives, switch to Activity tab
+    // and broadcast the thread id via NotificationCenter so ActivityScreen
+    // can open the InquiryThreadView directly.
+    @State private var pendingInquiryThreadId: Int? = nil
     
     // Add navigation state container
     @State private var pendingNavigation: PendingNavigation?
@@ -261,6 +267,30 @@ struct TabbarScreen: View {
 
                 // 4️⃣ Reset deep link
                 deepLinkManager.reset()
+            }
+            // Trey QA 2026-05-31: inquiry deep-link — switch to Activity tab
+            // then post NavToInquiryThread so ActivityScreen opens the thread.
+            .onReceive(
+                NotificationCenter.default.publisher(for: NSNotification.Name("NavToInquiryThread"))
+            ) { notification in
+                let tid = notification.object as? Int
+                // Switch to Activity tab (index 3)
+                tabBarRouter.selectedTab = 3
+                resetNavigation(for: 3)
+                // Slight delay so the tab switch settles before pushing the thread
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("PushInquiryThread"),
+                        object: tid
+                    )
+                }
+            }
+            .onReceive(
+                NotificationCenter.default.publisher(for: NSNotification.Name("NavToInquiryInbox"))
+            ) { _ in
+                // No thread_id — switch to Activity tab; user sees inbox from there.
+                tabBarRouter.selectedTab = 3
+                resetNavigation(for: 3)
             }
             // Navigation destinations
             .navigationDestination(isPresented: $navigateTogetStarted) {

@@ -178,6 +178,15 @@ enum APIEndPoint{
     case requestCancellation(param: RequestCancellationRequest)
     case decideCancellation(param: DecideCancellationRequest)
 
+    // MARK: - Inquiry Messaging (buyer↔seller REST, NOT Firebase peer-DM)
+    // Spec: memory/bidcast-inquiry-messaging-spec.md
+    // API base: /api/ (not /api/v1/) — verified 2026-05-31
+    case getInquiries(role: String?)           // GET /api/inquiries?role=buyer|seller
+    case getInquiryUnreadCount                 // GET /api/inquiries/unread-count
+    case getInquiryThread(threadId: Int)       // GET /api/inquiries/{thread}
+    case startInquiry(param: StartInquiryRequest)                  // POST /api/inquiries
+    case replyInquiry(threadId: Int, param: InquiryReplyRequest)   // POST /api/inquiries/{thread}/reply
+
 }
 
 extension APIEndPoint: EndPointType {
@@ -594,6 +603,18 @@ extension APIEndPoint: EndPointType {
             return "product/request-cancellation"
         case .decideCancellation:
             return "product/decide-cancellation"
+        // Inquiry Messaging — /api/ base (not /api/v1/)
+        case .getInquiries(let role):
+            if let r = role, !r.isEmpty { return "inquiries?role=\(r)" }
+            return "inquiries"
+        case .getInquiryUnreadCount:
+            return "inquiries/unread-count"
+        case .getInquiryThread(let threadId):
+            return "inquiries/\(threadId)"
+        case .startInquiry:
+            return "inquiries"
+        case .replyInquiry(let threadId, _):
+            return "inquiries/\(threadId)/reply"
         }
     }
     
@@ -921,6 +942,11 @@ extension APIEndPoint: EndPointType {
         case .requestCancellation:
             return .post
         case .decideCancellation:
+            return .post
+        // Inquiry Messaging
+        case .getInquiries, .getInquiryUnreadCount, .getInquiryThread:
+            return .get
+        case .startInquiry, .replyInquiry:
             return .post
         }
     }
@@ -1256,6 +1282,13 @@ extension APIEndPoint: EndPointType {
             return param
         case .decideCancellation(param: let param):
             return param
+        // Inquiry Messaging
+        case .getInquiries, .getInquiryUnreadCount, .getInquiryThread:
+            return nil
+        case .startInquiry(let param):
+            return param
+        case .replyInquiry(_, let param):
+            return param
         }
     }
     
@@ -1572,6 +1605,10 @@ extension APIEndPoint: EndPointType {
         case .requestCancellation:
             return nil
         case .decideCancellation:
+            return nil
+        // Inquiry Messaging — no extra jsonBody params (URL path carries threadId, body handled in `body`)
+        case .getInquiries, .getInquiryUnreadCount, .getInquiryThread,
+             .startInquiry, .replyInquiry:
             return nil
         }
     }
