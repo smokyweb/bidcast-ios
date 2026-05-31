@@ -2,16 +2,17 @@
 //  SearchResultsView.swift
 //  BidCast
 //
-//  Basecamp #9935356432 (2026-05-28): rebuild search results to use rich card
-//  layout matching the PWA spec. Shows render as 2-column grid with seller
-//  avatar + name on top, 3:4 aspect thumbnail with LIVE/viewer-count overlay,
-//  title + first product under. Products render as 2-column grid with
-//  square thumb, title, price, AND seller username. Users render as full-width
-//  rows with real profile images (unchanged behavior, just richer art).
+//  Trey QA 2026-05-31 (build 360 feedback): rebuilt with TABBED results matching
+//  Android SearchShowFragment:
+//    • Shows / Products / Users tabs (each showing section total in header)
+//    • PER-TAB independent numbered pager (Prev/1…N/Next) — switching tabs
+//      preserves each tab's own current-page and last-page state
+//    • Tapping a page loads ONLY that tab's data (replaces, does not append)
+//    • Multiselect tags wired through BrowseFiltersSheet → SearchViewModel
 //
-//  Basecamp #9933801536 (2026-05-28): add save-search bell button to the
-//  navigation bar so users can save the current query from search results.
-//  Taps the same SavedSearchAPI.create() already used by CustomSearchBar.
+//  Basecamp #9935356432 (2026-05-28): rich card layout (Shows=2-col grid, Products=list rows)
+//  Basecamp #9933801536 (2026-05-28): save-search bell button
+//  Basecamp #9933301500 (2026-05-29): filter sheet on search results
 //
 
 import SwiftUI
@@ -25,17 +26,11 @@ struct SearchResultsView: View {
     var onUserTap: ((Int) -> Void)?
     var onProductTap: ((Int) -> Void)?
 
-    // Basecamp #9933801536: track whether the search was saved so the bell
-    // flips to filled + orange after a successful save.
+    // Basecamp #9933801536: save-search bell state
     @State private var savedAcknowledged: Bool = false
     @State private var showSavedToast: Bool = false
 
-    // Basecamp #9933301500 round 5 (2026-05-28): filter sheet on search
-    // results. Trey: "the filter options should also appear on the search
-    // results page of all 3 platforms, they currently do not." Re-uses the
-    // BrowseFiltersSheet that Home + Explore already use, so the UX is
-    // identical. Apply re-runs the unified-search with the selected
-    // category_ids + sub_category_ids.
+    // Basecamp #9933301500 round 5: filter sheet
     @State private var showFiltersSheet: Bool = false
     @State private var appliedFilters: BrowseFilters = .empty
 
@@ -44,101 +39,50 @@ struct SearchResultsView: View {
         GridItem(.flexible(), spacing: 12),
     ]
 
+    // MARK: - Body
+
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                if viewModel.isLoading {
-                    ProgressView("Searching...")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                } else if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .padding()
-                } else {
-                    // MARK: - Shows
-                    if !viewModel.shows.isEmpty {
-                        sectionHeader("Shows", count: viewModel.shows.count)
-                        LazyVGrid(columns: cardColumns, spacing: 16) {
-                            ForEach(viewModel.shows) { show in
-                                ShowResultCard(show: show)
-                                    .onTapGesture { onShowTap?(show.id) }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
+        VStack(spacing: 0) {
+            // MARK: Tab bar — Shows / Products / Users with totals
+            // Matches Android TabLayout with section total counts.
+            tabBar
 
-                    // MARK: - Products
-                    // Basecamp #9935356432 (2026-05-28 corrected): products render
-                    // as a single-column list of horizontal rows, NOT a 2-col grid.
-                    // Mirrors the seller-profile product list style from Trey's spec.
-                    if !viewModel.products.isEmpty {
-                        sectionHeader("Products", count: viewModel.products.count)
-                        VStack(spacing: 8) {
-                            ForEach(viewModel.products) { product in
-                                ProductResultRow(product: product)
-                                    .onTapGesture { onProductTap?(product.id) }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-
-                    // MARK: - Users
-                    if !viewModel.users.isEmpty {
-                        sectionHeader("Users", count: viewModel.users.count)
-                        VStack(spacing: 8) {
-                            ForEach(viewModel.users) { user in
-                                UserResultRow(user: user)
-                                    .onTapGesture { onUserTap?(user.id) }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-
-                    if !viewModel.isLoading && viewModel.shows.isEmpty && viewModel.products.isEmpty && viewModel.users.isEmpty {
-                        Text("No results for \"\(initialQuery)\"")
-                            .foregroundColor(.secondary)
-                            .padding()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    if viewModel.isLoading {
+                        ProgressView("Searching...")
+                            .padding(32)
                             .frame(maxWidth: .infinity)
-                    }
+                    } else if let errorMessage = viewModel.errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .padding()
+                    } else {
+                        // MARK: Active tab content
+                        activeTabContent
 
-                    // Trey QA 2026-05-31: numbered pager at bottom of results.
-                    // Shows Prev / 1 2 3 … N / Next. Each tap replaces results
-                    // (not appended). Hidden when only 1 page for ALL sections.
-                    if let pagination = viewModel.pagination {
-                        let productPages = max(1, pagination.products.lastPage)
-                        let showPages   = max(1, pagination.shows.lastPage)
-                        let userPages   = max(1, pagination.users.lastPage)
-                        let totalPages  = max(productPages, showPages, userPages)
-                        if totalPages > 1 {
-                            SearchNumberedPager(
-                                currentPage: viewModel.currentPage,
-                                totalPages: totalPages
-                            ) { page in
-                                runPagedSearch(page: page)
-                            }
-                            .padding(.top, 8)
-                            .padding(.bottom, 16)
-                        }
+                        // MARK: Per-tab numbered pager
+                        // Hidden when only 1 page for the active tab.
+                        tabPager
                     }
                 }
+                .padding(.bottom, 32)
             }
-            .padding(.bottom, 32)
         }
         .navigationTitle("Search Results")
         .toolbar {
-            // Basecamp #9933301500 round 5: filter button on search results.
-            // Slotted to the LEFT of the bell so users hit Filter first, then
-            // bell to save the filtered query.
+            // Basecamp #9933301500 round 5: filter button
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showFiltersSheet = true }) {
-                    Image(systemName: appliedFilters.isActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                    Image(systemName: appliedFilters.isActive
+                          ? "line.3.horizontal.decrease.circle.fill"
+                          : "line.3.horizontal.decrease.circle")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(appliedFilters.isActive ? .orange : .primary)
                 }
                 .accessibilityLabel("Filter search results")
             }
-            // Basecamp #9933801536: save-search bell in the top-right corner.
+            // Basecamp #9933801536: save-search bell
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: saveCurrentSearch) {
                     Image(systemName: savedAcknowledged ? "bell.fill" : "bell")
@@ -148,8 +92,6 @@ struct SearchResultsView: View {
                 .accessibilityLabel("Save this search")
             }
         }
-        // Basecamp #9933301500 round 5: present the same BrowseFiltersSheet
-        // used by Home / Explore for consistency.
         .sheet(isPresented: $showFiltersSheet) {
             BrowseFiltersSheet(
                 isPresented: $showFiltersSheet,
@@ -171,14 +113,146 @@ struct SearchResultsView: View {
         .onAppear { rerunSearch() }
     }
 
-    // Basecamp #9933301500 round 5: shared search runner so onAppear + filter
-    // apply both go through the same code path. Pulls category + subcategory
-    // ids out of BrowseFilters and hands them to the view model.
+    // MARK: - Tab Bar
+
+    private var tabBar: some View {
+        HStack(spacing: 0) {
+            tabButton(tab: .shows,    label: "Shows",    total: viewModel.showsTotal)
+            tabButton(tab: .products, label: "Products", total: viewModel.productsTotal)
+            tabButton(tab: .users,    label: "Users",    total: viewModel.usersTotal)
+        }
+        .background(Color(.systemGray6))
+    }
+
+    private func tabButton(tab: SearchTab, label: String, total: Int) -> some View {
+        let isSelected = viewModel.activeTab == tab
+        let displayLabel = total > 0 ? "\(label) (\(total))" : label
+        return Button(action: { viewModel.activeTab = tab }) {
+            VStack(spacing: 0) {
+                Text(displayLabel)
+                    .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
+                    .foregroundColor(isSelected ? .defaultTheme : .secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .padding(.vertical, 11)
+                    .padding(.horizontal, 4)
+                // Active indicator line
+                Rectangle()
+                    .fill(isSelected ? Color.defaultTheme : Color.clear)
+                    .frame(height: 2)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    // MARK: - Active Tab Content
+
+    @ViewBuilder
+    private var activeTabContent: some View {
+        switch viewModel.activeTab {
+        case .shows:
+            showsContent
+        case .products:
+            productsContent
+        case .users:
+            usersContent
+        }
+    }
+
+    @ViewBuilder
+    private var showsContent: some View {
+        if viewModel.shows.isEmpty {
+            Text("No shows found for \"\(initialQuery)\"")
+                .foregroundColor(.secondary)
+                .padding()
+                .frame(maxWidth: .infinity)
+        } else {
+            LazyVGrid(columns: cardColumns, spacing: 16) {
+                ForEach(viewModel.shows) { show in
+                    ShowResultCard(show: show)
+                        .onTapGesture { onShowTap?(show.id) }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 12)
+        }
+    }
+
+    @ViewBuilder
+    private var productsContent: some View {
+        if viewModel.products.isEmpty {
+            Text("No products found for \"\(initialQuery)\"")
+                .foregroundColor(.secondary)
+                .padding()
+                .frame(maxWidth: .infinity)
+        } else {
+            VStack(spacing: 8) {
+                ForEach(viewModel.products) { product in
+                    ProductResultRow(product: product)
+                        .onTapGesture { onProductTap?(product.id) }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 12)
+        }
+    }
+
+    @ViewBuilder
+    private var usersContent: some View {
+        if viewModel.users.isEmpty {
+            Text("No users found for \"\(initialQuery)\"")
+                .foregroundColor(.secondary)
+                .padding()
+                .frame(maxWidth: .infinity)
+        } else {
+            VStack(spacing: 8) {
+                ForEach(viewModel.users) { user in
+                    UserResultRow(user: user)
+                        .onTapGesture { onUserTap?(user.id) }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 12)
+        }
+    }
+
+    // MARK: - Per-Tab Pager
+    //
+    // Each tab has its own currentPage + lastPage. Tapping a page number calls
+    // viewModel.loadPage(tab:page:) which updates ONLY that tab's array/page
+    // state, leaving the other two tabs untouched — matches Android's independent
+    // per-tab page counters (showsCurrentPage / productsCurrentPage / usersCurrentPage).
+
+    @ViewBuilder
+    private var tabPager: some View {
+        let (currentPage, lastPage) = pagerState(for: viewModel.activeTab)
+        if lastPage > 1 {
+            SearchNumberedPager(
+                currentPage: currentPage,
+                totalPages: lastPage
+            ) { page in
+                viewModel.loadPage(tab: viewModel.activeTab, page: page)
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 16)
+        }
+    }
+
+    private func pagerState(for tab: SearchTab) -> (Int, Int) {
+        switch tab {
+        case .shows:    return (viewModel.showsPage,    viewModel.showsLastPage)
+        case .products: return (viewModel.productsPage, viewModel.productsLastPage)
+        case .users:    return (viewModel.usersPage,    viewModel.usersLastPage)
+        }
+    }
+
+    // MARK: - Search helpers
+
     private func rerunSearch() {
         runPagedSearch(page: 1)
     }
 
-    // Trey QA 2026-05-31: pager taps call this; page 1 = first load / filter apply.
     private func runPagedSearch(page: Int) {
         let catIds = appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds
         let subIds = appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
@@ -188,8 +262,7 @@ struct SearchResultsView: View {
                          filters: appliedFilters)
     }
 
-    // Basecamp #9933801536: POST the current query to /api/saved-searches
-    // and flip the bell icon to filled on success.
+    // Basecamp #9933801536: save current query as a saved search
     private func saveCurrentSearch() {
         let trimmed = initialQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
@@ -201,18 +274,9 @@ struct SearchResultsView: View {
             }
         }
     }
-
-    private func sectionHeader(_ title: String, count: Int) -> some View {
-        Text("\(title) (\(count))")
-            .font(.system(size: 18, weight: .bold))
-            .foregroundColor(.black)
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 8)
-    }
 }
 
-// MARK: - Show card (matches home live/upcoming card)
+// MARK: - Show card (2-col grid, 3:4 aspect thumbnail)
 
 private struct ShowResultCard: View {
     let show: SearchResultShow
@@ -251,15 +315,7 @@ private struct ShowResultCard: View {
                     .foregroundColor(.black)
             }
 
-            // Thumbnail (3:4 aspect)
-            // Basecamp #9935356432 (2026-05-28 round 2): the previous
-            // .scaledToFill + .aspectRatio(3/4, contentMode: .fill) + .clipped()
-            // chain produced thumbnails that overflowed their grid cell
-            // boundary, causing the show cards to visibly overlap each other
-            // and overlap the section header on iOS. Fix: anchor the aspect
-            // ratio on a transparent Color rectangle (which sets the cell
-            // height correctly), then overlay the AsyncImage filling that
-            // rectangle. .clipped() now actually constrains the image.
+            // Thumbnail (3:4 aspect) — anchored on Color to set cell height correctly
             Color.gray.opacity(0.15)
                 .aspectRatio(3/4, contentMode: .fit)
                 .overlay(
@@ -289,7 +345,7 @@ private struct ShowResultCard: View {
     }
 }
 
-// MARK: - Product row (single-column horizontal list, matches seller-profile product list)
+// MARK: - Product row (single-column horizontal list)
 
 private struct ProductResultRow: View {
     let product: SearchResultProduct
@@ -318,7 +374,6 @@ private struct ProductResultRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            // Small square thumb LEFT
             AsyncImage(url: thumbnailURL) { phase in
                 switch phase {
                 case .success(let img): img.resizable().scaledToFill()
@@ -329,7 +384,6 @@ private struct ProductResultRow: View {
             .clipped()
             .cornerRadius(8)
 
-            // Right-side stack
             VStack(alignment: .leading, spacing: 2) {
                 Text(product.title)
                     .font(.system(size: 14, weight: .semibold))
@@ -343,7 +397,6 @@ private struct ProductResultRow: View {
                         .padding(.top, 2)
                 }
 
-                // Basecamp #9935356432 (2026-05-28): seller username on product rows.
                 if !sellerUsername.isEmpty {
                     Text("@\(sellerUsername)")
                         .font(.system(size: 11))
@@ -408,7 +461,6 @@ private struct UserResultRow: View {
 // • Current page highlighted in orange
 // • Ellipsis ("…") collapses long runs: always show first/last + ±2 around current
 // • Prev disabled on page 1, Next disabled on last page
-// • Hidden by caller when totalPages ≤ 1
 
 struct SearchNumberedPager: View {
     let currentPage: Int
@@ -416,10 +468,9 @@ struct SearchNumberedPager: View {
     let onPageTap: (Int) -> Void
 
     private var visiblePages: [Int?] {
-        // Returns an array where nil = ellipsis separator
         guard totalPages > 1 else { return [1] }
         var pages = [Int?]()
-        let window = 2  // pages around current to always show
+        let window = 2
         var included = Set<Int>()
         included.insert(1)
         included.insert(totalPages)
@@ -438,7 +489,6 @@ struct SearchNumberedPager: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            // Prev
             Button(action: { if currentPage > 1 { onPageTap(currentPage - 1) } }) {
                 Text("‹ Prev")
                     .font(.system(size: 13, weight: .medium))
@@ -446,7 +496,6 @@ struct SearchNumberedPager: View {
             }
             .disabled(currentPage <= 1)
 
-            // Page numbers / ellipsis
             ForEach(Array(visiblePages.enumerated()), id: \.offset) { _, item in
                 if let page = item {
                     Button(action: { onPageTap(page) }) {
@@ -465,7 +514,6 @@ struct SearchNumberedPager: View {
                 }
             }
 
-            // Next
             Button(action: { if currentPage < totalPages { onPageTap(currentPage + 1) } }) {
                 Text("Next ›")
                     .font(.system(size: 13, weight: .medium))

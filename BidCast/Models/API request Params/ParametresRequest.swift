@@ -1014,7 +1014,11 @@ struct UnifiedSearchRequest: Encodable {
     // backend already validates + applies all of these, so wire them through.
     // Encodable + Optionals: nil fields are simply omitted from the JSON body,
     // which Laravel `nullable` treats as absent. No literal auth prefix here.
-    var tag          : String? = nil   // tag NAME or slug (category-scoped)
+    var tag          : String? = nil   // legacy single-tag (category-scoped)
+    // Trey QA 2026-05-31: multiselect tags — array matches Android BrowseFiltersSheet
+    // chip behavior. Backend validates 'tags' => 'nullable|array', 'tags.*' => 'string|max:110'.
+    // When non-empty, prefer this over the legacy `tag` string.
+    var tags         : [String]? = nil // multiselect tag names (OR-match within group)
     var show_format  : String? = nil   // surprise_sets | live_auction | buy_it_now
     var shipping     : String? = nil   // free | reduced
     var premier_shop : Bool?   = nil

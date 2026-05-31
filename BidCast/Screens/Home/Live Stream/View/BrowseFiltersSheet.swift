@@ -22,7 +22,10 @@ import SwiftUI
 /// caller can just splat these into `GetLiveShowsRequest`.
 struct BrowseFilters: Equatable {
     var showFormat: String? = nil    // surprise_sets | live_auction | buy_it_now | nil(All)
-    var tag: String = ""             // single tag, no leading "#"
+    var tag: String = ""             // legacy single tag (used by GetLiveShowsRequest / Home)
+    // Trey QA 2026-05-31: multiselect tags for search filter (matches Android chip UI).
+    // Backend: 'tags' => 'nullable|array', 'tags.*' => 'string|max:110'. OR-match.
+    var tags: [String] = []          // multi-selected tag names; sent as tags[] array in search
     var premierShop: Bool = false
     var shipCountry: String? = nil   // 2-letter ISO; nil = Any country
     var shipState: String = ""       // optional state/region free text
@@ -37,6 +40,7 @@ struct BrowseFilters: Equatable {
     var isActive: Bool {
         showFormat != nil
         || !tag.trimmingCharacters(in: .whitespaces).isEmpty
+        || !tags.isEmpty
         || premierShop
         || shipCountry != nil
         || !shipState.trimmingCharacters(in: .whitespaces).isEmpty
@@ -313,8 +317,10 @@ struct BrowseFiltersSheet: View {
                     // tag NAME (backend matches name OR slug).
                     filterSection(title: "Tag") {
                         VStack(alignment: .leading, spacing: 8) {
+                            // Trey QA 2026-05-31: multiselect chip tag UI — matches Android
+                            // BrowseFiltersSheet "Add a tag…" picker. Tags are category-scoped:
+                            // only enabled when exactly one category is selected.
                             if draft.categoryIds.count != 1 {
-                                // No single category context → tag is ambiguous.
                                 Text(draft.categoryIds.count > 1
                                      ? "Tags are per-category — select just one category."
                                      : "Pick one category to see its seller tags.")
@@ -327,27 +333,55 @@ struct BrowseFiltersSheet: View {
                                     .font(.custom(poppinsRegular, size: 13))
                                     .foregroundColor(.gray)
                             } else {
-                                // Picker-style menu of tags scoped to the category.
-                                Menu {
-                                    Button("Any tag") { draft.tag = "" }
-                                    Divider()
-                                    ForEach(categoryTags, id: \.self) { tag in
-                                        Button(tag) { draft.tag = tag }
+                                // Chip row: each selected tag is removable. Below the chips,
+                                // an "Add a tag…" Menu lets the user pick from remaining tags.
+                                let availableTags = categoryTags.filter { !draft.tags.contains($0) }
+                                FlowLayout(spacing: 8) {
+                                    ForEach(draft.tags, id: \.self) { selectedTag in
+                                        HStack(spacing: 4) {
+                                            Text(selectedTag)
+                                                .font(.custom(poppinsRegular, size: 13))
+                                                .foregroundColor(.white)
+                                            Button(action: {
+                                                draft.tags.removeAll { $0 == selectedTag }
+                                            }) {
+                                                Image(systemName: "xmark")
+                                                    .font(.system(size: 10, weight: .bold))
+                                                    .foregroundColor(.white)
+                                            }
+                                        }
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 7)
+                                        .background(Color.defaultTheme)
+                                        .cornerRadius(20)
                                     }
-                                } label: {
-                                    HStack {
-                                        Text(draft.tag.isEmpty ? "Any tag" : draft.tag)
-                                            .font(.custom(poppinsRegular, size: 14))
-                                            .foregroundColor(draft.tag.isEmpty ? .gray : .primary)
-                                        Spacer()
-                                        Image(systemName: "chevron.up.chevron.down")
-                                            .font(.system(size: 12))
+                                    if !availableTags.isEmpty {
+                                        Menu {
+                                            ForEach(availableTags, id: \.self) { tag in
+                                                Button(tag) { draft.tags.append(tag) }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 4) {
+                                                Image(systemName: "plus")
+                                                    .font(.system(size: 11, weight: .semibold))
+                                                Text("Add a tag…")
+                                                    .font(.custom(poppinsRegular, size: 13))
+                                            }
+                                            .foregroundColor(.defaultTheme)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 7)
+                                            .background(Color.defaultTheme.opacity(0.08))
+                                            .cornerRadius(20)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(Color.defaultTheme.opacity(0.4), lineWidth: 1)
+                                            )
+                                        }
+                                    } else if draft.tags.isEmpty {
+                                        Text("All tags selected or none available")
+                                            .font(.custom(poppinsRegular, size: 13))
                                             .foregroundColor(.gray)
                                     }
-                                    .padding(10)
-                                    .background(Color.white)
-                                    .cornerRadius(8)
-                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
                                 }
                             }
 
@@ -469,7 +503,7 @@ struct BrowseFiltersSheet: View {
                         .cornerRadius(24)
                 }
                 // Note: Clear button action already resets draft = .empty which
-                // includes the new categoryIds / subCategoryIds (both default []).
+                // includes categoryIds / subCategoryIds and tags: [] (multiselect).
 
                 Button(action: {
                     onApply(normalized(draft))
@@ -554,6 +588,8 @@ struct BrowseFiltersSheet: View {
     private func normalized(_ f: BrowseFilters) -> BrowseFilters {
         var out = f
         out.tag = out.tag.trimmingCharacters(in: .whitespaces)
+        // Multiselect: trim each tag and drop empty strings
+        out.tags = out.tags.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
         out.shipState = out.shipState.trimmingCharacters(in: .whitespaces)
         // Don't ship a state without a country.
         if out.shipCountry == nil { out.shipState = "" }
@@ -573,12 +609,16 @@ struct BrowseFiltersSheet: View {
         guard draft.categoryIds.count == 1, let catId = draft.categoryIds.first else {
             categoryTags = []
             if !draft.tag.isEmpty { draft.tag = "" }
+            // Multiselect: clear tags that no longer make sense without a single category
+            if !draft.tags.isEmpty { draft.tags = [] }
             return
         }
         // Serve from cache when available.
         if let cached = tagCache[catId] {
             categoryTags = cached
             if !draft.tag.isEmpty && !cached.contains(draft.tag) { draft.tag = "" }
+            // Multiselect: remove any selected tags that aren't in the new category's tag list
+            draft.tags = draft.tags.filter { cached.contains($0) }
             return
         }
         isLoadingTags = true
@@ -607,6 +647,8 @@ struct BrowseFiltersSheet: View {
                 if self.draft.categoryIds.count == 1 && self.draft.categoryIds.first == catId {
                     self.categoryTags = parsed
                     if !self.draft.tag.isEmpty && !parsed.contains(self.draft.tag) { self.draft.tag = "" }
+                    // Multiselect: remove any selected tags no longer valid for this category
+                    self.draft.tags = self.draft.tags.filter { parsed.contains($0) }
                 }
             }
         }.resume()
