@@ -112,10 +112,53 @@ struct HighestBid: Codable {
     var user_id: String?
     var product_id: String?
     var placed_at: String?
-    
+
     var product_set_id: String?
-        var product_set_item_id: Int?
-        var product_set_item_unit_id: Int?
+    var product_set_item_id: Int?
+    var product_set_item_unit_id: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case bid_amount, user_name, user_image, user_id, product_id, placed_at
+        case product_set_id, product_set_item_id, product_set_item_unit_id
+    }
+
+    init() {}
+
+    // Basecamp #9955246140 (2026-06-02): CROSS-PLATFORM TOLERANT DECODE.
+    // The PWA emits bid fields (bid_amount/user_id/product_id) as JSON numbers
+    // while iOS emits them as strings. A strict synthesized decoder threw a
+    // typeMismatch on number-where-String-expected, so a PWA buyer's bid made
+    // the seller's decode fail silently (no bid shown, price stuck, no sold).
+    // The socket server now normalizes these to strings, but decode tolerantly
+    // here too (defense in depth) so a String OR a Number both work regardless
+    // of who placed the bid.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        func str(_ key: CodingKeys) -> String? {
+            if let s = try? c.decodeIfPresent(String.self, forKey: key) { return s }
+            if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return String(i) }
+            if let d = try? c.decodeIfPresent(Double.self, forKey: key) {
+                // render whole numbers without a trailing .0
+                return d == d.rounded() ? String(Int(d)) : String(d)
+            }
+            return nil
+        }
+        func intVal(_ key: CodingKeys) -> Int? {
+            if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i }
+            if let s = try? c.decodeIfPresent(String.self, forKey: key) { return Int(s) }
+            if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return Int(d) }
+            return nil
+        }
+        bid_amount = str(.bid_amount)
+        user_name = try? c.decodeIfPresent(String.self, forKey: .user_name)
+        user_image = try? c.decodeIfPresent(String.self, forKey: .user_image)
+        user_id = str(.user_id)
+        product_id = str(.product_id)
+        placed_at = try? c.decodeIfPresent(String.self, forKey: .placed_at)
+        product_set_id = str(.product_set_id)
+        product_set_item_id = intVal(.product_set_item_id)
+        product_set_item_unit_id = intVal(.product_set_item_unit_id)
+    }
 }
 // MARK: - 🎁 Raid Model -
 struct RaidInfo: Codable {
