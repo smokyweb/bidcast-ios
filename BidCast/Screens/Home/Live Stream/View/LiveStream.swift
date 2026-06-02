@@ -331,10 +331,24 @@ struct LiveStream: View {
                     // the currently-auctioned product id so the live product list
                     // can show the disabled "Bidding Live" state on that row.
                     currentAuctionedProductId: currentProductID,
-                    // Basecamp #9943369910 (2026-05-29): scope product list to
-                    // this show so the seller only sees items added to the show
-                    // instead of their entire catalog.
-                    scheduleShowId: showId
+                    // Basecamp #9943369910 (2026-05-29 / re-fix 2026-06-02):
+                    // scope product list to this show so the seller only sees
+                    // items added to the show instead of their entire catalog.
+                    // RE-FIX: the prior fix passed `self.showId`, a @State that
+                    // is only populated inside the join-room handler
+                    // (handleJoinRoom ~line 2890). If the seller opened the
+                    // products panel before/independently of that handler
+                    // running, showId was "" → fetchProduct sent show_id: nil →
+                    // backend returned the whole user catalog (verified live:
+                    // no show_id = 10 products, show_id=559 = 3). Use the
+                    // currently-displayed room's show_id (always current with
+                    // the visible show) and fall back to self.showId. Both map
+                    // to schedule_shows.id (node live_rooms.show_id = schedule
+                    // show id), which is exactly what /api/v1/get-product
+                    // filters on.
+                    scheduleShowId: liveShowsData[safe: currentIndex]?.show_id?.isEmpty == false
+                        ? (liveShowsData[safe: currentIndex]?.show_id ?? showId)
+                        : showId
                 )
             )
             
@@ -2853,6 +2867,24 @@ extension LiveStream {
         }
         
         guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
+            // Basecamp #9955246140 (2026-06-02): seller does not register bids
+            // (no highest-bid update, product never moves to sold). Verified
+            // against the LIVE node socket server with QA seller+buyer: when a
+            // socket joins room_id, place_bid correctly broadcasts
+            // get_highest_bid + bid_finalized to it. So the server is fine; the
+            // failure is an iOS race: the bid socket listeners
+            // (listenForHighestBid / listenForBidFinalized / observeRoomUpdates)
+            // are ONLY registered inside setupSocketListeners(for:), which is
+            // gated behind this room-lookup guard. For a HOST who lands here
+            // before room_create_get has populated socketManagerChat.rooms,
+            // the guard bails and the bid listeners are NEVER attached — so
+            // incoming bids are silently dropped for the rest of the session.
+            // Fix: still attach the socket listeners (which are room-id
+            // filtered and idempotent after removeAllListeners) so a
+            // late-arriving room_create_get / first bid is captured, then show
+            // the fallback. Listeners self-filter by roomId, so this is safe
+            // even if the room never materializes.
+            Task { await setupSocketListeners(for: roomId) }
             presentError(
                 title: "Stream Not Found",
                 message: "The requested stream is not available right now."

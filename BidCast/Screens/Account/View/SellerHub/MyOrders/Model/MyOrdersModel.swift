@@ -263,9 +263,12 @@ extension MyOrderModel {
             title: p.title,
             variant: p.variant,
             weight: p.weight.map { Double(($0)) },
-            width: p.width.map { ($0) },
-            length: p.length.map { ($0) },
-            height: p.height.map { ($0) },
+            // #9955380270: ProductDetails width/length/height are now Double?
+            // (backend sends fractional dimensions). Source ProductDetailModel
+            // still types them as Int?, so coerce Int -> Double here.
+            width: p.width.map { Double(($0)) },
+            length: p.length.map { Double(($0)) },
+            height: p.height.map { Double(($0)) },
             mailClass: p.mailClass,
             processingCategory: p.processingCategory,
             description: p.description,
@@ -380,8 +383,16 @@ struct ProductDetails: Codable {
     var id, userID, categoryID, subCategoryID: Int?
     var title: String?
     var variant: [ProductVariant]?
+    // Basecamp #9955380270 (2026-06-02): "cannot access my orders" failed with
+    // "Model out of sync with server. dataCorrupted (expected valid JSON)".
+    // Root cause: backend serializes product dimensions as MIXED numeric types
+    // across rows — length/weight 0.5 (float) for one product, 3/8 (int) for
+    // another (verified live: seller 230 product TMNT length=0.5). Decoding
+    // these as Int threw typeMismatch (expected Int, found double) on any
+    // fractional dimension, blocking the ENTIRE My Orders decode. Decode as
+    // Double (like weight already is) to tolerate int and fractional values.
     var weight: Double?
-    var width, length,height: Int?
+    var width, length, height: Double?
     var  mailClass, processingCategory: String?
     var description: String?
     var quantity, purchasedQuantity: String?
@@ -427,9 +438,9 @@ extension ProductDetails {
         title = try c.decodeIfPresent(String.self, forKey: .title)
         variant = try c.decodeIfPresent([ProductVariant].self, forKey: .variant)
         weight = try c.decodeIfPresent(Double.self, forKey: .weight)
-        width = try c.decodeIfPresent(Int.self, forKey: .width)
-        length = try c.decodeIfPresent(Int.self, forKey: .length)
-        height = try c.decodeIfPresent(Int.self, forKey: .height)
+        width = try c.decodeIfPresent(Double.self, forKey: .width)
+        length = try c.decodeIfPresent(Double.self, forKey: .length)
+        height = try c.decodeIfPresent(Double.self, forKey: .height)
         mailClass = try c.decodeIfPresent(String.self, forKey: .mailClass)
         processingCategory = try c.decodeIfPresent(String.self, forKey: .processingCategory)
         description = try c.decodeIfPresent(String.self, forKey: .description)
