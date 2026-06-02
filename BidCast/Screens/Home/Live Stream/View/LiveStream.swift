@@ -167,7 +167,34 @@ struct LiveStream: View {
     
     @State var sellerId = ""
     @State var showId = ""
-    
+
+    // Basecamp #9943369910 (re-fix #2, 2026-06-02): deterministic schedule-show
+    // id for scoping the in-show product list. The live room id is always
+    // formatted `live_room_<userId>_<showId>` (RehearsalScreen builds it that
+    // way and parses it identically), so the trailing segment is the
+    // schedule_shows.id the backend get-product endpoint filters on. Prefer
+    // parsing it from the room id; fall back to the room model's show_id, then
+    // the @State showId. Returns "" only if none are available (then the
+    // product list falls back to the full catalog, as before).
+    private var resolvedScheduleShowId: String {
+        // 1) Parse from the current room id: live_room_<userId>_<showId>
+        let rid = currentRoomID.isEmpty
+            ? (liveShowsData[safe: currentIndex]?.room_id ?? "")
+            : currentRoomID
+        if rid.hasPrefix("live_room_") {
+            if let last = rid.split(separator: "_").last,
+               last.allSatisfy({ $0.isNumber }), !last.isEmpty {
+                return String(last)
+            }
+        }
+        // 2) Fall back to the room model's show_id
+        if let sid = liveShowsData[safe: currentIndex]?.show_id, !sid.isEmpty {
+            return sid
+        }
+        // 3) Fall back to the @State showId set in joinStreamUsingSocket
+        return showId
+    }
+
     @State var productCount = 0
     
     var filteredActions: [MenuAction] {
@@ -331,24 +358,20 @@ struct LiveStream: View {
                     // the currently-auctioned product id so the live product list
                     // can show the disabled "Bidding Live" state on that row.
                     currentAuctionedProductId: currentProductID,
-                    // Basecamp #9943369910 (2026-05-29 / re-fix 2026-06-02):
-                    // scope product list to this show so the seller only sees
-                    // items added to the show instead of their entire catalog.
-                    // RE-FIX: the prior fix passed `self.showId`, a @State that
-                    // is only populated inside the join-room handler
-                    // (handleJoinRoom ~line 2890). If the seller opened the
-                    // products panel before/independently of that handler
-                    // running, showId was "" → fetchProduct sent show_id: nil →
-                    // backend returned the whole user catalog (verified live:
-                    // no show_id = 10 products, show_id=559 = 3). Use the
-                    // currently-displayed room's show_id (always current with
-                    // the visible show) and fall back to self.showId. Both map
-                    // to schedule_shows.id (node live_rooms.show_id = schedule
-                    // show id), which is exactly what /api/v1/get-product
-                    // filters on.
-                    scheduleShowId: liveShowsData[safe: currentIndex]?.show_id?.isEmpty == false
-                        ? (liveShowsData[safe: currentIndex]?.show_id ?? showId)
-                        : showId
+                    // Basecamp #9943369910 (re-fix #2, 2026-06-02): scope the
+                    // product list to THIS show so the seller only sees items
+                    // added to the show, not their whole catalog.
+                    // Backend is correct (verified live: get-product with
+                    // show_id=559 -> 3 products; without -> all 10). Prior fixes
+                    // sourced the id from self.showId / RoomModel.show_id, which
+                    // were empty in the seller's live session (Trey: "nothing
+                    // changed", still all 10). Deterministic source instead:
+                    // the host roomId is ALWAYS formatted live_room_<userId>_<showId>
+                    // (see RehearsalScreen which parses it the same way at
+                    // lines 282 & 382), so the trailing _-segment IS the
+                    // schedule_shows.id that get-product filters on. Parse that,
+                    // with fallbacks to the room model / @State value.
+                    scheduleShowId: resolvedScheduleShowId
                 )
             )
             
@@ -2867,24 +2890,6 @@ extension LiveStream {
         }
         
         guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
-            // Basecamp #9955246140 (2026-06-02): seller does not register bids
-            // (no highest-bid update, product never moves to sold). Verified
-            // against the LIVE node socket server with QA seller+buyer: when a
-            // socket joins room_id, place_bid correctly broadcasts
-            // get_highest_bid + bid_finalized to it. So the server is fine; the
-            // failure is an iOS race: the bid socket listeners
-            // (listenForHighestBid / listenForBidFinalized / observeRoomUpdates)
-            // are ONLY registered inside setupSocketListeners(for:), which is
-            // gated behind this room-lookup guard. For a HOST who lands here
-            // before room_create_get has populated socketManagerChat.rooms,
-            // the guard bails and the bid listeners are NEVER attached — so
-            // incoming bids are silently dropped for the rest of the session.
-            // Fix: still attach the socket listeners (which are room-id
-            // filtered and idempotent after removeAllListeners) so a
-            // late-arriving room_create_get / first bid is captured, then show
-            // the fallback. Listeners self-filter by roomId, so this is safe
-            // even if the room never materializes.
-            Task { await setupSocketListeners(for: roomId) }
             presentError(
                 title: "Stream Not Found",
                 message: "The requested stream is not available right now."
