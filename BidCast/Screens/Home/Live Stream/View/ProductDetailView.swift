@@ -121,9 +121,16 @@ struct ProductDetailView: View {
                             },btnTextColor:.defaultTheme, btnColor: .defaultThemeLight)
                         }
                         
-                        PrimaryButton(title: "Buy Now",onButtonClick: {
-                            showBuyNowSheet = true
-                        })
+                        // Basecamp #9954326658 (2026-06-02, PWA parity db19011f):
+                        // "Buy Now" must NEVER appear on a live-auction product.
+                        // Auction items are sold by bidding / pre-bid, never at a
+                        // fixed buy-it-now price. Show Buy Now only for non-auction
+                        // (buy-it-now) products. (Pre-Bid below is the auction action.)
+                        if productDetail?.auction != true {
+                            PrimaryButton(title: "Buy Now",onButtonClick: {
+                                showBuyNowSheet = true
+                            })
+                        }
 
                         // Basecamp #9933847997 (2026-05-27) + #9938346351 (2026-05-28):
                         // pre-bid button ONLY appears on live-auction products.
