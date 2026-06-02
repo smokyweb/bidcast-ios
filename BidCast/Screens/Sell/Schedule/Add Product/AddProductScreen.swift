@@ -74,7 +74,32 @@ struct AddProductsScreen: View {
     var didTapBack : ((Bool, ProductManager, LetsPrepareCoordinator) -> Void)?
     var didTapEdit : ((ProductDataModel1, LetsPrepareCoordinator) -> Void)?
     @EnvironmentObject var coordinator: LetsPrepareCoordinator
-    
+
+    // Basecamp #5 (PWA refs 89eb86d1, b6794176, 83501a01): filter the inventory
+    // picker to products whose pricing format matches the show's chosen format.
+    //   auction_type_id 5 = Buy Now      -> only buy-it-now products
+    //   auction_type_id 8 = Live Auction -> only auction products
+    //   auction_type_id 9 / Surprise Sets / other -> no restriction
+    // Legacy NULL-type products are classified by the `auction` boolean.
+    private func productIsAuction(_ p: ProductDataModel1) -> Bool {
+        let t = (p.type ?? "").lowercased()
+        if t == "live" || t == "auction" { return true }
+        if t == "buy_now" || t == "buy_it_now" || t == "buynow" { return false }
+        return p.auction ?? false
+    }
+
+    private var filteredProducts: [ProductDataModel1] {
+        let all = productManager.products
+        switch request.auction_type_id {
+        case "5":  // Buy Now show -> only buy-it-now products
+            return all.filter { !productIsAuction($0) }
+        case "8":  // Live Auction show -> only auction products
+            return all.filter { productIsAuction($0) }
+        default:   // 9 / Surprise Sets / other -> no restriction
+            return all
+        }
+    }
+
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
         title: "",
@@ -175,7 +200,7 @@ struct AddProductsScreen: View {
                                 .font(.custom(poppinsSemiBold, size: 16))
                                 .foregroundColor(.primary)
                             
-                            if productManager.products.isEmpty {
+                            if filteredProducts.isEmpty {
                                 VStack(spacing: 16) {
                                     Image(systemName: "cube.box")
                                         .font(.system(size: 50))
@@ -193,8 +218,8 @@ struct AddProductsScreen: View {
                                 .padding(.vertical, 60)
                                 
                             } else {
-                                ForEach(productManager.products.indices, id: \.self) { index in
-                                    let data = productManager.products[index]
+                                ForEach(filteredProducts.indices, id: \.self) { index in
+                                    let data = filteredProducts[index]
                                     let idStr = "\(data.id ?? -1)"
                                     let isSelected = productManager.selectedProductIDs.contains(idStr)
                                     
@@ -334,12 +359,14 @@ struct AddProductsScreen: View {
 //                                print("   Remaining products: \(productData.count)")
 //                            }
 //                        }
-                        if let index = deletedIndex {
+                        // Basecamp #5: list may be filtered by show format, so the
+                        // ForEach index no longer maps to productManager.products.
+                        // Remove by product id instead to delete the right item.
+                        if let pid = deletedProductId {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                // ⭐ Remove using manager
-                                productManager.removeProduct(at: index)
+                                productManager.removeProduct(withId: pid)
                                 request.product_ids = Array(productManager.selectedProductIDs)
-                                
+
                                 deletedIndex = nil
                                 deletedProductId = nil
                             }

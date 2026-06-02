@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 // MARK: - Image Loader
 final class LocalImageLoader: ObservableObject {
@@ -74,6 +75,34 @@ struct ProductListItem: View {
     @Binding var product: ProductDataModel1
     var didSelectproduct: () -> Void = {}
 
+    // Basecamp #4 live-product-list action buttons (PWA refs 27688115,
+    // 1ec77674, fa249bc9). The id of the product currently being auctioned
+    // live in this show (LiveStream.currentProductID), so we can mark that
+    // row's button as the disabled "Bidding Live" state.
+    var currentAuctionedProductId: String? = nil
+    // True if the buyer already has a pre-bid placed for this product (drives
+    // "Update Pre-Bid" label). Looked up by the parent screen.
+    var hasExistingPreBid: Bool = false
+    var didTapAction: () -> Void = {}
+
+    // Classify this product's pricing format using the same signals the
+    // detail/inventory screens use: `auction` boolean is authoritative; the
+    // string `type` ("live"/"buy_now") is a fallback for legacy rows.
+    private var isAuctionProduct: Bool {
+        if let a = product.auction { return a }
+        let t = (product.type ?? "").lowercased()
+        return t == "live" || t == "auction"
+    }
+
+    private var isCurrentlyBiddingLive: Bool {
+        guard let cur = currentAuctionedProductId, !cur.isEmpty,
+              let pid = product.id else { return false }
+        // currentProductID may be a plain id ("123") or a composite
+        // ("123_..._...") for surprise sets — match the leading id segment.
+        let leading = cur.split(separator: "_").first.map(String.init) ?? cur
+        return leading == "\(pid)"
+    }
+
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
 
@@ -112,6 +141,9 @@ struct ProductListItem: View {
 
                 Text(Double(product.pricing ?? "0")?.compactCurrency() ?? "")
                     .font(.custom(poppinsSemiBold, size: 14))
+
+                actionButton
+                    .padding(.top, 2)
             }
 
             Spacer()
@@ -123,6 +155,51 @@ struct ProductListItem: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
         .onTapGesture { didSelectproduct() }
+    }
+
+    // Per-product action button matching the PWA live product list:
+    //   • Buy-now product             -> "Buy Now"
+    //   • Auction product, live now    -> disabled "Bidding Live"
+    //   • Auction product, not live    -> "Pre Bid" / "Update Pre-Bid"
+    @ViewBuilder private var actionButton: some View {
+        if isAuctionProduct {
+            if isCurrentlyBiddingLive {
+                actionLabel(title: "Bidding Live", filled: true, enabled: false)
+            } else {
+                Button { didTapAction() } label: {
+                    actionLabel(title: hasExistingPreBid ? "Update Pre-Bid" : "Pre Bid",
+                                filled: false, enabled: true)
+                }
+                .buttonStyle(.plain)
+            }
+        } else {
+            Button { didTapAction() } label: {
+                actionLabel(title: "Buy Now", filled: true, enabled: true)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private func actionLabel(title: String, filled: Bool, enabled: Bool) -> some View {
+        Text(title)
+            .font(.custom(poppinsSemiBold, size: 13))
+            .foregroundColor(filled ? (enabled ? .white : .white.opacity(0.85)) : .defaultTheme)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                Group {
+                    if filled {
+                        (enabled ? Color.defaultTheme : Color.gray.opacity(0.6))
+                    } else {
+                        Color.defaultThemeLight
+                    }
+                }
+            )
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(filled ? Color.clear : Color.defaultTheme.opacity(0.4), lineWidth: 1)
+            )
     }
 }
 
@@ -165,6 +242,23 @@ struct ProductShopListScreen: View {
 
     @Binding var sellerId: String
     @Binding var categoryIds: Int
+
+    // Basecamp #4 (PWA refs 27688115, 1ec77674, fa249bc9): id of the product
+    // currently being auctioned live in this show (LiveStream.currentProductID).
+    // Lets each row show the disabled "Bidding Live" state for the active item.
+    var currentAuctionedProductId: String? = nil
+
+    // Pre-bid state for the per-row action buttons.
+    // productId -> existing pre-bid id (presence => "Update Pre-Bid").
+    @State private var myPreBidIds: [Int: Int] = [:]
+    @State private var showPreBidAlert = false
+    @State private var preBidAmountText = ""
+    @State private var preBidProductId: Int = 0
+    @State private var showBuyNowSheet = false
+    @State private var buyNowProductId: Int = 0
+    @State private var hudMessage = ""
+    @State private var showHud = false
+
     // Basecamp #9943369910 (2026-05-29): numeric show ID (schedule_shows.id)
     // used to scope the product query to only items added to THIS show.
     // Default empty string so callers that don't have a show context (e.g.
@@ -188,9 +282,33 @@ struct ProductShopListScreen: View {
 
             Spacer(minLength: 0)
         }
+        .background(
+            CusNavLink(
+                doNavigate: $showBuyNowSheet,
+                destination: BuyNowBottomSheetView(productId: $buyNowProductId)
+            )
+        )
         .background(Color(.systemBackground))
-        .onAppear { fetchProduct() }
+        .onAppear {
+            fetchProduct()
+            loadMyPreBids()
+        }
         .onDisappear { resetData() }
+        // Basecamp #4: pre-bid input for an auction product in the live list.
+        .alert(myPreBidIds[preBidProductId] != nil ? "Update Pre-Bid" : "Place Pre-Bid",
+               isPresented: $showPreBidAlert) {
+            TextField("Amount in USD", text: $preBidAmountText)
+                .keyboardType(.decimalPad)
+            Button("Cancel", role: .cancel) { }
+            Button(myPreBidIds[preBidProductId] != nil ? "Update" : "Place") {
+                placePreBid()
+            }
+        } message: {
+            Text("Lock in your bid before the auction starts. Applied automatically as the opening bid.")
+        }
+        .toast(isPresenting: $showHud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMessage)
+        }
         .onChange(of: selectedSort) { _ in
             resetData()
             fetchProduct()
@@ -294,8 +412,33 @@ extension ProductShopListScreen {
 
     private var productItems: some View {
         ForEach(productData.indices, id: \.self) { index in
-            ProductListItem(product: $productData[index])
-                .onAppear { handlePagination(index: index) }
+            ProductListItem(
+                product: $productData[index],
+                currentAuctionedProductId: currentAuctionedProductId,
+                hasExistingPreBid: (productData[index].id).map { myPreBidIds[$0] != nil } ?? false,
+                didTapAction: { handleAction(for: productData[index]) }
+            )
+            .onAppear { handlePagination(index: index) }
+        }
+    }
+
+    // Route a row's action button to the right flow based on its format.
+    private func handleAction(for product: ProductDataModel1) {
+        guard let pid = product.id else { return }
+        let isAuction: Bool = {
+            if let a = product.auction { return a }
+            let t = (product.type ?? "").lowercased()
+            return t == "live" || t == "auction"
+        }()
+        if isAuction {
+            preBidProductId = pid
+            // We only cache pre-bid ids (not amounts), so the user re-enters the
+            // amount on update; clear the field before showing the alert.
+            preBidAmountText = ""
+            showPreBidAlert = true
+        } else {
+            buyNowProductId = pid
+            showBuyNowSheet = true
         }
     }
 }
@@ -372,5 +515,64 @@ extension ProductShopListScreen {
         }
 
         isFetchingMore = false
+    }
+
+    // MARK: - Pre-Bid networking (mirrors ProductDetailView, Basecamp #4)
+
+    /// GET /api/pre-bid — list the current user's pre-bids so each auction row
+    /// can show "Update Pre-Bid" when one already exists.
+    private func loadMyPreBids() {
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "GET"
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            do {
+                let (data, _) = try await URLSession.shared.data(for: req)
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let rows = (json?["data"] as? [[String: Any]]) ?? []
+                var map: [Int: Int] = [:]
+                for r in rows {
+                    if let pid = r["product_id"] as? Int, let id = r["id"] as? Int {
+                        map[pid] = id
+                    }
+                }
+                await MainActor.run { myPreBidIds = map }
+            } catch { /* no-op */ }
+        }
+    }
+
+    /// POST /api/pre-bid  body: product_id, amount.
+    private func placePreBid() {
+        let pid = preBidProductId
+        let amount = Double(preBidAmountText.replacingOccurrences(of: "$", with: "")) ?? 0
+        guard pid > 0 else { return }
+        guard amount >= 1 else {
+            hudMessage = "Please enter $1 or more."; showHud = true; return
+        }
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "POST"
+            req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            req.httpBody = try? JSONSerialization.data(withJSONObject: ["product_id": pid, "amount": amount])
+            do {
+                let (_, resp) = try await URLSession.shared.data(for: req)
+                let ok = (resp as? HTTPURLResponse)?.statusCode == 200
+                await MainActor.run {
+                    if ok {
+                        hudMessage = "Pre-bid placed."; showHud = true
+                        loadMyPreBids()
+                    } else {
+                        hudMessage = "Could not place pre-bid."; showHud = true
+                    }
+                }
+            } catch {
+                await MainActor.run { hudMessage = "Network error."; showHud = true }
+            }
+        }
     }
 }

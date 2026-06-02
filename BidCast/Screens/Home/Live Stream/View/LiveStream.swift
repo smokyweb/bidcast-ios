@@ -327,6 +327,10 @@ struct LiveStream: View {
                 destination: ProductShopListScreen(
                     sellerId: $sellerId,
                     categoryIds: $categoryId,
+                    // Basecamp #4 (PWA refs 27688115, 1ec77674, fa249bc9): pass
+                    // the currently-auctioned product id so the live product list
+                    // can show the disabled "Bidding Live" state on that row.
+                    currentAuctionedProductId: currentProductID,
                     // Basecamp #9943369910 (2026-05-29): scope product list to
                     // this show so the seller only sees items added to the show
                     // instead of their entire catalog.

@@ -1464,13 +1464,33 @@ extension ProductCardView {
     var productDetailsView: some View {
         VStack(alignment: .leading, spacing: 8) {
             productTitle
+            formatBadge
             productMetadata
             productQuantity
             priceSectionView
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
+    // Basecamp #5 (PWA refs 89eb86d1, b6794176, 83501a01): per-product format
+    // badge — red "Live Auction" for auction products, blue "Buy Now" for
+    // buy-it-now. Legacy/no-type rows fall back to the `auction` boolean.
+    @ViewBuilder private var formatBadge: some View {
+        if isAuctionFormat {
+            badgeView(title: "Live Auction", color: .red)
+        } else {
+            badgeView(title: "Buy Now", color: .blue)
+        }
+    }
+
+    private var isAuctionFormat: Bool {
+        let t = (product.type ?? "").lowercased()
+        if t == "live" || t == "auction" { return true }
+        if t == "buy_now" || t == "buy_it_now" || t == "buynow" { return false }
+        // Legacy / no-type: fall back to the `auction` boolean.
+        return product.auction ?? false
+    }
+
     private var productTitle: some View {
         Text(product.title?.capitalizingFirstLetter() ?? "")
             .font(.custom(poppinsSemiBold, size: 16))

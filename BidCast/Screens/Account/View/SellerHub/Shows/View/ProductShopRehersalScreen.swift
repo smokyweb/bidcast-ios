@@ -8,12 +8,18 @@
 import SwiftUI
 
 // MARK: - Inventory Segment Enum
+// Basecamp #7 (PWA refs 49fba598, cdb8fefb, 8096b426): seller live-shop tabs
+// are All / Sold / Offers (dropped the redundant Buy Now / Auction tabs).
+// Surprise Sets retained only for the surprise-set show context (auctionTypeId 9).
 enum RehearsalProductSegment: String, CaseIterable, CustomStringConvertible {
+    case all = "All"
+    case sold = "Sold"
+    case offers = "Offers"
+    case Surprise = "Surprise Sets"
+    // Legacy cases kept so the existing `switch segment` stays exhaustive and
+    // any older references still compile; no longer surfaced as tabs.
     case buynow = "Buy Now"
     case auction = "Auction"
-    case offers = "Offers"
-    case sold = "Sold"
-    case Surprise = "Surprise Sets"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
@@ -69,7 +75,8 @@ struct ProductShopRehersalScreen: View {
     // MARK: - Pagination / filtering
     @State private var isFetchingMore = false
     @State private var canLoadMore = true
-    @State private var saleType = "auction"
+    // Basecamp #7: default tab is now "All" -> no format/status filter.
+    @State private var saleType = ""
     @State private var type = ""
     @State private var status = ""
     @State private var totalCount = 0
@@ -115,11 +122,11 @@ struct ProductShopRehersalScreen: View {
     
     private var availableTabs: [RehearsalProductSegment] {
         if auctionTypeId == 9 {
-            // ✅ For auctionTypeId == 9 (Surprise Sets) show all tabs,
-            // but the content list will only render Surprise Sets.
-            return [.buynow, .auction, .sold, .Surprise]
+            // Surprise Sets show: All / Sold / Offers + the Surprise Sets tab.
+            return [.all, .sold, .offers, .Surprise]
         } else {
-            return [.buynow, .auction, .offers, .sold]
+            // Basecamp #7: All / Sold / Offers (dropped Buy Now / Auction).
+            return [.all, .sold, .offers]
         }
     }
     
@@ -148,8 +155,9 @@ struct ProductShopRehersalScreen: View {
         self.onSurpriseSetUnitSelected = onSurpriseSetUnitSelected
         self.onProductCreated = onProductCreated
         
-        // Set initial segment based on auctionTypeId
-        self._segment = State(initialValue: auctionTypeId.wrappedValue == 9 ? .Surprise : .buynow)
+        // Set initial segment based on auctionTypeId. Default to the new
+        // "All" tab (Basecamp #7); surprise-set shows still open on Surprise.
+        self._segment = State(initialValue: auctionTypeId.wrappedValue == 9 ? .Surprise : .all)
     }
     
     private var headingCount: Int {
@@ -222,8 +230,9 @@ struct ProductShopRehersalScreen: View {
             }
             
             switch segment {
-            case .auction:
-                saleType = "auction"
+            case .all:
+                // Basecamp #7: full show product list, no format/status filter.
+                saleType = ""
                 type = ""
                 status = ""
                 fetchProduct()
@@ -232,18 +241,20 @@ struct ProductShopRehersalScreen: View {
                 type = ""
                 status = ""
                 fetchProduct()
-            case .buynow:
-                saleType = ""
-                status = ""
-                type = "buy_now"
-                fetchProduct()
             case .sold:
+                // Sold across both formats (no `type` restriction).
                 saleType = ""
                 status = "inactive"
-                type = "buy_now"
+                type = ""
                 fetchProduct()
             case .Surprise:
                 fetchSurpriseSet()
+            case .buynow, .auction:
+                // Legacy cases — no longer reachable from the tab bar; treat as All.
+                saleType = ""
+                type = ""
+                status = ""
+                fetchProduct()
             }
         }
     }
@@ -478,8 +489,10 @@ extension ProductShopRehersalScreen {
         canLoadMore = true
         isFetchingMore = false
         isLoading = false
+        // Basecamp #7: reset to the unfiltered "All" defaults; the tab switch
+        // sets format/status filters when a specific tab is chosen.
         self.status = ""
-        self.type = "buy_now"
+        self.type = ""
         self.saleType = ""
     }
     

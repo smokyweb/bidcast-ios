@@ -18,11 +18,12 @@ struct Product: Identifiable {
     let statusColor: Color
 }
 
+// Basecamp #7 (PWA refs 49fba598, cdb8fefb, 8096b426): live-shop tabs are
+// All / Sold / Offers (dropped Auction/Buy Now/Freebie). Scoped to the show.
 enum ShopTab: String, CaseIterable {
-    case auction = "Auction"
-    case buyNow = "Buy Now"
-    case freebie = "Freebie"
+    case all = "All"
     case sold = "Sold"
+    case offers = "Offers"
 }
 
 //struct ShopBottomSheetView: View {
@@ -325,6 +326,30 @@ struct ShopBottomSheetView: View {
     @State private var showToast = false
     @State private var toastMessage = ""
     @State private var buttonScale: CGFloat = 1.0
+
+    // Basecamp #7: All/Sold/Offers tabs (buyer panel). "Offers" = items the
+    // buyer has bought or bid on. Pre-bid product ids are the strongest
+    // per-buyer "bid on" signal available client-side.
+    @State private var selectedTab: ShopTab = .all
+    @State private var myOfferProductIds: Set<Int> = []
+
+    // Show-scoped, tab-filtered product list. `productData` is already scoped to
+    // the current show by the caller (LiveStream loads only this show's items).
+    private var visibleProducts: [ProductDataModel1] {
+        switch selectedTab {
+        case .all:
+            return productData
+        case .sold:
+            return productData.filter { ($0.status ?? "").lowercased() == "sold" }
+        case .offers:
+            return productData.filter { p in
+                guard let id = p.id else { return false }
+                let bought = (p.status ?? "").lowercased() == "sold"
+                    && (Int(p.purchasedQuantity ?? "0") ?? 0) > 0
+                return myOfferProductIds.contains(id) || bought
+            }
+        }
+    }
     
 //    private var selectedProduct: ProductData? {
 //        let selectedProduct = productData.first(where: { $0.isCurrent })
@@ -411,18 +436,44 @@ struct ShopBottomSheetView: View {
                 
                 Divider()
                     .padding(.horizontal, 20)
-                
+
+                // MARK: Tabs (Basecamp #7) — All / Sold / Offers
+                HStack(spacing: 10) {
+                    ForEach(ShopTab.allCases, id: \.self) { tab in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) { selectedTab = tab }
+                        } label: {
+                            Text(tab.rawValue)
+                                .font(.custom(poppinsSemiBold, size: 13))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
+                                .foregroundColor(selectedTab == tab ? .white : .primary)
+                                .cornerRadius(20)
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+
                 // MARK: Product List
                 ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: 12) {
-                        ForEach(productData.indices, id: \.self) { index in
-                            productRow(productData[index], index: index)
-                                .padding(.vertical, 6)
+                        if visibleProducts.isEmpty {
+                            Text("No products")
+                                .font(.custom(poppinsRegular, size: 13))
+                                .foregroundColor(.secondary)
+                                .padding(.vertical, 40)
+                        } else {
+                            ForEach(visibleProducts.indices, id: \.self) { index in
+                                productRow(visibleProducts[index], index: index)
+                                    .padding(.vertical, 6)
+                            }
                         }
                     }
                     .padding(.horizontal, 20)
                 }
                 .padding(.vertical, 12)
+                .onAppear { loadMyOffers() }
                 
                 // Bottom button
                 if let product = selectedProduct {
@@ -761,4 +812,24 @@ struct ShopBottomSheetView: View {
                 .padding(.vertical, 4)
                 .background(Capsule().fill(color.opacity(0.12)))
         }
+
+    // Basecamp #7: GET /api/pre-bid — the buyer's pre-bids, used to populate the
+    // "Offers" tab (items the buyer has bid on). Combined with sold-to-buyer
+    // items in `visibleProducts`.
+    private func loadMyOffers() {
+        Task {
+            guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
+            var req = URLRequest(url: url)
+            req.httpMethod = "GET"
+            req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            req.setValue("application/json", forHTTPHeaderField: "Accept")
+            do {
+                let (data, _) = try await URLSession.shared.data(for: req)
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let rows = (json?["data"] as? [[String: Any]]) ?? []
+                let ids = Set(rows.compactMap { $0["product_id"] as? Int })
+                await MainActor.run { myOfferProductIds = ids }
+            } catch { /* no-op */ }
+        }
+    }
 }

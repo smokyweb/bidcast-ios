@@ -58,6 +58,16 @@ struct ProfileScreen: View {
     @State var navigateToReherseal = false
     @State var navigateToChat = false
     @State var navigateToVideoReceipt = false
+
+    // Basecamp #1 (PWA refs 2a83efcf, b43f5bb4): tapping an upcoming show on a
+    // profile must open the buyer show-DETAIL view (same as Home), never the
+    // live stream. State for that navigation:
+    @State private var navigateToUpcomingDetail = false
+    @State private var selectedUpcomingShowId: Int = 0
+    @State private var selectedUpcomingSellerImage = ""
+    @State private var selectedUpcomingSellerName = ""
+    @State private var selectedUpcomingShowDate = ""
+    @State private var selectedUpcomingShowTime = ""
     @State var videoURL = ""
     @State private var chatPath: String = ""
     @State private var isTipAmountButtoClicked: Bool = false
@@ -338,10 +348,16 @@ struct ProfileScreen: View {
                                             //                                userId = "\(show.user?.id ?? 0)"
                                             //                                navigateToProfile = true
                                         },onTapMainImage: {
-                                            print(" tapped the card!,inex \(index)")
-                                            //                                self.index = i
-                                            //                                userId = "\(show.user?.id ?? 0)"
-                                            //                                navigateToLiveStream = true
+                                            // Basecamp #1 (PWA refs 2a83efcf,
+                                            // b43f5bb4): open the buyer show-DETAIL
+                                            // view for an upcoming show. Never route
+                                            // a not-yet-live show to the live stream.
+                                            selectedUpcomingShowId = show.id ?? 0
+                                            selectedUpcomingSellerImage = show.user?.profile_image ?? ""
+                                            selectedUpcomingSellerName = show.user?.username ?? show.user?.name ?? ""
+                                            selectedUpcomingShowDate = show.date ?? ""
+                                            selectedUpcomingShowTime = show.time ?? ""
+                                            navigateToUpcomingDetail = true
                                         },onTapCategory: {
                                             //                                self.category = show.category?.name ?? ""
                                             //                                navigateToCategoryDetailScreen = true
@@ -503,6 +519,19 @@ struct ProfileScreen: View {
             CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
             
             CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
+            // Basecamp #1 (PWA refs 2a83efcf, b43f5bb4): buyer show-detail page
+            // for an upcoming show tapped on this profile (same destination Home
+            // uses). Routes to DETAIL, never the live stream.
+            CusNavLink(
+                doNavigate: $navigateToUpcomingDetail,
+                destination: UpcomingShowDetailScreen(
+                    showId: selectedUpcomingShowId,
+                    sellerImage: selectedUpcomingSellerImage,
+                    sellerName: selectedUpcomingSellerName,
+                    showDate: selectedUpcomingShowDate,
+                    showTime: selectedUpcomingShowTime
+                )
+            )
             CusNavLink(
                 doNavigate: $navigateToChat,
                 destination: ChatScreen(
@@ -764,10 +793,17 @@ struct ProfileScreen: View {
             
             if isLast && scheduleShowArr.count < total {
                 SVProgressHUD.show()
-                await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", page: currentPage))
+                // Basecamp #9 (PWA ref 67dbe223): page 2+ MUST be scoped to the
+                // seller being viewed. Previously seller_id was omitted, so the
+                // next page loaded the VIEWER's own shows instead of the
+                // profile owner's. Pass the seller id on every page fetch.
+                await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", seller_id: profileData.id ?? 0, page: currentPage))
                 await SVProgressHUD.dismiss()
                 if viewModel.getMyScheduleShowResponseDict?.status == "success" {
-                    currentPage = currentPage
+                    // Basecamp #9: previously `currentPage = currentPage` (a no-op
+                    // that never advanced). currentPage is already incremented at
+                    // the top of handlePagination, so on the next page-end we
+                    // request the following page rather than re-fetching this one.
                     scheduleShowArr.append(contentsOf: viewModel.getMyScheduleShowResponseDict?.data ?? [])
                 }
             }
