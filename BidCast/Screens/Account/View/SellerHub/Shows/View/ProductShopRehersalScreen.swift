@@ -242,9 +242,21 @@ struct ProductShopRehersalScreen: View {
                 status = ""
                 fetchProduct()
             case .sold:
-                // Sold across both formats (no `type` restriction).
+                // Basecamp #9959083112 (2026-06-03): the Sold tab was sending
+                // status="inactive" to get-product. Verified against the LIVE
+                // backend + DB that this is wrong: a purchased product keeps
+                // status="active" (the purchase flow increments purchased_quantity
+                // and never flips status), so status="inactive" returned only the
+                // handful of manually-deactivated products and NONE of the actually
+                // sold ones — the Sold tab was always empty for sold items.
+                //
+                // A product is "sold" when purchased_quantity > 0. There is no
+                // backend filter for that, so we fetch the show's full product list
+                // (status="", like the All tab) and filter to purchased_quantity > 0
+                // CLIENT-SIDE in updateSortedProducts() — mirroring the Android
+                // in-show shop, which also filters the show list client-side.
                 saleType = ""
-                status = "inactive"
+                status = ""
                 type = ""
                 fetchProduct()
             case .Surprise:
@@ -471,11 +483,22 @@ struct ProductShopRehersalScreen: View {
     
     // MARK: - Update Sorted Products
     private func updateSortedProducts() {
-        displayedProducts = reorderProducts(
+        var products = reorderProducts(
             pinnedIds: pinnedProductIds,
             eventIds: eventProductIds,
             apiProducts: apiProducts
         )
+
+        // Basecamp #9959083112 (2026-06-03): the Sold tab shows products that
+        // buyers have purchased. "Sold" == purchased_quantity > 0 (verified live:
+        // sold products keep status="active", so we cannot rely on a status flag).
+        // The fetch for this tab pulls the show's full list (status=""); we filter
+        // to the purchased ones here, client-side.
+        if segment == .sold {
+            products = products.filter { (Int($0.purchasedQuantity ?? "0") ?? 0) > 0 }
+        }
+
+        displayedProducts = products
     }
 }
 
