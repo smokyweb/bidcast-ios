@@ -322,25 +322,41 @@ class AgoraManager: NSObject, ObservableObject {
         guard let agoraKit = agoraKit else { return }
         isHost = asHost
 
-        // Basecamp #9958806477 ROUND 2 (2026-06-03): black remote video when an
-        // iOS buyer joins a show while the app is ALREADY OPEN (re-join within the
-        // same process). AgoraRtcEngineKit.sharedEngine() is a PROCESS-WIDE
-        // singleton, but every LiveStream view owns its own @StateObject
-        // AgoraManager with its own remoteVideoView UIView. When a viewer leaves
-        // one show and opens another without killing the app, the singleton was
-        // still: (a) delivering delegate callbacks to the PREVIOUS AgoraManager
-        // instance, and (b) holding a remote-video canvas bound to the previous
-        // (now detached) remoteVideoView. Result: frames decoded into a dead view
-        // -> black, even though socket/chat/products (independent layers) worked.
-        // Keeping the engine alive (round 1) was necessary but not sufficient; we
-        // must also re-point the singleton at THIS instance + view on each join.
+        // Basecamp #9958806477 ROUND 3 (2026-06-03): The previous rounds established
+        // that (a) the engine must NOT be destroyed between joins, and (b) the delegate
+        // must be re-pointed to THIS instance on each join. Both of those remain.
+        //
+        // Round 3 fixes the root cause that Round 2 accidentally introduced:
+        // leaveChannel() set `remoteUserId = nil` at the TOP of the function and then
+        // read `remoteUserId ?? 0` for the clear-canvas call — so the canvas clear ALWAYS
+        // used uid=0 instead of the real seller uid. The actual seller canvas
+        // (uid=<sellerUID> → old detached UIView) was NEVER cleared in the engine.
+        // On the next join the engine still held the stale canvas pointing at the
+        // deallocated/detached view; even though we called setupRemoteVideo with the
+        // new view in didJoinedOfUid, Agora SDK 4.6.0 would not properly transition the
+        // render pipeline away from the stale canvas → black.
+        //
+        // Additional Round 3 fix: the uid=0 canvas calls (setupRemoteVideoCanvas) are
+        // a no-op in Agora SDK 4.x — uid=0 in setupRemoteVideo means "canvas for uid 0"
+        // not "any remote user". Removed to reduce confusion. We wait for didJoinedOfUid
+        // to get the real uid before calling setupRemoteVideo.
+        //
+        // Defensive additions:
+        //   • disableVideo + enableVideo to flush any stale video pipeline state
+        //   • muteAllRemoteVideoStreams(false) to unblock subscription in case a prior
+        //     mute state persisted through the channel leave
+        //   • explicit muteRemoteVideoStream(uid, mute: false) in setupRemoteVideo(uid:)
+
+        // Always re-point delegate to THIS instance (engine is a shared singleton).
         agoraKit.delegate = self
+
+        // Flush stale video pipeline state from previous session.
+        agoraKit.disableVideo()
         agoraKit.enableVideo()
+
         if !asHost {
-            // Bind the remote canvas to THIS instance's on-screen view up front so
-            // the freshly laid-out view is the active render target before frames
-            // arrive (uid 0 = bind to the first/any remote stream).
-            setupRemoteVideoCanvas()
+            // Unblock any muted remote video subscriptions left over from the last session.
+            agoraKit.muteAllRemoteVideoStreams(false)
         }
 
         let options = AgoraRtcChannelMediaOptions()
@@ -363,16 +379,11 @@ class AgoraManager: NSObject, ObservableObject {
                 self?.isJoined = true
                 if asHost {
                     self?.setupLocalVideo()
-                } else {
-                    // ✅ Setup remote video canvas immediately for viewers
-                    self?.setupRemoteVideoCanvas()
                 }
+                // For viewers we do NOT call setupRemoteVideo here —
+                // we wait for didJoinedOfUid which delivers the real uid.
             }
         }
-        
-        // ✅ FIXED: Only enable PiP delegate when actually needed
-        // Don't call setupVideoFrameDelegate() here - it can interfere with normal rendering
-    }
     
     func setupVideoFrameDelegate() {
         // Only call this when PiP is actually needed
@@ -396,37 +407,45 @@ class AgoraManager: NSObject, ObservableObject {
     
     // MARK: - Leave Channel
     func leaveChannel() {
+        // Basecamp #9958806477 ROUND 3 (2026-06-03): PRIMARY BUG FIX.
+        // Round 2 introduced a regression: it set `remoteUserId = nil` at the top
+        // of this function and then immediately read `remoteUserId ?? 0` for the
+        // clear-canvas call. That expression ALWAYS evaluates to 0, so the canvas for
+        // the real seller uid was NEVER cleared. The Agora engine kept a stale canvas
+        // (uid=<sellerUID> → old detached UIView) registered across sessions.
+        // When the next show joined and didJoinedOfUid fired with the same or a new
+        // seller uid, Agora SDK 4.6.0 would not properly transition its internal
+        // render pipeline away from the stale canvas → black video.
+        //
+        // FIX: capture remoteUserId BEFORE clearing it, then use the captured value.
+        let lastRemoteUid = remoteUserId  // capture BEFORE nil-assignment
         remoteUserId = nil
         isJoined = false
-        
-        // Stop local video preview
+
+        // Stop local video preview.
         agoraKit?.stopPreview()
 
-        // Basecamp #9958806477 ROUND 2 (2026-06-03): explicitly UNBIND the remote
-        // video canvas from this instance's view before leaving. Because the engine
-        // is a shared singleton we keep alive across shows, a lingering canvas bound
-        // to this (about-to-be-detached) remoteVideoView would otherwise stay
-        // registered and fight the NEXT show's binding -> black video on re-join.
-        // Binding a canvas whose view is nil clears the previous render target.
-        let clearCanvas = AgoraRtcVideoCanvas()
-        clearCanvas.uid = remoteUserId ?? 0
-        clearCanvas.view = nil
-        agoraKit?.setupRemoteVideo(clearCanvas)
+        // Explicitly unbind the remote canvas with the REAL seller uid (not 0).
+        // This tells the engine to stop rendering to our UIView, preventing the stale
+        // canvas from blocking the next session’s canvas binding.
+        if let uid = lastRemoteUid, uid != 0 {
+            let clearCanvas = AgoraRtcVideoCanvas()
+            clearCanvas.uid = uid
+            clearCanvas.view = nil
+            agoraKit?.setupRemoteVideo(clearCanvas)
+            print("🧹 Cleared Agora canvas for uid \(uid) on leave")
+        }
+        // Also clear any uid=0 canvas that was registered (from old setupRemoteVideoCanvas calls).
+        let clearZero = AgoraRtcVideoCanvas()
+        clearZero.uid = 0
+        clearZero.view = nil
+        agoraKit?.setupRemoteVideo(clearZero)
 
-        // Leave the channel
+        // Leave the channel.
         agoraKit?.leaveChannel(nil)
-        // Basecamp #9958806477 (2026-06-03): DO NOT call AgoraRtcEngineKit.destroy()
-        // here. destroy() tears down the PROCESS-WIDE shared engine singleton. Each
-        // LiveStream view owns its own @StateObject AgoraManager and calls
-        // sharedEngine() in init, but they all resolve to the SAME singleton. When a
-        // viewer left one show and then joined another WITHOUT killing the app, the
-        // previous leave had destroyed the shared engine, so the next join ran against
-        // a torn-down engine -> no remote frames decoded -> BLACK video (everything
-        // else worked because the socket/REST layer is independent). Only a full app
-        // relaunch rebuilt the engine, which is exactly why "close and reopen the app"
-        // fixed it. We now leave the channel but keep the engine alive for re-join.
-        // (The engine is cheap to keep; it is recreated by sharedEngine() if the OS
-        // ever reclaims it.)
+        // Basecamp #9958806477 (round 1, 2026-06-03): DO NOT call AgoraRtcEngineKit.destroy().
+        // The engine is a PROCESS-WIDE singleton; destroying it tears it down for all
+        // subsequent joins within the same app lifecycle. Keep it alive for re-join.
     }
     
     func setupLocalVideo() {
@@ -439,31 +458,33 @@ class AgoraManager: NSObject, ObservableObject {
         agoraKit?.startPreview()
     }
     
-    // MARK: - Setup Remote Video Canvas (call this early)
-    func setupRemoteVideoCanvas() {
-        // ✅ Setup the canvas immediately when joining as audience
-        // This prepares the view to receive video before remote user joins
-        if !isHost {
-            let videoCanvas = AgoraRtcVideoCanvas()
-            videoCanvas.uid = 0 // 0 means "any remote user"
-            videoCanvas.view = remoteVideoView
-            videoCanvas.renderMode = .hidden
-            agoraKit?.setupRemoteVideo(videoCanvas)
-            print("✅ Remote video canvas prepared for incoming stream")
-        }
-    }
-    
     // MARK: - Setup Remote Video
+    // Binds the Agora engine’s render canvas for `uid` to THIS instance’s
+    // remoteVideoView (the UIView that is live in the UIKit hierarchy via
+    // VideoContainerView). Must be called with the real remote uid (not 0).
+    // Also explicitly un-mutes the remote video subscription so frames flow.
     private func setupRemoteVideo(uid: UInt) {
         guard let agoraKit = agoraKit else { return }
-        
+        // Guard against uid=0: in Agora SDK 4.x, setupRemoteVideo(uid=0) creates a
+        // canvas for the literal uid 0, not "any remote user". Binding to uid 0 is a
+        // no-op for real sellers and can confuse the engine’s canvas registry.
+        guard uid != 0 else {
+            print("⚠️ setupRemoteVideo called with uid=0 — skipping (not a valid remote uid)")
+            return
+        }
+
         let videoCanvas = AgoraRtcVideoCanvas()
         videoCanvas.uid = uid
         videoCanvas.view = remoteVideoView
         videoCanvas.renderMode = .hidden
         agoraKit.setupRemoteVideo(videoCanvas)
-        
-        print("✅ Remote video setup for UID: \(uid)")
+
+        // Explicitly un-mute the remote video stream for this uid.
+        // If a prior session left the engine with a muted subscription, this
+        // ensures frames actually flow to the newly bound canvas.
+        agoraKit.muteRemoteVideoStream(uid, mute: false)
+
+        print("✅ Remote video canvas bound: uid=\(uid), view=\(remoteVideoView)")
     }
 }
 
