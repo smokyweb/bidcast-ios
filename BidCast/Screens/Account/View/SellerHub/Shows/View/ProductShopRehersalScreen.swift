@@ -361,7 +361,12 @@ struct ProductShopRehersalScreen: View {
                             roomId: roomId,
                             isPinned: pinnedProductIds.contains(productId),
                             actionTitle: mode.buttonTitle,
-                            showsActionButton: auctionTypeId != 9,
+                            // Basecamp #9959083112 ROUND 2 (2026-06-03): sold items
+                            // must NOT show the "Start Auction" button — a product
+                            // that's already been purchased can't be auctioned. Hide
+                            // the action button on the Sold tab (still shown on All/
+                            // Offers). Surprise Sets (9) hides it as before.
+                            showsActionButton: auctionTypeId != 9 && segment != .sold,
                             onPinTapped: { togglePin(productId) },
                             onActionTapped: { onProductSelected?(product) }
                         )
@@ -495,7 +500,17 @@ struct ProductShopRehersalScreen: View {
         // The fetch for this tab pulls the show's full list (status=""); we filter
         // to the purchased ones here, client-side.
         if segment == .sold {
-            products = products.filter { (Int($0.purchasedQuantity ?? "0") ?? 0) > 0 }
+            // Basecamp #9959083112 ROUND 2 (2026-06-03): two fixes from Trey's QA:
+            //  (1) "shows all sold items, not just this show's" — the Sold tab must
+            //      stay scoped to THIS show. reorderProducts() already scopes to
+            //      eventProductIds when present, but we additionally hard-filter
+            //      to the show's product set here so off-show purchased products
+            //      can never leak in even if apiProducts contains catalog items.
+            //  (2) purchased_quantity > 0 identifies a sold product.
+            let scoped = eventProductIds.isEmpty
+                ? products
+                : products.filter { eventProductIds.contains($0.id ?? -1) }
+            products = scoped.filter { (Int($0.purchasedQuantity ?? "0") ?? 0) > 0 }
         }
 
         displayedProducts = products
