@@ -382,8 +382,18 @@ class AgoraManager: NSObject, ObservableObject {
         agoraKit?.stopPreview()
         // Leave the channel
         agoraKit?.leaveChannel(nil)
-        // Release all resources
-        AgoraRtcEngineKit.destroy()
+        // Basecamp #9958806477 (2026-06-03): DO NOT call AgoraRtcEngineKit.destroy()
+        // here. destroy() tears down the PROCESS-WIDE shared engine singleton. Each
+        // LiveStream view owns its own @StateObject AgoraManager and calls
+        // sharedEngine() in init, but they all resolve to the SAME singleton. When a
+        // viewer left one show and then joined another WITHOUT killing the app, the
+        // previous leave had destroyed the shared engine, so the next join ran against
+        // a torn-down engine -> no remote frames decoded -> BLACK video (everything
+        // else worked because the socket/REST layer is independent). Only a full app
+        // relaunch rebuilt the engine, which is exactly why "close and reopen the app"
+        // fixed it. We now leave the channel but keep the engine alive for re-join.
+        // (The engine is cheap to keep; it is recreated by sharedEngine() if the OS
+        // ever reclaims it.)
     }
     
     func setupLocalVideo() {
@@ -460,10 +470,28 @@ extension AgoraManager: AgoraRtcEngineDelegate {
     // ✅ NEW: Add these callbacks for better debugging
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStateChangedOfUid uid: UInt, state: AgoraVideoRemoteState, reason: AgoraVideoRemoteReason, elapsed: Int) {
         print("📹 Remote video state changed - UID: \(uid), State: \(state.rawValue), Reason: \(reason.rawValue)")
+        // Basecamp #9958806477 (2026-06-03): when the remote stream starts decoding
+        // (.decoding == 2), make absolutely sure the canvas is bound to the on-screen
+        // remoteVideoView. On a re-join within the same app session the SwiftUI view
+        // may have been re-created after the initial setupRemoteVideo, leaving the
+        // canvas pointed at a stale/detached view -> black. Re-binding here guarantees
+        // the freshly-laid-out view receives frames.
+        if state == .decoding || state == .starting {
+            DispatchQueue.main.async {
+                self.remoteUserId = uid
+                self.setupRemoteVideo(uid: uid)
+            }
+        }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoDecodedOfUid uid: UInt, size: CGSize, elapsed: Int) {
         print("✅ First remote video frame decoded - UID: \(uid), Size: \(size)")
+        // Re-bind the canvas to the current on-screen view on the first decoded
+        // frame, covering the re-join-while-app-open black-video case (#9958806477).
+        DispatchQueue.main.async {
+            self.remoteUserId = uid
+            self.setupRemoteVideo(uid: uid)
+        }
     }
 }
 
