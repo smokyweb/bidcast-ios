@@ -394,6 +394,12 @@ struct AddProductsScreen: View {
                    destination: InventoryScreen(
                     preSelectedProducts:productManager.products,
                     selectedCategoryId: [Int(request.category_id) ?? 0],
+                    // Basecamp #9959447268 (2026-06-03): pass the show's chosen
+                    // format so the picker only offers products whose pricing
+                    // format matches (Live Auction=8 -> auction products,
+                    // Buy Now=5 -> buy-now products). Without this the picker
+                    // listed the seller's whole inventory regardless of format.
+                    showAuctionTypeId: request.auction_type_id,
                     navigatedFrom: .addProduct,
                     onProductsSelected: { products in
                         productManager.products.removeAll()

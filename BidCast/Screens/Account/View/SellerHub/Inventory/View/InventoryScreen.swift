@@ -77,6 +77,16 @@ struct InventoryScreen: View {
     @State var categoryList: [CategoryDataModel] = []
     @State var selectedCategoryId: [Int] = []
     @State var selectedCondition: [String] = []
+
+    // Basecamp #9959447268 (2026-06-03): the show's chosen format (auction_type_id
+    // from the auctions table: 5 = Buy Now, 8 = Live Auction, 9 = Surprise Sets).
+    // When the inventory picker is opened from show-creation (.addProduct) we must
+    // only offer products whose pricing format matches the show. Previously this
+    // value was never passed in, so the picker listed the seller's ENTIRE
+    // inventory regardless of format — and because most inventory is buy-now, a
+    // Live Auction show looked like it "only showed Buy Now products". Empty/other
+    // (incl. 9) = no restriction.
+    var showAuctionTypeId: String = ""
     @State var minPrice: Double = 0.0
     @State var maxPrice: Double = 0.0
     @State var format: String = ""
@@ -103,6 +113,35 @@ struct InventoryScreen: View {
     @State private var navigateToMyOrders = false
     
     
+    // Basecamp #9959447268 (2026-06-03): a product's pricing format, resilient to a
+    // NULL `type`. The `type` column was only populated from ~2026-05-29 onward, so
+    // most products have type=NULL; when type is set we trust it, otherwise we fall
+    // back to the `auction` flag — EXACTLY how the backend derives a default type
+    // (type = auction ? 'live' : 'buy_it_now'). Mirrors the PWA's productIsLive()
+    // in addProduct.blade.php (Basecamp #9948992087 round 2). We deliberately do
+    // NOT use reserve_for_live (that's a reserve-price concept, not the format).
+    private func productIsLive(_ p: ProductDataModel1) -> Bool {
+        let t = (p.type ?? "").lowercased()
+        if t == "live" || t == "auction" || t == "live_auction" { return true }
+        if t == "buy_it_now" || t == "buy_now" || t == "buynow" || t == "buy" { return false }
+        return p.auction ?? false
+    }
+
+    // The inventory list to display: when picking products for a show, restrict to
+    // the show's pricing format (Live Auction -> live products, Buy Now -> buy-now
+    // products). Surprise Sets / unknown / non-picker contexts -> no restriction.
+    private var displayedInventory: [ProductDataModel1] {
+        guard navigatedFrom == .addProduct else { return inventoryList }
+        switch showAuctionTypeId {
+        case "8":  // Live Auction show -> only auction products
+            return inventoryList.filter { productIsLive($0) }
+        case "5":  // Buy Now show -> only buy-it-now products
+            return inventoryList.filter { !productIsLive($0) }
+        default:   // 9 (Surprise Sets) / empty / unknown -> no restriction
+            return inventoryList
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Header
@@ -223,9 +262,12 @@ struct InventoryScreen: View {
                     else if inventoryList.isEmpty {
                         NoDataView(message: AppString.NoInventoryFound.localized)
                     }
+                    else if displayedInventory.isEmpty {
+                        NoDataView(message: AppString.NoInventoryFound.localized)
+                    }
                     else {
-                        ForEach(Array(inventoryList.enumerated()), id: \.element.id) { index, inventory in
-                            let inventory = inventoryList[index]
+                        ForEach(Array(displayedInventory.enumerated()), id: \.element.id) { index, inventory in
+                            let inventory = displayedInventory[index]
                             
                             ProductCardView(product: inventory,
                                             segmant: $segment,

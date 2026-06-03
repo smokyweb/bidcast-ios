@@ -321,7 +321,28 @@ class AgoraManager: NSObject, ObservableObject {
     func joinChannel(asHost: Bool, channelName: String, token: String) {
         guard let agoraKit = agoraKit else { return }
         isHost = asHost
-        
+
+        // Basecamp #9958806477 ROUND 2 (2026-06-03): black remote video when an
+        // iOS buyer joins a show while the app is ALREADY OPEN (re-join within the
+        // same process). AgoraRtcEngineKit.sharedEngine() is a PROCESS-WIDE
+        // singleton, but every LiveStream view owns its own @StateObject
+        // AgoraManager with its own remoteVideoView UIView. When a viewer leaves
+        // one show and opens another without killing the app, the singleton was
+        // still: (a) delivering delegate callbacks to the PREVIOUS AgoraManager
+        // instance, and (b) holding a remote-video canvas bound to the previous
+        // (now detached) remoteVideoView. Result: frames decoded into a dead view
+        // -> black, even though socket/chat/products (independent layers) worked.
+        // Keeping the engine alive (round 1) was necessary but not sufficient; we
+        // must also re-point the singleton at THIS instance + view on each join.
+        agoraKit.delegate = self
+        agoraKit.enableVideo()
+        if !asHost {
+            // Bind the remote canvas to THIS instance's on-screen view up front so
+            // the freshly laid-out view is the active render target before frames
+            // arrive (uid 0 = bind to the first/any remote stream).
+            setupRemoteVideoCanvas()
+        }
+
         let options = AgoraRtcChannelMediaOptions()
         options.clientRoleType = asHost ? .broadcaster : .audience
         options.channelProfile = .liveBroadcasting
@@ -380,6 +401,18 @@ class AgoraManager: NSObject, ObservableObject {
         
         // Stop local video preview
         agoraKit?.stopPreview()
+
+        // Basecamp #9958806477 ROUND 2 (2026-06-03): explicitly UNBIND the remote
+        // video canvas from this instance's view before leaving. Because the engine
+        // is a shared singleton we keep alive across shows, a lingering canvas bound
+        // to this (about-to-be-detached) remoteVideoView would otherwise stay
+        // registered and fight the NEXT show's binding -> black video on re-join.
+        // Binding a canvas whose view is nil clears the previous render target.
+        let clearCanvas = AgoraRtcVideoCanvas()
+        clearCanvas.uid = remoteUserId ?? 0
+        clearCanvas.view = nil
+        agoraKit?.setupRemoteVideo(clearCanvas)
+
         // Leave the channel
         agoraKit?.leaveChannel(nil)
         // Basecamp #9958806477 (2026-06-03): DO NOT call AgoraRtcEngineKit.destroy()
