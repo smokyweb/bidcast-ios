@@ -418,22 +418,34 @@ struct LiveStream: View {
             listenForRaidEvents()
             // Basecamp #9934003774 (2026-05-27): listen for the host kicking us.
             socketManagerChat.listenForKickedFromShow { msg in
+                // Exit the room — host removed us, can't rejoin. Show the toast
+                // FIRST, then dismiss after a beat so the message is actually
+                // visible (dismissing immediately tears down the toast before it
+                // renders — Basecamp #9956272376).
+                logoutRoom()
                 toastMessage = msg
                 showToast = true
-                // Exit the room — host removed us, can't rejoin.
-                logoutRoom()
-                presentationMode.wrappedValue.dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                    presentationMode.wrappedValue.dismiss()
+                }
             }
             // Basecamp #9956272376 (2026-06-02): the server rejects the join
             // with join_room_error (e.g. the buyer was removed from this show
             // earlier → code "kicked"). Without handling it the buyer was stuck
-            // forever on the black "Loading show…" screen. Surface the message
-            // and dismiss instead of hanging.
-            socketManagerChat.listenForJoinRoomError { msg, _ in
-                toastMessage = msg
-                showToast = true
+            // forever on the black "Loading show…" screen. Show the removal
+            // message, THEN dismiss after a short delay so the buyer actually
+            // sees WHY they were bounced (previously the immediate dismiss tore
+            // the toast down before it could render → silent bounce to Home).
+            socketManagerChat.listenForJoinRoomError { msg, code in
                 logoutRoom()
-                presentationMode.wrappedValue.dismiss()
+                let shown = (code == "kicked")
+                    ? "You have been removed from this show by the host."
+                    : msg
+                toastMessage = shown
+                showToast = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                    presentationMode.wrappedValue.dismiss()
+                }
             }
         }
        
@@ -1681,6 +1693,19 @@ struct LiveStream: View {
                     type: .regular,
                     title: hudMsg,
                     style: alertStlyeSuccess
+                )
+            }
+            // Basecamp #9956272376: kicked/rejected-join message. This lives in
+            // the always-rendered top-level toastLayer so it shows even on the
+            // black "Loading show…" overlay (where liveShowsData is empty and the
+            // in-content toast never renders). Duration matches the 1.8s dismiss
+            // delay in the join_room_error / kicked handlers.
+            .toast(isPresenting: $showToast, duration: 1.7) {
+                AlertToast(
+                    displayMode: .alert,
+                    type: .regular,
+                    title: toastMessage,
+                    style: .style(backgroundColor: Color.black.opacity(0.85), titleColor: Color.white)
                 )
             }
     }
