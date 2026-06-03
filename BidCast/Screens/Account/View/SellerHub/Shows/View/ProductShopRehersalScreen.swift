@@ -543,7 +543,19 @@ extension ProductShopRehersalScreen {
         guard canLoadMore,
               !isFetchingMore,
               apiProducts.count < totalCount else { return }
-        
+
+        // Basecamp #9943369910: in the show-scoped picker we only display the
+        // show's products (eventProductIds). Once every show product has been
+        // loaded, stop paging the rest of the category catalog — otherwise the
+        // list keeps fetching off-show items we never render (the old 7->13).
+        if !eventProductIds.isEmpty {
+            let loadedIds = Set(apiProducts.compactMap { $0.id })
+            if eventProductIds.isSubset(of: loadedIds) {
+                canLoadMore = false
+                return
+            }
+        }
+
         currentPage += 1
         fetchProduct(isLoaderShown: false)
     }
@@ -569,6 +581,16 @@ extension ProductShopRehersalScreen {
             }
         }
         
+        // Basecamp #9943369910 (2026-06-02, Larry confirmed "only 7"): the
+        // in-show auction/freebie picker must show ONLY the products added to
+        // THIS show, not the seller's whole category catalog. The category API
+        // returns every product in the show's category (e.g. 13) and we used to
+        // append `normal` (the off-show items), so the list flickered 7 -> 13.
+        // When a show product set (eventIds) is present, scope strictly to it.
+        // eventIds empty => non-show context (browse/add): keep old behavior.
+        if !eventIds.isEmpty {
+            return pinned + event
+        }
         return pinned + event + normal
     }
   
