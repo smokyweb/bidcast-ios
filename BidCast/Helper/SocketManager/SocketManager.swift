@@ -1909,6 +1909,24 @@ extension SocketManagerService {
         }
     }
 
+    // Basecamp #9956272376 (2026-06-02): the server rejects a join with
+    // `join_room_error` (e.g. code "kicked" when the buyer was removed from the
+    // show earlier, or any other join failure). The app previously had NO
+    // listener for this event, so a rejected buyer's `room_create_get` never
+    // arrived and they sat forever on the black "Loading show…" screen. Listen
+    // for it and surface the message + let the caller dismiss the screen.
+    func listenForJoinRoomError(completion: @escaping (_ message: String, _ code: String?) -> Void) {
+        socket.off("join_room_error")
+        socket.on("join_room_error") { [weak self] data, _ in
+            guard let self else { return }
+            let dict = data.first as? [String: Any]
+            let msg = dict?["message"] as? String ?? "This show can’t be opened right now."
+            let code = dict?["code"] as? String
+            DispatchQueue.main.async { completion(msg, code) }
+            logger.info("⛔️ join_room_error: \(msg) [\(code ?? "")]")
+        }
+    }
+
     func enterInFreebie(room_id: String, userId: Int) {
         performIfConnected {
             let payload: [String: Any] = [

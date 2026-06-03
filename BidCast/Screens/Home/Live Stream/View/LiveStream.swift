@@ -424,6 +424,17 @@ struct LiveStream: View {
                 logoutRoom()
                 presentationMode.wrappedValue.dismiss()
             }
+            // Basecamp #9956272376 (2026-06-02): the server rejects the join
+            // with join_room_error (e.g. the buyer was removed from this show
+            // earlier → code "kicked"). Without handling it the buyer was stuck
+            // forever on the black "Loading show…" screen. Surface the message
+            // and dismiss instead of hanging.
+            socketManagerChat.listenForJoinRoomError { msg, _ in
+                toastMessage = msg
+                showToast = true
+                logoutRoom()
+                presentationMode.wrappedValue.dismiss()
+            }
         }
        
     }
