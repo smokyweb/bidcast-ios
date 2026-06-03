@@ -496,18 +496,42 @@ struct LiveStream: View {
             }
             .padding(.top, 50)
             Spacer()
-            VStack(spacing: 12) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(1.4)
-                Text("Loading show…")
-                    .font(.system(size: 14))
-                    .foregroundColor(.white.opacity(0.7))
-                Text("If the show doesn't load in a few seconds, tap the X above to go back.")
-                    .font(.system(size: 12))
-                    .foregroundColor(.white.opacity(0.5))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
+            // Basecamp #9956272376: when the join is rejected (e.g. the buyer
+            // was kicked), show the removal reason IN PLACE of the loading
+            // spinner. The previous AlertToast approach didn't render on this
+            // full-screen black overlay, so the buyer saw a silent bounce. This
+            // is guaranteed visible because it's part of the overlay already on
+            // screen. `showToast` is set by listenForJoinRoomError/Kicked.
+            if showToast {
+                VStack(spacing: 14) {
+                    Image(systemName: "hand.raised.slash.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.white.opacity(0.85))
+                    Text(toastMessage.isEmpty
+                         ? "You have been removed from this show by the host."
+                         : toastMessage)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 36)
+                    Text("Returning to home…")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.5))
+                }
+            } else {
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.4)
+                    Text("Loading show…")
+                        .font(.system(size: 14))
+                        .foregroundColor(.white.opacity(0.7))
+                    Text("If the show doesn't load in a few seconds, tap the X above to go back.")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.5))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                }
             }
             Spacer()
             Spacer()
