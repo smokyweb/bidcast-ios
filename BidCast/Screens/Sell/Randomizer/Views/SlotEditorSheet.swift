@@ -13,17 +13,26 @@ struct SlotEditorSheet: View {
     /// Pass available seller products for the product picker
     let availableProducts: [SlotProduct]
 
+    /// When true, the Product tab is hidden (buyer_raffle mode — Basecamp #9955991396)
+    let hideProductPicker: Bool
+
     @State private var selectedColor: String
     @State private var selectedIcon: String?
     @State private var selectedProductId: Int?
     @State private var tab: SlotTab = .color
 
-    init(slot: Binding<RandomizerSlot>, availableProducts: [SlotProduct]) {
+    init(slot: Binding<RandomizerSlot>, availableProducts: [SlotProduct], hideProductPicker: Bool = false) {
         self._slot = slot
         self.availableProducts = availableProducts
+        self.hideProductPicker = hideProductPicker
         self._selectedColor = State(initialValue: slot.wrappedValue.color)
         self._selectedIcon  = State(initialValue: slot.wrappedValue.icon)
         self._selectedProductId = State(initialValue: slot.wrappedValue.product_id)
+    }
+
+    /// Tabs shown in the segmented control (Product tab hidden for buyer_raffle)
+    private var visibleTabs: [SlotTab] {
+        hideProductPicker ? [.color, .icon] : SlotTab.allCases
     }
 
     enum SlotTab: String, CaseIterable {
@@ -42,7 +51,7 @@ struct SlotEditorSheet: View {
 
                 // Tab picker
                 Picker("Tab", selection: $tab) {
-                    ForEach(SlotTab.allCases, id: \.self) { t in
+                    ForEach(visibleTabs, id: \.self) { t in
                         Text(t.rawValue).tag(t)
                     }
                 }

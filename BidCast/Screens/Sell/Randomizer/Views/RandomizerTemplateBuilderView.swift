@@ -29,6 +29,11 @@ struct RandomizerTemplateBuilderView: View {
     @State private var showHud = false
     @State private var isSaving = false
 
+    // Buyer Raffle: single prize product (mirrored to all slots)
+    // Basecamp #9955991396 — hide per-slot picker, show one prize picker
+    @State private var buyerRaffleProductId: Int? = nil
+    @State private var showingPrizeProductPicker = false
+
     private let minSlots = 2
     private let maxSlots = 12
 
@@ -43,6 +48,12 @@ struct RandomizerTemplateBuilderView: View {
 
                     // Type picker
                     typeSectionView
+
+                    // Buyer Raffle: single prize product picker
+                    // Basecamp #9955991396
+                    if selectedType == .buyerRaffle {
+                        buyerRafflePrizeSection
+                    }
 
                     // Entry cost (shown for buyer_raffle and product_raffle)
                     if selectedType == .buyerRaffle || selectedType == .productRaffle {
@@ -75,14 +86,35 @@ struct RandomizerTemplateBuilderView: View {
             }
             .sheet(isPresented: $showingSlotEditor) {
                 if let idx = editingSlotIndex, idx < slots.count {
-                    SlotEditorSheet(slot: $slots[idx], availableProducts: availableProducts)
+                    SlotEditorSheet(
+                        slot: $slots[idx],
+                        availableProducts: availableProducts,
+                        hideProductPicker: selectedType == .buyerRaffle
+                    )
                 }
+            }
+            // Prize product picker for Buyer Raffle (Basecamp #9955991396)
+            .sheet(isPresented: $showingPrizeProductPicker) {
+                ProductPickerSheet(
+                    selectedProductId: $buyerRaffleProductId,
+                    availableProducts: availableProducts
+                )
             }
             .toast(isPresenting: $showHud) {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
             }
         }
         .onAppear { setup() }
+        // Mirror prize product whenever it changes (picker selection)
+        .onChange(of: buyerRaffleProductId) { _ in
+            mirrorBuyerRaffleProduct()
+        }
+        // Re-mirror when switching type TO buyer_raffle
+        .onChange(of: selectedType) { _ in
+            if selectedType == .buyerRaffle {
+                mirrorBuyerRaffleProduct()
+            }
+        }
     }
 
     // MARK: - Name Section
@@ -243,13 +275,89 @@ struct RandomizerTemplateBuilderView: View {
             let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 3)
             LazyVGrid(columns: columns, spacing: 10) {
                 ForEach(slots.indices, id: \.self) { idx in
-                    SlotCardView(slot: slots[idx], position: idx, product: productForSlot(slots[idx]))
-                        .onTapGesture {
-                            editingSlotIndex = idx
-                            showingSlotEditor = true
-                        }
+                    SlotCardView(
+                        slot: slots[idx],
+                        position: idx,
+                        product: selectedType == .buyerRaffle ? nil : productForSlot(slots[idx]),
+                        isBuyerSlot: selectedType == .buyerRaffle
+                    )
+                    .onTapGesture {
+                        editingSlotIndex = idx
+                        showingSlotEditor = true
+                    }
                 }
             }
+        }
+    }
+
+    // MARK: - Buyer Raffle helpers (Basecamp #9955991396)
+
+    /// Mirror the single prize product onto every slot. Only acts when type == .buyerRaffle.
+    private func mirrorBuyerRaffleProduct() {
+        guard selectedType == .buyerRaffle else { return }
+        for i in slots.indices {
+            slots[i].product_id = buyerRaffleProductId
+        }
+    }
+
+    /// Template-level prize product row shown only for buyer_raffle.
+    private var buyerRafflePrizeSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Prize Product")
+                .font(.custom(poppinsBold, size: 14))
+                .foregroundColor(.primary)
+
+            Text("One product for the whole raffle — goes to whichever buyer-slot wins.")
+                .font(.custom(poppinsRegular, size: 12))
+                .foregroundColor(.gray)
+
+            Button {
+                showingPrizeProductPicker = true
+            } label: {
+                HStack(spacing: 12) {
+                    if let pid = buyerRaffleProductId,
+                       let prod = availableProducts.first(where: { $0.id == pid }) {
+                        AsyncImage(url: prod.thumbnailURL) { img in
+                            img.resizable().scaledToFill()
+                        } placeholder: {
+                            Color.gray.opacity(0.15)
+                        }
+                        .frame(width: 40, height: 40)
+                        .cornerRadius(8)
+                        .clipped()
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(prod.title ?? "Product #\(pid)")
+                                .font(.custom(poppinsBold, size: 13))
+                                .foregroundColor(.primary)
+                                .lineLimit(1)
+                            if let price = prod.pricing {
+                                Text("$\(price)")
+                                    .font(.custom(poppinsRegular, size: 11))
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                    } else {
+                        Image(systemName: "photo.badge.plus")
+                            .font(.system(size: 20))
+                            .foregroundColor(.defaultTheme)
+                            .frame(width: 40, height: 40)
+
+                        Text("Select prize product")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.defaultTheme)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray.opacity(0.5))
+                        .font(.system(size: 12, weight: .semibold))
+                }
+                .padding(12)
+                .background(Color.white)
+                .cornerRadius(10)
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -271,6 +379,10 @@ struct RandomizerTemplateBuilderView: View {
                 slots = existingSlots
             } else {
                 generateDefaultSlots()
+            }
+            // For buyer_raffle edit: extract single prize product from slot[0]
+            if t.randomizerType == .buyerRaffle, let firstSlot = t.slots?.first {
+                buyerRaffleProductId = firstSlot.product_id
             }
         } else {
             generateDefaultSlots()
@@ -316,6 +428,11 @@ struct RandomizerTemplateBuilderView: View {
 
         // Re-index positions
         for i in slots.indices { slots[i].position = i }
+
+        // Mirror prize product when slot count changes in buyer_raffle mode
+        if selectedType == .buyerRaffle {
+            mirrorBuyerRaffleProduct()
+        }
     }
 
     private func saveTemplate() {
@@ -324,6 +441,11 @@ struct RandomizerTemplateBuilderView: View {
             hudMsg = "Please enter a template name"
             showHud = true
             return
+        }
+
+        // Mirror prize product to all slots before building the save payload
+        if selectedType == .buyerRaffle {
+            mirrorBuyerRaffleProduct()
         }
 
         isSaving = true
@@ -361,6 +483,8 @@ struct SlotCardView: View {
     let slot: RandomizerSlot
     let position: Int
     let product: SlotProduct?
+    /// When true, label shows "Buyer N" and product overlay is hidden (buyer_raffle mode)
+    var isBuyerSlot: Bool = false
 
     var body: some View {
         VStack(spacing: 6) {
@@ -373,7 +497,8 @@ struct SlotCardView: View {
                     if let icon = slot.icon {
                         Text(icon).font(.system(size: 24))
                     }
-                    if let prod = product, let title = prod.title {
+                    // Hide product name overlay for buyer_raffle (prize is shown at template level)
+                    if !isBuyerSlot, let prod = product, let title = prod.title {
                         Text(title)
                             .font(.custom(poppinsRegular, size: 9))
                             .foregroundColor(.white.opacity(0.9))
@@ -383,9 +508,111 @@ struct SlotCardView: View {
                 }
             }
 
-            Text("Slot \(position + 1)")
+            Text(isBuyerSlot ? "Buyer \(position + 1)" : "Slot \(position + 1)")
                 .font(.custom(poppinsRegular, size: 11))
                 .foregroundColor(.gray)
+        }
+    }
+}
+
+// MARK: - ProductPickerSheet
+// Basecamp #9955991396 — standalone product picker for buyer_raffle prize product
+
+struct ProductPickerSheet: View {
+
+    @Environment(\.dismiss) var dismiss
+    @Binding var selectedProductId: Int?
+    let availableProducts: [SlotProduct]
+
+    var body: some View {
+        NavigationView {
+            List {
+                // None option
+                Button {
+                    selectedProductId = nil
+                    dismiss()
+                } label: {
+                    HStack {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.gray.opacity(0.1))
+                            .frame(width: 44, height: 44)
+                            .overlay(Image(systemName: "minus.circle").foregroundColor(.gray))
+                        Text("None")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.primary)
+                        Spacer()
+                        if selectedProductId == nil {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.defaultTheme)
+                        }
+                    }
+                    .padding(.vertical, 6)
+                }
+                .buttonStyle(.plain)
+
+                if availableProducts.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "tray")
+                            .font(.system(size: 32))
+                            .foregroundColor(.gray.opacity(0.4))
+                        Text("No products available.\nCreate products first in your inventory.")
+                            .font(.custom(poppinsRegular, size: 13))
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(40)
+                    .listRowSeparator(.hidden)
+                } else {
+                    ForEach(availableProducts) { product in
+                        Button {
+                            selectedProductId = product.id
+                            dismiss()
+                        } label: {
+                            HStack(spacing: 12) {
+                                AsyncImage(url: product.thumbnailURL) { img in
+                                    img.resizable().scaledToFill()
+                                } placeholder: {
+                                    Color.gray.opacity(0.15)
+                                }
+                                .frame(width: 44, height: 44)
+                                .cornerRadius(8)
+                                .clipped()
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(product.title ?? "Unnamed Product")
+                                        .font(.custom(poppinsBold, size: 13))
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                    if let price = product.pricing {
+                                        Text("$\(price)")
+                                            .font(.custom(poppinsRegular, size: 12))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+
+                                Spacer()
+
+                                if selectedProductId == product.id {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.defaultTheme)
+                                }
+                            }
+                            .padding(.vertical, 8)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Select Prize Product")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") { dismiss() }
+                        .foregroundColor(.defaultTheme)
+                }
+            }
         }
     }
 }
