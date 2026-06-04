@@ -210,18 +210,40 @@ extension AppDelegate {
             }
         }
 
+        // #9960387225 — Push notification tap-through for all notification types.
+        // Each case below posts an NSNotification that TabbarScreen (or ActivityScreen)
+        // observes to switch to the correct tab/screen.
+        //
+        // Backend data-key reference (confirmed from Laravel ApiController +
+        // InquiryController + bidcast-node/notification.js):
+        //   Live Room Started   room_id, sender_id
+        //   message             sender_id, sender_name, sender_imagee
+        //   inquiry_message     thread_id, sender_id
+        //   bid                 bid_id, product_id, sender_id
+        //   bid_won             bid_id, product_id, show_id
+        //   offer_received      offer_id, product_id, sender_id
+        //   offer_accepted /    offer_id, product_id, sender_id
+        //     offer_declined
+        //   purchase            order_id, product_id, sender_id
+        //   sold                order_id, product_id, sender_id
+        //   cancellation_*      order_id, product_id, sender_id
+        //   cohost_invite       cohost_invite_id, schedule_show_id, show_title
+        //   credited/debited    DB-only, no FCM push (handled defensively)
         switch type {
+
+        // ── Peer DM chat ──────────────────────────────────────────────────
         case "message":
-            // Firebase peer-DM — existing handler (observer wiring is dead;
-            // left intact to avoid regression; real routing replaced by below).
+            // Switches to Activity tab; existing observer in ActivityScreen
+            // wires the DM list.
             DispatchQueue.main.async {
-                NotificationCenter.default.post(name: NSNotification.Name("NavToActivityScreen"), object: nil)
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("NavToActivityScreen"), object: nil)
             }
 
+        // ── Buyer↔Seller inquiry thread ─────────────────────────────────
         case "inquiry_message":
             // Trey QA 2026-05-31: buyer↔seller REST inquiry deep-link.
-            // Push payload carries data.type="inquiry_message" + data.thread_id (Int or String).
-            // Route to InquiryThreadView for that thread via DeepLinkManager.
+            // Push payload carries data.type="inquiry_message" + data.thread_id.
             let rawThreadId = userInfo["thread_id"]
             let threadId: Int?
             if let intId = rawThreadId as? Int {
@@ -233,15 +255,12 @@ extension AppDelegate {
             }
             if let tid = threadId {
                 DispatchQueue.main.async {
-                    // Switch Activity tab + open thread via DeepLinkManager.
-                    // TabbarScreen observes deepLinkManager.$inquiryThreadId.
                     NotificationCenter.default.post(
                         name: NSNotification.Name("NavToInquiryThread"),
                         object: tid
                     )
                 }
             } else {
-                // No thread_id in payload — fall back to inbox (Activity tab)
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(
                         name: NSNotification.Name("NavToInquiryInbox"),
@@ -249,6 +268,82 @@ extension AppDelegate {
                     )
                 }
             }
+
+        // ── Live room ───────────────────────────────────────────────────
+        // BUG FIX: was routing to a generic screen.  Now routes to Home tab
+        // with the room_id so HomeViewScreen can open the live viewer.
+        // Context: a buyer tapping this notification is a VIEWER; the live
+        // stream viewer is opened from the Home tab by passing room_id.
+        case "Live Room Started":
+            let roomIdRaw = userInfo["room_id"]
+            let roomId: String
+            if let r = roomIdRaw as? String { roomId = r }
+            else if let r = roomIdRaw as? Int { roomId = String(r) }
+            else { roomId = "" }
+            guard !roomId.isEmpty else { break }
+            DispatchQueue.main.async {
+                // "NavToLiveRoom" — TabbarScreen switches to Home tab and
+                // passes the room_id to HomeViewScreen via selectedShowId.
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("NavToLiveRoom"),
+                    object: roomId
+                )
+            }
+
+        // ── Bid placed (seller receives) / bid won (buyer wins) ──────────
+        // Routes to Activity tab → Bids segment (index 1).
+        case "bid", "bid_won", "bid_placed":
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("NavToActivityTab"),
+                    object: 1   // Segment.bid.index
+                )
+            }
+
+        // ── Offer received / accepted / declined ───────────────────────
+        // Routes to Activity tab → Offers segment (index 2).
+        // Backend sends "offer_received", "offer_accepted", "offer_declined".
+        case _ where type.hasPrefix("offer_") || type == "offer":
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("NavToActivityTab"),
+                    object: 2   // Segment.offer.index
+                )
+            }
+
+        // ── Purchase / sale / cancellation / order status ──────────────
+        // Routes to Activity tab → Purchases segment (index 3).
+        // Note: OrderStatusScreen requires a MyOrderModel binding, so we route
+        // to the Purchases list rather than deep-linking to a specific order.
+        // A future improvement can carry order_id here and open OrderStatusScreen
+        // directly once ActivityScreen exposes a push-driven orderId binding.
+        case "purchase", "sold",
+             "cancellation_requested", "cancellation_approved", "cancellation_rejected",
+             "order_placed", "order_confirmed", "Order Status Updated":
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("NavToActivityTab"),
+                    object: 3   // Segment.purchases.index
+                )
+            }
+
+        // ── Co-host invite ───────────────────────────────────────────
+        // FOLLOW-UP: No dedicated "co-host invite accept" screen exists yet.
+        // Schedule show id is in userInfo["schedule_show_id"].
+        // When an invite-acceptance screen is built, route here.
+        case "cohost_invite":
+            // Fall through to default (notification inbox)
+            break
+
+        // ── Wallet credited / debited ─────────────────────────────
+        // These are DB / transaction-history only; no FCM push confirmed.
+        // Handled defensively: no routing action needed.
+        case "credited", "debited":
+            break
+
+        // ── Account onboarding / promote show (DB-only, no FCM push) ──
+        case "account_onboarding", "promote_show":
+            break
 
         default:
             break

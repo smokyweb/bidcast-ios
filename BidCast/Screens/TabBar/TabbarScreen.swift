@@ -292,6 +292,36 @@ struct TabbarScreen: View {
                 tabBarRouter.selectedTab = 3
                 resetNavigation(for: 3)
             }
+            // #9960387225 — Live room push tap: switch to Home tab and pass
+            // the room_id to HomeViewScreen so it can open the live viewer.
+            .onReceive(
+                NotificationCenter.default.publisher(for: NSNotification.Name("NavToLiveRoom"))
+            ) { notification in
+                guard let roomId = notification.object as? String, !roomId.isEmpty else { return }
+                tabBarRouter.selectedTab = 0
+                resetNavigation(for: 0)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    deepLinkManager.openLiveShow(id: roomId)
+                }
+            }
+            // #9960387225 — Activity tab + segment routing for bid / offer /
+            // purchase push taps.  Object is the Segment index (Int).
+            // This mirrors the NavToInquiryThread flow: switch to Activity tab,
+            // then post SetActivityTab after a short delay so ActivityScreen
+            // is mounted and its .onReceive observer is subscribed.
+            .onReceive(
+                NotificationCenter.default.publisher(for: NSNotification.Name("NavToActivityTab"))
+            ) { notification in
+                guard let tabIndex = notification.object as? Int else { return }
+                tabBarRouter.selectedTab = 3
+                resetNavigation(for: 3)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("SetActivityTab"),
+                        object: tabIndex
+                    )
+                }
+            }
             // Navigation destinations
             .navigationDestination(isPresented: $navigateTogetStarted) {
                             GetStartedScreen(backToTabBar: $navigateTogetStarted)

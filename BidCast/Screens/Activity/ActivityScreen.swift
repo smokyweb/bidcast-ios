@@ -400,6 +400,17 @@ struct ActivityScreen: View {
                 navigateToInquiryInbox = true
             }
         }
+        // #9960387225 — Push tap-through for bid / offer / purchase types.
+        // TabbarScreen posts SetActivityTab (with Segment index as Int object)
+        // after switching to the Activity tab so this view is mounted.
+        .onReceive(
+            NotificationCenter.default.publisher(for: NSNotification.Name("SetActivityTab"))
+        ) { notification in
+            guard let tabIndex = notification.object as? Int else { return }
+            let segment = Segment.segment(at: tabIndex) ?? .message
+            selectedTabIndex = tabIndex
+            selected = segment
+        }
         .padding(.bottom, -27)
         .onDisappear {
             UIScrollView.appearance().bounces = true
