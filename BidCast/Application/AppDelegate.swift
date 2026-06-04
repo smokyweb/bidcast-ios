@@ -190,17 +190,26 @@ extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate {
                 }
             }
         }
-        self.redirectNotification(with: userInfo) // ✅ Pass directly
+        // #9960387225 — Push tap-through. This completion-handler delegate is the
+        // one iOS actually invokes on a notification TAP (when both this and the
+        // async didReceive variant exist, UIKit calls THIS one). Previously it only
+        // called redirectNotification(), which posts a generic event with NO
+        // type-based routing — so every tap fell through to the default screen
+        // (home). Route by type here so cancellation→orders, offer→Offers, etc.
+        self.routeNotificationByType(userInfo)
+        self.redirectNotification(with: userInfo)
         completionHandler()
     }
 }
 
 //MARK: AppDelegate.
 extension AppDelegate {
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-        let userInfo = response.notification.request.content.userInfo
-        print("Did Receive User Info: \(userInfo)")
-
+    // #9960387225 — Shared push tap-through router. Called from the active
+    // completion-handler didReceive delegate so taps actually route by type.
+    // (Previously this switch lived only in an `async didReceive` variant that
+    // UIKit never invokes when the completion-handler variant is also present,
+    // making the whole routing dead code — every tap landed on home.)
+    func routeNotificationByType(_ userInfo: [AnyHashable: Any]) {
         guard let type = userInfo["type"] as? String else { return }
         if let filePath = userInfo["filePath"] as? String {
             let fileURL = URL(fileURLWithPath: filePath)
