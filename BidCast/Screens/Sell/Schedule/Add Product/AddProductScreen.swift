@@ -864,14 +864,31 @@ struct ProductItemCard: View {
                     .font(.custom(poppinsMedium, size: 13))
                     .foregroundColor(.secondary)
 
-                HStack(spacing: 4) {
-                    Text("Qty:")
-                        .font(.custom(poppinsRegular, size: 12))
-                        .foregroundColor(.secondary)
+                // Basecamp #9963271582 (2026-06-04): show AVAILABLE quantity
+                // (listed - purchased), not the raw listed quantity, so the card
+                // agrees with the server's sold-out rule at schedule time. When a
+                // product is sold out, surface a clear "Sold out" badge instead of a
+                // misleading positive number.
+                if product.isSoldOut {
+                    HStack(spacing: 4) {
+                        Text("Qty:")
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(.secondary)
 
-                    Text(product.quantity ?? "0")
-                        .font(.custom(poppinsSemiBold, size: 12))
-                        .foregroundColor(.primary)
+                        Text("Sold out")
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.red)
+                    }
+                } else {
+                    HStack(spacing: 4) {
+                        Text("Qty:")
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(.secondary)
+
+                        Text("\(product.availableQuantity)")
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.primary)
+                    }
                 }
             }
 
