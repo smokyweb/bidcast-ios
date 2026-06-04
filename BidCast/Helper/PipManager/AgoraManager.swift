@@ -384,6 +384,7 @@ class AgoraManager: NSObject, ObservableObject {
                 // we wait for didJoinedOfUid which delivers the real uid.
             }
         }
+    }
     
     func setupVideoFrameDelegate() {
         // Only call this when PiP is actually needed
