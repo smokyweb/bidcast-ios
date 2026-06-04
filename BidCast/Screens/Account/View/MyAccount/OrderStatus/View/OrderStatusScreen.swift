@@ -141,9 +141,25 @@ struct OrderStatusScreen: View {
                     
                     // Basecamp #9934033253 (2026-05-29): order-cancellation flow.
                     if let order = productDetail {
+                        // Basecamp #9934033253 (2026-06-04 return): `comeFrom == "myOrder"`
+                        // is overloaded — BOTH the seller's MyOrdersScreen and the BUYER's
+                        // Activity → Purchases → OrderTrackingView path pass comeFrom: "myOrder".
+                        // Deriving isSeller from comeFrom therefore wrongly marked the BUYER as
+                        // the seller, hiding the "Request Cancellation" button + reason sheet
+                        // (Trey: "cancellation request doesn't give user entry field"). Determine
+                        // the real role by comparing the logged-in user to the order's buyer id
+                        // (order.user_id). If we ARE the buyer on this order, we're not the seller.
+                        let buyerOnOrder = order.userID
+                        let isSellerForOrder: Bool = {
+                            guard let buyerId = buyerOnOrder else {
+                                // Fall back to the old behaviour only when we can't tell.
+                                return comeFrom == "myOrder"
+                            }
+                            return UserDefaults.userId != buyerId
+                        }()
                         OrderCancellationSection(
                             order: order,
-                            isSeller: comeFrom == "myOrder",
+                            isSeller: isSellerForOrder,
                             isWorking: workflowVM.isWorking,
                             onRequestCancel: { showCancelReasonSheet = true },
                             onApprove: { approveCancellation() },
