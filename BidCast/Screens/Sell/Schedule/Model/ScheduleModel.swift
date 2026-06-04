@@ -194,6 +194,26 @@ struct ProductDataModel1: Codable, Identifiable {
 
     var category: ProductCategory?
     var user: ProductUser?
+
+    // Basecamp #9963271582 (2026-06-04): the seller-facing "Qty" shown on cards must be
+    // AVAILABLE stock (listed quantity minus units already purchased), NOT the raw listed
+    // `quantity`. The server marks a product sold-out for scheduling when
+    // `quantity <= purchased_quantity` (ApiController scheduleShow), so a product can show a
+    // positive raw quantity yet still be rejected as sold-out. Mirror the server rule here so
+    // the card never disagrees with the scheduling error.
+    var availableQuantity: Int {
+        let listed = Int(quantity ?? "0") ?? 0
+        let purchased = Int(purchasedQuantity ?? "0") ?? 0
+        return max(0, listed - purchased)
+    }
+
+    // True when there is no available stock left to sell — matches the server's
+    // `quantity <= purchased_quantity` sold-out determination used at schedule time.
+    var isSoldOut: Bool {
+        let listed = Int(quantity ?? "0") ?? 0
+        let purchased = Int(purchasedQuantity ?? "0") ?? 0
+        return listed <= purchased
+    }
     
     
 //    enum CodingKeys: String, CodingKey {
