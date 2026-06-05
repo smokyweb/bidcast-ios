@@ -78,6 +78,7 @@ struct RandomizerSlot: Codable, Identifiable {
     var position: Int
     var color: String
     var icon: String?
+    var image: String?        // #9960173707 Phase 4: custom slot image url
     var product_id: Int?
     var product: SlotProduct?
 
@@ -85,13 +86,14 @@ struct RandomizerSlot: Codable, Identifiable {
     var localId: UUID = UUID()
 
     enum CodingKeys: String, CodingKey {
-        case id, template_id, position, color, icon, product_id, product
+        case id, template_id, position, color, icon, image, product_id, product
     }
 
-    init(position: Int, color: String = "#339AF0", icon: String? = nil, product_id: Int? = nil) {
+    init(position: Int, color: String = "#339AF0", icon: String? = nil, image: String? = nil, product_id: Int? = nil) {
         self.position = position
         self.color = color
         self.icon = icon
+        self.image = image
         self.product_id = product_id
     }
 }
@@ -116,6 +118,8 @@ struct RandomizerTemplate: Codable, Identifiable {
     var name: String
     var type: String
     var entry_cost: Double?
+    var prize_product_id: Int?       // #9960173707 Phase 4: buyer_raffle single prize product
+    var prize_product: SlotProduct?  // optional embedded prize product detail
     var slot_count: Int
     var slots: [RandomizerSlot]?
     var created_at: String?
@@ -149,6 +153,7 @@ struct RandomizerTemplateRequest: Encodable {
     var name: String
     var type: String
     var entry_cost: Double?
+    var prize_product_id: Int?    // #9960173707 Phase 4: buyer_raffle prize product
     var slot_count: Int
     var slots: [RandomizerSlotRequest]
 }
@@ -157,12 +162,34 @@ struct RandomizerSlotRequest: Encodable {
     var position: Int
     var color: String
     var icon: String?
+    var image: String?           // #9960173707 Phase 4: custom slot image url
     var product_id: Int?
 }
 
 // MARK: - Show-attach request
 struct AttachTemplateRequest: Encodable {
     var template_id: Int
+}
+
+// MARK: - Single-detach request (#9960173707 Phase 4: multiple-per-show)
+struct DetachTemplateRequest: Encodable {
+    var template_id: Int
+}
+
+// MARK: - Show-scoped attached-templates response (#9960173707 Phase 4)
+struct ShowTemplatesResponse: Codable {
+    var status: String?
+    var success: Bool?
+    var data: [RandomizerTemplate]?
+}
+
+// MARK: - Slot image upload response (#9960173707 Phase 4)
+struct SlotImageUploadResponse: Codable {
+    var status: String?
+    var success: Bool?
+    var url: String?
+    var path: String?
+    var message: String?
 }
 
 // MARK: - Socket payload extensions for template-based wheel
@@ -181,6 +208,7 @@ struct TemplateWheelSlot: Codable, Identifiable {
     var position: Int
     var color: String
     var icon: String?
+    var image: String?        // #9960173707 Phase 4: custom slot image url
     var product_id: Int?
     var product: SlotProduct?
 
@@ -191,5 +219,9 @@ struct TemplateWheelSlot: Codable, Identifiable {
             return title
         }
         return icon ?? "🎁"
+    }
+    var imageURL: URL? {
+        guard let image = image, !image.isEmpty else { return nil }
+        return URL(string: image)
     }
 }

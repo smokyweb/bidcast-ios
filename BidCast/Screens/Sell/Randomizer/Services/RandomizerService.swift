@@ -101,10 +101,53 @@ final class RandomizerService: ObservableObject {
         let _ = try await session.data(for: req)
     }
 
-    // MARK: - Detach template from show
+    // MARK: - Detach template from show (all)
     func detachTemplate(showId: Int) async throws {
         let req = try makeRequest(path: "/shows/\(showId)/randomizer-template", method: "DELETE")
         let _ = try await session.data(for: req)
+    }
+
+    // MARK: - Detach ONE template from show (#9960173707 Phase 4: multiple-per-show)
+    func detachOneTemplate(showId: Int, templateId: Int) async throws {
+        let body = DetachTemplateRequest(template_id: templateId)
+        let req = try makeRequest(path: "/shows/\(showId)/randomizer-template", method: "DELETE", body: body)
+        let _ = try await session.data(for: req)
+    }
+
+    // MARK: - List templates attached to a show (#9960173707 Phase 4)
+    func listShowTemplates(showId: Int) async throws -> [RandomizerTemplate] {
+        let req = try makeRequest(path: "/shows/\(showId)/randomizer-templates", method: "GET")
+        let (data, _) = try await session.data(for: req)
+        let decoded = try JSONDecoder().decode(ShowTemplatesResponse.self, from: data)
+        return decoded.data ?? []
+    }
+
+    // MARK: - Release ALL randomizer products for a show (#9960173707 Phase 4)
+    func releaseShowProducts(showId: Int) async throws {
+        let req = try makeRequest(path: "/shows/\(showId)/randomizer/release-products", method: "POST")
+        let _ = try await session.data(for: req)
+    }
+
+    // MARK: - Upload a custom slot image (#9960173707 Phase 4)
+    // Multipart field name "image"; returns the hosted url to store on the slot.
+    func uploadSlotImage(imageData: Data, filename: String = "slot.jpg", mimeType: String = "image/jpeg") async throws -> String {
+        guard let url = URL(string: "\(baseURL)/randomizer/slot-image") else { throw URLError(.badURL) }
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue(authHeader, forHTTPHeaderField: "Authorization")
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        req.httpBody = body
+        let (data, _) = try await session.data(for: req)
+        let decoded = try JSONDecoder().decode(SlotImageUploadResponse.self, from: data)
+        guard let urlString = decoded.url, !urlString.isEmpty else { throw URLError(.cannotParseResponse) }
+        return urlString
     }
 
     // MARK: - List seller's products for slot mapping

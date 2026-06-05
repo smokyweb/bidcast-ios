@@ -380,9 +380,10 @@ struct RandomizerTemplateBuilderView: View {
             } else {
                 generateDefaultSlots()
             }
-            // For buyer_raffle edit: extract single prize product from slot[0]
-            if t.randomizerType == .buyerRaffle, let firstSlot = t.slots?.first {
-                buyerRaffleProductId = firstSlot.product_id
+            // For buyer_raffle edit: prefer the template-level prize_product_id
+            // (#9960173707 Phase 4), fall back to slot[0].product_id for older templates.
+            if t.randomizerType == .buyerRaffle {
+                buyerRaffleProductId = t.prize_product_id ?? t.slots?.first?.product_id
             }
         } else {
             generateDefaultSlots()
@@ -451,12 +452,15 @@ struct RandomizerTemplateBuilderView: View {
         isSaving = true
         let cost = Double(entryCost.trimmingCharacters(in: .whitespaces))
         let requestSlots = slots.map { s in
-            RandomizerSlotRequest(position: s.position, color: s.color, icon: s.icon, product_id: s.product_id)
+            RandomizerSlotRequest(position: s.position, color: s.color, icon: s.icon, image: s.image, product_id: s.product_id)
         }
+        // #9960173707 Phase 4: send the buyer_raffle prize as the template-level field.
+        let prizeId: Int? = (selectedType == .buyerRaffle) ? buyerRaffleProductId : nil
         let body = RandomizerTemplateRequest(
             name: trimmedName,
             type: selectedType.rawValue,
             entry_cost: cost,
+            prize_product_id: prizeId,
             slot_count: slotCount,
             slots: requestSlots
         )
@@ -493,8 +497,19 @@ struct SlotCardView: View {
                     .fill(Color(hex: slot.color))
                     .frame(height: 64)
 
+                // #9960173707 Phase 4: custom slot image fills the card when set.
+                if let img = slot.image, !img.isEmpty, let url = URL(string: img) {
+                    AsyncImage(url: url) { image in
+                        image.resizable().scaledToFill()
+                    } placeholder: {
+                        Color.clear
+                    }
+                    .frame(height: 64)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+
                 VStack(spacing: 2) {
-                    if let icon = slot.icon {
+                    if slot.image == nil || slot.image?.isEmpty == true, let icon = slot.icon {
                         Text(icon).font(.system(size: 24))
                     }
                     // Hide product name overlay for buyer_raffle (prize is shown at template level)

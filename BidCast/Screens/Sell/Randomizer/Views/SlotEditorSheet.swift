@@ -4,6 +4,7 @@
 
 import SwiftUI
 import AlertToast
+import PhotosUI
 
 struct SlotEditorSheet: View {
 
@@ -21,6 +22,12 @@ struct SlotEditorSheet: View {
     @State private var selectedProductId: Int?
     @State private var tab: SlotTab = .color
 
+    // #9960173707 Phase 4: custom slot image
+    @State private var selectedImageURL: String?
+    @State private var photoItem: PhotosPickerItem?
+    @State private var isUploadingImage = false
+    @State private var uploadError: String?
+
     init(slot: Binding<RandomizerSlot>, availableProducts: [SlotProduct], hideProductPicker: Bool = false) {
         self._slot = slot
         self.availableProducts = availableProducts
@@ -28,16 +35,18 @@ struct SlotEditorSheet: View {
         self._selectedColor = State(initialValue: slot.wrappedValue.color)
         self._selectedIcon  = State(initialValue: slot.wrappedValue.icon)
         self._selectedProductId = State(initialValue: slot.wrappedValue.product_id)
+        self._selectedImageURL = State(initialValue: slot.wrappedValue.image)
     }
 
     /// Tabs shown in the segmented control (Product tab hidden for buyer_raffle)
     private var visibleTabs: [SlotTab] {
-        hideProductPicker ? [.color, .icon] : SlotTab.allCases
+        hideProductPicker ? [.color, .icon, .image] : SlotTab.allCases
     }
 
     enum SlotTab: String, CaseIterable {
         case color   = "Color"
         case icon    = "Icon"
+        case image   = "Image"
         case product = "Product"
     }
 
@@ -68,6 +77,8 @@ struct SlotEditorSheet: View {
                         colorGrid
                     case .icon:
                         iconGrid
+                    case .image:
+                        imagePickerSection
                     case .product:
                         productList
                     }
@@ -83,9 +94,11 @@ struct SlotEditorSheet: View {
                     Button("Done") {
                         slot.color = selectedColor
                         slot.icon  = selectedIcon
+                        slot.image = selectedImageURL
                         slot.product_id = selectedProductId
                         dismiss()
                     }
+                    .disabled(isUploadingImage)
                     .font(.custom(poppinsBold, size: 15))
                     .foregroundColor(.defaultTheme)
                 }
@@ -100,8 +113,20 @@ struct SlotEditorSheet: View {
                 .fill(Color(hex: selectedColor))
                 .frame(width: 60, height: 60)
                 .overlay(
-                    Text(selectedIcon ?? "")
-                        .font(.system(size: 28))
+                    Group {
+                        // #9960173707 Phase 4: show custom image if set, else emoji icon
+                        if let img = selectedImageURL, !img.isEmpty, let url = URL(string: img) {
+                            AsyncImage(url: url) { image in
+                                image.resizable().scaledToFill()
+                            } placeholder: {
+                                Text(selectedIcon ?? "").font(.system(size: 28))
+                            }
+                            .frame(width: 60, height: 60)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                        } else {
+                            Text(selectedIcon ?? "").font(.system(size: 28))
+                        }
+                    }
                 )
                 .shadow(radius: 4)
 
@@ -205,6 +230,102 @@ struct SlotEditorSheet: View {
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
+        }
+    }
+
+    // MARK: - Image Picker (#9960173707 Phase 4)
+    private var imagePickerSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Custom Slot Image (optional)")
+                .font(.custom(poppinsBold, size: 15))
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+
+            Text("Add a custom image for this slot. Overrides the emoji icon on the wheel.")
+                .font(.custom(poppinsRegular, size: 12))
+                .foregroundColor(.gray)
+                .padding(.horizontal, 16)
+
+            if let img = selectedImageURL, !img.isEmpty, let url = URL(string: img) {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFit()
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 160)
+                .background(Color.gray.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal, 16)
+            }
+
+            HStack(spacing: 12) {
+                PhotosPicker(selection: $photoItem, matching: .images) {
+                    HStack {
+                        if isUploadingImage {
+                            ProgressView().padding(.trailing, 4)
+                            Text("Uploading…")
+                        } else {
+                            Image(systemName: "photo.on.rectangle")
+                            Text(selectedImageURL == nil ? "Choose Image" : "Replace Image")
+                        }
+                    }
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.defaultTheme)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .disabled(isUploadingImage)
+
+                if selectedImageURL != nil {
+                    Button {
+                        selectedImageURL = nil
+                        photoItem = nil
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red)
+                            .frame(width: 48, height: 48)
+                            .background(Color.red.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .disabled(isUploadingImage)
+                }
+            }
+            .padding(.horizontal, 16)
+
+            if let err = uploadError {
+                Text(err)
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 16)
+            }
+
+            Spacer().frame(height: 24)
+        }
+        .onChange(of: photoItem) { newItem in
+            guard let newItem = newItem else { return }
+            uploadError = nil
+            isUploadingImage = true
+            Task {
+                do {
+                    guard let data = try await newItem.loadTransferable(type: Data.self) else {
+                        await MainActor.run { isUploadingImage = false; uploadError = "Could not read image." }
+                        return
+                    }
+                    let url = try await RandomizerService.shared.uploadSlotImage(imageData: data)
+                    await MainActor.run {
+                        selectedImageURL = url
+                        isUploadingImage = false
+                    }
+                } catch {
+                    await MainActor.run {
+                        isUploadingImage = false
+                        uploadError = "Upload failed. Please try again."
+                    }
+                }
+            }
         }
     }
 
