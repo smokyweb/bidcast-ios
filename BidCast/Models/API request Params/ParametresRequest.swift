@@ -594,6 +594,12 @@ struct ProductOrderListingRequest : Encodable{
     var search: String?
 }
 
+struct SellerSoldOrdersRequest: Encodable {
+    var user_id: String
+    var page: Int
+    var search: String?
+}
+
 struct ProductPurchaseDetailRequest : Encodable{
     var shipping_id : Int
     var product_id : Int

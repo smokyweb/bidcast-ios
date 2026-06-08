@@ -70,6 +70,7 @@ enum APIEndPoint{
     case getTotalRating(param : GetTotalRatingRequest)
     case addRating(param : AddRatingRequest)
     case productOrderListing(param : ProductOrderListingRequest)
+    case getSellerSoldOrders(param: SellerSoldOrdersRequest)
     case productPurchaseDetail(param : ProductPurchaseDetailRequest)
     case productOrder(param : ProductOrderRequest)
     case productOrderDetails(param : ProductOrderDetailRequest)
@@ -206,6 +207,7 @@ extension APIEndPoint: EndPointType {
                 .productPurchaseDetail,
                 .productOrder,
                 .productOrderListing,
+                .getSellerSoldOrders,
                 .productOrderDetails,
                 .getPurchasedOrderDetails,
                 .getMyPurchasedOrder,
@@ -357,6 +359,8 @@ extension APIEndPoint: EndPointType {
             return "get-my-schedule-show?=\(param.type ?? "")&page=\(param.page)"
         case .productOrderListing:
             return "get-my-orders"
+        case .getSellerSoldOrders:
+            return "get-seller-sold-orders"
         case .productPurchaseDetail:
             return "checkout-product-detail"
         case .productOrder:
@@ -729,6 +733,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .productOrderListing:
             return .post
+        case .getSellerSoldOrders:
+            return .post
         case .productPurchaseDetail:
             return .post
         case .productOrder:
@@ -1067,6 +1073,8 @@ extension APIEndPoint: EndPointType {
             
         case .productOrderListing(param: let param):
             return param
+        case .getSellerSoldOrders(param: let param):
+            return param
         case .productPurchaseDetail(param: let param):
             return param
         case .productOrder(param: let param):
@@ -1400,6 +1408,8 @@ extension APIEndPoint: EndPointType {
         case .addRating:
             return nil
         case .productOrderListing:
+            return nil
+        case .getSellerSoldOrders:
             return nil
         case .productPurchaseDetail:
             return nil

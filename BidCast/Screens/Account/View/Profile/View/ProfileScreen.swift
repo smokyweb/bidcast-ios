@@ -123,6 +123,7 @@ struct ProfileScreen: View {
     
     @State private var totalCount = 0
     @State var productData: [ProductDataModel1] = []
+    @State var soldOrders: [MyOrderModel] = []
     @State var searchText: String = ""
     
     @State var sellerInfo : SellerInfoResponse? = nil
@@ -291,6 +292,7 @@ struct ProfileScreen: View {
                                 searchText: $searchText,
                                 selectedIndex: $selectedIndex,
                                 products: $productData,
+                                soldOrders: $soldOrders,
                                 isLoading: isLoading,
                                 isFetchingMore: isFetchingMore,
                                 onSearch: { debouncedText in
@@ -312,6 +314,9 @@ struct ProfileScreen: View {
                                     productId = product.id ?? 0
                                 },
                                 onProductAppear: { index in
+                                    handlePagination(index: index)
+                                },
+                                onSoldOrderAppear: { index in
                                     handlePagination(index: index)
                                 }
                             )
@@ -1144,6 +1149,7 @@ struct ProfileShopSection: View {
     @Binding var searchText: String
     @Binding var selectedIndex: Int
     @Binding var products: [ProductDataModel1]
+    @Binding var soldOrders: [MyOrderModel]
 
     let isLoading: Bool
     let isFetchingMore: Bool
@@ -1152,8 +1158,10 @@ struct ProfileShopSection: View {
     let onTabChange: (Int) -> Void
     let onProductTap: (ProductDataModel1) -> Void
     let onProductAppear: (Int) -> Void
+    let onSoldOrderAppear: (Int) -> Void
 
     private let tabs = ["Auction", "Buy Now", "Sold"]
+    private var isSoldTab: Bool { selectedIndex == 2 }
 
     var body: some View {
         VStack(spacing: 18) {
@@ -1195,18 +1203,30 @@ struct ProfileShopSection: View {
                         PurchasesViewShimmerView()
                             .padding(.horizontal, 16)
                     }
-                } else if products.isEmpty {
+                } else if isSoldTab && soldOrders.isEmpty {
+                    NoDataView(message: "No Orders Found", yPosition: screenWidth / 3.5)
+                } else if !isSoldTab && products.isEmpty {
                     NoDataView(message: "No Product Found", yPosition: screenWidth / 3.5)
                 } else {
-                    ForEach(products.indices, id: \.self) { index in
-                        ProfileShopProductCard(product: products[index])
-                            .padding(.horizontal, 16)
-                            .onTapGesture {
-                                onProductTap(products[index])
-                            }
-                            .onAppear {
-                                onProductAppear(index)
-                            }
+                    if isSoldTab {
+                        ForEach(soldOrders.indices, id: \.self) { index in
+                            OrderCardView(order: soldOrders[index], showsCancellationActions: false)
+                                .padding(.horizontal, 16)
+                                .onAppear {
+                                    onSoldOrderAppear(index)
+                                }
+                        }
+                    } else {
+                        ForEach(products.indices, id: \.self) { index in
+                            ProfileShopProductCard(product: products[index])
+                                .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    onProductTap(products[index])
+                                }
+                                .onAppear {
+                                    onProductAppear(index)
+                                }
+                        }
                     }
                 }
 
@@ -1338,6 +1358,7 @@ extension ProfileScreen {
     
     private func resetShopData() {
         productData = []
+        soldOrders = []
         currentPage = 1
         canLoadMore = true
         isFetchingMore = false
@@ -1350,7 +1371,11 @@ extension ProfileScreen {
             isFetchingMore = false
             return
         }
-        
+
+        if selectedShopFilter == .sold {
+            fetchSellerSoldOrders(sellerId: sellerId, isLoaderShown: isLoaderShown)
+            return
+        }
         
         Task{
             await performAPICalls(
@@ -1389,7 +1414,7 @@ extension ProfileScreen {
     func handlePagination(index: Int) {
         guard canLoadMore, !isFetchingMore else { return }
         guard totalCount > (index + 1) else { return }
-        let thresholdIndex = productData.count - 1
+        let thresholdIndex = selectedShopFilter == .sold ? soldOrders.count - 1 : productData.count - 1
         if index == thresholdIndex {
             isFetchingMore = true
             currentPage += 1
@@ -1403,11 +1428,10 @@ extension ProfileScreen {
         if response?.status == "success"{
             let newItems = response?.data ?? []
             totalCount = response?.total ?? 0
-            let filteredItems = newItems.filter { $0.matchesProfileShopFilter(selectedShopFilter) }
             if newItems.isEmpty {
                 canLoadMore = false
             } else {
-                productData.append(contentsOf: filteredItems)
+                productData.append(contentsOf: newItems)
             }
             
         }else{
@@ -1416,6 +1440,61 @@ extension ProfileScreen {
                 icon: .alert,
                 title: "Error",
                 message: scheduleViewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
+            )
+            showError = true
+        }
+        isFetchingMore = false
+    }
+
+    func fetchSellerSoldOrders(sellerId: Int, isLoaderShown: Bool = true) {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: isLoaderShown,
+                onError: { error in
+                    canLoadMore = false
+                    isFetchingMore = false
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText: ""
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    sellerSoldOrdersSuccess()
+                }
+            ) {
+                let request = SellerSoldOrdersRequest(
+                    user_id: "\(sellerId)",
+                    page: currentPage,
+                    search: searchText
+                )
+                await viewModel.getSellerSoldOrders(parameters: request)
+            }
+        }
+    }
+
+    func sellerSoldOrdersSuccess() {
+        let response = viewModel.sellerSoldOrdersResponseDict
+        if response.status == "success" {
+            let newOrders = response.data ?? []
+            totalCount = response.total ?? 0
+            if newOrders.isEmpty {
+                canLoadMore = false
+            } else {
+                soldOrders.append(contentsOf: newOrders)
+            }
+        } else {
+            canLoadMore = false
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.errorMessage ?? response.message ?? "",
                 primaryBtnText: AppString.ok.localized,
                 secondaryBtnText:""
             )

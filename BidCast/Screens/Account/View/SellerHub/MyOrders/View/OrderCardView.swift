@@ -82,6 +82,7 @@ import SwiftUI
 // MARK: - Modern Order Card View
 struct OrderCardView: View {
     let order: MyOrderModel
+    var showsCancellationActions: Bool = true
     private var isProductSetOrder: Bool {
         order.productSet != nil
     }
@@ -143,7 +144,7 @@ struct OrderCardView: View {
             
             // Actual Image
             CustomProfileImage(
-                url: order.product?.thumbnail?.first ?? "",
+                url: order.product?.thumbnail?.first ?? order.product?.images?.first ?? "",
                 isCircular: false,
                 size: 100
             )
@@ -195,6 +196,11 @@ struct OrderCardView: View {
 
 
     private var displayPrice: String {
+        if let transactionTotal = order.transaction?.first?.total,
+           let amount = Double(transactionTotal) {
+            return amount.compactCurrency()
+        }
+
         if isProductSetOrder {
             return order.transaction?.first?.total?.toDouble?.compactCurrency() ?? "0.0"
         } else {
@@ -374,7 +380,7 @@ struct OrderCardView: View {
     // MARK: - Cancellation request block (seller)
     @ViewBuilder
     private var cancellationRequestBlock: some View {
-        if order.cancellationStatus?.lowercased() == "requested" {
+        if showsCancellationActions, order.cancellationStatus?.lowercased() == "requested" {
             VStack(alignment: .leading, spacing: 8) {
                 // Amber header with optional reason
                 HStack(alignment: .top, spacing: 6) {

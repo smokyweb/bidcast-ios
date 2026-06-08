@@ -17,6 +17,7 @@ final class ProfileViewModel: ObservableObject {
     @Published var getTotalRatingResponseDict: ResponseModal<TotalRating>?
     @Published var addRatingResponseDict: ResponseModal<AddRatigModel>?
     @Published var blockUserResponseDict: ResponseModal<BlockUserModel>?
+    @Published var sellerSoldOrdersResponseDict = ResponseModelOrder<[MyOrderModel]>()
     @Published var errorMessage: String? = nil
     @Published var requestType = ""
     @Published var getClipsResponseDict: ResponseModalPaginate<[GetClipModel]>?
@@ -134,6 +135,21 @@ final class ProfileViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Seller Sold Orders
+    func getSellerSoldOrders(parameters: SellerSoldOrdersRequest) async {
+        self.errorMessage?.removeAll()
+        self.requestType = "sellerSoldOrders"
+        do {
+            let response: ResponseModelOrder<[MyOrderModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getSellerSoldOrders(param: parameters),
+                header: true
+            )
+            self.sellerSoldOrdersResponseDict = response
+        } catch {
+            handle(error: error)
+        }
+    }
+
     // MARK: - getTotalRating
     func getTotalRating(parameters: GetTotalRatingRequest) async {
         self.errorMessage?.removeAll()
