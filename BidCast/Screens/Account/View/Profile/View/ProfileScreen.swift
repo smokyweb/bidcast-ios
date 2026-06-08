@@ -1434,11 +1434,11 @@ fileprivate extension ProductDataModel1 {
     func matchesProfileShopFilter(_ filter: ProfileShopFilter) -> Bool {
         switch filter {
         case .auction:
-            return !isProfileShopSold && isProfileLiveAuctionFormat
+            return !isProfileShopSoldOut && isProfileLiveAuctionFormat
         case .buyNow:
-            return !isProfileShopSold && !isProfileLiveAuctionFormat
+            return !isProfileShopSoldOut && !isProfileLiveAuctionFormat
         case .sold:
-            return isProfileShopSold
+            return hasProfileShopSales
         }
     }
 
@@ -1449,10 +1449,19 @@ fileprivate extension ProductDataModel1 {
         return false
     }
 
-    var isProfileShopSold: Bool {
+    var hasProfileShopSales: Bool {
+        if isProfileShopSoldOut { return true }
+        return profilePurchasedQuantity > 0
+    }
+
+    var isProfileShopSoldOut: Bool {
         let normalizedStatus = (status ?? "").lowercased()
         if normalizedStatus == "sold" || normalizedStatus == "inactive" { return true }
         return isSoldOut
+    }
+
+    var profilePurchasedQuantity: Int {
+        Int(purchasedQuantity ?? "0") ?? 0
     }
 }
 
