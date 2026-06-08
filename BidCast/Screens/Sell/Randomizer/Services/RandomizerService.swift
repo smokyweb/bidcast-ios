@@ -160,10 +160,10 @@ final class RandomizerService: ObservableObject {
             let pageResponse = try await listSellerProductsPage(page: page)
             total = pageResponse.total ?? products.count + (pageResponse.data?.count ?? 0)
 
-            let newItems = pageResponse.data ?? []
-            guard !newItems.isEmpty else { break }
+            let pageItems = pageResponse.data ?? []
+            guard !pageItems.isEmpty else { break }
 
-            products.append(contentsOf: newItems)
+            products.append(contentsOf: pageItems.filter { $0.quantityValue > 0 })
             page += 1
         }
 

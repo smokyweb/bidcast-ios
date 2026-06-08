@@ -105,11 +105,52 @@ struct SlotProduct: Codable, Identifiable {
     var images: [String]?
     var thumbnail: [String]?
     var pricing: String?
+    var quantity: String?
+    var purchasedQuantity: String?
 
     var thumbnailURL: URL? {
         guard let first = thumbnail?.first ?? images?.first else { return nil }
         return URL(string: first)
     }
+
+    var quantityValue: Int {
+        Int(quantity ?? "0") ?? 0
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, title, images, thumbnail, pricing, quantity, purchasedQuantity
+        case purchased_quantity
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try? c.decodeIfPresent(Int.self, forKey: .id)
+        title = try? c.decodeIfPresent(String.self, forKey: .title)
+        images = try? c.decodeIfPresent([String].self, forKey: .images)
+        thumbnail = try? c.decodeIfPresent([String].self, forKey: .thumbnail)
+        pricing = randomizerDecodeFlexibleString(c, forKey: .pricing)
+        quantity = randomizerDecodeFlexibleString(c, forKey: .quantity)
+        purchasedQuantity = randomizerDecodeFlexibleString(c, forKey: .purchasedQuantity) ?? randomizerDecodeFlexibleString(c, forKey: .purchased_quantity)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(id, forKey: .id)
+        try c.encodeIfPresent(title, forKey: .title)
+        try c.encodeIfPresent(images, forKey: .images)
+        try c.encodeIfPresent(thumbnail, forKey: .thumbnail)
+        try c.encodeIfPresent(pricing, forKey: .pricing)
+        try c.encodeIfPresent(quantity, forKey: .quantity)
+        try c.encodeIfPresent(purchasedQuantity, forKey: .purchasedQuantity)
+    }
+}
+
+private func randomizerDecodeFlexibleString<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> String? {
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) { return s.isEmpty ? nil : s }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return String(i) }
+    if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return String(d) }
+    if let b = try? c.decodeIfPresent(Bool.self, forKey: key) { return b ? "true" : "false" }
+    return nil
 }
 
 // MARK: - Template Model
