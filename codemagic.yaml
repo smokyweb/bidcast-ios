@@ -31,10 +31,14 @@ workflows:
           # `app-store-connect fetch-signing-files` step. Codemagic places
           # them at ~/Library/MobileDevice/Provisioning\ Profiles/.
           # Read the embedded plist to get the profile's Name field.
-          PROFILE_FILE=$(/bin/ls -t ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision 2>/dev/null | /usr/bin/head -1)
+          PROFILE_FILE=$(/bin/ls -t \
+            ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision \
+            ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/*.mobileprovision \
+            2>/dev/null | /usr/bin/head -1)
           if [ -z "$PROFILE_FILE" ]; then
             /bin/echo "ERROR: no .mobileprovision file found after signing step"
             /bin/ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ 2>&1 || true
+            /bin/ls -la ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/ 2>&1 || true
             exit 1
           fi
           PROFILE_NAME=$(/usr/bin/security cms -D -i "$PROFILE_FILE" 2>/dev/null | /usr/libexec/PlistBuddy -c "Print :Name" /dev/stdin)
