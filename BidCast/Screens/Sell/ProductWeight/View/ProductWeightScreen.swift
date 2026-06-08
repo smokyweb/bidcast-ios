@@ -498,6 +498,9 @@ struct ProductWeightScreen: View {
                 if !variantArray.isEmpty {
                     productRequest["variant"] = variantArray
                 }
+                if let existingProductId = Int(productId), !productId.isEmpty {
+                    productRequest["product_id"] = existingProductId
+                }
                 
                 try await viewModel.storeProduct(productId: !productId.isEmpty ? Int(productId) : nil ,param: productRequest)
                 storeSuccess()

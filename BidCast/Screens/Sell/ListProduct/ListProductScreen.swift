@@ -1113,6 +1113,9 @@ struct ListProductScreen: View {
                         "status": request.status,
                         "hazardous_material": isHazardousMaterial
                     ]
+                    if isEditing, let productId = editingProduct?.id {
+                        productRequest["product_id"] = productId
+                    }
 
                     if !variantArray.isEmpty {
                         productRequest["variant"] = variantArray

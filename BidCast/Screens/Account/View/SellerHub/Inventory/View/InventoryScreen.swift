@@ -111,6 +111,7 @@ struct InventoryScreen: View {
     @State var navigateToDetail = false
     // QA #10 — Inventory Orders tab → push to MyOrdersScreen
     @State private var navigateToMyOrders = false
+    @State private var shouldRefreshAfterEdit = false
     
     
     // Basecamp #9959447268 (2026-06-03): a product's pricing format, resilient to a
@@ -384,7 +385,16 @@ struct InventoryScreen: View {
             CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
             // QA #10 — Inventory Orders tab → MyOrdersScreen
             CusNavLink(doNavigate: $navigateToMyOrders, destination: MyOrdersScreen())
-            CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
+            CusNavLink(
+                doNavigate: $navigateToEditProduct,
+                destination: EditProductScreen(
+                    productData: $productToEdit,
+                    onProductUpdated: { updated in
+                        applyUpdatedProduct(updated)
+                        shouldRefreshAfterEdit = true
+                    }
+                )
+            ) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigateToShipping, destination: CreateAddress())
@@ -494,6 +504,12 @@ struct InventoryScreen: View {
                 guard Reachability.isConnectedToNetwork() else { return }
                 currentPage = 1
                 _ = try? await fetchInventory(for: segment, page: currentPage)
+            }
+        }
+        .onChange(of: navigateToEditProduct) { isEditing in
+            if !isEditing && shouldRefreshAfterEdit {
+                shouldRefreshAfterEdit = false
+                refreshInventoryAfterEdit()
             }
         }
         .toast(isPresenting: $showhud) {
@@ -634,6 +650,32 @@ struct InventoryScreen: View {
             selectedProducts = updatedSelectedProducts
             print("🟢 Maintained \(selectedProducts.count) selections after data load")
         }
+
+    private func applyUpdatedProduct(_ product: ProductDataModel1) {
+        guard let productId = product.id else { return }
+        if let index = inventoryList.firstIndex(where: { $0.id == productId }) {
+            inventoryList[index] = product
+        }
+        if let selectedIndex = selectedProducts.firstIndex(where: { $0.id == productId }) {
+            selectedProducts[selectedIndex] = product
+        }
+        if productToEdit.id == productId {
+            productToEdit = product
+        }
+    }
+
+    private func refreshInventoryAfterEdit() {
+        Task {
+            guard Reachability.isConnectedToNetwork() else { return }
+            currentPage = 1
+            do {
+                try await fetchInventory(for: segment, page: currentPage)
+                handleDataLoad()
+            } catch {
+                print("Failed to refresh inventory after product edit: \(error)")
+            }
+        }
+    }
     private func initializeSelectedProducts() {
             // Set selected product IDs from pre-selected products
         selectedProductIDs = Set(productManager.products.compactMap { $0.id })

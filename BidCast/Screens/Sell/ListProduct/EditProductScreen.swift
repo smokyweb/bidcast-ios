@@ -81,7 +81,8 @@ struct EditProductScreen: View {
     @State var productId: Int = -1
     @State var openShippingSheet = false
     @State var navigateToShippingProfiles = false
-
+    var onProductUpdated: ((ProductDataModel1) -> Void)? = nil
+    
     private var isUsingShippingProfile: Bool {
         !(request.shipping_profile_id.trimmingCharacters(in: .whitespacesAndNewlines)).isEmpty
     }
@@ -894,6 +895,7 @@ struct EditProductScreen: View {
 
                 // 🔹 Prepare request body
                 var productRequest: [String: Any] = [
+                    "product_id": productId,
                     "category_id": request.category_id,
                     "sub_category_id": request.sub_category_id ?? "",
                     "title": request.title,
@@ -1197,6 +1199,10 @@ struct EditProductScreen: View {
 
         let response = viewModel.storeProductResponse
         if response?.status?.lowercased() == "success" {
+            if let product = response?.data {
+                productData = product
+                onProductUpdated?(product)
+            }
             alertType = .sheetType(
                 icon: .success,
                 title: "Success",
