@@ -722,6 +722,7 @@ struct SellerHubSection: View {
     @State private var navigateToInventory = false
     @State private var navigateToPayouts = false
     @State private var navigateToUserProfile = false
+    @State private var navigateToRandomizerTemplates = false
 
     
 
@@ -790,6 +791,8 @@ struct SellerHubSection: View {
             
             // Create Buttons
             createButtonsRow
+
+            randomizerTemplatesButton
             
             // Upcoming Shows Section
             upcomingShowsSection
@@ -822,6 +825,7 @@ struct SellerHubSection: View {
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletPayoutView())
             CusNavLink(doNavigate: $navigateToInventory, destination: InventoryScreen())
             CusNavLink(doNavigate: $navigateToPayouts, destination: WalletPayoutView())
+            CusNavLink(doNavigate: $navigateToRandomizerTemplates, destination: RandomizerTemplatesView())
             CusNavLink(
                 doNavigate: $navigateToUserProfile,
                 destination: ProfileScreen(
@@ -922,6 +926,41 @@ struct SellerHubSection: View {
 //                    )
             }
         }
+    }
+
+    private var randomizerTemplatesButton: some View {
+        Button {
+            navigateToRandomizerTemplates = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "dice.fill")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(.defaultTheme)
+                    .frame(width: 44, height: 44)
+                    .background(Color.defaultThemeLight)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Randomizer Templates")
+                        .font(.custom(poppinsSemiBold, size: 15))
+                        .foregroundColor(.primary)
+                    Text("Create and manage saved wheels")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.gray.opacity(0.7))
+            }
+            .padding(14)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
     }
     
     // MARK: - Upcoming Shows Section
@@ -1631,4 +1670,3 @@ struct CouponListScreen: View {
         }
     }
 }
-

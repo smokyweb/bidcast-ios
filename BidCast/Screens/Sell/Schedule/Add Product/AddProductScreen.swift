@@ -192,11 +192,7 @@ struct AddProductsScreen: View {
                                 }
                             }
 
-                            addProductOption(
-                                text: coordinator.randomizerTemplateId == nil
-                                    ? "Add Randomizer"
-                                    : "Randomizer #\(coordinator.randomizerTemplateId!)"
-                            ) {
+                            randomizerProductOption {
                                 showRandomizerPicker = true
                             }
                         }
@@ -484,6 +480,46 @@ struct AddProductsScreen: View {
                 RoundedRectangle(cornerRadius: 14)
                     .stroke(style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
                     .foregroundColor(.defaultTheme.opacity(0.3))
+            )
+            .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
+        }
+        .buttonStyle(ScaleButtonStyle())
+    }
+
+    private func randomizerProductOption(action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: coordinator.randomizerTemplateId == nil ? "dice" : "dice.fill")
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundColor(.defaultTheme)
+                    .frame(width: 54, height: 54)
+                    .background(Color.defaultThemeLight)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(coordinator.randomizerTemplateId == nil ? "Add Randomizer Template" : "Randomizer Template #\(coordinator.randomizerTemplateId!)")
+                        .font(.custom(poppinsSemiBold, size: 15))
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                    Text("Choose a saved template or create a new wheel")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                        .lineLimit(2)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.gray.opacity(0.7))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(14)
+            .background(Color.white)
+            .cornerRadius(14)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.defaultTheme.opacity(0.25), lineWidth: 1.5)
             )
             .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
         }
