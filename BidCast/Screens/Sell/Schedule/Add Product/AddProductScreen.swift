@@ -53,6 +53,7 @@ struct AddProductsScreen: View {
     @State private var navigateToListProduct: Bool = false
     @State private var navigateToEditListProduct: Bool = false
     @State private var editingProduct: ProductDataModel1? = nil
+    @State private var showRandomizerPicker = false
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -190,6 +191,14 @@ struct AddProductsScreen: View {
                                     navigateToInventry = true
                                 }
                             }
+
+                            addProductOption(
+                                text: coordinator.randomizerTemplateId == nil
+                                    ? "Add Randomizer"
+                                    : "Randomizer #\(coordinator.randomizerTemplateId!)"
+                            ) {
+                                showRandomizerPicker = true
+                            }
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 16)
@@ -310,6 +319,18 @@ struct AddProductsScreen: View {
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .sheet(isPresented: $showRandomizerPicker) {
+            RandomizerTemplatePickerSheet(
+                selectedTemplateId: Binding(
+                    get: { coordinator.randomizerTemplateId },
+                    set: { newId in
+                        coordinator.randomizerTemplateId = newId
+                        request.randomizer_template_id = newId
+                    }
+                ),
+                allowsProductMapping: true
+            )
         }
         .overlay(
             CustomBottomSheetView(
@@ -611,6 +632,10 @@ extension AddProductsScreen {
             let prodIds = productManager.selectedProductIDs.joined(separator: ",")
             params["product_ids"] = prodIds
 
+            if let templateId = request.randomizer_template_id {
+                params["randomizer_template_id"] = templateId
+            }
+
 
             viewModel.errorMessage = ""
 
@@ -690,6 +715,10 @@ extension AddProductsScreen {
 //            }
             let prodIds = productManager.selectedProductIDs.joined(separator: ",")
             params["product_ids"] = prodIds
+
+            if let templateId = request.randomizer_template_id {
+                params["randomizer_template_id"] = templateId
+            }
 
             viewModel.errorMessage = ""
 

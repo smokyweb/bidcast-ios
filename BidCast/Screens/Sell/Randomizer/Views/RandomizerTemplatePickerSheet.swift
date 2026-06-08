@@ -11,6 +11,7 @@ struct RandomizerTemplatePickerSheet: View {
 
     /// Currently selected template ID (nil = None)
     @Binding var selectedTemplateId: Int?
+    var allowsProductMapping: Bool = true
 
     @State private var templates: [RandomizerTemplate] = []
     @State private var isLoading = true
@@ -51,7 +52,7 @@ struct RandomizerTemplatePickerSheet: View {
             // the show-create / live flow.
             .background(
                 NavigationLink(isActive: $showBuilder, destination: {
-                    RandomizerTemplateBuilderView(editingTemplate: nil)
+                    RandomizerTemplateBuilderView(editingTemplate: nil, allowsProductMapping: allowsProductMapping)
                         .onDisappear { loadTemplates() }
                 }, label: { EmptyView() })
             )
@@ -160,7 +161,7 @@ struct RandomizerTemplatePickerSheet: View {
                     Text("Build a new randomizer")
                         .font(.custom(poppinsBold, size: 14))
                         .foregroundColor(.primary)
-                    Text("Pick slot colors, icons, and products")
+                    Text(allowsProductMapping ? "Pick slot colors, icons, and products" : "Pick slot colors and icons")
                         .font(.custom(poppinsRegular, size: 11))
                         .foregroundColor(.gray)
                 }
@@ -185,5 +186,203 @@ struct RandomizerTemplatePickerSheet: View {
             }
             isLoading = false
         }
+    }
+}
+
+struct ShowRandomizersManagementSheet: View {
+
+    @Environment(\.dismiss) var dismiss
+
+    let showId: Int
+
+    @State private var attachedTemplates: [RandomizerTemplate] = []
+    @State private var sellerTemplates: [RandomizerTemplate] = []
+    @State private var isLoading = true
+    @State private var errorMessage: String? = nil
+    @State private var showBuilder = false
+
+    var body: some View {
+        NavigationView {
+            List {
+                if isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                } else {
+                    attachedSection
+                    availableSection
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Randomizers")
+            .navigationBarTitleDisplayMode(.inline)
+            .background(
+                NavigationLink(isActive: $showBuilder, destination: {
+                    RandomizerTemplateBuilderView(editingTemplate: nil, allowsProductMapping: true)
+                        .onDisappear { loadData() }
+                }, label: { EmptyView() })
+            )
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Close") { dismiss() }
+                        .foregroundColor(.defaultTheme)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showBuilder = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .foregroundColor(.defaultTheme)
+                    }
+                }
+            }
+        }
+        .onAppear { loadData() }
+    }
+
+    @ViewBuilder
+    private var attachedSection: some View {
+        Section {
+            if attachedTemplates.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("No randomizers added")
+                        .font(.custom(poppinsBold, size: 14))
+                    Text("Attach an existing randomizer or create a new one.")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                }
+                .padding(.vertical, 8)
+            } else {
+                ForEach(attachedTemplates) { template in
+                    ShowRandomizerRow(template: template, isAttached: true) {
+                        detach(template)
+                    }
+                }
+            }
+        } header: {
+            Text("Added To This Show")
+        }
+    }
+
+    @ViewBuilder
+    private var availableSection: some View {
+        Section {
+            Button {
+                showBuilder = true
+            } label: {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(.defaultTheme)
+                    Text("Create new randomizer")
+                        .font(.custom(poppinsBold, size: 14))
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.gray.opacity(0.6))
+                }
+                .padding(.vertical, 6)
+            }
+            .buttonStyle(.plain)
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.red)
+            }
+
+            ForEach(sellerTemplates.filter { template in
+                !attachedTemplates.contains(where: { $0.id == template.id })
+            }) { template in
+                ShowRandomizerRow(template: template, isAttached: false) {
+                    attach(template)
+                }
+            }
+        } header: {
+            Text("Available Templates")
+        }
+    }
+
+    private func loadData() {
+        guard showId > 0 else {
+            errorMessage = "Show not found."
+            isLoading = false
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+        Task {
+            do {
+                async let attached = RandomizerService.shared.listShowTemplates(showId: showId)
+                async let templates = RandomizerService.shared.listTemplates()
+                attachedTemplates = try await attached
+                sellerTemplates = try await templates
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+            isLoading = false
+        }
+    }
+
+    private func attach(_ template: RandomizerTemplate) {
+        guard let templateId = template.id else { return }
+        Task {
+            do {
+                try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId)
+                loadData()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func detach(_ template: RandomizerTemplate) {
+        guard let templateId = template.id else { return }
+        Task {
+            do {
+                try await RandomizerService.shared.detachOneTemplate(showId: showId, templateId: templateId)
+                loadData()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+}
+
+private struct ShowRandomizerRow: View {
+    let template: RandomizerTemplate
+    let isAttached: Bool
+    let action: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 2) {
+                ForEach((template.slots ?? []).prefix(4), id: \.localId) { slot in
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color(hex: slot.color))
+                        .frame(width: 10, height: 32)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(template.name)
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                Text("\(template.randomizerType.displayName) · \(template.slot_count) slots · \(template.formattedEntryCost)")
+                    .font(.custom(poppinsRegular, size: 11))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            Button(isAttached ? "Remove" : "Add") {
+                action()
+            }
+            .font(.custom(poppinsBold, size: 12))
+            .foregroundColor(isAttached ? .red : .defaultTheme)
+        }
+        .padding(.vertical, 5)
     }
 }

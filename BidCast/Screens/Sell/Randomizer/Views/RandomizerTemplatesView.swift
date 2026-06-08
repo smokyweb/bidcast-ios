@@ -64,7 +64,7 @@ struct RandomizerTemplatesView: View {
         .sheet(isPresented: $showingBuilder, onDismiss: {
             Task { await vm.loadTemplates() }
         }) {
-            RandomizerTemplateBuilderView(editingTemplate: editingTemplate)
+            RandomizerTemplateBuilderView(editingTemplate: editingTemplate, allowsProductMapping: false)
         }
         .alert("Delete Template?", isPresented: $showDeleteConfirm, presenting: deletingTemplate) { tpl in
             Button("Delete", role: .destructive) {

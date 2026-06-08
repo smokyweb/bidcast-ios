@@ -71,6 +71,8 @@ struct RehearsalScreen: View {
     // sheet so hosts can build a custom randomizer mid-stream.
     @State private var showRandomizerPicker: Bool = false
     @State private var selectedRandomizerTemplateId: Int? = nil
+    @State private var showReleaseRandomizerProductsPrompt: Bool = false
+    @State private var hasCheckedRandomizerReleaseOnEnd: Bool = false
     // Basecamp #9934001770 (2026-05-27): co-host pairing sheet.
     @State private var showCoHostPairing: Bool = false
     @State private var showInviteCohostPicker: Bool = false
@@ -229,6 +231,13 @@ struct RehearsalScreen: View {
     @State private var isSurpriseSetAuctionActive: Bool = false
     
     @StateObject private var viewModelFreebie = RandomizerViewModel()
+
+    private var currentScheduleShowId: Int {
+        if let id = Int(showUd), id > 0 { return id }
+        if let id = Int(roomId.split(separator: "_").last ?? "0"), id > 0 { return id }
+        if let id = showsData.id, id > 0 { return id }
+        return 0
+    }
     
     // MARK: - Body
     var body: some View {
@@ -282,10 +291,7 @@ struct RehearsalScreen: View {
         
         .sheet(isPresented: $navigateToRandomizer) { randomizerSheet }
         .sheet(isPresented: $showRandomizerPicker) {
-            // Basecamp #9931107836 / #9929871140 (2026-05-27 round 2):
-            // pre-wheel template picker. Includes a Build New row that
-            // opens the existing RandomizerTemplateBuilderView inline.
-            RandomizerTemplatePickerSheet(selectedTemplateId: $selectedRandomizerTemplateId)
+            ShowRandomizersManagementSheet(showId: currentScheduleShowId)
         }
         // Basecamp #9934001770 (2026-05-27): co-host pairing sheet.
         // showId derived from roomId which has format live_room_<userId>_<showId>.
@@ -299,6 +305,23 @@ struct RehearsalScreen: View {
                 }
             }
             Button("Cancel", role: .cancel) {}
+        }
+        .confirmationDialog(
+            "Would you like to remove all items from your randomizers?",
+            isPresented: $showReleaseRandomizerProductsPrompt,
+            titleVisibility: .visible
+        ) {
+            Button("Yes, remove all") {
+                Task {
+                    if currentScheduleShowId > 0 {
+                        try? await RandomizerService.shared.releaseShowProducts(showId: currentScheduleShowId)
+                    }
+                    await performEndShowCleanup()
+                }
+            }
+            Button("No") {
+                Task { await performEndShowCleanup() }
+            }
         }
        
  
@@ -2709,6 +2732,36 @@ struct RehearsalScreen: View {
     // Updated cleanup helpers inside RehearsalScreen
     func endShow(){
         Task{
+            if !hasCheckedRandomizerReleaseOnEnd,
+               await showHasMappedRandomizerProducts() {
+                hasCheckedRandomizerReleaseOnEnd = true
+                showReleaseRandomizerProductsPrompt = true
+                return
+            }
+
+            await performEndShowCleanup()
+        }
+    }
+
+    private func showHasMappedRandomizerProducts() async -> Bool {
+        let showId = currentScheduleShowId
+        guard showId > 0 else { return false }
+
+        do {
+            let templates = try await RandomizerService.shared.listShowTemplates(showId: showId)
+            return templates.contains { template in
+                if template.prize_product_id != nil { return true }
+                return (template.slots ?? []).contains { $0.product_id != nil }
+            }
+        } catch {
+            return false
+        }
+    }
+
+    @MainActor
+    private func performEndShowCleanup() async {
+        hasCheckedRandomizerReleaseOnEnd = true
+
             // stop RTC
             if agoraManager.isJoined {
                 agoraManager.leaveChannel()
@@ -2748,7 +2801,6 @@ struct RehearsalScreen: View {
             } else {
                 self.presentationMode.wrappedValue.dismiss()
             }
-        }
     }
     
     func logoutRoom() {

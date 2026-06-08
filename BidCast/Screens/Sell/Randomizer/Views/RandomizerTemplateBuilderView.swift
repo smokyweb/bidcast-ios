@@ -12,6 +12,7 @@ struct RandomizerTemplateBuilderView: View {
 
     // nil = create mode; non-nil = edit mode
     let editingTemplate: RandomizerTemplate?
+    var allowsProductMapping: Bool = false
 
     // Form state
     @State private var name: String = ""
@@ -51,12 +52,12 @@ struct RandomizerTemplateBuilderView: View {
 
                     // Buyer Raffle: single prize product picker
                     // Basecamp #9955991396
-                    if selectedType == .buyerRaffle {
+                    if allowsProductMapping && selectedType == .buyerRaffle {
                         buyerRafflePrizeSection
                     }
 
-                    // Entry cost (shown for buyer_raffle and product_raffle)
-                    if selectedType == .buyerRaffle || selectedType == .productRaffle {
+                    // Entry cost (shown for paid/free raffle types)
+                    if selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle {
                         entryCostSectionView
                     }
 
@@ -89,7 +90,7 @@ struct RandomizerTemplateBuilderView: View {
                     SlotEditorSheet(
                         slot: $slots[idx],
                         availableProducts: availableProducts,
-                        hideProductPicker: selectedType == .buyerRaffle
+                        hideProductPicker: selectedType == .buyerRaffle || !allowsProductMapping
                     )
                 }
             }
@@ -291,7 +292,7 @@ struct RandomizerTemplateBuilderView: View {
                     SlotCardView(
                         slot: slots[idx],
                         position: idx,
-                        product: selectedType == .buyerRaffle ? nil : productForSlot(slots[idx]),
+                        product: selectedType == .buyerRaffle || !allowsProductMapping ? nil : productForSlot(slots[idx]),
                         isBuyerSlot: selectedType == .buyerRaffle
                     )
                     .onTapGesture {
@@ -307,7 +308,7 @@ struct RandomizerTemplateBuilderView: View {
 
     /// Mirror the single prize product onto every slot. Only acts when type == .buyerRaffle.
     private func mirrorBuyerRaffleProduct() {
-        guard selectedType == .buyerRaffle else { return }
+        guard allowsProductMapping, selectedType == .buyerRaffle else { return }
         for i in slots.indices {
             slots[i].product_id = buyerRaffleProductId
         }
@@ -402,12 +403,13 @@ struct RandomizerTemplateBuilderView: View {
             generateDefaultSlots()
         }
 
-        // Fetch products
+        guard allowsProductMapping else { return }
+
         Task {
             do {
                 availableProducts = try await RandomizerService.shared.listSellerProducts()
             } catch {
-                print("⚠️ Could not load products: \(error)")
+                print("Could not load randomizer products: \(error)")
             }
         }
     }
@@ -444,7 +446,7 @@ struct RandomizerTemplateBuilderView: View {
         for i in slots.indices { slots[i].position = i }
 
         // Mirror prize product when slot count changes in buyer_raffle mode
-        if selectedType == .buyerRaffle {
+        if allowsProductMapping && selectedType == .buyerRaffle {
             mirrorBuyerRaffleProduct()
         }
     }
@@ -458,17 +460,31 @@ struct RandomizerTemplateBuilderView: View {
         }
 
         // Mirror prize product to all slots before building the save payload
-        if selectedType == .buyerRaffle {
+        if allowsProductMapping && selectedType == .buyerRaffle {
             mirrorBuyerRaffleProduct()
         }
 
         isSaving = true
         let cost = Double(entryCost.trimmingCharacters(in: .whitespaces))
+        let shouldPreserveExistingProductMapping = !allowsProductMapping && editingTemplate != nil
         let requestSlots = slots.map { s in
-            RandomizerSlotRequest(position: s.position, color: s.color, icon: s.icon, image: s.image, product_id: s.product_id)
+            RandomizerSlotRequest(
+                position: s.position,
+                color: s.color,
+                icon: s.icon,
+                image: s.image,
+                product_id: (allowsProductMapping || shouldPreserveExistingProductMapping) ? s.product_id : nil
+            )
         }
         // #9960173707 Phase 4: send the buyer_raffle prize as the template-level field.
-        let prizeId: Int? = (selectedType == .buyerRaffle) ? buyerRaffleProductId : nil
+        let prizeId: Int?
+        if allowsProductMapping && selectedType == .buyerRaffle {
+            prizeId = buyerRaffleProductId
+        } else if shouldPreserveExistingProductMapping {
+            prizeId = editingTemplate?.prize_product_id
+        } else {
+            prizeId = nil
+        }
         let body = RandomizerTemplateRequest(
             name: trimmedName,
             type: selectedType.rawValue,

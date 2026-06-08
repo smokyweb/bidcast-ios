@@ -151,15 +151,43 @@ final class RandomizerService: ObservableObject {
     }
 
     // MARK: - List seller's products for slot mapping
-    func listSellerProducts(page: Int = 1) async throws -> [SlotProduct] {
-        let req = try makeRequest(path: "/products?status=active&page=\(page)&per_page=50", method: "GET")
-        let (data, _) = try await session.data(for: req)
-        // Use the same ResponseModel wrapper pattern
-        struct ProductListResp: Codable {
-            var status: String?
-            var data: [SlotProduct]?
+    func listSellerProducts() async throws -> [SlotProduct] {
+        var products: [SlotProduct] = []
+        var page = 1
+        var total = Int.max
+
+        while products.count < total {
+            let pageResponse = try await listSellerProductsPage(page: page)
+            total = pageResponse.total ?? products.count + (pageResponse.data?.count ?? 0)
+
+            let newItems = pageResponse.data ?? []
+            guard !newItems.isEmpty else { break }
+
+            products.append(contentsOf: newItems)
+            page += 1
         }
-        let decoded = try JSONDecoder().decode(ProductListResp.self, from: data)
-        return decoded.data ?? []
+
+        return products
     }
+
+    private func listSellerProductsPage(page: Int) async throws -> ProductListResp {
+        struct ProductListRequest: Encodable {
+            let status: String
+            let page: Int
+        }
+
+        let req = try makeRequest(
+            path: "/get-product",
+            method: "POST",
+            body: ProductListRequest(status: "active", page: page)
+        )
+        let (data, _) = try await session.data(for: req)
+        return try JSONDecoder().decode(ProductListResp.self, from: data)
+    }
+}
+
+private struct ProductListResp: Codable {
+    var status: String?
+    var data: [SlotProduct]?
+    var total: Int?
 }

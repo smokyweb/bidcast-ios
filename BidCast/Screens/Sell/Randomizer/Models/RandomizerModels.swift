@@ -19,7 +19,7 @@ enum RandomizerType: String, Codable, CaseIterable, Identifiable {
         case .productRaffle:      return "Product Raffle"
         case .blindProductRaffle: return "Blind Product Raffle"
         case .buyerRaffle:        return "Buyer Raffle"
-        case .wheelBinAuction:    return "Wheel + BIN/Auction"
+        case .wheelBinAuction:    return "Random Product Wheel"
         }
     }
 
@@ -28,7 +28,7 @@ enum RandomizerType: String, Codable, CaseIterable, Identifiable {
         case .productRaffle:      return "Slots show product images, colors & icons"
         case .blindProductRaffle: return "Slots show colors & icons only (mystery!)"
         case .buyerRaffle:        return "Slots show buyer avatars & names"
-        case .wheelBinAuction:    return "Visual wheel decoration alongside BIN/Auction"
+        case .wheelBinAuction:    return "Randomly chooses the next BIN or auction item"
         }
     }
 }
@@ -103,10 +103,11 @@ struct SlotProduct: Codable, Identifiable {
     var id: Int?
     var title: String?
     var images: [String]?
+    var thumbnail: [String]?
     var pricing: String?
 
     var thumbnailURL: URL? {
-        guard let first = images?.first else { return nil }
+        guard let first = thumbnail?.first ?? images?.first else { return nil }
         return URL(string: first)
     }
 }
