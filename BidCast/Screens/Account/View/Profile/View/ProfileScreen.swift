@@ -22,23 +22,23 @@ fileprivate enum ProfileShopFilter {
     case buyNow
     case sold
 
-    var statusFilter: String {
+    var statusFilter: String? {
         switch self {
         case .auction, .buyNow:
             return "active"
         case .sold:
-            return "inactive"
+            return nil
         }
     }
 
-    var marketplaceFilter: String? {
+    var saleTypeFilter: String {
         switch self {
         case .auction:
-            return "true"
+            return "auction"
         case .buyNow:
-            return "false"
+            return "buy_now"
         case .sold:
-            return nil
+            return "sold"
         }
     }
 }
@@ -1115,17 +1115,21 @@ struct ProfileTabsView: View {
     @Binding var selectedTab: String
     var onTabSelected: (String) -> Void = { _ in }
     var body: some View {
-        HStack(spacing: 22) {
+        HStack(spacing: 0) {
             ForEach(tabs, id: \.self) { tab in
                 Text(tab)
-                    .font(.custom(selectedTab == tab ? poppinsBold : poppinsSemiBold, size: 21.0))
+                    .font(.custom(selectedTab == tab ? poppinsBold : poppinsSemiBold, size: selectedTab == tab ? 19.0 : 18.0))
                     .foregroundColor(selectedTab == tab ? .black : Color.gray.opacity(0.45))
-                .onTapGesture {
-                    selectedTab = tab
-                    onTabSelected(tab)
-                }
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+                    .allowsTightening(true)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedTab = tab
+                        onTabSelected(tab)
+                    }
             }
-            Spacer(minLength: 0)
         }
         .padding(.horizontal, 16)
         .padding(.top, 4)
@@ -1367,9 +1371,8 @@ extension ProfileScreen {
                 let request = ProductRequest(user_id: "\(sellerId)",
                                              search: searchText,
                                              status: selectedShopFilter.statusFilter,
-                                             marketplace: selectedShopFilter.marketplaceFilter,
                                              page: currentPage,
-                                             sale_type: selectedOptions.isEmpty ? nil : selectedOptions,
+                                             sale_type: selectedOptions.isEmpty ? selectedShopFilter.saleTypeFilter : selectedOptions,
                                              sort_by: selectedSort
                 )
                 
