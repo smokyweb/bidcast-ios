@@ -72,6 +72,8 @@ struct TabbarScreen: View {
     // and broadcast the thread id via NotificationCenter so ActivityScreen
     // can open the InquiryThreadView directly.
     @State private var pendingInquiryThreadId: Int? = nil
+    @State private var pendingCoHostInviteId: Int? = nil
+    @State private var navigateToCoHostInvite = false
     
     // Add navigation state container
     @State private var pendingNavigation: PendingNavigation?
@@ -322,6 +324,17 @@ struct TabbarScreen: View {
                     )
                 }
             }
+            .onReceive(
+                NotificationCenter.default.publisher(for: NSNotification.Name("NavToCoHostInvite"))
+            ) { notification in
+                guard let inviteId = notification.object as? Int else { return }
+                tabBarRouter.selectedTab = 4
+                resetNavigation(for: 4)
+                pendingCoHostInviteId = inviteId
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    navigateToCoHostInvite = true
+                }
+            }
             // Navigation destinations
             .navigationDestination(isPresented: $navigateTogetStarted) {
                             GetStartedScreen(backToTabBar: $navigateTogetStarted)
@@ -355,6 +368,11 @@ struct TabbarScreen: View {
                         }
                         .navigationDestination(isPresented: $navigateToShipping) {
                             CreateAddress()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
+                        }
+                        .navigationDestination(isPresented: $navigateToCoHostInvite) {
+                            CoHostJoinScreen(inviteId: pendingCoHostInviteId)
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .navigationBar)
                         }

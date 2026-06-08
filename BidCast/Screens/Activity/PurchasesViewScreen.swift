@@ -13,7 +13,8 @@ struct PurchasesViewScreen: View {
     @State private var userImage: String = ""
     @State private var userName: String = ""
     // Basecamp #9934033253 (2026-05-27 → 2026-05-29): buyer cancel-request state
-    @State private var showCancelConfirm: Bool = false
+    @State private var showCancelReasonSheet: Bool = false
+    @State private var cancelReasonText: String = ""
     @State private var cancelLoading: Bool = false
     @State private var cancelError: String? = nil
     @State private var localStatusOverride: String? = nil
@@ -33,7 +34,8 @@ struct PurchasesViewScreen: View {
     private var canCancel: Bool {
         let s = (localStatusOverride ?? purchaseList?.status ?? "").lowercased()
         guard s == "pending" || s == "processing" else { return false }
-        return effectiveCancellationStatus?.lowercased() != "requested"
+        let cancellationStatus = effectiveCancellationStatus?.lowercased()
+        return cancellationStatus != "requested" && cancellationStatus != "approved"
     }
 
     private var cancelRejectedNote: String {
@@ -188,18 +190,25 @@ struct PurchasesViewScreen: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-        .alert("Request to cancel this order?", isPresented: $showCancelConfirm) {
-            Button("Keep Order", role: .cancel) { }
-            Button("Request Cancellation", role: .destructive) {
-                requestCancellation()
-            }
-        } message: {
-            Text("Request to cancel this order? The seller will need to approve it.")
+        .sheet(isPresented: $showCancelReasonSheet) {
+            CancellationReasonSheet(
+                title: "Request Cancellation",
+                message: "Tell the seller why you'd like to cancel this order. They'll review your request.",
+                placeholder: "Reason for cancellation",
+                confirmTitle: "Submit Request",
+                text: $cancelReasonText,
+                onConfirm: { reason in
+                    showCancelReasonSheet = false
+                    requestCancellation(reason: reason)
+                },
+                onCancel: { showCancelReasonSheet = false }
+            )
+            .presentationDetents([.medium])
         }
     }
 
     // Basecamp #9934033253 (2026-05-29): POST /api/product/request-cancellation.
-    private func requestCancellation() {
+    private func requestCancellation(reason: String) {
         guard let orderId = purchaseList?.id, orderId > 0 else { return }
         cancelLoading = true
         cancelError = nil
@@ -210,7 +219,10 @@ struct PurchasesViewScreen: View {
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.setValue("application/json", forHTTPHeaderField: "Accept")
             req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
-            let body: [String: Any] = ["order_id": orderId]
+            let body: [String: Any] = [
+                "order_id": orderId,
+                "reason": reason
+            ]
             req.httpBody = try? JSONSerialization.data(withJSONObject: body)
             do {
                 let (data, resp) = try await URLSession.shared.data(for: req)
@@ -222,6 +234,7 @@ struct PurchasesViewScreen: View {
                     cancelLoading = false
                     if http?.statusCode == 200 && statusStr == "success" {
                         localCancellationStatus = "requested"
+                        cancelReasonText = ""
                     } else {
                         cancelError = msg.isEmpty ? "Could not request cancellation." : msg
                     }
@@ -263,7 +276,11 @@ struct PurchasesViewScreen: View {
 
     @ViewBuilder
     private var requestCancelButton: some View {
-        Button(action: { showCancelConfirm = true }) {
+        Button(action: {
+            cancelError = nil
+            cancelReasonText = ""
+            showCancelReasonSheet = true
+        }) {
             HStack(spacing: 4) {
                 if cancelLoading { ProgressView().scaleEffect(0.7) }
                 Text(cancelLoading ? "Requesting…" : "Request Cancellation")

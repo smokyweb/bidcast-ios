@@ -904,6 +904,23 @@ extension SocketManagerService {
             logger.info("📡 Sending bid: \(payload)")
         }
     }
+
+    func listenForBidRejected(forRoom roomId: String, completion: ((_ message: String) -> Void)? = nil) {
+        socket.off("place_bid_rejected")
+        socket.on("place_bid_rejected") { data, _ in
+            guard let json = data.first as? [String: Any],
+                  let incomingRoomId = json["room_id"] as? String,
+                  incomingRoomId == roomId else {
+                return
+            }
+
+            let message = json["message"] as? String ?? "Bid was not accepted. Please try again."
+            DispatchQueue.main.async {
+                completion?(message)
+            }
+        }
+    }
+
     func listenForHighestBid(forRoom roomId: String,
                              completion: ((_ highestBid: HighestBid?) -> Void)? = nil) {
         socket.on("get_highest_bid") { [weak self] data, _ in
@@ -1489,32 +1506,43 @@ extension SocketManagerService {
            }
        }
        
-       /// Listens for `auction_order_failed` event
+       /// Listens for auction order failures after a winning bid.
     func listenForAuctionOrderFailed(
         completion: @escaping (
             _ roomId: String,
-            _ productSetId: Int,
-            _ userId: Int
+            _ userId: Int,
+            _ message: String
         ) -> Void
     ) {
-        socket.on("auction_order_failed") { [weak self] data, _ in
+        let handleFailure: ([Any]) -> Void = { [weak self] data in
             guard let self,
                   let json = data.first as? [String: Any],
-                  let roomId = json["room_id"] as? String,
-                  let productSetId = json["productSetId"] as? Int,
-                  let userId = json["user_id"] as? Int
+                  let roomId = json["room_id"] as? String
             else {
-                print("❌ Invalid auction_order_failed payload:", data)
+                print("❌ Invalid auction order failed payload:", data)
                 return
             }
 
+            let rawUserId = json["user_id"]
+            let userId = (rawUserId as? Int) ?? Int(rawUserId as? String ?? "") ?? 0
+            let message = json["message"] as? String
+                ?? "Order failed after winning auction. Please check your payment and shipping details."
+
             DispatchQueue.main.async {
-                completion(roomId, productSetId, userId)
+                completion(roomId, userId, message)
             }
 
-            self.logger.error(
-                "❌ [\(roomId)] auction_order_failed | productSetId: \(productSetId) | userId: \(userId)"
-            )
+            self.logger.error("❌ [\(roomId)] auction order failed | userId: \(userId)")
+        }
+
+        socket.off("auction_order_failed")
+        socket.on("auction_order_failed") { data, _ in
+            handleFailure(data)
+        }
+
+        socket.off("auction_order_failed_break_spot")
+        socket.on("auction_order_failed_break_spot") { data, _ in
+            handleFailure(data)
         }
     }
 
@@ -2134,6 +2162,137 @@ extension SocketManagerService {
         socket.off("follow_unfollow_status")
     }
     
+}
+
+// MARK: - Co-host / Multi-device Events
+extension SocketManagerService {
+    var socketId: String {
+        socket?.sid ?? ""
+    }
+
+    func requestCoHostSecondary(roomId: String, userId: Int, showId: String) {
+        let payload: [String: Any] = [
+            "room_id": roomId,
+            "user_id": userId,
+            "show_id": showId
+        ]
+        performIfConnected {
+            socket.emit("cohost_request_secondary", payload)
+            logger.info("📤 cohost_request_secondary: \(payload)")
+        }
+    }
+
+    func enterCoHostControlOnly(roomId: String, userId: Int, showId: String) {
+        let payload: [String: Any] = [
+            "room_id": roomId,
+            "user_id": userId,
+            "show_id": showId
+        ]
+        performIfConnected {
+            socket.emit("cohost_enter_control_only", payload)
+            logger.info("📤 cohost_enter_control_only: \(payload)")
+        }
+    }
+
+    func takeOverCoHostVideo(roomId: String, userId: Int, showId: String) {
+        let payload: [String: Any] = [
+            "room_id": roomId,
+            "user_id": userId,
+            "show_id": showId
+        ]
+        performIfConnected {
+            socket.emit("cohost_take_over_video", payload)
+            logger.info("📤 cohost_take_over_video: \(payload)")
+        }
+    }
+
+    func joinAsInvitedCoHost(roomId: String, userId: Int, showId: String, coHostId: Int?) {
+        var payload: [String: Any] = [
+            "room_id": roomId,
+            "user_id": userId,
+            "show_id": showId
+        ]
+        if let coHostId {
+            payload["cohost_id"] = coHostId
+        }
+        performIfConnected {
+            socket.emit("cohost_join", payload)
+            logger.info("📤 cohost_join: \(payload)")
+        }
+    }
+
+    func leaveInvitedCoHost(roomId: String, userId: Int, showId: String, coHostId: Int?) {
+        var payload: [String: Any] = [
+            "room_id": roomId,
+            "user_id": userId,
+            "show_id": showId
+        ]
+        if let coHostId {
+            payload["cohost_id"] = coHostId
+        }
+        performIfConnected {
+            socket.emit("cohost_leave", payload)
+            logger.info("📤 cohost_leave: \(payload)")
+        }
+    }
+
+    func listenForCoHostVideoHolderChanged(_ completion: @escaping (_ roomId: String, _ holderUserId: Int?, _ holderSocketId: String?) -> Void) {
+        socket.off("cohost_video_holder_changed")
+        socket.on("cohost_video_holder_changed") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any] else {
+                logger.warning("⚠️ Invalid cohost_video_holder_changed payload: \(data)")
+                return
+            }
+            let roomId = json["room_id"] as? String ?? ""
+            let holderUserId = Self.intValue(json["video_holder_user_id"])
+            let holderSocketId = json["video_holder_socket_id"] as? String
+            DispatchQueue.main.async {
+                completion(roomId, holderUserId, holderSocketId)
+            }
+        }
+    }
+
+    func listenForCoHostControlMode(_ completion: @escaping (_ roomId: String, _ userId: Int?) -> Void) {
+        socket.off("cohost_control_mode")
+        socket.on("cohost_control_mode") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any] else {
+                logger.warning("⚠️ Invalid cohost_control_mode payload: \(data)")
+                return
+            }
+            let roomId = json["room_id"] as? String ?? ""
+            let userId = Self.intValue(json["user_id"])
+            DispatchQueue.main.async {
+                completion(roomId, userId)
+            }
+        }
+    }
+
+    func listenForCoHostError(_ completion: @escaping (_ message: String) -> Void) {
+        socket.off("cohost_error")
+        socket.on("cohost_error") { [weak self] data, _ in
+            guard let self else { return }
+            let json = data.first as? [String: Any]
+            let message = json?["message"] as? String ?? "Unable to update cohost state."
+            DispatchQueue.main.async {
+                completion(message)
+            }
+        }
+    }
+
+    func removeCoHostListeners() {
+        socket.off("cohost_video_holder_changed")
+        socket.off("cohost_control_mode")
+        socket.off("cohost_error")
+    }
+
+    private static func intValue(_ any: Any?) -> Int? {
+        if let value = any as? Int { return value }
+        if let value = any as? String { return Int(value) }
+        if let value = any as? Double { return Int(value) }
+        return nil
+    }
 }
 
 

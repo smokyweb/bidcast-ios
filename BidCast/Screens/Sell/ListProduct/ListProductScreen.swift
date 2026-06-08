@@ -17,7 +17,7 @@ struct ListProductScreen: View {
     @State var categoyList = [String]()
     @State var productTitle = ""
     @State var message = ""
-    
+
     @State var isTappedFlash: Bool = false
     @State var isTappedAccept: Bool = false
     @State var isTappedReserve: Bool = false
@@ -41,20 +41,20 @@ struct ListProductScreen: View {
     @State private var mailClasses: [MailClass] = []
 //    @State var isImageSizeExceeding: Bool = false
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
-    
+
     @State private var profiles: [StoreShippingModel] = []
     @State var shippingProfileNames: [String] = []
     @State var selectedShippingProfileName: String = ""
     @StateObject private var shippingViewModel = ShippingViewModel()
-    
+
     @StateObject var viewModel = ListProductViewModel()
-    
+
     @State var imageUrls: [String] = []
     @State var uploadedVideoUrls: [String] = []
-    
+
     @State private var isHazardousMaterial: Bool = false
     @State private var selectedFormat: SalesFormat = .buyItNow
-    
+
     @State var showSellerSheet = false
     @State var navigateToSeller = false
     @State var showSubCategorySheet = false
@@ -66,7 +66,7 @@ struct ListProductScreen: View {
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     @State var openShippingSheet = false
     var forSheet : Bool = false
-    
+
     var onCancel : () -> () = { }
     var strokeColor: Color {
         isHazardousMaterial ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1)
@@ -75,22 +75,22 @@ struct ListProductScreen: View {
     var lineWidth: CGFloat {
         isHazardousMaterial ? 2 : 1
     }
-    
+
     @State private var segment: lisProductScreenSegment = .Buyit
-    
+
 //    @State var conditionListArr = ["New","Used - Like New","Used - Very Good","Used - Good","Used - Acceptable","Collectible - Like New","Collectible - Very Good","Collectible - Good","Collectible - Acceptable"]
-    
+
     @State var conditionListArr = ["New",
                                    "Like New",
                                    "Gently Loved",
                                    "Well Loved",
                                    "Other",
                                    "Trending"]
-    
+
     @State var extraFieldValues: [String: String] = [:]
     @State var selectedRadio: [String: String] = [:]
     @State var navigateToShippingProfiles = false
-    
+
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
         title: "",
@@ -99,31 +99,46 @@ struct ListProductScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
-    
+
     var preSelectedCategoryId: String? = nil
        var preSelectedCategoryName: String? = nil
        var isCategoryLocked: Bool = false
-    
+
     var onProductCreated: ((ProductDataModel1) -> Void)? = nil
     var onProductUpdated: ((ProductDataModel1) -> Void)? = nil
     var editingProduct: ProductDataModel1? = nil
     var hideDraftButton: Bool = false
-    
+
     private var isEditing: Bool { (editingProduct?.id ?? 0) != 0 }
     @EnvironmentObject var coordinator: LetsPrepareCoordinator
-    
+
     private var isUsingShippingProfile: Bool {
         !(request.shipping_profile_id.trimmingCharacters(in: .whitespacesAndNewlines)).isEmpty
     }
-    
+
     private var selectedMailClass: MailClass? {
         let selected = request.mail_class.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !selected.isEmpty else { return nil }
         return mailClasses.first(where: { $0.label == selected })
     }
-    
+
+    private var selectedFormatIsAuction: Bool {
+        selectedFormat == .auction
+    }
+
+    private var selectedProductType: String {
+        selectedFormatIsAuction ? "live" : "buy_it_now"
+    }
+
+    private func productIsAuction(_ product: ProductDataModel1) -> Bool {
+        if product.auction == true || product.reserveForLive == true || product.isAuction == true { return true }
+        let values = [product.type, product.saleFormat]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+        return values.contains { ["live", "auction", "live_auction", "reserve_for_live", "reserveforlive"].contains($0) }
+    }
+
     var body: some View {
-        
+
 //        ZStack {
             VStack{
                 VStack{
@@ -146,11 +161,11 @@ struct ListProductScreen: View {
                 }
                 .frame(height: forSheet ? 60 : 50)
                 .background(Color.white)
-                
+
                 ScrollView(showsIndicators:false){
-                    
+
                     MediaPickerView(uploadedImageUrls: $imageUrls, uploadedVideoUrls: $uploadedVideoUrls)
-                    
+
                     VStack(alignment:.leading,spacing: 8){
                         Text("Product Details".localized)
                             .font(.custom(robotoMedium, size: 16.0))
@@ -178,7 +193,7 @@ struct ListProductScreen: View {
                                         request.category_id = ""
                                     }
                                     Task{
-                                        
+
                                         await performAPICalls(
                                             isConcurrent: false,
                                             onError: { error in
@@ -223,7 +238,7 @@ struct ListProductScreen: View {
                             })
                         .keyboardType(.alphabet)
                         .padding([.top,.bottom],4)
-                        
+
                         DescriptionFieldView(
                             description:$request.description,
                             custFontName : robotoMedium,
@@ -260,11 +275,11 @@ struct ListProductScreen: View {
                                     .clipShape(Circle())
                             }
                             .buttonStyle(.plain)
-                            
+
                             Text("\(request.quantity)")
                                 .font(.custom(poppinsSemiBold, fixedSize: 13.0))
                                 .frame(width: 50, alignment: .center)
-                            
+
                             Button(action: {
                                 var quantity = Int(request.quantity) ?? 0
                                 quantity += 1
@@ -282,7 +297,7 @@ struct ListProductScreen: View {
                         .padding(.horizontal,16)
                         .padding([.top,.bottom],4)
 //
-                        
+
                         // Shipping Profile (optional). If selected, Mail Class + Dimensions become optional.
                         DropDownSelection(
                             options: $shippingProfileNames,
@@ -301,7 +316,7 @@ struct ListProductScreen: View {
                                 } else {
                                     request.shipping_profile_id = ""
                                 }
-                                
+
                                 if isUsingShippingProfile {
                                     // When using shipping profile, Mail Class + Dimensions are not required.
                                     request.mail_class = ""
@@ -310,7 +325,7 @@ struct ListProductScreen: View {
                         )
                         .padding([.leading,.trailing],16)
                         .zIndex(1202.0)
-                        
+
                         if isUsingShippingProfile {
                             Button(action: {
                                 selectedShippingProfileName = ""
@@ -330,7 +345,7 @@ struct ListProductScreen: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 2)
                         }
-                        
+
                         if !isUsingShippingProfile {
                             DropDownSelection(
                                 options: $mailClassList, floatingLabel:"Mail Class",
@@ -346,11 +361,11 @@ struct ListProductScreen: View {
                                 }
                             )
                             .padding([.leading,.trailing],16)
-                            
+
                             // Dimensions Section (required when no shipping profile selected)
                             DimensionsSection(request: $request, limits: selectedMailClass)
                         }
-                        
+
                         DropDownSelection(
                             options: $processingListArr, floatingLabel:"Processing Category",
                             hint: "Select",
@@ -365,7 +380,7 @@ struct ListProductScreen: View {
                             }
                         )
                         .padding([.leading,.trailing],16)
-                        
+
                         DropDownSelection(
                             options: $conditionListArr, floatingLabel:"Condition",
                             hint: "Select",
@@ -380,7 +395,7 @@ struct ListProductScreen: View {
                             }
                         )
                         .padding([.leading,.trailing],16)
-                        
+
 //                        var extraField = self.extraFields
                         if extraFields.count != 0{
                             ForEach(0 ..< extraFields.count) { index in
@@ -403,14 +418,14 @@ struct ListProductScreen: View {
                                             }
                                         )
                                         .padding(.bottom, 4)
-                                        
+
                                     } else if type == "radio", let options = field.options {
-                                        
+
                                         VStack(alignment: .leading) {
                                             Text(field.label?.capitalizingFirstLetter() ?? "")
                                                 .padding(.horizontal,1)
                                                 .font(.custom(robotoMedium, size: 14))
-                                            
+
                                             ForEach(options, id: \.self) { option in
                                                 HStack {
                                                     Image(systemName: selectedRadio[field.label ?? ""] == option ? "largecircle.fill.circle" : "circle")
@@ -428,7 +443,7 @@ struct ListProductScreen: View {
                                         .padding(.bottom, 8)
                                     }
                                 }
-                                
+
                             }
                         }
 //                        PrimaryButton(
@@ -440,22 +455,22 @@ struct ListProductScreen: View {
 //                                print("hell")
 //                            }, imageName: "ic_Plus", btnColor: .white)
                     }
-                    
+
                     .padding(.bottom, 16)
                     .background(.white)
                     .cornerRadius(12)
                     .padding(.top,2)
                     .padding(.horizontal, 12)
-                    
-                    
+
+
                     VStack(alignment: .leading){
                         // Select Format Label
                         Text("Pricing")
                             .font(.custom(poppinsMedium, size: 13.0))
                             .padding(.horizontal)
                             .padding(.top)
-                        
-                        
+
+
                         CustomSegmentedControl(preselectedIndex: $segment, options: lisProductScreenSegment.allCases)
                             .onChange(of: segment) { newSegment in
                                 if segment == .Buyit{
@@ -463,16 +478,16 @@ struct ListProductScreen: View {
                                 }else{
                                     selectedFormat = .auction
                                 }
-                                
+
                             }
                             .padding(.horizontal)
-                        
-                        
+
+
                         Text("Price".localized)
                             .font(.custom(robotoMedium, size: 16.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
-                        
+
                         AuthTextField(floatingLabel: "Buy It Now Price".localized,
                                       placeholder: "$0.0",
                                       icon: .menuProfile,
@@ -485,8 +500,8 @@ struct ListProductScreen: View {
                             request.pricing = price
                         })
                         .keyboardType(.decimalPad)
-                        
-                        
+
+
                         if selectedFormat == .auction {
                             VStack(spacing: 12) {
                                 EnhancedToggleCard(
@@ -506,7 +521,7 @@ struct ListProductScreen: View {
                                     request.reserve_for_live = "0"
                                 }
                             }
-                            
+
                         }else{
                             VStack(spacing: 12) {
                                 EnhancedToggleCard(
@@ -570,9 +585,9 @@ struct ListProductScreen: View {
                     .padding(.bottom, 16)
                     .background(.white)
                     .cornerRadius(12)
-                    
+
                     .padding(.horizontal, 16)
-                    
+
                     .onChange(of: isTappedFlash) { newValue in
                         if newValue {
                             request.flash_sale = "1"
@@ -587,15 +602,15 @@ struct ListProductScreen: View {
                             request.accept_offers = "0"
                         }
                     }
-                    
-                    
+
+
                     VStack(alignment:.leading,spacing: 8){
 
                         // Sales Options - Enhanced Toggle Cards
                         VStack(alignment: .leading, spacing: 16) {
 
                             Toggle(isOn: $isHazardousMaterial) {
-                                HazardousLabel() 
+                                HazardousLabel()
                             }
                             .toggleStyle(SwitchToggleStyle(tint: .blue))
                             .padding(20)
@@ -627,7 +642,7 @@ struct ListProductScreen: View {
                     )
                     .padding(.horizontal, 12)
                     .zIndex(1000)
-                    
+
                     // Bottom Buttons
                     if hideDraftButton {
                         PrimaryButton(
@@ -659,8 +674,8 @@ struct ListProductScreen: View {
                 }
                 .background(.backGround)
                 .zIndex(1000)
-                
-                
+
+
                 .bottomSheet(
                     isPresented: $showSubCategorySheet,
                     height: selectedOption.count < 4 ? screenHeight * 0.4 : screenHeight/1.7,
@@ -687,12 +702,12 @@ struct ListProductScreen: View {
                                 showSubCategorySheet = false
                             }
                         )
-               
+
                     }
                 )
                 .toast(isPresenting: $showhud) {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
-                    
+
                 }
 //                .toast(isPresenting: $isImageSizeExceeding) {
 //                    AlertToast(displayMode: .hud, type: .regular, title: "Please select image size less than 5 MB", style: alertStlye)
@@ -756,7 +771,7 @@ struct ListProductScreen: View {
                                 showSubCategorySheet = false
                             }
                         )
-               
+
                     }
                 )
                 .overlay(
@@ -779,14 +794,14 @@ struct ListProductScreen: View {
                     )
                     .ignoresSafeArea(.keyboard)
                 )
-                
+
                 CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }
         .edgesIgnoringSafeArea(.bottom)
             .background(.backGround)
         .onFirstAppear(perform: {
             Task{
-                
+
                 await performAPICalls(
                     isConcurrent: true,
                     onError: { error in
@@ -804,17 +819,17 @@ struct ListProductScreen: View {
                         categorySuccess()
                         successShippingProfiles()
                         mailSuccess()
-                        
+
                         setupPreSelectedCategory()
                         setupEditingProductIfNeeded()
                     }
-                    
+
                 ) {
                     // 👇 These run in parallel
                     async let categoryTask: () = viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
                     async let mailTask: () = viewModel.getMailClasses()
                     async let shippingTask: () = shippingViewModel.getShippingProfiles()
-                    
+
                     // Wait for all
                     _ = try await (categoryTask, mailTask, shippingTask)
                 }
@@ -824,12 +839,12 @@ struct ListProductScreen: View {
            hideKeyboard()
         }
     }
-    
+
     private func setupPreSelectedCategory() {
             guard let categoryId = preSelectedCategoryId, !categoryId.isEmpty else { return }
-            
+
             request.category_id = categoryId
-            
+
             if let categoryName = preSelectedCategoryName, !categoryName.isEmpty {
                 selectedCategory = categoryName
             } else if let id = Int(categoryId),
@@ -837,7 +852,7 @@ struct ListProductScreen: View {
                       !derivedName.isEmpty {
                 selectedCategory = derivedName
             }
-            
+
             // If category is locked, fetch subcategories automatically
             if isCategoryLocked {
                 Task {
@@ -848,7 +863,7 @@ struct ListProductScreen: View {
 
     private func setupEditingProductIfNeeded() {
         guard let product = editingProduct else { return }
-        
+
         // Basic info
         if let categoryId = product.category?.id, categoryId != 0 {
             request.category_id = "\(categoryId)"
@@ -856,23 +871,24 @@ struct ListProductScreen: View {
         request.title = product.title ?? ""
         request.description = product.description ?? ""
         request.quantity = product.quantity ?? "1"
-        
+
         // Dimensions
         request.width = "\(product.width ?? 0.0)"
         request.height = "\(product.height ?? 0.0)"
         request.length = "\(product.length ?? 0.0)"
         request.weight = "\(product.weight ?? 0.0)"
-        
+
         // Mail / processing / condition
         request.mail_class = product.mailClass ?? ""
         request.processing_category = product.processingCategory ?? ""
         request.product_condition = product.productCondition ?? ""
-        
+
         // Pricing flags
         request.pricing = product.pricing ?? ""
+        let isAuctionProduct = productIsAuction(product)
         isTappedFlash = product.flashSale ?? false
         isTappedAccept = product.acceptOffers ?? false
-        isTappedReserve = product.reserveForLive ?? false
+        isTappedReserve = product.reserveForLive ?? isAuctionProduct
         request.flash_sale = isTappedFlash ? "1" : "0"
         request.accept_offers = isTappedAccept ? "1" : "0"
         request.reserve_for_live = isTappedReserve ? "1" : "0"
@@ -889,23 +905,23 @@ struct ListProductScreen: View {
            let endsDate = ISO8601DateFormatter().date(from: endsStr) {
             flashSaleEndsAt = endsDate
         }
-        
-        // Segment guess: reserve_for_live implies auction
-        if isTappedReserve {
+
+        // Segment guess: persisted auction/type flags imply auction.
+        if isAuctionProduct {
             segment = .Auction
             selectedFormat = .auction
         } else {
             segment = .Buyit
             selectedFormat = .buyItNow
         }
-        
+
         // Media
         imageUrls = product.images ?? []
         if imageUrls.isEmpty {
             imageUrls = product.thumbnail ?? []
         }
         uploadedVideoUrls = product.videos ?? []
-        
+
         // Shipping profile
         if let shippingProfileId = product.shippingProfileId, shippingProfileId != 0 {
             request.shipping_profile_id = "\(shippingProfileId)"
@@ -913,7 +929,7 @@ struct ListProductScreen: View {
                 selectedShippingProfileName = name
             }
         }
-        
+
         // Category UI label
         if isCategoryLocked {
             if let name = product.category?.name, !name.isEmpty {
@@ -924,7 +940,7 @@ struct ListProductScreen: View {
             }
         }
     }
-        
+
         // NEW: Fetch subcategories for pre-selected category
         private func fetchSubCategoriesForPreSelectedCategory(categoryId: String) async {
             await performAPICalls(
@@ -945,14 +961,14 @@ struct ListProductScreen: View {
                 try await self.viewModel.getSubCategoryList(param: request)
             }
         }
-    
+
     private func successShippingProfiles() {
         let response = shippingViewModel.getShippingProfilesResponse
         self.profiles = response?.data ?? []
         openShippingSheet = false
         self.shippingProfileNames = profiles.map { $0.name ?? "" }
     }
-    
+
     func mailSuccess() {
         let response = viewModel.mailClassResponse
         if viewModel.errorMessage == nil {
@@ -968,21 +984,21 @@ struct ListProductScreen: View {
                 secondaryBtnText: AppString.ok.localized
             )
             showError = true
-            
-            
+
+
         }
     }
-    
+
     func saveProductDetails(as status: String) {
         // 🔹 Step 1: Validation
         guard validateRequest(request, imageUrls: imageUrls, videoUrls: uploadedVideoUrls, status: status) else {
             showhud = true
             return
         }
-        
+
         // 🔹 Step 2: Update status
         request.status = status
-        
+
         // 🔹 Step 3: Perform Sequential API calls
         Task {
             await performAPICalls(
@@ -1002,21 +1018,21 @@ struct ListProductScreen: View {
                 var mimeType: [String] = []
                 var photos = [[String]]()
                 var keysValue: [String] = []
-            
+
                 if imageUrls.count > 0 {
                     mimeType.append("image/jpeg")
                     keysValue.append("images[]")
                     let imagesArr = self.imageUrls.map({$0.description})
                     photos.append(imagesArr)
                 }
-                
-                
+
+
                 if self.uploadedVideoUrls.count > 0 {
                     // Check video URL extension to set the appropriate MIME type
                     for urlString in uploadedVideoUrls {
                         guard let url = URL(string: urlString) else { return }
                         let fileExtension = url.pathExtension.lowercased()
-                        
+
                         switch fileExtension {
                         case "mp4":
                             keysValue.append("videos[]")
@@ -1055,20 +1071,20 @@ struct ListProductScreen: View {
                 else  {
                     guard let response = self.viewModel.storeImageResponse,
                           response.status == "success" else { return }
-                    
+
                     let uploadedImagesUrls: [[String: String]] = response.data.images?.compactMap {
                         return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
                     } ?? []
                     let uploadedVideoUrls: [[String: String]] = response.data.videos?.compactMap {
                         return ["videos": $0.videos ?? ""]
                     } ?? []
-                    
-                    
+
+
                     // 🔹 Build extra fields
                     let variantArray = buildVariantArray(extraFields: extraFields,
                                                          extraFieldValues: extraFieldValues,
                                                          selectedRadio: selectedRadio)
-                    
+
                     // 🔹 Prepare request body
                     var productRequest: [String: Any] = [
                         "category_id": request.category_id,
@@ -1080,8 +1096,9 @@ struct ListProductScreen: View {
                         "flash_sale": request.flash_sale,
                         "accept_offers": request.accept_offers,
                         "reserve_for_live": request.reserve_for_live,
+                        "auction": selectedFormatIsAuction,
+                        "type": selectedProductType,
                         "shipping_profile_id": request.shipping_profile_id,
-//                        "auction": "true",
                         // ✅ Newly added fields
                         "width": request.width,
                         "length": request.length,
@@ -1093,7 +1110,6 @@ struct ListProductScreen: View {
                         // ✅ Images array (already present)
                         "images": uploadedImagesUrls,
                         "videos": uploadedVideoUrls,
-//                        "type": "live",
                         "status": request.status,
                         "hazardous_material": isHazardousMaterial
                     ]
@@ -1101,9 +1117,9 @@ struct ListProductScreen: View {
                     if !variantArray.isEmpty {
                         productRequest["variant"] = variantArray
                     }
-                    
+
                     // 🔹 Call product store API
-                    self.viewModel.errorMessage?.removeAll()
+                    self.viewModel.errorMessage = nil
                     try await viewModel.storeProduct(productId: isEditing ? (editingProduct?.id ?? 0) : nil, param: productRequest)
 
                     // Basecamp #9933973683 (2026-05-29 RETURN): follow up with
@@ -1122,14 +1138,14 @@ struct ListProductScreen: View {
             }
         }
     }
-    
+
     func categorySuccess() {
-       
+
         let response = viewModel.categoryResponse
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
-            
+
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -1139,11 +1155,11 @@ struct ListProductScreen: View {
                 secondaryBtnText: AppString.ok.localized
             )
             showError = true
-            
-            
+
+
         }
     }
-    
+
     // MARK: - Validation
     private func validateRequest(_ request: StoreProductParam, imageUrls: [String],videoUrls: [String], status: String) -> Bool {
         if status == "draft" {
@@ -1157,7 +1173,7 @@ struct ListProductScreen: View {
             }
             return true
         }
-        
+
         if imageUrls.isEmpty && videoUrls.isEmpty {
             hudMsg = "Please add media"
             return false
@@ -1182,7 +1198,7 @@ struct ListProductScreen: View {
             hudMsg = "Please enter quantity greater than 1"
             return false
         }
-        
+
         if request.shipping_profile_id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             // No shipping profile: Mail Class + Dimensions are required.
             if request.mail_class.isEmpty { hudMsg = "Please select mail class"; return false }
@@ -1190,7 +1206,7 @@ struct ListProductScreen: View {
             if request.height.isEmpty { hudMsg = "Please enter height"; return false }
             if request.length.isEmpty { hudMsg = "Please enter length"; return false }
             if request.weight.isEmpty { hudMsg = "Please enter weight"; return false }
-            
+
             let mailLabel = request.mail_class.trimmingCharacters(in: .whitespacesAndNewlines)
             if let limits = mailClasses.first(where: { $0.label == mailLabel }) {
                 if let msg = validateDimensionsAgainstMailClass(request: request, mailClass: limits) {
@@ -1198,9 +1214,9 @@ struct ListProductScreen: View {
                     return false
                 }
             }
-            
+
         }
-        
+
         if request.processing_category.isEmpty { hudMsg = "Please select processing category"; return false }
         if request.product_condition.isEmpty { hudMsg = "Please select product condition"; return false }
         if request.pricing.isEmpty { hudMsg = "Please enter pricing"; return false }
@@ -1210,13 +1226,13 @@ struct ListProductScreen: View {
         }
         return true
     }
-    
+
     private func validateDimensionsAgainstMailClass(request: StoreProductParam, mailClass: MailClass) -> String? {
         let weight = Double(request.weight) ?? 0
         let width = Double(request.width) ?? 0
         let height = Double(request.height) ?? 0
         let length = Double(request.length) ?? 0
-        
+
         if let maxWeight = mailClass.max_weight_lbs, maxWeight > 0, weight > maxWeight {
             return "Weight must be ≤ \(maxWeight) lbs for \(mailClass.label)"
         }
@@ -1229,14 +1245,14 @@ struct ListProductScreen: View {
         if let maxHeight = mailClass.max_height_in, maxHeight > 0, height > maxHeight {
             return "Height must be ≤ \(maxHeight) in for \(mailClass.label)"
         }
-        
+
         if let maxLPG = mailClass.max_length_plus_girth_in, maxLPG > 0 {
             let lengthPlusGirth = length + 2 * (width + height)
             if lengthPlusGirth > maxLPG {
                 return "Length + girth must be ≤ \(maxLPG) in for \(mailClass.label)"
             }
         }
-        
+
         return nil
     }
 
@@ -1247,23 +1263,23 @@ struct ListProductScreen: View {
         selectedRadio: [String: String]
     ) -> [[String: Any]] {
         var variantArray: [[String: Any]] = []
-        
+
         for field in extraFields {
             guard let title = field.label, let type = field.type else { continue }
-            
+
             if type == "text" {
                 let value = extraFieldValues[title] ?? ""
                 variantArray.append(["title": title, "value": value])
             } else if type == "radio", let options = field.options {
                 let selected = selectedRadio[title] ?? ""
                 var valueDict: [String: String] = [:]
-                
+
                 for (index, option) in options.enumerated() {
                     let key = "option_\(index + 1)"
                     valueDict[key] = option
                 }
                 valueDict["selected"] = selected
-                
+
                 variantArray.append(["title": title, "value": valueDict])
             }
         }
@@ -1303,7 +1319,7 @@ struct ListProductScreen: View {
     }
 
     func storeSuccess(){
-        if let errorMessage = viewModel.errorMessage {
+        if let errorMessage = viewModel.errorMessage, !errorMessage.isEmpty {
             alertType = .sheetType(
                 icon: .alert,
                 title: "Error",
@@ -1312,9 +1328,12 @@ struct ListProductScreen: View {
                 secondaryBtnText: AppString.ok.localized
             )
             showError = true
-        }else{
-            let response = viewModel.storeProductResponse
-            if response?.status == "success", let product = response?.data {
+            return
+        }
+
+        let response = viewModel.storeProductResponse
+        if response?.status?.lowercased() == "success" {
+            if let product = response?.data {
                 if isEditing {
                     onProductUpdated?(product)
                 } else {
@@ -1329,9 +1348,18 @@ struct ListProductScreen: View {
                 secondaryBtnText: ""
             )
             showError = true
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: response?.message ?? "Product could not be saved.",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         }
     }
-    
+
     // Format Button View
     private func formatButton(title: String, systemImage: String, isSelected: Bool) -> some View {
         VStack {
@@ -1350,7 +1378,7 @@ struct ListProductScreen: View {
         )
         .cornerRadius(12)
     }
-   
+
 }
 
 extension MailClass {
@@ -1366,7 +1394,7 @@ extension MailClass {
 
 struct MailClassLimitsView: View {
     let mailClass: MailClass
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if let notes = mailClass.notes, !notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -1375,7 +1403,7 @@ struct MailClassLimitsView: View {
                     .foregroundColor(.gray)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            
+
             let items: [(String, String?)] = [
                 ("Max weight", mailClass.max_weight_lbs.map { "\($0) lbs" }),
                 ("Max length", mailClass.max_length_in.map { "\($0) in" }),
@@ -1383,13 +1411,13 @@ struct MailClassLimitsView: View {
                 ("Max height", mailClass.max_height_in.map { "\($0) in" }),
                 ("Max length + girth", mailClass.max_length_plus_girth_in.map { "\($0) in" })
             ]
-            
+
             let filteredItems: [(String, String)] = items.compactMap { pair in
                 let (title, value) = pair
                 guard let value, !value.isEmpty else { return nil }
                 return (title, value)
             }
-            
+
             ForEach(filteredItems, id: \.0) { item in
                 HStack(spacing: 6) {
                     Text(item.0 + ":")
@@ -1437,12 +1465,12 @@ enum lisProductScreenSegment : String, CaseIterable, CustomStringConvertible {
 
 struct SectionHeader: View {
     let title: String
-    
+
     var body: some View {
         Text(title)
             .font(.custom(poppinsSemiBold, size: 16.0))
             .foregroundColor(.primary)
-          
+
     }
 }
 
@@ -1450,12 +1478,12 @@ struct SectionHeader: View {
 struct DimensionsSection: View {
     @Binding var request: StoreProductParam
     var limits: MailClass? = nil
-    
+
     private func maxLabel(_ value: Double?, unit: String) -> String? {
         guard let value, value > 0 else { return nil }
         return "max \(value) \(unit)"
     }
-    
+
     var body: some View {
         VStack(spacing: 16) {
             // Section Header
@@ -1463,15 +1491,15 @@ struct DimensionsSection: View {
                 Image(systemName: "cube.fill")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.defaultTheme)
-                
+
                 Text("Package Dimensions")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(.black)
-                
+
                 Spacer()
             }
             .padding(.horizontal, 16)
-            
+
             // Dimensions Grid
             VStack(spacing: 12) {
                 HStack(spacing: 12) {
@@ -1483,7 +1511,7 @@ struct DimensionsSection: View {
                         value: $request.width,
                         icon: "arrow.left.and.right"
                     )
-                    
+
                     // Height Field
                     DimensionField(
                         label: "Height",
@@ -1493,7 +1521,7 @@ struct DimensionsSection: View {
                         icon: "arrow.up.and.down"
                     )
                 }
-                
+
                 HStack(spacing: 12) {
                     // Length Field
                     DimensionField(
@@ -1503,7 +1531,7 @@ struct DimensionsSection: View {
                         value: $request.length,
                         icon: "arrow.forward"
                     )
-                    
+
                     // Weight Field
                     DimensionField(
                         label: "Weight",
@@ -1536,9 +1564,9 @@ struct DimensionField: View {
     let unit: String
     @Binding var value: String
     let icon: String
-    
+
     @State private var isFocused: Bool = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Label with Icon
@@ -1546,12 +1574,12 @@ struct DimensionField: View {
                 Image(systemName: icon)
                     .font(.custom(poppinsSemiBold,size: 13.0))
                     .foregroundColor(.defaultTheme)
-                
+
                 Text(maxText == nil ? label : "\(label) (\(maxText!))")
                     .font(.custom(poppinsSemiBold,size: 13.0))
                     .foregroundColor(.darkGray)
             }
-            
+
             // Input Field with Unit
             HStack(spacing: 8) {
                 TextField("0", text: $value, onEditingChanged: { focused in
@@ -1559,12 +1587,12 @@ struct DimensionField: View {
                         isFocused = focused
                     }
                 })
-               
+
                 .keyboardType(.decimalPad)
                 .font(.custom(poppinsSemiBold,size: 13.0))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.leading)
-                
+
                 Text(unit)
                     .font(.custom(poppinsSemiBold,size: 13.0))
                     .foregroundColor(.darkGray)
@@ -1591,19 +1619,19 @@ struct EnhancedToggleCard: View {
     let icon: String
     let iconColor: Color
     @Binding var isOn: Bool
-    
+
     @State private var isPressed: Bool = false
-    
+
     var body: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 isPressed = true
             }
-            
+
             // Haptic feedback
             let generator = UIImpactFeedbackGenerator(style: .medium)
             generator.impactOccurred()
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     isPressed = false
@@ -1617,27 +1645,27 @@ struct EnhancedToggleCard: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(iconColor.opacity(isOn ? 0.15 : 0.08))
                         .frame(width: 48, height: 48)
-                    
+
                     Image(systemName: icon)
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundColor(iconColor)
                 }
                 .shadow(color: isOn ? iconColor.opacity(0.1) : Color.clear, radius: 1, x: 0, y: 4)
-                
+
                 // Text Content
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
-                    
+
                     Text(subtitle)
                         .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-                
+
                 Spacer()
-                
+
                 // Toggle Switch
                 Toggle("", isOn: $isOn)
                     .labelsHidden()
@@ -1661,20 +1689,20 @@ struct EnhancedToggleCard: View {
 }
 struct LockedCategoryField: View {
     let categoryName: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Category")
                 .font(.custom(robotoMedium, size: 14.0))
                 .foregroundColor(.text)
-            
+
             HStack {
                 Text(categoryName)
                     .font(.custom(robotoRegular, size: 13.0))
                     .foregroundColor(.black)
-                
+
                 Spacer()
-                
+
                 Image(systemName: "lock.fill")
                     .font(.system(size: 14))
                     .foregroundColor(.gray)

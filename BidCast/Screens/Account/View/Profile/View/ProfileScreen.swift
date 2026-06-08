@@ -17,6 +17,32 @@ enum ProfileTabType {
     case clips
 }
 
+fileprivate enum ProfileShopFilter {
+    case auction
+    case buyNow
+    case sold
+
+    var statusFilter: String {
+        switch self {
+        case .auction, .buyNow:
+            return "active"
+        case .sold:
+            return "inactive"
+        }
+    }
+
+    var marketplaceFilter: String? {
+        switch self {
+        case .auction:
+            return "true"
+        case .buyNow:
+            return "false"
+        case .sold:
+            return nil
+        }
+    }
+}
+
 struct ProfileScreen: View {
     
     @Environment(\.dismiss) private var dismiss
@@ -83,7 +109,6 @@ struct ProfileScreen: View {
         return String(UserDefaults.userId) == id
     }
 
-    var options:[String] = ["Sort", "Auction", "Buy Now"]
     @State private var selectedIndex: Int = 0
     @State private var showSortSheet = false
     @State private var selectedSort: String = "newest"
@@ -258,71 +283,34 @@ struct ProfileScreen: View {
                             }
                         }
                         if selectedTab == "Shop" {
-                            // MARK: - Pills Selector
-                            VStack(spacing: 12){
-                                SearchBarView(placeholder: "Search") { debouncedText in
-//                                    if debouncedText == "" { return }
+                            ProfileShopSection(
+                                searchText: $searchText,
+                                selectedIndex: $selectedIndex,
+                                products: $productData,
+                                isLoading: isLoading,
+                                isFetchingMore: isFetchingMore,
+                                onSearch: { debouncedText in
                                     resetShopData()
                                     self.searchText = debouncedText
                                     fetchProduct()
-                                }.padding(.horizontal, 16)
-                                PillsSelectorView(
-                                    titles: options,
-                                    selectedIndex: $selectedIndex,
-                                    backgroundStyle: .roundedRect,
-                                    underlineEnabled: false,
-                                    showFilterButton: false,
-                                    showSortDropdown: true,
-                                    onSelectionChanged: { index, title in
-                                        // Show sort sheet when "Sort" is tapped
-                                        if index == 0 {
-                                            showSortSheet = true
-                                            selectedOptions = "newest"
-                                        }
-                                        else if index == 1 {
-                                            resetShopData()
-                                            selectedOptions = "auction"
-                                            fetchProduct()
-                                        }
-                                        else if index == 2 {
-                                            resetShopData()
-                                            selectedOptions = "accept_offers"
-                                            fetchProduct()
-                                        }
-                                    })
-                                
-                                LazyVStack(spacing: 0) {
-                                    
-                                    if isLoading {
-                                        ForEach(0..<8) { _ in
-                                            PurchasesViewShimmerView()
-                                                .padding(.horizontal, 8)
-                                                .padding(.vertical, 4)
-                                        }
-                                    } else if productData.isEmpty {
-                                        NoDataView(message: "No Product Found",yPosition:screenWidth/3.5)
-                                    } else {
-                                        ForEach(productData.indices, id: \.self) { index in
-                                            var product = productData[index]
-                                            ProductListItem(product: $productData[index],didSelectproduct: {
-                                                navigateToDetail = true
-                                                productId = product.id ?? 0
-                                                
-                                            })
-                                                .padding(.vertical, 4)
-                                                .onAppear {
-                                                    handlePagination(index: index)
-                                                }
-                                        }
-                                    }
-                                    
-                                    // Loader at bottom
-                                    if isFetchingMore {
-                                        ProgressView()
-                                            .padding(.vertical, 16)
-                                    }
+                                },
+                                onFilterTap: {
+                                    showSortSheet = true
+                                },
+                                onTabChange: { index in
+                                    resetShopData()
+                                    selectedIndex = index
+                                    selectedOptions = ""
+                                    fetchProduct()
+                                },
+                                onProductTap: { product in
+                                    navigateToDetail = true
+                                    productId = product.id ?? 0
+                                },
+                                onProductAppear: { index in
+                                    handlePagination(index: index)
                                 }
-                            }
+                            )
                         }
                         
                         else if selectedTab == "Shows" {
@@ -616,6 +604,11 @@ struct ProfileScreen: View {
                     fetchProduct()
                 }
             }
+        }
+        .onChange(of: selectedSort) { _ in
+            guard selectedTab == "Shop" else { return }
+            resetShopData()
+            fetchProduct()
         }
       
        
@@ -1122,27 +1115,183 @@ struct ProfileTabsView: View {
     @Binding var selectedTab: String
     var onTabSelected: (String) -> Void = { _ in }
     var body: some View {
-        HStack {
+        HStack(spacing: 22) {
             ForEach(tabs, id: \.self) { tab in
-                VStack {
-                    Text(tab)
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                        .fontWeight(selectedTab == tab ? .bold : .regular)
-                        .foregroundColor(selectedTab == tab ? .defaultTheme : .darkGray)
-                    if selectedTab == tab {
-                        Capsule().fill(Color.defaultTheme).frame(height: 3)
-                    } else {
-                        Capsule().fill(Color.clear).frame(height: 3)
-                    }
-                }
+                Text(tab)
+                    .font(.custom(selectedTab == tab ? poppinsBold : poppinsSemiBold, size: 21.0))
+                    .foregroundColor(selectedTab == tab ? .black : Color.gray.opacity(0.45))
                 .onTapGesture {
                     selectedTab = tab
                     onTabSelected(tab)
                 }
-                .frame(maxWidth: .infinity)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 4)
+    }
+}
+
+struct ProfileShopSection: View {
+    @Binding var searchText: String
+    @Binding var selectedIndex: Int
+    @Binding var products: [ProductDataModel1]
+
+    let isLoading: Bool
+    let isFetchingMore: Bool
+    let onSearch: (String) -> Void
+    let onFilterTap: () -> Void
+    let onTabChange: (Int) -> Void
+    let onProductTap: (ProductDataModel1) -> Void
+    let onProductAppear: (Int) -> Void
+
+    private let tabs = ["Auction", "Buy Now", "Sold"]
+
+    var body: some View {
+        VStack(spacing: 18) {
+            HStack(spacing: 14) {
+                SearchBarView(placeholder: "What are you looking for?") { debouncedText in
+                    searchText = debouncedText
+                    onSearch(debouncedText)
+                }
+                .frame(height: 54)
+
+                Button(action: onFilterTap) {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundColor(.defaultTheme)
+                        .frame(width: 54, height: 54)
+                        .background(Color.defaultThemeLight)
+                        .clipShape(Circle())
+                        .shadow(color: .black.opacity(0.10), radius: 6, x: 0, y: 3)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 16)
+
+            HStack(spacing: 14) {
+                ForEach(tabs.indices, id: \.self) { index in
+                    ProfileShopFilterPill(
+                        title: tabs[index],
+                        isSelected: selectedIndex == index
+                    ) {
+                        onTabChange(index)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+
+            LazyVStack(spacing: 14) {
+                if isLoading {
+                    ForEach(0..<8) { _ in
+                        PurchasesViewShimmerView()
+                            .padding(.horizontal, 16)
+                    }
+                } else if products.isEmpty {
+                    NoDataView(message: "No Product Found", yPosition: screenWidth / 3.5)
+                } else {
+                    ForEach(products.indices, id: \.self) { index in
+                        ProfileShopProductCard(product: products[index])
+                            .padding(.horizontal, 16)
+                            .onTapGesture {
+                                onProductTap(products[index])
+                            }
+                            .onAppear {
+                                onProductAppear(index)
+                            }
+                    }
+                }
+
+                if isFetchingMore {
+                    ProgressView()
+                        .padding(.vertical, 16)
+                }
             }
         }
-        .padding(.horizontal, 13)
+        .padding(.top, 18)
+        .padding(.bottom, 20)
+        .frame(maxWidth: .infinity)
+        .background(Color(.systemGray6))
+    }
+}
+
+struct ProfileShopFilterPill: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.custom(isSelected ? poppinsSemiBold : poppinsRegular, size: 20))
+                .foregroundColor(isSelected ? .white : .black)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .background(isSelected ? Color.defaultTheme : Color.gray.opacity(0.08))
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct ProfileShopProductCard: View {
+    let product: ProductDataModel1
+
+    var body: some View {
+        HStack(spacing: 16) {
+            CustomProfileImage(
+                url: productCardImage,
+                isCircular: false,
+                cornerRadius: 12,
+                size: 92,
+                height: 92,
+                defaultImage: "photo"
+            ) {}
+
+            VStack(alignment: .leading, spacing: 7) {
+                Text(product.title?.capitalizingFirstLetter() ?? "Product")
+                    .font(.custom(poppinsBold, size: 20))
+                    .foregroundColor(.black)
+                    .lineLimit(1)
+
+                Text(detailLine)
+                    .font(.custom(poppinsRegular, size: 20))
+                    .foregroundColor(.black)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(Double(product.pricing ?? "0")?.compactCurrency() ?? "$0.00")
+                    .font(.custom(poppinsRegular, size: 20))
+                    .foregroundColor(.black)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .cornerRadius(10)
+        .shadow(color: .black.opacity(0.10), radius: 8, x: 0, y: 2)
+    }
+
+    private var productCardImage: String {
+        product.thumbnail?.first ?? product.images?.first ?? ""
+    }
+
+    private var detailLine: String {
+        let category = product.category?.name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let condition = (product.productCondition ?? "")
+            .replacingOccurrences(of: "_", with: " ")
+            .capitalizingFirstLetter()
+
+        switch (category.isEmpty, condition.isEmpty) {
+        case (false, false): return "\(category) • \(condition)"
+        case (false, true): return category
+        case (true, false): return condition
+        default: return "Item"
+        }
     }
 }
 
@@ -1168,6 +1317,16 @@ struct TabIcon: View {
 //}
 
 extension ProfileScreen {
+    private var selectedShopFilter: ProfileShopFilter {
+        switch selectedIndex {
+        case 1:
+            return .buyNow
+        case 2:
+            return .sold
+        default:
+            return .auction
+        }
+    }
     
     private func resetShopData() {
         productData = []
@@ -1206,8 +1365,11 @@ extension ProfileScreen {
                 }
             ) {
                 let request = ProductRequest(user_id: "\(sellerId)",
-                                             search: searchText, page: currentPage,
-                                             sale_type: selectedOptions,
+                                             search: searchText,
+                                             status: selectedShopFilter.statusFilter,
+                                             marketplace: selectedShopFilter.marketplaceFilter,
+                                             page: currentPage,
+                                             sale_type: selectedOptions.isEmpty ? nil : selectedOptions,
                                              sort_by: selectedSort
                 )
                 
@@ -1233,10 +1395,11 @@ extension ProfileScreen {
         if response?.status == "success"{
             let newItems = response?.data ?? []
             totalCount = response?.total ?? 0
+            let filteredItems = newItems.filter { $0.matchesProfileShopFilter(selectedShopFilter) }
             if newItems.isEmpty {
                 canLoadMore = false
             } else {
-                productData.append(contentsOf: newItems)
+                productData.append(contentsOf: filteredItems)
             }
             
         }else{
@@ -1251,5 +1414,41 @@ extension ProfileScreen {
             showError = true
         }
         isFetchingMore = false
+    }
+}
+
+fileprivate extension ProductDataModel1 {
+    func matchesProfileShopFilter(_ filter: ProfileShopFilter) -> Bool {
+        switch filter {
+        case .auction:
+            return !isProfileShopSold && isProfileLiveAuctionFormat
+        case .buyNow:
+            return !isProfileShopSold && !isProfileLiveAuctionFormat
+        case .sold:
+            return isProfileShopSold
+        }
+    }
+
+    var isProfileLiveAuctionFormat: Bool {
+        if auction == true || reserveForLive == true || isAuction == true { return true }
+        if type.isProfileLiveAuctionText { return true }
+        if saleFormat.isProfileLiveAuctionText { return true }
+        return false
+    }
+
+    var isProfileShopSold: Bool {
+        let normalizedStatus = (status ?? "").lowercased()
+        if normalizedStatus == "sold" || normalizedStatus == "inactive" { return true }
+        return isSoldOut
+    }
+}
+
+fileprivate extension Optional where Wrapped == String {
+    var isProfileLiveAuctionText: Bool {
+        let normalized = (self ?? "")
+            .lowercased()
+            .replacingOccurrences(of: "-", with: "_")
+            .replacingOccurrences(of: " ", with: "_")
+        return ["live", "auction", "live_auction", "reserve_for_live", "reserveforlive"].contains(normalized)
     }
 }

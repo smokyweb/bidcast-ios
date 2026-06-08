@@ -17,6 +17,11 @@ enum ProductShowType {
     case viewOnly
 }
 
+private struct CohostInviteCandidate: Identifiable {
+    let id: Int
+    let name: String
+}
+
 struct RehearsalScreen: View {
     // MARK: - Environment / Inputs
     @EnvironmentObject  var appRootManager: AppRootManager
@@ -41,6 +46,9 @@ struct RehearsalScreen: View {
     @State private var bottomSheetHeight: CGFloat = screenHeight * 0.85
     
     @State var isLive: Bool = false
+    var sameAccountSecondDevice: Bool = false
+    var startControlOnly: Bool = false
+    var takeOverVideo: Bool = false
     @State var roomId = ""
     @State var isMicOn: Bool = true
     @State var isUsingFrontCamera: Bool = true
@@ -65,6 +73,8 @@ struct RehearsalScreen: View {
     @State private var selectedRandomizerTemplateId: Int? = nil
     // Basecamp #9934001770 (2026-05-27): co-host pairing sheet.
     @State private var showCoHostPairing: Bool = false
+    @State private var showInviteCohostPicker: Bool = false
+    @State private var cohostInviteCandidates: [CohostInviteCandidate] = []
     
 
     @State private var showPollSheet : Bool = false
@@ -138,6 +148,7 @@ struct RehearsalScreen: View {
     
     @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true
+    @State private var isControlOnlyDevice = false
     
     @State var agoraToken: String = ""
     @State var uId: Int = 0
@@ -280,6 +291,14 @@ struct RehearsalScreen: View {
         // showId derived from roomId which has format live_room_<userId>_<showId>.
         .sheet(isPresented: $showCoHostPairing) {
             CoHostPairingSheet(scheduleShowId: Int(roomId.split(separator: "_").last ?? "0") ?? 0)
+        }
+        .confirmationDialog("Invite Cohost", isPresented: $showInviteCohostPicker, titleVisibility: .visible) {
+            ForEach(cohostInviteCandidates) { candidate in
+                Button(candidate.name) {
+                    sendCohostInvite(inviteeUserId: candidate.id)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
         }
        
  
@@ -571,10 +590,24 @@ struct RehearsalScreen: View {
             
             logoutRoom()
             showTopBadge = true
-            agoraManager.setupLocalVideo()
+            isControlOnlyDevice = startControlOnly
+            if startControlOnly {
+                enterControlOnlyMode(notifyServer: true)
+            } else {
+                agoraManager.setupLocalVideo()
+            }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                if comeFromPrepare && !comeForLive {
+                if sameAccountSecondDevice {
+                    showReadyModal = false
+                    showWelcomeDialog = false
+                    showButton = true
+                    showLiveControls = true
+                    showPreLiveControls = false
+                    if takeOverVideo {
+                        fetchAgoraToken()
+                    }
+                } else if comeFromPrepare && !comeForLive {
                     showReadyModal = false
                 } else {
                     showReadyModal = true
@@ -588,7 +621,12 @@ struct RehearsalScreen: View {
             }
             
             Task {
-                if agoraManager.isJoined {
+                if isControlOnlyDevice {
+                    if !roomId.isEmpty {
+                        SocketManagerService.shared.leaveRoom(roomId: roomId, userId: UserDefaults.userId)
+                    }
+                    hasInitialized = false
+                } else if agoraManager.isJoined {
                     print("❌ Truly leaving - ending show")
                     self.endShow()
                     hasInitialized = false // Reset for next time
@@ -668,40 +706,52 @@ struct RehearsalScreen: View {
     private func videoLayer(_ geometry: GeometryProxy) -> some View {
         let size = geometry.size
         ZStack {
-
-            // 🎥 Host's own local camera — always full-screen main feed
-            VideoContainerView(uiView: agoraManager.localVideoView)
+            if isControlOnlyDevice {
+                Color.black
+                VStack(spacing: 8) {
+                    Image(systemName: "video.slash.fill")
+                        .font(.system(size: 34, weight: .semibold))
+                    Text("Video is active on another device")
+                        .font(.custom(poppinsSemiBold, size: 15))
+                }
+                .foregroundColor(.white.opacity(0.75))
                 .frame(width: size.width, height: size.height)
+            } else {
 
-            // 📺 Co-host's remote feed — compact PiP overlay in top-right
-            // when a second broadcaster (co-host) has joined the channel.
-            if agoraManager.remoteUserId != nil {
-                VStack {
-                    HStack {
-                        Spacer()
-                        ZStack(alignment: .bottomLeading) {
-                            VideoContainerView(uiView: agoraManager.remoteVideoView)
-                                .frame(width: 120, height: 160)
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
-                                )
-                                .shadow(radius: 8)
+                // 🎥 Host's own local camera — always full-screen main feed
+                VideoContainerView(uiView: agoraManager.localVideoView)
+                    .frame(width: size.width, height: size.height)
 
-                            Text("CO-HOST")
-                                .font(.system(size: 9, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .background(Color.black.opacity(0.6))
-                                .cornerRadius(4)
-                                .padding(6)
+                // 📺 Co-host's remote feed — compact PiP overlay in top-right
+                // when a second broadcaster (co-host) has joined the channel.
+                if agoraManager.remoteUserId != nil {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            ZStack(alignment: .bottomLeading) {
+                                VideoContainerView(uiView: agoraManager.remoteVideoView)
+                                    .frame(width: 120, height: 160)
+                                    .cornerRadius(12)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                    )
+                                    .shadow(radius: 8)
+
+                                Text("CO-HOST")
+                                    .font(.system(size: 9, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .background(Color.black.opacity(0.6))
+                                    .cornerRadius(4)
+                                    .padding(6)
+                            }
+                            .padding(.top, 60)
+                            .padding(.trailing, 16)
                         }
-                        .padding(.top, 60)
-                        .padding(.trailing, 16)
+                        Spacer()
                     }
-                    Spacer()
                 }
             }
         }
@@ -1031,6 +1081,10 @@ struct RehearsalScreen: View {
                     // Basecamp #9934001770 (2026-05-27): open co-host pairing.
                     showSellSheet = false
                     showCoHostPairing = true
+                },
+                onInviteCohost: {
+                    showSellSheet = false
+                    loadCohostInviteCandidates()
                 },
                 onZoomOut: {
                     print("Zoom Out")
@@ -1997,7 +2051,9 @@ struct RehearsalScreen: View {
 //            }
             
             // STEP 3: Join Agora Channel — runs best on background thread
-            self.joinAgoraChannelIfNeeded()
+            if !self.isControlOnlyDevice {
+                self.joinAgoraChannelIfNeeded()
+            }
             self.categoryid = "\(data.category?.id ?? 0)"
             // STEP 4: Prepare seller data (light, can stay background)
             self.auctionTypeId = (data.auction?.id ?? data.auction_type_id) ?? 0
@@ -2032,6 +2088,62 @@ struct RehearsalScreen: View {
                 self.showLiveControls = true
                 self.showPreLiveControls = false
                 self.getPromoteShows()
+                if self.sameAccountSecondDevice {
+                    if self.takeOverVideo {
+                        SocketManagerService.shared.takeOverCoHostVideo(
+                            roomId: roomId,
+                            userId: UserDefaults.userId,
+                            showId: "\(showId)"
+                        )
+                    } else {
+                        SocketManagerService.shared.enterCoHostControlOnly(
+                            roomId: roomId,
+                            userId: UserDefaults.userId,
+                            showId: "\(showId)"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private func enterControlOnlyMode(notifyServer: Bool) {
+        guard let userId = showsData.user_id, let showId = showsData.id else {
+            showhudMessage("Invalid stream data — missing show ID or user ID.")
+            return
+        }
+
+        let resolvedRoomId = "live_room_\(userId)_\(showId)"
+        roomId = resolvedRoomId
+        isControlOnlyDevice = true
+        isLive = true
+        showButton = true
+        showReadyModal = false
+        showWelcomeDialog = false
+        showLiveControls = true
+        showPreLiveControls = false
+        categoryid = "\(showsData.category?.id ?? 0)"
+        categoryName = showsData.category?.name ?? ""
+        auctionTypeId = (showsData.auction?.id ?? showsData.auction_type_id) ?? 0
+        sellerId = "\(UserDefaults.userId)"
+
+        if agoraManager.isJoined {
+            agoraManager.leaveChannel()
+        }
+
+        socketManager.setupSocket {
+            socketManager.joinRoom(roomId: resolvedRoomId, userId: UserDefaults.userId) {
+                fetchProducts(for: resolvedRoomId)
+            }
+            setupLiveSocketListeners(for: resolvedRoomId, showId: showId)
+            SocketManagerService.shared.startLiveScheduler(roomId: resolvedRoomId)
+            getPromoteShows()
+            if notifyServer {
+                socketManager.enterCoHostControlOnly(
+                    roomId: resolvedRoomId,
+                    userId: UserDefaults.userId,
+                    showId: "\(showId)"
+                )
             }
         }
     }
@@ -2080,6 +2192,23 @@ struct RehearsalScreen: View {
             print("🏠 Room updated: \(newRoom.room_id ?? "unknown")")
             productCount = newRoom.productCount ?? 0
             self.fetchProducts(for: roomId)
+        }
+
+        socketManager.listenForCoHostVideoHolderChanged { eventRoomId, holderUserId, holderSocketId in
+            guard eventRoomId == roomId else { return }
+            guard holderUserId == UserDefaults.userId else { return }
+            guard holderSocketId != nil, holderSocketId != socketManager.socketId else { return }
+            enterControlOnlyMode(notifyServer: false)
+        }
+
+        socketManager.listenForCoHostControlMode { eventRoomId, userId in
+            guard eventRoomId == roomId else { return }
+            guard userId == UserDefaults.userId else { return }
+            enterControlOnlyMode(notifyServer: false)
+        }
+
+        socketManager.listenForCoHostError { message in
+            showhudMessage(message)
         }
         
         SocketManagerService.shared.observeBidCountdown(
@@ -2409,15 +2538,6 @@ struct RehearsalScreen: View {
             showWinnerOnParent = true
             randomWinner = winnerName.capitalizingFirstLetter()
             randomWinnerImage = winnerProfileImage
-
-            let message = "We have a winner! \(winnerName)"
-            SocketManagerService.shared.sendChat(
-                roomId: roomId,
-                message: message,
-                userId: id,
-                userName: name,
-                userImage: image
-            )
         } else {
             // No bids placed — clear any stale winner UI so only Run Next is shown.
             winnerName = ""
@@ -2453,6 +2573,83 @@ struct RehearsalScreen: View {
     private func showhudMessage(_ message: String) {
         hudMsg = message
         showhud = true
+    }
+
+    private func loadCohostInviteCandidates() {
+        let scheduleShowId = Int(roomId.split(separator: "_").last ?? "0") ?? Int(showUd) ?? 0
+        guard scheduleShowId > 0 else {
+            showhudMessage("Show not found.")
+            return
+        }
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/invite-candidates?schedule_show_id=\(scheduleShowId)") else {
+            showhudMessage("Could not load cohost candidates.")
+            return
+        }
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+
+        URLSession.shared.dataTask(with: req) { data, response, _ in
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            guard (200...299).contains(status), let data else {
+                DispatchQueue.main.async { showhudMessage("Could not load cohost candidates.") }
+                return
+            }
+
+            let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            let rows = json?["data"] as? [[String: Any]] ?? []
+            let candidates = rows.compactMap { row -> CohostInviteCandidate? in
+                guard let id = row["id"] as? Int else { return nil }
+                let rawName = (row["name"] as? String) ?? ""
+                let rawUsername = (row["username"] as? String) ?? ""
+                let name = !rawName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    ? rawName
+                    : (!rawUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? rawUsername : "User #\(id)")
+                return CohostInviteCandidate(id: id, name: name)
+            }
+
+            DispatchQueue.main.async {
+                cohostInviteCandidates = candidates
+                if candidates.isEmpty {
+                    showhudMessage("No cohost candidates found.")
+                } else {
+                    showInviteCohostPicker = true
+                }
+            }
+        }.resume()
+    }
+
+    private func sendCohostInvite(inviteeUserId: Int) {
+        let scheduleShowId = Int(roomId.split(separator: "_").last ?? "0") ?? Int(showUd) ?? 0
+        guard scheduleShowId > 0,
+              let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/invite") else {
+            showhudMessage("Show not found.")
+            return
+        }
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+        req.httpBody = try? JSONSerialization.data(withJSONObject: [
+            "schedule_show_id": scheduleShowId,
+            "invitee_user_id": inviteeUserId
+        ])
+
+        URLSession.shared.dataTask(with: req) { _, response, _ in
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            DispatchQueue.main.async {
+                if (200...299).contains(status) {
+                    hudMsg = "Cohost invite sent."
+                    showhudSuccess = true
+                } else {
+                    showhudMessage("Could not send cohost invite.")
+                }
+            }
+        }.resume()
     }
     
     

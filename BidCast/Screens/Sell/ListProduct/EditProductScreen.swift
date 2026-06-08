@@ -22,7 +22,7 @@ struct EditProductScreen: View {
     @State var categoyList = [String]()
     @State var productTitle = ""
     @State var message = ""
-    
+
     @State var isTappedFlash: Bool = false
     // Basecamp #9933973683 (2026-05-27): flash sale price + window state.
     @State private var flashSalePriceText: String = ""
@@ -30,7 +30,7 @@ struct EditProductScreen: View {
     @State private var flashSaleEndsAt: Date = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
     @State var isTappedAccept: Bool = false
     @State var isTappedReserve: Bool = false
-    
+
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
@@ -42,30 +42,30 @@ struct EditProductScreen: View {
     @State var shippingId = ""
     @State var mailClassList = [String]()
     @State private var mailClasses: [MailClass] = []
-    
+
     @State var conditionListArr = ["New",
                                    "Like New",
                                    "Gently Loved",
                                    "Well Loved",
                                    "Other",
                                    "Trending"]
-    
+
     @State var request: StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "", sub_category_id: "", width: "", length: "", weight: "", height: "", mail_class: "", processing_category: "", product_condition: "")
-    
+
     @State private var profiles: [StoreShippingModel] = []
     @State var shippingProfileNames: [String] = []
     @State var selectedShippingProfileName: String = ""
     @StateObject private var shippingViewModel = ShippingViewModel()
-    
+
     @StateObject var viewModel = ListProductViewModel()
-    
+
     @State var imageUrls: [String] = []
     @State var videoUrls: [String] = []
     @State var thumbnailUrls: [String] = []
-    
+
     @State private var isHazardousMaterial: Bool = false
     @State private var selectedFormat: SalesFormat = .buyItNow
-    
+
     @State var showSellerSheet = false
     @State var navigateToSeller = false
     @State var showSubCategorySheet = false
@@ -81,27 +81,42 @@ struct EditProductScreen: View {
     @State var productId: Int = -1
     @State var openShippingSheet = false
     @State var navigateToShippingProfiles = false
-    
+
     private var isUsingShippingProfile: Bool {
         !(request.shipping_profile_id.trimmingCharacters(in: .whitespacesAndNewlines)).isEmpty
     }
-    
+
     private var selectedMailClass: MailClass? {
         let selected = request.mail_class.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !selected.isEmpty else { return nil }
         return mailClasses.first(where: { $0.label == selected })
     }
-    
+
+    private var selectedFormatIsAuction: Bool {
+        selectedFormat == .auction
+    }
+
+    private var selectedProductType: String {
+        selectedFormatIsAuction ? "live" : "buy_it_now"
+    }
+
+    private func productIsAuction(_ product: ProductDataModel1) -> Bool {
+        if product.auction == true || product.reserveForLive == true || product.isAuction == true { return true }
+        let values = [product.type, product.saleFormat]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+        return values.contains { ["live", "auction", "live_auction", "reserve_for_live", "reserveforlive"].contains($0) }
+    }
+
     var strokeColor: Color {
         isHazardousMaterial ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1)
     }
-    
+
     var lineWidth: CGFloat {
         isHazardousMaterial ? 2 : 1
     }
-    
+
     @State private var segment: lisProductScreenSegment = .Buyit
-    
+
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
         title: "",
@@ -110,7 +125,7 @@ struct EditProductScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
-    
+
     var body: some View {
         VStack {
             VStack {
@@ -127,21 +142,23 @@ struct EditProductScreen: View {
             }
             .frame(height: 40)
             .background(Color.white)
-            
+
             ScrollView(showsIndicators: false) {
-                
+
                 MediaPickerView(uploadedImageUrls: $imageUrls, uploadedVideoUrls: $videoUrls) { index, mediaType in
                     if mediaType == .image {
-                        thumbnailUrls.remove(at: index)
+                        if index < thumbnailUrls.count {
+                            thumbnailUrls.remove(at: index)
+                        }
                     }
                 }
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Product Details".localized)
                         .font(.custom(robotoMedium, size: 16.0))
                         .padding(.top, 8)
                         .padding([.leading, .trailing], 16.0)
-                    
+
                     DropDownSelection(
                         options: $categoryNames,
                         floatingLabel: "Category",
@@ -190,7 +207,7 @@ struct EditProductScreen: View {
                     )
                     .zIndex(1201.0)
                     .padding([.leading, .trailing], 16)
-                    
+
                     AuthTextField(
                         floatingLabel: "Title".localized,
                         placeholder: "Enter Product title".localized,
@@ -204,7 +221,7 @@ struct EditProductScreen: View {
                         })
                     .keyboardType(.alphabet)
                     .padding([.top, .bottom], 4)
-                    
+
                     DescriptionFieldView(
                         description: $request.description,
                         custFontName: robotoMedium,
@@ -212,7 +229,7 @@ struct EditProductScreen: View {
                     ) { message in
                         request.description = message
                     }
-                    
+
                     AuthTextField(
                         floatingLabel: "Quantity".localized,
                         placeholder: "Enter Quantity".localized,
@@ -226,7 +243,7 @@ struct EditProductScreen: View {
                         })
                     .keyboardType(.numberPad)
                     .padding([.bottom], 4)
-                    
+
                     // Shipping Profile (optional). If selected, Mail Class + Dimensions become optional.
                     DropDownSelection(
                         options: $shippingProfileNames,
@@ -245,7 +262,7 @@ struct EditProductScreen: View {
                             } else {
                                 request.shipping_profile_id = ""
                             }
-                            
+
                             if isUsingShippingProfile {
                                 request.mail_class = ""
                             }
@@ -253,7 +270,7 @@ struct EditProductScreen: View {
                     )
                     .padding([.leading, .trailing], 16)
                     .zIndex(1202.0)
-                    
+
                     if isUsingShippingProfile {
                         Button(action: {
                             selectedShippingProfileName = ""
@@ -273,7 +290,7 @@ struct EditProductScreen: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 2)
                     }
-                    
+
                     if !isUsingShippingProfile {
                         DropDownSelection(
                             options: $mailClassList,
@@ -292,7 +309,7 @@ struct EditProductScreen: View {
                         .padding([.leading, .trailing], 16)
                         DimensionsSection(request: $request, limits: selectedMailClass)
                     }
-                    
+
                     DropDownSelection(
                         options: $processingListArr,
                         floatingLabel: "Processing Category",
@@ -308,7 +325,7 @@ struct EditProductScreen: View {
                         }
                     )
                     .padding([.leading, .trailing], 16)
-                    
+
                     DropDownSelection(
                         options: $conditionListArr,
                         floatingLabel: "Condition",
@@ -324,7 +341,7 @@ struct EditProductScreen: View {
                         }
                     )
                     .padding([.leading, .trailing], 16)
-                    
+
                     if extraFields.count != 0 {
                         ForEach(0 ..< extraFields.count) { index in
                             let field = extraFields[index]
@@ -346,13 +363,13 @@ struct EditProductScreen: View {
                                         }
                                     )
                                     .padding(.bottom, 4)
-                                    
+
                                 } else if type == "radio", let options = field.options {
                                     VStack(alignment: .leading) {
                                         Text(field.label?.capitalizingFirstLetter() ?? "")
                                             .padding(.horizontal, 1)
                                             .font(.custom(robotoMedium, size: 14))
-                                        
+
                                         ForEach(options, id: \.self) { option in
                                             HStack {
                                                 Image(systemName: selectedRadio[field.label ?? ""] == option ? "largecircle.fill.circle" : "circle")
@@ -378,13 +395,13 @@ struct EditProductScreen: View {
                 .cornerRadius(12)
                 .padding(.top, 2)
                 .padding(.horizontal, 12)
-                
+
                 VStack(alignment: .leading) {
                     Text("Pricing")
                         .font(.custom(poppinsMedium, size: 13.0))
                         .padding(.horizontal)
                         .padding(.top)
-                    
+
                     CustomSegmentedControl(preselectedIndex: $segment, options: lisProductScreenSegment.allCases)
                         .onChange(of: segment) { newSegment in
                             if segment == .Buyit {
@@ -394,12 +411,12 @@ struct EditProductScreen: View {
                             }
                         }
                         .padding(.horizontal)
-                    
+
                     Text("Price".localized)
                         .font(.custom(robotoMedium, size: 16.0))
                         .padding(.top, 8)
                         .padding([.leading, .trailing], 16.0)
-                    
+
                     AuthTextField(
                         floatingLabel: "Buy It Now Price".localized,
                         placeholder: "$0.0",
@@ -413,7 +430,7 @@ struct EditProductScreen: View {
                             request.pricing = price
                         })
                     .keyboardType(.decimalPad)
-                    
+
                     if selectedFormat == .auction {
                         VStack(spacing: 12) {
                             EnhancedToggleCard(
@@ -477,7 +494,7 @@ struct EditProductScreen: View {
                                 .cornerRadius(10)
                                 .padding(.horizontal, 12)
                             }
-                            
+
                             EnhancedToggleCard(
                                 title: "Accept Offers",
                                 subtitle: "Allow buyers to make offers",
@@ -507,7 +524,7 @@ struct EditProductScreen: View {
                         request.accept_offers = "0"
                     }
                 }
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     VStack(alignment: .leading, spacing: 16) {
                         Toggle(isOn: $isHazardousMaterial) {
@@ -543,7 +560,7 @@ struct EditProductScreen: View {
                 )
                 .padding(.horizontal, 12)
                 .zIndex(1000)
-                
+
                 // Bottom Buttons - Updated for Edit
                 TwoButton(
                     titleOne: "Update",
@@ -562,7 +579,7 @@ struct EditProductScreen: View {
             .padding(.vertical, 16)
             .background(.backGround)
             .zIndex(1000)
-            
+
             .bottomSheet(
                 isPresented: $showSubCategorySheet,
                 height: selectedOption.count < 4 ? screenHeight * 0.4 : screenHeight/1.7,
@@ -642,7 +659,7 @@ struct EditProductScreen: View {
                 )
                 .ignoresSafeArea(.keyboard)
             )
-            
+
             CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }
         .edgesIgnoringSafeArea(.bottom)
@@ -673,7 +690,7 @@ struct EditProductScreen: View {
                     async let categoryTask: () = viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
                     async let mailTask: () = viewModel.getMailClasses()
                     async let shippingTask: () = shippingViewModel.getShippingProfiles()
-                    
+
                     _ = try await (categoryTask, mailTask, shippingTask)
                 }
             }
@@ -682,14 +699,18 @@ struct EditProductScreen: View {
             hideKeyboard()
         }
     }
-    
+
     private func successShippingProfiles() {
         let response = shippingViewModel.getShippingProfilesResponse
         self.profiles = response?.data ?? []
         openShippingSheet = false
         self.shippingProfileNames = profiles.map { $0.name ?? "" }
+        if let selectedId = Int(request.shipping_profile_id),
+           let profile = profiles.first(where: { $0.id == selectedId }) {
+            selectedShippingProfileName = profile.name ?? ""
+        }
     }
-    
+
     func mailSuccess() {
         let response = viewModel.mailClassResponse
         if viewModel.errorMessage == nil {
@@ -707,17 +728,17 @@ struct EditProductScreen: View {
             showError = true
         }
     }
-    
+
     func saveProductDetails(as status: String) {
         // 🔹 Step 1: Validation
         guard validateRequest(request, imageUrls: imageUrls, videoUrls: videoUrls, status: status) else {
             showhud = true
             return
         }
-        
+
         // 🔹 Step 2: Update status
         request.status = status
-        
+
         // 🔹 Step 3: Perform Sequential API calls
         Task {
             await performAPICalls(
@@ -734,48 +755,48 @@ struct EditProductScreen: View {
                 }
             ) {
                 viewModel.errorMessage?.removeAll()
-                
+
                 let localImages = imageUrls.filter { url in
                     !(url.hasPrefix("http://") || url.hasPrefix("https://"))
                 }
-                
+
                 let serverImages = imageUrls.filter { url in
                     (url.hasPrefix("http://") || url.hasPrefix("https://"))
                 }
-                
+
                 let serverThumbnails = thumbnailUrls.filter { url in
                     (url.hasPrefix("http://") || url.hasPrefix("https://"))
                 }
-                
+
                 let localVideos = videoUrls.filter { url in
                     !(url.hasPrefix("http://") || url.hasPrefix("https://"))
                 }
-                
+
                 let serverVideos = videoUrls.filter { url in
                     (url.hasPrefix("http://") || url.hasPrefix("https://"))
                 }
-                
+
                 var uploadedImagesUrls: [[String: String]] = []
                 var uploadedVideoUrls: [[String: String]] = []
-                
+
                 // Upload new media if any
                 if !localImages.isEmpty || !localVideos.isEmpty {
                     var mimeType: [String] = []
                     var photos = [[String]]()
                     var keysValue: [String] = []
-                    
+
                     if localImages.count > 0 {
                         mimeType.append("image/jpeg")
                         keysValue.append("images[]")
                         let imagesArr = localImages.map { $0.description }
                         photos.append(imagesArr)
                     }
-                    
+
                     if localVideos.count > 0 {
                         for urlString in localVideos {
                             guard let url = URL(string: urlString) else { return }
                             let fileExtension = url.pathExtension.lowercased()
-                            
+
                             switch fileExtension {
                             case "mp4":
                                 keysValue.append("videos[]")
@@ -800,9 +821,9 @@ struct EditProductScreen: View {
                             }
                         }
                     }
-                    
+
                     try await viewModel.uploadStoreImage(images: photos, mimeType: mimeType, keysValue: keysValue)
-                    
+
                     if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
                         alertType = .sheetType(
                             icon: .alert,
@@ -814,29 +835,30 @@ struct EditProductScreen: View {
                         showError = true
                         return
                     }
-                    
+
                     guard let response = self.viewModel.storeImageResponse,
                           response.status == "success" else { return }
-                    
+
                     uploadedImagesUrls = response.data.images?.compactMap {
                         return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
                     } ?? []
-                    
+
                     uploadedVideoUrls = response.data.videos?.compactMap {
                         return ["videos": $0.videos ?? ""]
                     } ?? []
                 }
-                
+
                 // Combine server and newly uploaded media
                 for (index, item) in serverImages.enumerated() {
-                    uploadedImagesUrls.append(["image": item, "thumbnail": serverThumbnails[index]])
+                    let thumbnail = index < serverThumbnails.count ? serverThumbnails[index] : item
+                    uploadedImagesUrls.append(["image": item, "thumbnail": thumbnail])
                 }
-                
+
                 for item in serverVideos {
                     uploadedVideoUrls.append(["videos": item])
                 }
-                
-                
+
+
                 let finalImageUrls: [[String: String]]
                 if !uploadedImagesUrls.isEmpty {
                     // New images were uploaded
@@ -864,12 +886,12 @@ struct EditProductScreen: View {
                     // No videos at all
                     finalVideoUrls = []
                 }
-                
+
                 // 🔹 Build extra fields
                 let variantArray = buildVariantArray(extraFields: extraFields,
                                                      extraFieldValues: extraFieldValues,
                                                      selectedRadio: selectedRadio)
-                
+
                 // 🔹 Prepare request body
                 var productRequest: [String: Any] = [
                     "category_id": request.category_id,
@@ -881,6 +903,8 @@ struct EditProductScreen: View {
                     "flash_sale": request.flash_sale,
                     "accept_offers": request.accept_offers,
                     "reserve_for_live": request.reserve_for_live,
+                    "auction": selectedFormatIsAuction,
+                    "type": selectedProductType,
                     "shipping_profile_id": request.shipping_profile_id,
                     "width": request.width,
                     "length": request.length,
@@ -894,13 +918,13 @@ struct EditProductScreen: View {
                     "status": request.status,
                     "hazardous_material": isHazardousMaterial
                 ]
-                
+
                 if !variantArray.isEmpty {
                     productRequest["variant"] = variantArray
                 }
-                
+
                 // 🔹 Call product update API
-                self.viewModel.errorMessage?.removeAll()
+                self.viewModel.errorMessage = nil
                 try await viewModel.storeProduct(productId: productId, param: productRequest)
 
                 // Basecamp #9933973683 (2026-05-27): if flash sale on, follow up
@@ -915,7 +939,7 @@ struct EditProductScreen: View {
             }
         }
     }
-    
+
     // Basecamp #9933973683 (2026-05-27): flash sale API helpers.
     private func setFlashSale(productId: Int, price: Double, startsAt: Date, endsAt: Date) async {
         guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/flash-sale") else { return }
@@ -961,10 +985,12 @@ struct EditProductScreen: View {
             showError = true
         }
     }
-    
+
     func getProductDetails() {
         selectedCategory = productData.category?.name ?? ""
         productId = productData.id ?? 0
+        let shippingProfileId = productData.shippingProfileId ?? 0
+        let isAuctionProduct = productIsAuction(productData)
         request = StoreProductParam(
             category_id: "\(productData.category?.id ?? 0)",
             title: productData.title ?? "",
@@ -973,8 +999,8 @@ struct EditProductScreen: View {
             pricing: "\(productData.pricing ?? "0.0")",
             flash_sale: productData.flashSale ?? false ? "1" : "0",
             accept_offers: productData.acceptOffers ?? false ? "1" : "0",
-            reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",
-            shipping_profile_id: "\(productData.shippingProfileId ?? 0)",
+            reserve_for_live: (productData.reserveForLive ?? isAuctionProduct) ? "1" : "0",
+            shipping_profile_id: shippingProfileId > 0 ? "\(shippingProfileId)" : "",
             status: productData.status ?? "",
             width: "\(productData.width ?? 0.0)",
             length: "\(productData.length ?? 0.0)",
@@ -984,15 +1010,34 @@ struct EditProductScreen: View {
             processing_category: productData.processingCategory ?? "",
             product_condition: productData.productCondition ?? ""
         )
-        
+
         isTappedFlash = productData.flashSale ?? false
         isTappedAccept = productData.acceptOffers ?? false
-        isTappedReserve = productData.reserveForLive ?? false
-        
+        isTappedReserve = productData.reserveForLive ?? isAuctionProduct
+        isHazardousMaterial = productData.hazardousMaterial ?? false
+        selectedFormat = isAuctionProduct ? .auction : .buyItNow
+        segment = isAuctionProduct ? .Auction : .Buyit
+
+        if let price = productData.flashSalePrice, price > 0 {
+            flashSalePriceText = String(format: "%.2f", price)
+        }
+        let isoFormatter = ISO8601DateFormatter()
+        if let startsAt = productData.flashSaleStartsAt,
+           let date = isoFormatter.date(from: startsAt) {
+            flashSaleStartsAt = date
+        }
+        if let endsAt = productData.flashSaleEndsAt,
+           let date = isoFormatter.date(from: endsAt) {
+            flashSaleEndsAt = date
+        }
+
         self.imageUrls = productData.images ?? [String]()
         self.thumbnailUrls = productData.thumbnail ?? [String]()
+        if thumbnailUrls.isEmpty {
+            thumbnailUrls = imageUrls
+        }
         self.videoUrls = productData.videos ?? [String]()
-        
+
         if request.category_id == "0" {
             request.category_id.removeAll()
         }
@@ -1012,7 +1057,7 @@ struct EditProductScreen: View {
             self.videoUrls.removeAll()
         }
     }
-    
+
     // MARK: - Validation
     private func validateRequest(_ request: StoreProductParam, imageUrls: [String], videoUrls: [String], status: String) -> Bool {
         if status == "draft" {
@@ -1026,7 +1071,7 @@ struct EditProductScreen: View {
             }
             return true
         }
-        
+
         if imageUrls.isEmpty && videoUrls.isEmpty {
             hudMsg = "Please add media"
             return false
@@ -1051,14 +1096,14 @@ struct EditProductScreen: View {
             hudMsg = "Please enter quantity greater than 1"
             return false
         }
-        
+
         if request.shipping_profile_id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             if request.mail_class.isEmpty { hudMsg = "Please select mail class"; return false }
             if request.width.isEmpty { hudMsg = "Please enter width"; return false }
             if request.height.isEmpty { hudMsg = "Please enter height"; return false }
             if request.length.isEmpty { hudMsg = "Please enter length"; return false }
             if request.weight.isEmpty { hudMsg = "Please enter weight"; return false }
-            
+
             let mailLabel = request.mail_class.trimmingCharacters(in: .whitespacesAndNewlines)
             if let limits = mailClasses.first(where: { $0.label == mailLabel }) {
                 if let msg = validateDimensionsAgainstMailClass(request: request, mailClass: limits) {
@@ -1066,9 +1111,9 @@ struct EditProductScreen: View {
                     return false
                 }
             }
-            
+
         }
-        
+
         if request.processing_category.isEmpty { hudMsg = "Please select processing category"; return false }
         if request.product_condition.isEmpty { hudMsg = "Please select product condition"; return false }
         if request.pricing.isEmpty { hudMsg = "Please enter pricing"; return false }
@@ -1078,13 +1123,13 @@ struct EditProductScreen: View {
         }
         return true
     }
-    
+
     private func validateDimensionsAgainstMailClass(request: StoreProductParam, mailClass: MailClass) -> String? {
         let weight = Double(request.weight) ?? 0
         let width = Double(request.width) ?? 0
         let height = Double(request.height) ?? 0
         let length = Double(request.length) ?? 0
-        
+
         if let maxWeight = mailClass.max_weight_lbs, maxWeight > 0, weight > maxWeight {
             return "Weight must be ≤ \(maxWeight) lbs for \(mailClass.label)"
         }
@@ -1103,10 +1148,10 @@ struct EditProductScreen: View {
                 return "Length + girth must be ≤ \(maxLPG) in for \(mailClass.label)"
             }
         }
-        
+
         return nil
     }
-    
+
     // MARK: - Variant Builder
     private func buildVariantArray(
         extraFields: [ExtraFieldModel],
@@ -1114,31 +1159,31 @@ struct EditProductScreen: View {
         selectedRadio: [String: String]
     ) -> [[String: Any]] {
         var variantArray: [[String: Any]] = []
-        
+
         for field in extraFields {
             guard let title = field.label, let type = field.type else { continue }
-            
+
             if type == "text" {
                 let value = extraFieldValues[title] ?? ""
                 variantArray.append(["title": title, "value": value])
             } else if type == "radio", let options = field.options {
                 let selected = selectedRadio[title] ?? ""
                 var valueDict: [String: String] = [:]
-                
+
                 for (index, option) in options.enumerated() {
                     let key = "option_\(index + 1)"
                     valueDict[key] = option
                 }
                 valueDict["selected"] = selected
-                
+
                 variantArray.append(["title": title, "value": valueDict])
             }
         }
         return variantArray
     }
-    
+
     func storeSuccess() {
-        if let errorMessage = viewModel.errorMessage {
+        if let errorMessage = viewModel.errorMessage, !errorMessage.isEmpty {
             alertType = .sheetType(
                 icon: .alert,
                 title: "Error",
@@ -1147,14 +1192,26 @@ struct EditProductScreen: View {
                 secondaryBtnText: AppString.ok.localized
             )
             showError = true
-        } else {
-            let response = viewModel.storeProductResponse
+            return
+        }
+
+        let response = viewModel.storeProductResponse
+        if response?.status?.lowercased() == "success" {
             alertType = .sheetType(
                 icon: .success,
                 title: "Success",
                 message: response?.message ?? "Product updated successfully",
                 primaryBtnText: AppString.ok.localized,
                 secondaryBtnText: ""
+            )
+            showError = true
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: response?.message ?? "Product could not be saved.",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
             )
             showError = true
         }

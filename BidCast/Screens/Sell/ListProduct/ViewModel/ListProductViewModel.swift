@@ -63,6 +63,8 @@ final class ListProductViewModel: ObservableObject {
     
     func storeProduct(productId: Int? = nil, param: [String:Any]) async throws{
         self.requestType = "store"
+        self.errorMessage = nil
+        self.storeProductResponse = nil
         
         do {
             
@@ -72,6 +74,9 @@ final class ListProductViewModel: ObservableObject {
                 modalType: ResponseModal<ProductDataModel1>?.self,
                 header: true){
                 self.storeProductResponse = response
+                if response.status?.lowercased() != "success" {
+                    self.errorMessage = response.message ?? "Product could not be saved."
+                }
             }
         }catch(let error) {
             if let dataError = error as? DataError {

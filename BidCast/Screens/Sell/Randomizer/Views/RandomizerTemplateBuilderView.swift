@@ -145,47 +145,60 @@ struct RandomizerTemplateBuilderView: View {
 
             VStack(spacing: 0) {
                 ForEach(RandomizerType.allCases) { type in
-                    Button {
-                        selectedType = type
-                    } label: {
-                        HStack(spacing: 12) {
-                            Circle()
-                                .fill(selectedType == type ? Color.defaultTheme : Color.clear)
-                                .frame(width: 18, height: 18)
-                                .overlay(
-                                    Circle().stroke(Color.defaultTheme, lineWidth: 2)
-                                )
-                                .overlay(
-                                    Group {
-                                        if selectedType == type {
-                                            Circle().fill(Color.white).frame(width: 7, height: 7)
-                                        }
-                                    }
-                                )
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(type.displayName)
-                                    .font(.custom(poppinsBold, size: 13))
-                                    .foregroundColor(.primary)
-                                Text(type.description)
-                                    .font(.custom(poppinsRegular, size: 11))
-                                    .foregroundColor(.gray)
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 12)
-                    }
-                    .buttonStyle(.plain)
-
-                    if type != RandomizerType.allCases.last {
-                        Divider().padding(.horizontal, 14)
-                    }
+                    typeOptionRow(
+                        for: type,
+                        showsDivider: type != RandomizerType.allCases.last
+                    )
                 }
             }
             .background(Color.white)
             .cornerRadius(10)
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+        }
+    }
+
+    @ViewBuilder
+    private func typeOptionRow(for type: RandomizerType, showsDivider: Bool) -> some View {
+        Button {
+            selectedType = type
+        } label: {
+            HStack(spacing: 12) {
+                typeSelectionIndicator(isSelected: selectedType == type)
+                typeOptionText(for: type)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+        }
+        .buttonStyle(.plain)
+
+        if showsDivider {
+            Divider().padding(.horizontal, 14)
+        }
+    }
+
+    private func typeSelectionIndicator(isSelected: Bool) -> some View {
+        Circle()
+            .fill(isSelected ? Color.defaultTheme : Color.clear)
+            .frame(width: 18, height: 18)
+            .overlay(Circle().stroke(Color.defaultTheme, lineWidth: 2))
+            .overlay {
+                if isSelected {
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 7, height: 7)
+                }
+            }
+    }
+
+    private func typeOptionText(for type: RandomizerType) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(type.displayName)
+                .font(.custom(poppinsBold, size: 13))
+                .foregroundColor(.primary)
+            Text(type.description)
+                .font(.custom(poppinsRegular, size: 11))
+                .foregroundColor(.gray)
         }
     }
 

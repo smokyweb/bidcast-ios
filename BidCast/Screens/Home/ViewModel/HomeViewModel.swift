@@ -22,11 +22,13 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Get Live Shows
     func getLiveShows(param:GetLiveShowsRequest) async {
         self.requestType = "get"
+        self.errorMessage = nil
         do {
             let response: ResponseModelPaginate<[HomeModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getLiveShows(param: param),
                 header: true
             )
+            self.errorMessage = nil
             self.liveShowsResponse = response
         } catch {
             handle(error)

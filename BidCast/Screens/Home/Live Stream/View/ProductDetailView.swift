@@ -85,6 +85,10 @@ struct ProductDetailView: View {
     @State private var showInquiryCompose: Bool = false
     @State private var inquiryComposeText: String = ""
     @StateObject private var inquiryVM = InquiryThreadViewModel()
+    @State private var isNavigatingToSellerProfile: Bool = false
+    @State private var sellerProfileId: String = ""
+    @State private var sellerProfileName: String = ""
+    @State private var sellerProfileImage: String = ""
     
     
     
@@ -120,7 +124,7 @@ struct ProductDetailView: View {
                                 makeOfferSheet = true
                             },btnTextColor:.defaultTheme, btnColor: .defaultThemeLight)
                         }
-                        
+
                         // Basecamp #9954326658 (2026-06-02, PWA parity db19011f):
                         // "Buy Now" must NEVER appear on a live-auction product.
                         // Auction items are sold by bidding / pre-bid, never at a
@@ -197,6 +201,15 @@ struct ProductDetailView: View {
                     )
                 )
             }
+            CusNavLink(
+                doNavigate: $isNavigatingToSellerProfile,
+                destination: ProfileScreen(
+                    id: $sellerProfileId,
+                    isComeFrom: .constant("ProductDetails"),
+                    userName: $sellerProfileName,
+                    userImage: $sellerProfileImage
+                )
+            )
         }
         .edgesIgnoringSafeArea(.all)
         .background(.backGround)
@@ -238,8 +251,10 @@ struct ProductDetailView: View {
             Text("Lock in your bid before the auction starts. Applied automatically as the opening bid.")
         }
         .onAppear {
-            loadCurrentPreBid()
-            loadHighestPreBid()
+            if isFromShowContext {
+                loadCurrentPreBid()
+                loadHighestPreBid()
+            }
         }
         .sheet(isPresented: $makeOfferSheet)   {
             MakeOfferBottomSheet(isPresented: $makeOfferSheet, listedPrice: "\(productPrice)", offerOptions: offerArr, onSendOffer: { text in
@@ -357,6 +372,28 @@ struct ProductDetailView: View {
             }
         }
     }
+
+    func openSellerProfile() {
+        guard let sellerId = sellerInfo?.seller_details?.id
+                ?? productDetail?.user?.id
+                ?? productDetail?.userID
+        else {
+            hudMsg = "Cannot find seller info."
+            style = alertStlye
+            showhud = true
+            return
+        }
+
+        sellerProfileId = "\(sellerId)"
+        sellerProfileName = sellerInfo?.seller_details?.name
+            ?? sellerInfo?.seller_details?.username
+            ?? productDetail?.user?.name
+            ?? ""
+        sellerProfileImage = sellerInfo?.seller_details?.profile_image
+            ?? productDetail?.user?.profileImage
+            ?? ""
+        isNavigatingToSellerProfile = true
+    }
     
     func offerSuccess(){
         let response = viewModel.offerResponse
@@ -441,6 +478,7 @@ struct ProductDetailView: View {
     // live routes are /api/pre-bid (NOT /api/product/pre-bid). All three
     // methods below are updated accordingly.
     private func loadCurrentPreBid() {
+        guard isFromShowContext else { return }
         Task {
             // GET /api/pre-bid — list the current user's pre-bids
             guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid") else { return }
@@ -468,6 +506,7 @@ struct ProductDetailView: View {
     }
 
     private func placePreBid() {
+        guard isFromShowContext else { return }
         let amount = Double(preBidAmountText.replacingOccurrences(of: "$", with: "")) ?? 0
         guard amount >= 1 else {
             hudMsg = "Please enter $1 or more."; showhud = true; return
@@ -500,6 +539,7 @@ struct ProductDetailView: View {
     }
 
     private func withdrawPreBid() {
+        guard isFromShowContext else { return }
         guard let id = preBidExistingId else { return }
         Task {
             // DELETE /api/pre-bid/{id}
@@ -527,6 +567,7 @@ struct ProductDetailView: View {
     /// GET /api/pre-bid/highest/{productId} — fetch the leading pre-bid
     /// amount so we can surface it to ALL viewers (not just the one who bid).
     private func loadHighestPreBid() {
+        guard isFromShowContext else { return }
         Task {
             guard productID > 0 else { return }
             guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/pre-bid/highest/\(productID)") else { return }
@@ -554,16 +595,23 @@ extension ProductDetailView {
         VStack(spacing: 14) {
             
             HStack {
-                CustomProfileImage(
-                    url: sellerInfo?.seller_details?.profile_image ?? "",
-                    isCircular: true,
-                    size: 30
-                )
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(sellerInfo?.seller_details?.name?.capitalizingFirstLetter() ?? "Seller Name")
-                        .font(.custom(poppinsSemiBold, size: 16))
+                Button {
+                    openSellerProfile()
+                } label: {
+                    HStack(spacing: 8) {
+                        CustomProfileImage(
+                            url: sellerInfo?.seller_details?.profile_image ?? "",
+                            isCircular: true,
+                            size: 30
+                        )
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(sellerInfo?.seller_details?.name?.capitalizingFirstLetter() ?? "Seller Name")
+                                .font(.custom(poppinsSemiBold, size: 16))
+                                .foregroundColor(.black)
+                        }
+                    }
                 }
+                .buttonStyle(.plain)
                 
                 Spacer()
                 // Inquiry messaging entry: visible for BOTH live-auction AND buy-it-now.

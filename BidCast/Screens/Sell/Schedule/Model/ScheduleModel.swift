@@ -158,6 +158,8 @@ struct ProductDataModel1: Codable, Identifiable {
     var sku: String?
     var status: String?
     var type: String?
+    var saleFormat: String?
+    var isAuction: Bool?
     var variant: [ProductVariant]?
     var productCondition: String?
     var productShow: String?
@@ -319,11 +321,16 @@ extension ProductDataModel1 {
     private enum FlexCodingKeys: String, CodingKey {
         case id, title, description, pricing, quantity, purchasedQuantity, sku, status, type
         case purchased_quantity
-        case variant, productCondition, productShow, acceptOffers, auction, flashSale
-        case reserveForLive, hazardousMaterial, bidCount, bid_count
+        case saleFormat, sale_format, isAuction, is_auction
+        case variant, productCondition, product_condition, productShow, product_show
+        case acceptOffers, accept_offers, auction, flashSale, flash_sale
+        case flashSalePrice, flash_sale_price, flashSaleStartsAt, flash_sale_starts_at
+        case flashSaleEndsAt, flash_sale_ends_at
+        case reserveForLive, reserve_for_live, hazardousMaterial, hazardous_material, bidCount, bid_count
         case height, length, width, weight
-        case mailClass, processingCategory, shippingProfileId, subCategoryId, userId
-        case images, thumbnail, videos, createdAt, category, user
+        case mailClass, mail_class, processingCategory, processing_category
+        case shippingProfileId, shipping_profile_id, subCategoryId, sub_category_id, userId, user_id
+        case images, thumbnail, videos, createdAt, created_at, category, user
     }
 
     init(from decoder: Decoder) throws {
@@ -343,29 +350,34 @@ extension ProductDataModel1 {
         self.sku = decodeFlexibleString(c, forKey: .sku)
         self.status = decodeFlexibleString(c, forKey: .status)
         self.type = decodeFlexibleString(c, forKey: .type)
+        self.saleFormat = decodeFlexibleString(c, forKey: .saleFormat) ?? decodeFlexibleString(c, forKey: .sale_format)
+        self.isAuction = decodeFlexibleBool(c, forKey: .isAuction) ?? decodeFlexibleBool(c, forKey: .is_auction)
         self.variant = try? c.decodeIfPresent([ProductVariant].self, forKey: .variant)
-        self.productCondition = decodeFlexibleString(c, forKey: .productCondition)
-        self.productShow = decodeFlexibleString(c, forKey: .productShow)
-        self.acceptOffers = decodeFlexibleBool(c, forKey: .acceptOffers)
+        self.productCondition = decodeFlexibleString(c, forKey: .productCondition) ?? decodeFlexibleString(c, forKey: .product_condition)
+        self.productShow = decodeFlexibleString(c, forKey: .productShow) ?? decodeFlexibleString(c, forKey: .product_show)
+        self.acceptOffers = decodeFlexibleBool(c, forKey: .acceptOffers) ?? decodeFlexibleBool(c, forKey: .accept_offers)
         self.auction = decodeFlexibleBool(c, forKey: .auction)
-        self.flashSale = decodeFlexibleBool(c, forKey: .flashSale)
-        self.reserveForLive = decodeFlexibleBool(c, forKey: .reserveForLive)
-        self.hazardousMaterial = decodeFlexibleBool(c, forKey: .hazardousMaterial)
+        self.flashSale = decodeFlexibleBool(c, forKey: .flashSale) ?? decodeFlexibleBool(c, forKey: .flash_sale)
+        self.flashSalePrice = decodeFlexibleDouble(c, forKey: .flashSalePrice) ?? decodeFlexibleDouble(c, forKey: .flash_sale_price)
+        self.flashSaleStartsAt = decodeFlexibleString(c, forKey: .flashSaleStartsAt) ?? decodeFlexibleString(c, forKey: .flash_sale_starts_at)
+        self.flashSaleEndsAt = decodeFlexibleString(c, forKey: .flashSaleEndsAt) ?? decodeFlexibleString(c, forKey: .flash_sale_ends_at)
+        self.reserveForLive = decodeFlexibleBool(c, forKey: .reserveForLive) ?? decodeFlexibleBool(c, forKey: .reserve_for_live)
+        self.hazardousMaterial = decodeFlexibleBool(c, forKey: .hazardousMaterial) ?? decodeFlexibleBool(c, forKey: .hazardous_material)
         // bid_count from server, bidCount from iOS-emitted payloads; accept either.
         self.bidCount = decodeFlexibleInt(c, forKey: .bidCount) ?? decodeFlexibleInt(c, forKey: .bid_count)
         self.height = decodeFlexibleDouble(c, forKey: .height)
         self.length = decodeFlexibleDouble(c, forKey: .length)
         self.width = decodeFlexibleDouble(c, forKey: .width)
         self.weight = decodeFlexibleDouble(c, forKey: .weight)
-        self.mailClass = decodeFlexibleString(c, forKey: .mailClass)
-        self.processingCategory = decodeFlexibleString(c, forKey: .processingCategory)
-        self.shippingProfileId = decodeFlexibleInt(c, forKey: .shippingProfileId)
-        self.subCategoryId = decodeFlexibleInt(c, forKey: .subCategoryId)
-        self.userId = decodeFlexibleInt(c, forKey: .userId)
+        self.mailClass = decodeFlexibleString(c, forKey: .mailClass) ?? decodeFlexibleString(c, forKey: .mail_class)
+        self.processingCategory = decodeFlexibleString(c, forKey: .processingCategory) ?? decodeFlexibleString(c, forKey: .processing_category)
+        self.shippingProfileId = decodeFlexibleInt(c, forKey: .shippingProfileId) ?? decodeFlexibleInt(c, forKey: .shipping_profile_id)
+        self.subCategoryId = decodeFlexibleInt(c, forKey: .subCategoryId) ?? decodeFlexibleInt(c, forKey: .sub_category_id)
+        self.userId = decodeFlexibleInt(c, forKey: .userId) ?? decodeFlexibleInt(c, forKey: .user_id)
         self.images = try? c.decodeIfPresent([String].self, forKey: .images)
         self.thumbnail = try? c.decodeIfPresent([String].self, forKey: .thumbnail)
         self.videos = try? c.decodeIfPresent([String].self, forKey: .videos)
-        self.createdAt = decodeFlexibleString(c, forKey: .createdAt)
+        self.createdAt = decodeFlexibleString(c, forKey: .createdAt) ?? decodeFlexibleString(c, forKey: .created_at)
         self.category = try? c.decodeIfPresent(ProductCategory.self, forKey: .category)
         self.user = try? c.decodeIfPresent(ProductUser.self, forKey: .user)
     }

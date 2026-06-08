@@ -97,6 +97,7 @@ struct HomeViewScreen: View {
     @State private var isLoadingMore = false
     @State private var hasMorePages = true
     @State private var totalItems = 0
+    @State private var feedRequestSerial = 0
     
     @StateObject var socketManager = SocketManagerService.shared
     
@@ -594,6 +595,44 @@ struct HomeViewScreen: View {
     }
     
     // MARK: - Pagination Helper Functions
+
+    private func currentFeedScope() -> (apiCategory: String, subCategory: String) {
+        let apiCategory: String
+        let apiSubCategory: String
+
+        if comeFromExploreScreen {
+            apiCategory = showCategory
+            if showSubCategory == "" {
+                apiSubCategory = selectedButton.isEmpty ? "" : selectedButton
+            } else {
+                apiSubCategory = showSubCategory
+            }
+        } else {
+            apiCategory = (selectedButton == "For You") ? "" : selectedButton
+            apiSubCategory = ""
+        }
+
+        return (apiCategory, apiSubCategory)
+    }
+
+    private func isCurrentFeedRequest(
+        id: Int,
+        tab: String,
+        page: Int,
+        apiCategory: String,
+        subCategory: String,
+        search: String,
+        filters: BrowseFilters
+    ) -> Bool {
+        let currentScope = currentFeedScope()
+        return id == feedRequestSerial
+            && tab == selectedTab
+            && page == currentPage
+            && apiCategory == currentScope.apiCategory
+            && subCategory == currentScope.subCategory
+            && search == searchText
+            && filters == appliedFilters
+    }
     
     /// Resets pagination to initial state
     private func resetPagination() {
@@ -615,40 +654,40 @@ struct HomeViewScreen: View {
 
     /// Fetches live shows for socket updates (page 1 only)
     func fetchLiveShowForSocketUpdate() async {
-        var apiCategory = String()
-        var subCategory = String()
-        
-        if comeFromExploreScreen {
-            apiCategory = showCategory
-            if showSubCategory == "" {
-                subCategory = selectedButton.isEmpty ? "" : selectedButton
-            } else {
-                subCategory = showSubCategory
-            }
-        } else {
-            apiCategory = (selectedButton == "For You") ? "" : selectedButton
-        }
+        let requestTab = selectedTab
+        let requestSearch = searchText
+        let requestFilters = appliedFilters
+        let requestScope = currentFeedScope()
         
         // Basecamp #9933301500 (2026-05-29): mirror the filter params that
         // fetchLiveShow() uses so a socket-triggered refresh doesn't wipe out
         // the user's applied filters.
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
-            type: selectedTab,
-            category: apiCategory,
-            sub_category: subCategory,
-            search: searchText,
+            type: requestTab,
+            category: requestScope.apiCategory,
+            sub_category: requestScope.subCategory,
+            search: requestSearch,
             page: "1",
-            show_format: appliedFilters.showFormat,
-            tag: appliedFilters.tag.isEmpty ? nil : appliedFilters.tag,
-            ship_country: appliedFilters.shipCountry,
-            ship_state: appliedFilters.shipState.isEmpty ? nil : appliedFilters.shipState,
-            premier_shop: appliedFilters.premierShop ? 1 : nil,
-            shipping: appliedFilters.shipping,
-            category_ids: appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds,
-            sub_category_ids: appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
+            show_format: requestFilters.showFormat,
+            tag: requestFilters.tag.isEmpty ? nil : requestFilters.tag,
+            ship_country: requestFilters.shipCountry,
+            ship_state: requestFilters.shipState.isEmpty ? nil : requestFilters.shipState,
+            premier_shop: requestFilters.premierShop ? 1 : nil,
+            shipping: requestFilters.shipping,
+            category_ids: requestFilters.categoryIds.isEmpty ? nil : requestFilters.categoryIds,
+            sub_category_ids: requestFilters.subCategoryIds.isEmpty ? nil : requestFilters.subCategoryIds
         ))
 
         await MainActor.run {
+            let currentScope = currentFeedScope()
+            guard requestTab == selectedTab,
+                  requestSearch == searchText,
+                  requestFilters == appliedFilters,
+                  requestScope.apiCategory == currentScope.apiCategory,
+                  requestScope.subCategory == currentScope.subCategory else {
+                return
+            }
+
             guard let socketShows = viewModel.liveShowsResponse.data else { return }
 
             for show in socketShows {
@@ -717,6 +756,14 @@ struct HomeViewScreen: View {
             print("⚠️ Already loading, skipping request")
             return
         }
+
+        let requestID = feedRequestSerial + 1
+        feedRequestSerial = requestID
+        let requestTab = selectedTab
+        let requestPage = currentPage
+        let requestSearch = searchText
+        let requestFilters = appliedFilters
+        let requestScope = currentFeedScope()
         
         if currentPage == 1 {
             isLoadingShowAPI = true
@@ -726,40 +773,39 @@ struct HomeViewScreen: View {
             print("📥 Loading page \(currentPage) (pagination)")
         }
         
-        var apiCategory = String()
-        var subCategory = String()
-        
-        if comeFromExploreScreen {
-            apiCategory = showCategory
-            if showSubCategory == "" {
-                subCategory = selectedButton.isEmpty ? "" : selectedButton
-            } else {
-                subCategory = showSubCategory
-            }
-        } else {
-            apiCategory = (selectedButton == "For You") ? "" : selectedButton
-        }
-        
         // Todo #9933301500 (2026-05-27): merge active browse filters into
         // the get-live-show request. All 6 fields are optional and the
         // backend treats nil/empty as absent so we can just pass through.
         let params = GetLiveShowsRequest(
-            type: selectedTab,
-            category: apiCategory,
-            sub_category: subCategory,
-            search: searchText,
-            page: "\(currentPage)",
-            show_format: appliedFilters.showFormat,
-            tag: appliedFilters.tag.isEmpty ? nil : appliedFilters.tag,
-            ship_country: appliedFilters.shipCountry,
-            ship_state: appliedFilters.shipState.isEmpty ? nil : appliedFilters.shipState,
-            premier_shop: appliedFilters.premierShop ? 1 : nil,
-            shipping: appliedFilters.shipping,
+            type: requestTab,
+            category: requestScope.apiCategory,
+            sub_category: requestScope.subCategory,
+            search: requestSearch,
+            page: "\(requestPage)",
+            show_format: requestFilters.showFormat,
+            tag: requestFilters.tag.isEmpty ? nil : requestFilters.tag,
+            ship_country: requestFilters.shipCountry,
+            ship_state: requestFilters.shipState.isEmpty ? nil : requestFilters.shipState,
+            premier_shop: requestFilters.premierShop ? 1 : nil,
+            shipping: requestFilters.shipping,
             // Basecamp #9938023997 (2026-05-28): category + subcategory filter
-            category_ids: appliedFilters.categoryIds.isEmpty ? nil : appliedFilters.categoryIds,
-            sub_category_ids: appliedFilters.subCategoryIds.isEmpty ? nil : appliedFilters.subCategoryIds
+            category_ids: requestFilters.categoryIds.isEmpty ? nil : requestFilters.categoryIds,
+            sub_category_ids: requestFilters.subCategoryIds.isEmpty ? nil : requestFilters.subCategoryIds
         )
         await viewModel.getLiveShows(param: params)
+
+        guard isCurrentFeedRequest(
+            id: requestID,
+            tab: requestTab,
+            page: requestPage,
+            apiCategory: requestScope.apiCategory,
+            subCategory: requestScope.subCategory,
+            search: requestSearch,
+            filters: requestFilters
+        ) else {
+            print("⏭️ Ignored stale Home feed response for \(requestTab)")
+            return
+        }
 
         // MC cmp5crrg600j556kdjykbdaza (Ankit 2026-05-14): after sign-in the
         // first feed call sometimes fails with a transient error (network
@@ -774,9 +820,26 @@ struct HomeViewScreen: View {
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             viewModel.errorMessage = nil
             await viewModel.getLiveShows(param: params)
+
+            guard isCurrentFeedRequest(
+                id: requestID,
+                tab: requestTab,
+                page: requestPage,
+                apiCategory: requestScope.apiCategory,
+                subCategory: requestScope.subCategory,
+                search: requestSearch,
+                filters: requestFilters
+            ) else {
+                print("⏭️ Ignored stale Home feed retry for \(requestTab)")
+                return
+            }
         }
 
-        success()
+        success(
+            response: viewModel.liveShowsResponse,
+            requestedTab: requestTab,
+            requestedPage: requestPage
+        )
     }
 
     /// Fetches the next page of shows
@@ -922,9 +985,11 @@ struct HomeViewScreen: View {
         return formatter.date(from: d)
     }
 
-    func success() {
-        let response = viewModel.liveShowsResponse
-        
+    func success(
+        response: ResponseModelPaginate<[HomeModel]>,
+        requestedTab: String,
+        requestedPage: Int
+    ) {
         guard response.status == "success", let newShows = response.data else {
             print("❌ API Error: \(response.message ?? "Unknown error")")
             // MC sub-task cmp4935yr00lz3mx130q4x1ku: surface a real error sheet
@@ -950,8 +1015,8 @@ struct HomeViewScreen: View {
         
         // Add new shows, avoiding duplicates.
         //
-        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): when the user is on
-        // the "Coming Soon" tab (selectedTab == "upcoming"), filter out any
+        // MC cmpaj2fex0000w5hgq64jp9k4 (2026-05-24): when the request is for
+        // the "Coming Soon" tab (requestedTab == "upcoming"), filter out any
         // show whose computed start time is already in the past. Backend
         // currently returns shows with `date >= today()` regardless of
         // time, which leaves shows scheduled for earlier today still
@@ -963,7 +1028,7 @@ struct HomeViewScreen: View {
         // "time TBD" listings.
         let nowDate = Date()
         let filteredShows: [HomeModel]
-        if selectedTab == "upcoming" {
+        if requestedTab == "upcoming" {
             filteredShows = newShows.filter { show in
                 guard let start = parseShowStart(date: show.date, time: show.time) else {
                     return true // unparseable → keep, don't accidentally hide
@@ -991,7 +1056,7 @@ struct HomeViewScreen: View {
                 addedCount += 1
             }
         }
-        print("✅ Added \(addedCount) new shows (Page \(currentPage))")
+        print("✅ Added \(addedCount) new shows (Page \(requestedPage))")
         
         // Check if there are more pages
         hasMorePages = liveShowsData.count < totalItems

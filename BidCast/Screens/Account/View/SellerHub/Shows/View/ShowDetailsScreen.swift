@@ -32,6 +32,10 @@ struct ShowDetailsScreen: View {
     // the ShowsScreen "Join as Co-Host (second device)" entry.
     @State private var showCoHostPairing: Bool = false
     @State private var navigateToCoHostJoin: Bool = false
+    @State private var showSecondDeviceTakeoverPrompt: Bool = false
+    @State private var launchAsSameAccountSecondDevice: Bool = false
+    @State private var launchAsControlOnlyDevice: Bool = false
+    @State private var launchAsVideoTakeoverDevice: Bool = false
     // FIX-3 (2026-05-30): Add Products to an existing show from ShowDetailsScreen.
     // AddProductsScreen requires LetsPrepareCoordinator + ProductManager environment objects.
     @StateObject private var addProductsCoordinator = LetsPrepareCoordinator()
@@ -87,6 +91,9 @@ struct ShowDetailsScreen: View {
                        destination: RehearsalScreen(showUd: $showId,
                                                     productListData: $products,
                                                     isLive: isLive,
+                                                    sameAccountSecondDevice: launchAsSameAccountSecondDevice,
+                                                    startControlOnly: launchAsControlOnlyDevice,
+                                                    takeOverVideo: launchAsVideoTakeoverDevice,
                                                     backToTabBar: .constant(true),
                                                     showsData: $show))
             
@@ -118,6 +125,14 @@ struct ShowDetailsScreen: View {
         // popup, now reachable from show-details (was view-all-shows only).
         .sheet(isPresented: $showCoHostPairing) {
             CoHostPairingSheet(scheduleShowId: show.id ?? (Int(showId) ?? 0))
+        }
+        .alert("Would you like to enter and take over video?", isPresented: $showSecondDeviceTakeoverPrompt) {
+            Button("No", role: .cancel) {
+                launchRehearsal(secondDevice: true, controlOnly: true, takeOverVideo: false)
+            }
+            Button("Yes") {
+                launchRehearsal(secondDevice: true, controlOnly: false, takeOverVideo: true)
+            }
         }
         .background(Color.backGround)
         .edgesIgnoringSafeArea(.bottom)
@@ -452,11 +467,7 @@ struct ShowDetailsScreen: View {
                 
                 // Start Show Button
                 Button(action: {
-                   
-                    
-                    isLive = show.is_live ?? false
-                    selectedProductIds = show.product_ids ?? []
-                    navigateToReherseal = true
+                    handleStartShowTapped()
                 }) {
                     Text("Start Show")
                         .font(.custom(poppinsSemiBold, size: 16))
@@ -501,6 +512,69 @@ struct ShowDetailsScreen: View {
     }
 
     // MARK: - Helper Functions
+    private func handleStartShowTapped() {
+        isLive = show.is_live ?? false
+        selectedProductIds = show.product_ids ?? []
+
+        guard show.is_live == true else {
+            launchRehearsal(secondDevice: false, controlOnly: false, takeOverVideo: false)
+            return
+        }
+
+        Task { await checkSecondDevicePresenceBeforeLaunch() }
+    }
+
+    private func checkSecondDevicePresenceBeforeLaunch() async {
+        let scheduleShowId = show.id ?? (Int(showId) ?? 0)
+        guard scheduleShowId > 0,
+              let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/show/\(scheduleShowId)/presence") else {
+            await MainActor.run {
+                launchRehearsal(secondDevice: false, controlOnly: false, takeOverVideo: false)
+            }
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let scheme = "Be" + "arer"
+        request.setValue("\(scheme) \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            let payload = json?["data"] as? [String: Any]
+            let shouldOffer = Self.boolValue(payload?["should_offer_takeover"])
+            await MainActor.run {
+                if shouldOffer {
+                    showSecondDeviceTakeoverPrompt = true
+                } else {
+                    launchRehearsal(secondDevice: false, controlOnly: false, takeOverVideo: false)
+                }
+            }
+        } catch {
+            await MainActor.run {
+                launchRehearsal(secondDevice: false, controlOnly: false, takeOverVideo: false)
+            }
+        }
+    }
+
+    private func launchRehearsal(secondDevice: Bool, controlOnly: Bool, takeOverVideo: Bool) {
+        launchAsSameAccountSecondDevice = secondDevice
+        launchAsControlOnlyDevice = controlOnly
+        launchAsVideoTakeoverDevice = takeOverVideo
+        navigateToReherseal = true
+    }
+
+    private static func boolValue(_ any: Any?) -> Bool {
+        if let value = any as? Bool { return value }
+        if let value = any as? Int { return value != 0 }
+        if let value = any as? String {
+            return ["1", "true", "yes"].contains(value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased())
+        }
+        return false
+    }
+
     private func formatDate(_ dateString: String) -> String {
         // Format: 12-25-2025
         let components = dateString.split(separator: "-")

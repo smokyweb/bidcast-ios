@@ -27,10 +27,16 @@ import AVFoundation
 struct CoHostJoinScreen: View {
 
     @Environment(\.presentationMode) var presentationMode
+    let inviteId: Int?
+
+    init(inviteId: Int? = nil) {
+        self.inviteId = inviteId
+    }
 
     // MARK: - Agora objects (reuse existing manager + view-model)
     @StateObject private var agoraViewModel = AgoraViewModel()
     @StateObject private var agoraManager   = AgoraManager(asHost: true)
+    @StateObject private var socketManager  = SocketManagerService.shared
 
     // MARK: - Pairing State
     @State private var pairingCode: String = ""
@@ -42,6 +48,25 @@ struct CoHostJoinScreen: View {
     @State private var showhud = false
     @State private var hudMsg  = ""
 
+    // MARK: - Invite State
+    @State private var inviteLoaded = false
+    @State private var isLoadingInvite = false
+    @State private var isRespondingToInvite = false
+    @State private var inviteStatus: String = ""
+    @State private var inviteHostName: String = ""
+    @State private var inviteShowTitle: String = ""
+    @State private var inviteScheduleShowId: Int = 0
+    @State private var inviteHostUserId: Int = 0
+    @State private var showInviteProductSelection = false
+    @State private var eligibleInviteProducts: [ProductDataModel1] = []
+    @State private var selectedInviteProductIds: Set<Int> = []
+    @State private var activeCoHostId: Int?
+    @State private var activeRoomId: String = ""
+    @State private var activeShowId: Int = 0
+    @State private var coHostCommentText: String = ""
+    @State private var showCoHostProducts = false
+    @State private var coHostShowProducts: [ProductDataModel1] = []
+
     // MARK: - Co-host Live State
     @State private var isLive: Bool        = false
     @State private var isJoiningAgora: Bool = false
@@ -52,9 +77,213 @@ struct CoHostJoinScreen: View {
     var body: some View {
         if isLive {
             coHostLiveView
+        } else if inviteId != nil {
+            inviteView
         } else {
             pairingView
         }
+    }
+
+    @ViewBuilder
+    private var inviteView: some View {
+        VStack(spacing: 0) {
+            PrimaryHeader(
+                title: "Co-Host Invite",
+                isForLogo: false,
+                leadingImgArr: ["chevron.left"],
+                trailingImgArr: [],
+                onClickLeading: { _ in presentationMode.wrappedValue.dismiss() },
+                count: .constant(0)
+            )
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 22) {
+                    if isLoadingInvite {
+                        ProgressView()
+                            .padding(.top, 80)
+                    } else if !inviteLoaded {
+                        Text(joinError ?? "Could not load invite.")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 80)
+                            .padding(.horizontal, 24)
+                    } else if showInviteProductSelection {
+                        inviteProductSelectionView
+                    } else {
+                        inviteDecisionView
+                    }
+                }
+                .padding(.bottom, 40)
+            }
+        }
+        .background(Color.backGround)
+        .navigationBarHidden(true)
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
+        }
+        .onAppear {
+            guard !inviteLoaded, !isLoadingInvite else { return }
+            Task { await loadInviteDetail() }
+        }
+        .onDisappear {
+            if !isLive && agoraManager.isJoined {
+                agoraManager.leaveChannel()
+            }
+        }
+    }
+
+    private var inviteDecisionView: some View {
+        VStack(spacing: 22) {
+            Image(systemName: "person.2.fill")
+                .font(.system(size: 54, weight: .semibold))
+                .foregroundColor(.defaultTheme)
+                .padding(.top, 32)
+
+            VStack(spacing: 10) {
+                Text("\(inviteHostName.isEmpty ? "A seller" : inviteHostName) has invited you to be a cohost for their Live: \(inviteShowTitle.isEmpty ? "Live show" : inviteShowTitle). Would you like to accept?")
+                    .font(.custom(poppinsSemiBold, size: 17))
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+
+                if !inviteStatus.isEmpty && inviteStatus != "pending" {
+                    Text("Invite is \(inviteStatus).")
+                        .font(.custom(poppinsRegular, size: 13))
+                        .foregroundColor(.gray)
+                }
+            }
+
+            HStack(spacing: 12) {
+                Button {
+                    Task { await respondToInvite(accept: false, productIds: []) }
+                } label: {
+                    Text("No")
+                        .font(.custom(poppinsBold, size: 16))
+                        .foregroundColor(.defaultTheme)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(Color.defaultTheme.opacity(0.08))
+                        .cornerRadius(26)
+                }
+                .disabled(isRespondingToInvite || inviteStatus != "pending")
+
+                Button {
+                    Task { await loadEligibleProductsForInvite() }
+                } label: {
+                    ZStack {
+                        if isRespondingToInvite {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text("Yes")
+                                .font(.custom(poppinsBold, size: 16))
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Color.defaultTheme)
+                    .cornerRadius(26)
+                }
+                .disabled(isRespondingToInvite || inviteStatus != "pending")
+            }
+            .padding(.horizontal, 24)
+        }
+    }
+
+    private var inviteProductSelectionView: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Would you like to add products to the show?")
+                    .font(.custom(poppinsBold, size: 21))
+                    .foregroundColor(.primary)
+
+                Text("You can join without selecting products.")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.gray)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 24)
+
+            if eligibleInviteProducts.isEmpty {
+                Text("No eligible products found.")
+                    .font(.custom(poppinsRegular, size: 14))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 36)
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(eligibleInviteProducts, id: \.id) { product in
+                        inviteProductRow(product)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+
+            Button {
+                Task {
+                    await respondToInvite(
+                        accept: true,
+                        productIds: Array(selectedInviteProductIds)
+                    )
+                }
+            } label: {
+                ZStack {
+                    if isRespondingToInvite {
+                        ProgressView().tint(.white)
+                    } else {
+                        Text("Join as cohost")
+                            .font(.custom(poppinsBold, size: 16))
+                    }
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background(Color.defaultTheme)
+                .cornerRadius(28)
+            }
+            .disabled(isRespondingToInvite)
+            .padding(.horizontal, 20)
+            .padding(.top, 10)
+        }
+    }
+
+    private func inviteProductRow(_ product: ProductDataModel1) -> some View {
+        let productId = product.id ?? 0
+        let isSelected = selectedInviteProductIds.contains(productId)
+        return Button {
+            if isSelected {
+                selectedInviteProductIds.remove(productId)
+            } else {
+                selectedInviteProductIds.insert(productId)
+            }
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(isSelected ? .defaultTheme : .gray.opacity(0.7))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(product.title ?? "Untitled product")
+                        .font(.custom(poppinsSemiBold, size: 15))
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                    Text("$\(product.pricing ?? "0.00")")
+                        .font(.custom(poppinsRegular, size: 13))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+            }
+            .padding(14)
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.defaultTheme.opacity(0.6) : Color.gray.opacity(0.12), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Pairing / Code Entry View
@@ -322,6 +551,10 @@ struct CoHostJoinScreen: View {
                         .padding(.bottom, 12)
                 }
 
+                if inviteId != nil {
+                    coHostChatAndProductsPanel
+                }
+
                 // Leave co-host button
                 Button {
                     leaveCoHost()
@@ -338,15 +571,286 @@ struct CoHostJoinScreen: View {
         }
         .navigationBarHidden(true)
         .statusBar(hidden: true)
+        .sheet(isPresented: $showCoHostProducts) {
+            coHostProductsSheet
+        }
+    }
+
+    private var coHostChatAndProductsPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Button {
+                    showCoHostProducts = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "shippingbox.fill")
+                        Text("Products")
+                            .font(.custom(poppinsSemiBold, size: 13))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.black.opacity(0.45))
+                    .cornerRadius(18)
+                }
+
+                Spacer()
+            }
+
+            VStack(alignment: .leading, spacing: 5) {
+                ForEach(Array(socketManager.chats.suffix(3)), id: \.id) { chat in
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text(chat.username?.isEmpty == false ? chat.username! : "User")
+                            .font(.custom(poppinsBold, size: 11))
+                        Text(chat.message ?? "")
+                            .font(.custom(poppinsRegular, size: 11))
+                            .lineLimit(2)
+                    }
+                    .foregroundColor(.white)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 10)
+            .padding(.vertical, socketManager.chats.isEmpty ? 0 : 8)
+            .background(socketManager.chats.isEmpty ? Color.clear : Color.black.opacity(0.35))
+            .cornerRadius(12)
+
+            HStack(spacing: 8) {
+                TextField("Send a message", text: $coHostCommentText)
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 12)
+                    .frame(height: 42)
+                    .background(Color.white)
+                    .cornerRadius(21)
+
+                Button {
+                    sendCoHostChatMessage()
+                } label: {
+                    Image(systemName: "paperplane.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 42, height: 42)
+                        .background(Color.defaultTheme)
+                        .clipShape(Circle())
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 12)
+    }
+
+    private var coHostProductsSheet: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 10) {
+                    if coHostShowProducts.isEmpty {
+                        Text("No products are currently available.")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.gray)
+                            .padding(.top, 40)
+                    } else {
+                        ForEach(coHostShowProducts, id: \.id) { product in
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(product.title ?? "Untitled product")
+                                        .font(.custom(poppinsSemiBold, size: 15))
+                                        .foregroundColor(.primary)
+                                        .lineLimit(2)
+                                    Text("$\(product.pricing ?? "0.00")")
+                                        .font(.custom(poppinsRegular, size: 13))
+                                        .foregroundColor(.gray)
+                                }
+                                Spacer()
+                            }
+                            .padding(14)
+                            .background(Color(.systemBackground))
+                            .cornerRadius(12)
+                        }
+                    }
+                }
+                .padding(16)
+            }
+            .background(Color.backGround)
+            .navigationTitle("Show Products")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { showCoHostProducts = false }
+                }
+            }
+        }
     }
 
     // MARK: - Leave Co-Host
     private func leaveCoHost() {
         agoraManager.leaveChannel()
+        if !activeRoomId.isEmpty {
+            SocketManagerService.shared.leaveInvitedCoHost(
+                roomId: activeRoomId,
+                userId: UserDefaults.userId,
+                showId: "\(activeShowId)",
+                coHostId: activeCoHostId
+            )
+        }
+        if let activeCoHostId {
+            Task { await leaveCoHostOnServer(coHostId: activeCoHostId) }
+        }
+        SocketManagerService.shared.removeChatListener()
         isLive = false
-        // No pairing ID available on co-host side; host can revoke via
-        // CoHostPairingSheet → "Revoke" if needed (best-effort per spec).
         presentationMode.wrappedValue.dismiss()
+    }
+
+    private func loadInviteDetail() async {
+        guard let inviteId else { return }
+        await MainActor.run {
+            isLoadingInvite = true
+            joinError = nil
+        }
+        do {
+            let json = try await coHostRequest(path: "invite/\(inviteId)", method: "GET")
+            guard (json["status"] as? String) == "success",
+                  let data = json["data"] as? [String: Any] else {
+                await MainActor.run {
+                    inviteLoaded = false
+                    isLoadingInvite = false
+                    joinError = (json["message"] as? String) ?? "Could not load invite."
+                }
+                return
+            }
+
+            let show = data["show"] as? [String: Any]
+                ?? data["schedule_show"] as? [String: Any]
+            let host = data["host"] as? [String: Any]
+
+            await MainActor.run {
+                inviteLoaded = true
+                isLoadingInvite = false
+                inviteStatus = (data["status"] as? String) ?? "pending"
+                inviteShowTitle = (show?["title"] as? String)
+                    ?? (data["show_title"] as? String)
+                    ?? "Live show"
+                inviteHostName = (host?["name"] as? String)
+                    ?? (host?["username"] as? String)
+                    ?? "A seller"
+                inviteScheduleShowId = Self.intValue(data["schedule_show_id"])
+                    ?? Self.intValue(show?["id"])
+                    ?? 0
+                inviteHostUserId = Self.intValue(data["host_user_id"])
+                    ?? Self.intValue(show?["user_id"])
+                    ?? 0
+            }
+        } catch {
+            await MainActor.run {
+                inviteLoaded = false
+                isLoadingInvite = false
+                joinError = error.localizedDescription
+            }
+        }
+    }
+
+    private func loadEligibleProductsForInvite() async {
+        guard let inviteId else { return }
+        await MainActor.run { isRespondingToInvite = true }
+        do {
+            let json = try await coHostRequest(path: "invite/\(inviteId)/eligible-products", method: "GET")
+            let productsJson = json["data"] as? [[String: Any]] ?? []
+            let data = try JSONSerialization.data(withJSONObject: productsJson)
+            let products = (try? JSONDecoder().decode([ProductDataModel1].self, from: data)) ?? []
+            await MainActor.run {
+                eligibleInviteProducts = products
+                selectedInviteProductIds.removeAll()
+                showInviteProductSelection = true
+                isRespondingToInvite = false
+            }
+        } catch {
+            await MainActor.run {
+                isRespondingToInvite = false
+                hudMsg = error.localizedDescription
+                showhud = true
+            }
+        }
+    }
+
+    private func respondToInvite(accept: Bool, productIds: [Int]) async {
+        guard let inviteId else { return }
+        await MainActor.run { isRespondingToInvite = true }
+        do {
+            let json = try await coHostRequest(
+                path: "invite/\(inviteId)/respond",
+                method: "POST",
+                body: [
+                    "accept": accept,
+                    "product_ids": productIds
+                ]
+            )
+            guard (json["status"] as? String) == "success" else {
+                await MainActor.run {
+                    isRespondingToInvite = false
+                    hudMsg = (json["message"] as? String) ?? "Could not update invite."
+                    showhud = true
+                }
+                return
+            }
+
+            if !accept {
+                await MainActor.run {
+                    isRespondingToInvite = false
+                    presentationMode.wrappedValue.dismiss()
+                }
+                return
+            }
+
+            let data = json["data"] as? [String: Any]
+            let coHost = data?["co_host"] as? [String: Any]
+            let showId = Self.intValue(data?["schedule_show_id"])
+                ?? Self.intValue(coHost?["schedule_show_id"])
+                ?? inviteScheduleShowId
+            let hostUserId = Self.intValue(coHost?["host_user_id"]) ?? inviteHostUserId
+            let coHostId = Self.intValue(coHost?["id"])
+
+            await MainActor.run {
+                activeCoHostId = coHostId
+                activeShowId = showId
+                isRespondingToInvite = false
+            }
+
+            if hostUserId > 0 && showId > 0 {
+                await joinAgoraAsCoHost(hostUserId: hostUserId, showId: showId)
+            } else {
+                await MainActor.run {
+                    agoraError = "Could not determine channel — missing show data."
+                }
+            }
+        } catch {
+            await MainActor.run {
+                isRespondingToInvite = false
+                hudMsg = error.localizedDescription
+                showhud = true
+            }
+        }
+    }
+
+    private func coHostRequest(path: String, method: String, body: [String: Any]? = nil) async throws -> [String: Any] {
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/\(path)") else {
+            return [:]
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let scheme = "Be" + "arer"
+        request.setValue("\(scheme) \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+        if let body {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        }
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return (try JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
+    }
+
+    private func leaveCoHostOnServer(coHostId: Int) async {
+        _ = try? await coHostRequest(path: "\(coHostId)/leave", method: "POST", body: [:])
     }
 
     // MARK: - Claim pairing code
@@ -501,11 +1005,57 @@ struct CoHostJoinScreen: View {
 
         // 4. Join as broadcaster (second publisher in same channel)
         agoraManager.joinChannel(asHost: true, channelName: channelName, token: token)
+        activeRoomId = channelName
+        activeShowId = showId
+        if inviteId != nil {
+            SocketManagerService.shared.setupSocket {
+                SocketManagerService.shared.joinRoom(roomId: channelName, userId: UserDefaults.userId) {
+                    syncCoHostProducts()
+                }
+                SocketManagerService.shared.observeRoomUpdates { room in
+                    guard room.room_id == channelName else { return }
+                    coHostShowProducts = room.products ?? []
+                }
+                SocketManagerService.shared.listenForChat(roomId: channelName)
+                SocketManagerService.shared.joinAsInvitedCoHost(
+                    roomId: channelName,
+                    userId: UserDefaults.userId,
+                    showId: "\(showId)",
+                    coHostId: activeCoHostId
+                )
+            }
+        }
 
         await MainActor.run {
             isJoiningAgora = false
             isLive         = true
         }
+    }
+
+    private func syncCoHostProducts() {
+        if let room = socketManager.rooms.first(where: { $0.room_id == activeRoomId }) {
+            coHostShowProducts = room.products ?? []
+        }
+    }
+
+    private func sendCoHostChatMessage() {
+        let message = coHostCommentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !message.isEmpty, !activeRoomId.isEmpty else { return }
+        SocketManagerService.shared.sendChat(
+            roomId: activeRoomId,
+            message: message,
+            userId: UserDefaults.userId,
+            userName: UserDefaults.userName,
+            userImage: UserDefaults.profileURL
+        )
+        coHostCommentText = ""
+    }
+
+    private static func intValue(_ any: Any?) -> Int? {
+        if let value = any as? Int { return value }
+        if let value = any as? String { return Int(value) }
+        if let value = any as? Double { return Int(value) }
+        return nil
     }
 }
 

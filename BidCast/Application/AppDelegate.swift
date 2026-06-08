@@ -337,12 +337,26 @@ extension AppDelegate {
             }
 
         // ── Co-host invite ───────────────────────────────────────────
-        // FOLLOW-UP: No dedicated "co-host invite accept" screen exists yet.
-        // Schedule show id is in userInfo["schedule_show_id"].
-        // When an invite-acceptance screen is built, route here.
         case "cohost_invite":
-            // Fall through to default (notification inbox)
-            break
+            let rawInviteId = userInfo["cohost_invite_id"]
+            let inviteId: Int?
+            if let intId = rawInviteId as? Int {
+                inviteId = intId
+            } else if let strId = rawInviteId as? String {
+                inviteId = Int(strId)
+            } else if let doubleId = rawInviteId as? Double {
+                inviteId = Int(doubleId)
+            } else {
+                inviteId = nil
+            }
+            if let inviteId {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("NavToCoHostInvite"),
+                        object: inviteId
+                    )
+                }
+            }
 
         // ── Wallet credited / debited ─────────────────────────────
         // These are DB / transaction-history only; no FCM push confirmed.
@@ -372,5 +386,4 @@ extension AppDelegate {
         }
     }
 }
-
 

@@ -25,6 +25,7 @@ struct MoreOptionsScreen: View {
     var onCreatePoll: () -> Void
     // Basecamp #9934001770 (2026-05-27): co-host pairing.
     var onPairSecondDevice: (() -> Void)? = nil
+    var onInviteCohost: (() -> Void)? = nil
     var onZoomOut: () -> Void
     var onZoomIn: () -> Void
     var onMicToggle: () -> Void
@@ -179,6 +180,10 @@ struct MoreOptionsScreen: View {
                                 OptionGridButtonView(label: "Pair Device", icon: "iphone.and.arrow.forward", isSelected: selectedOption == "Pair Device", action: {
                                     selectedOption = "Pair Device"
                                     onPairSecondDevice?()
+                                })
+                                OptionGridButtonView(label: "Invite Cohost", icon: "person.2.fill", isSelected: selectedOption == "Invite Cohost", action: {
+                                    selectedOption = "Invite Cohost"
+                                    onInviteCohost?()
                                 })
                             }
                             .padding(.horizontal, 16)
