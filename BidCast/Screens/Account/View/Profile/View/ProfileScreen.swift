@@ -31,10 +31,19 @@ fileprivate enum ProfileShopFilter {
         }
     }
 
-    var saleTypeFilter: String {
+    var typeFilter: String? {
         switch self {
         case .auction:
-            return "auction"
+            return "live"
+        case .buyNow, .sold:
+            return nil
+        }
+    }
+
+    var saleTypeFilter: String? {
+        switch self {
+        case .auction:
+            return nil
         case .buyNow:
             return "buy_now"
         case .sold:
@@ -222,7 +231,7 @@ struct ProfileScreen: View {
                                     }
                                     scheduleShowArr.removeAll()
                                     SVProgressHUD.show()
-                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming",page : 1))
+                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", seller_id: profileData.id ?? Int(id) ?? 0, page: 1))
                                     await SVProgressHUD.dismiss()
                                     if viewModel.errorMessage != "" && viewModel.errorMessage != nil{
                                         alertType = .sheetType(icon: .alert,
@@ -1118,12 +1127,12 @@ struct ProfileTabsView: View {
         HStack(spacing: 0) {
             ForEach(tabs, id: \.self) { tab in
                 Text(tab)
-                    .font(.custom(selectedTab == tab ? poppinsBold : poppinsSemiBold, size: selectedTab == tab ? 19.0 : 18.0))
+                    .font(.custom(selectedTab == tab ? poppinsBold : poppinsSemiBold, size: selectedTab == tab ? 16.0 : 15.0))
                     .foregroundColor(selectedTab == tab ? .black : Color.gray.opacity(0.45))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.78)
+                    .minimumScaleFactor(0.72)
                     .allowsTightening(true)
-                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedTab = tab
@@ -1131,7 +1140,7 @@ struct ProfileTabsView: View {
                     }
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 10)
         .padding(.top, 4)
     }
 }
@@ -1372,6 +1381,7 @@ extension ProfileScreen {
                                              search: searchText,
                                              status: selectedShopFilter.statusFilter,
                                              page: currentPage,
+                                             type: selectedOptions.isEmpty ? selectedShopFilter.typeFilter : nil,
                                              sale_type: selectedOptions.isEmpty ? selectedShopFilter.saleTypeFilter : selectedOptions,
                                              sort_by: selectedSort
                 )
@@ -1433,9 +1443,9 @@ fileprivate extension ProductDataModel1 {
     }
 
     var isProfileLiveAuctionFormat: Bool {
-        if auction == true || reserveForLive == true || isAuction == true { return true }
         if type.isProfileLiveAuctionText { return true }
         if saleFormat.isProfileLiveAuctionText { return true }
+        if auction == true || isAuction == true { return true }
         return false
     }
 
@@ -1452,6 +1462,15 @@ fileprivate extension Optional where Wrapped == String {
             .lowercased()
             .replacingOccurrences(of: "-", with: "_")
             .replacingOccurrences(of: " ", with: "_")
-        return ["live", "auction", "live_auction", "reserve_for_live", "reserveforlive"].contains(normalized)
+        return [
+            "live",
+            "auction",
+            "live_auction",
+            "liveauction",
+            "live_bid",
+            "livebid",
+            "auction_product",
+            "live_auction_product"
+        ].contains(normalized)
     }
 }

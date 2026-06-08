@@ -476,20 +476,32 @@ struct EditProductScreen: View {
                                             .cornerRadius(8)
                                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.orange.opacity(0.4), lineWidth: 1))
                                     }
-                                    HStack(spacing: 8) {
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text("Starts at").font(.custom(poppinsBold, size: 11)).foregroundColor(.orange)
-                                            DatePicker("", selection: $flashSaleStartsAt).labelsHidden().datePickerStyle(.compact)
-                                        }
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text("Ends at").font(.custom(poppinsBold, size: 11)).foregroundColor(.orange)
-                                            DatePicker("", selection: $flashSaleEndsAt, in: Date()...).labelsHidden().datePickerStyle(.compact)
-                                        }
+                                    HStack {
+                                        Text("Starts at")
+                                            .font(.custom(poppinsBold, size: 11))
+                                            .foregroundColor(.orange)
+                                        Spacer(minLength: 8)
+                                        DatePicker("", selection: $flashSaleStartsAt)
+                                            .labelsHidden()
+                                            .datePickerStyle(.compact)
+                                            .fixedSize()
+                                    }
+                                    HStack {
+                                        Text("Ends at")
+                                            .font(.custom(poppinsBold, size: 11))
+                                            .foregroundColor(.orange)
+                                        Spacer(minLength: 8)
+                                        DatePicker("", selection: $flashSaleEndsAt, in: Date()...)
+                                            .labelsHidden()
+                                            .datePickerStyle(.compact)
+                                            .fixedSize()
                                     }
                                     Text("Buyers see a flash-sale badge + countdown during the window.")
                                         .font(.custom(poppinsRegular, size: 11))
                                         .foregroundColor(.gray)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(12)
                                 .background(Color.orange.opacity(0.06))
                                 .cornerRadius(10)
