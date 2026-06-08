@@ -14,6 +14,7 @@ struct CurrentProductView: View {
     @Binding var currentPrice: Double
     @Binding var suddenDeath : Bool
     @Binding var bidTime: String
+    @Binding var bidAddedSeconds: Int
     @Binding var userName: String
     @Binding var userImage: String
     @Binding var categoryName : String
@@ -157,6 +158,12 @@ struct CurrentProductView: View {
                                     Text(bidTime)
                                         .font(.custom(poppinsSemiBold, size: 13))
                                         .foregroundColor(timeToSeconds(bidTime) < 10 ? .red : .white)
+                                    if bidAddedSeconds > 0 {
+                                        Text("+\(bidAddedSeconds)s")
+                                            .font(.custom(poppinsBold, size: 11))
+                                            .foregroundColor(.yellow)
+                                            .transition(.opacity)
+                                    }
                                 }
                             }
                         }

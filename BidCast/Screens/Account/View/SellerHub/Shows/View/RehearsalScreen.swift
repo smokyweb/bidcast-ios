@@ -1601,6 +1601,7 @@ struct RehearsalScreen: View {
                                 currentPrice: $currentPrice,
                                 suddenDeath: $sudden_Death,
                                 bidTime: $socketManager.bidTime,
+                                bidAddedSeconds: $socketManager.bidAddedSeconds,
                                 userName: $winnerName,
                                 userImage: $winnerProfileImage,
                                 categoryName: $categoryName,

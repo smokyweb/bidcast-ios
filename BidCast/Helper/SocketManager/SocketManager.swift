@@ -190,6 +190,7 @@ final class SocketManagerService: NSObject, ObservableObject {
     @Published var viewerCount: Int = 0
     @Published var showTime: String = "00:00:00"
     @Published var bidTime: String = "00:00"
+    @Published var bidAddedSeconds: Int = 0
     @Published var hasWon = false
     @Published var countdownTimer : Int = 30
     /// Published follow status for UI binding
@@ -552,10 +553,25 @@ extension SocketManagerService {
             guard let self,
                   let json = data.first as? [String: Any],
                   let roomID = json["room_id"] as? String,
-                  let remaining = json["remaining"] as? Int,
                   roomID == roomId else { return }
+            let remaining = (json["remaining"] as? Int)
+                ?? Int("\(json["remaining"] ?? "")")
+                ?? 0
+            let addedSeconds = (json["added_seconds"] as? Int)
+                ?? (json["addedSeconds"] as? Int)
+                ?? Int("\(json["added_seconds"] ?? json["addedSeconds"] ?? "")")
+                ?? 0
             
             bidTime = formatElapsedTime(seconds: remaining)
+            if addedSeconds > 0 {
+                bidAddedSeconds = addedSeconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+                    guard let self else { return }
+                    if self.bidAddedSeconds == addedSeconds {
+                        self.bidAddedSeconds = 0
+                    }
+                }
+            }
         }
     }
 

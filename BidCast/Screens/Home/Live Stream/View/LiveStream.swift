@@ -1169,6 +1169,7 @@ struct LiveStream: View {
             currentPrice: $currentPrice,
             suddenDeath: $sudden_Death,
             bidTime: $socketManagerChat.bidTime,
+            bidAddedSeconds: $socketManagerChat.bidAddedSeconds,
             userName: $winnerName,
             userImage: $winnerProfileImage,
             categoryName: $categoryName, hasWon: $socketManagerChat.hasWon,sellerId: $sellerId,
@@ -2742,8 +2743,11 @@ extension LiveStream {
                 self.isSurpriseSetAuctionActive = false
                 self.currentSurpriseSetData = nil
                 if userid == UserDefaults.userId {
-                    self.toastMessage = message
+                    self.toastMessage = message + " Choose another payment method."
                     self.showToast = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                        self.navigateToEditPayment = true
+                    }
                 }
             }
         }
