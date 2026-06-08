@@ -41,7 +41,8 @@ workflows:
             /bin/ls -la ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/ 2>&1 || true
             exit 1
           fi
-          PROFILE_NAME=$(/usr/bin/security cms -D -i "$PROFILE_FILE" 2>/dev/null | /usr/libexec/PlistBuddy -c "Print :Name" /dev/stdin)
+          /usr/bin/security cms -D -i "$PROFILE_FILE" > /tmp/profile.plist
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print :Name" /tmp/profile.plist)
           /bin/echo "Using PROFILE_FILE: $PROFILE_FILE"
           /bin/echo "Using PROFILE_NAME: $PROFILE_NAME"
           xcodebuild \
