@@ -32,18 +32,13 @@ fileprivate enum ProfileShopFilter {
     }
 
     var typeFilter: String? {
-        switch self {
-        case .auction:
-            return "live"
-        case .buyNow, .sold:
-            return nil
-        }
+        return nil
     }
 
     var saleTypeFilter: String? {
         switch self {
         case .auction:
-            return nil
+            return "auction"
         case .buyNow:
             return "buy_now"
         case .sold:
@@ -1445,7 +1440,7 @@ fileprivate extension ProductDataModel1 {
     var isProfileLiveAuctionFormat: Bool {
         if type.isProfileLiveAuctionText { return true }
         if saleFormat.isProfileLiveAuctionText { return true }
-        if auction == true || isAuction == true { return true }
+        if auction == true || isAuction == true || reserveForLive == true { return true }
         return false
     }
 
@@ -1478,6 +1473,8 @@ fileprivate extension Optional where Wrapped == String {
             "liveauction",
             "live_bid",
             "livebid",
+            "reserve_for_live",
+            "reserveforlive",
             "auction_product",
             "live_auction_product"
         ].contains(normalized)
