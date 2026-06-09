@@ -390,20 +390,12 @@ struct ProductShopRehersalScreen: View {
     
     // MARK: - Sheets
     private var createProductSheet: some View {
-        let lockedCategoryId = (displayedProducts.first?.category?.id ?? 0) != 0
-        ? "\(displayedProducts.first?.category?.id ?? 0)"
-        : categoryId
-        
-        let lockedCategoryName = !(displayedProducts.first?.category?.name ?? "").isEmpty
-        ? (displayedProducts.first?.category?.name ?? "")
-        : categoryName
-        
-        return ListProductScreen(
+        ListProductScreen(
             forSheet: true,
             onCancel: { showCreateProductSheet = false },
-            preSelectedCategoryId: lockedCategoryId,
-            preSelectedCategoryName: lockedCategoryName,
-            isCategoryLocked: true
+            preSelectedCategoryId: nil,
+            preSelectedCategoryName: nil,
+            isCategoryLocked: false
         )
         .onDisappear {
             resetData()

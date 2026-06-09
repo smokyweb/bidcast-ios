@@ -1017,6 +1017,10 @@ struct CoHostJoinScreen: View {
                     coHostShowProducts = room.products ?? []
                 }
                 SocketManagerService.shared.listenForChat(roomId: channelName)
+                SocketManagerService.shared.listenForRoomEnded { endedRoomId in
+                    guard endedRoomId == channelName else { return }
+                    leaveCoHost()
+                }
                 SocketManagerService.shared.joinAsInvitedCoHost(
                     roomId: channelName,
                     userId: UserDefaults.userId,

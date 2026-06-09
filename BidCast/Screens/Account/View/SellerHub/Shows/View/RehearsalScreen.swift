@@ -2234,6 +2234,14 @@ struct RehearsalScreen: View {
         socketManager.listenForCoHostError { message in
             showhudMessage(message)
         }
+
+        socketManager.listenForRoomEnded { endedRoomId in
+            guard endedRoomId == roomId else { return }
+            agoraManager.leaveChannel()
+            SocketManagerService.shared.removeChatListener()
+            hasInitialized = false
+            presentationMode.wrappedValue.dismiss()
+        }
         
         SocketManagerService.shared.observeBidCountdown(
             for: roomId,

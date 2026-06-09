@@ -496,7 +496,7 @@ extension SocketManagerService {
         socket.on("roomEnded") { [weak self] data, _ in
             guard let self,
                   let json = data.first as? [String: Any],
-                  let roomId = json["room_end"] as? String else { return }
+                  let roomId = (json["room_end"] as? String) ?? (json["room_id"] as? String) else { return }
             
             logger.info("🏁 Room ended: \(roomId)")
             

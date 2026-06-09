@@ -126,8 +126,8 @@ struct SlotProduct: Codable, Identifiable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try? c.decodeIfPresent(Int.self, forKey: .id)
         title = try? c.decodeIfPresent(String.self, forKey: .title)
-        images = try? c.decodeIfPresent([String].self, forKey: .images)
-        thumbnail = try? c.decodeIfPresent([String].self, forKey: .thumbnail)
+        images = randomizerDecodeFlexibleStringArray(c, forKey: .images)
+        thumbnail = randomizerDecodeFlexibleStringArray(c, forKey: .thumbnail)
         pricing = randomizerDecodeFlexibleString(c, forKey: .pricing)
         quantity = randomizerDecodeFlexibleString(c, forKey: .quantity)
         purchasedQuantity = randomizerDecodeFlexibleString(c, forKey: .purchasedQuantity) ?? randomizerDecodeFlexibleString(c, forKey: .purchased_quantity)
@@ -153,6 +153,19 @@ private func randomizerDecodeFlexibleString<K: CodingKey>(_ c: KeyedDecodingCont
     return nil
 }
 
+private func randomizerDecodeFlexibleDouble<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> Double? {
+    if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return d }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return Double(i) }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) { return Double(s.trimmingCharacters(in: .whitespaces)) }
+    return nil
+}
+
+private func randomizerDecodeFlexibleStringArray<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> [String]? {
+    if let values = try? c.decodeIfPresent([String].self, forKey: key) { return values }
+    if let value = try? c.decodeIfPresent(String.self, forKey: key), !value.isEmpty { return [value] }
+    return nil
+}
+
 // MARK: - Template Model
 struct RandomizerTemplate: Codable, Identifiable {
     var id: Int?
@@ -166,6 +179,25 @@ struct RandomizerTemplate: Codable, Identifiable {
     var slots: [RandomizerSlot]?
     var created_at: String?
     var updated_at: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, user_id, name, type, entry_cost, prize_product_id, prize_product, slot_count, slots, created_at, updated_at
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try? c.decodeIfPresent(Int.self, forKey: .id)
+        user_id = try? c.decodeIfPresent(Int.self, forKey: .user_id)
+        name = (try? c.decodeIfPresent(String.self, forKey: .name)) ?? ""
+        type = (try? c.decodeIfPresent(String.self, forKey: .type)) ?? RandomizerType.productRaffle.rawValue
+        entry_cost = randomizerDecodeFlexibleDouble(c, forKey: .entry_cost)
+        prize_product_id = try? c.decodeIfPresent(Int.self, forKey: .prize_product_id)
+        prize_product = try? c.decodeIfPresent(SlotProduct.self, forKey: .prize_product)
+        slot_count = (try? c.decodeIfPresent(Int.self, forKey: .slot_count)) ?? 6
+        slots = try? c.decodeIfPresent([RandomizerSlot].self, forKey: .slots)
+        created_at = try? c.decodeIfPresent(String.self, forKey: .created_at)
+        updated_at = try? c.decodeIfPresent(String.self, forKey: .updated_at)
+    }
 
     var randomizerType: RandomizerType {
         RandomizerType(rawValue: type) ?? .productRaffle

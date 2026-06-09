@@ -17,6 +17,7 @@ struct RandomizerTemplateBuilderView: View {
     // Form state
     @State private var name: String = ""
     @State private var selectedType: RandomizerType = .productRaffle
+    @State private var isPaidEntry: Bool = false
     @State private var entryCost: String = ""
     @State private var slotCount: Int = 6
     @State private var slots: [RandomizerSlot] = []
@@ -56,8 +57,12 @@ struct RandomizerTemplateBuilderView: View {
                         buyerRafflePrizeSection
                     }
 
-                    // Entry cost (shown for paid/free raffle types)
+                    // Paid/free entry mode for raffle types
                     if selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle {
+                        entryModeSectionView
+                    }
+
+                    if isPaidEntry && (selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle) {
                         entryCostSectionView
                     }
 
@@ -204,9 +209,27 @@ struct RandomizerTemplateBuilderView: View {
     }
 
     // MARK: - Entry Cost
+    private var entryModeSectionView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Entry Mode")
+                .font(.custom(poppinsBold, size: 14))
+                .foregroundColor(.primary)
+
+            Picker("Entry Mode", selection: $isPaidEntry) {
+                Text("Free").tag(false)
+                Text("Paid").tag(true)
+            }
+            .pickerStyle(.segmented)
+            .padding(8)
+            .background(Color.white)
+            .cornerRadius(10)
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+        }
+    }
+
     private var entryCostSectionView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Entry Cost (leave blank for free)")
+            Text("Entry Cost")
                 .font(.custom(poppinsBold, size: 14))
                 .foregroundColor(.primary)
 
@@ -388,6 +411,7 @@ struct RandomizerTemplateBuilderView: View {
             name = t.name
             selectedType = t.randomizerType
             slotCount = t.slot_count
+            isPaidEntry = (t.entry_cost ?? 0) > 0
             entryCost = t.entry_cost.map { $0 > 0 ? String(format: "%.2f", $0) : "" } ?? ""
             if let existingSlots = t.slots, !existingSlots.isEmpty {
                 slots = existingSlots
@@ -458,6 +482,12 @@ struct RandomizerTemplateBuilderView: View {
             showHud = true
             return
         }
+        let cost = isPaidEntry ? Double(entryCost.trimmingCharacters(in: .whitespaces)) : 0
+        if isPaidEntry && (cost ?? 0) <= 0 {
+            hudMsg = "Please enter an entry cost for paid randomizers"
+            showHud = true
+            return
+        }
 
         // Mirror prize product to all slots before building the save payload
         if allowsProductMapping && selectedType == .buyerRaffle {
@@ -465,7 +495,6 @@ struct RandomizerTemplateBuilderView: View {
         }
 
         isSaving = true
-        let cost = Double(entryCost.trimmingCharacters(in: .whitespaces))
         let shouldPreserveExistingProductMapping = !allowsProductMapping && editingTemplate != nil
         let requestSlots = slots.map { s in
             RandomizerSlotRequest(
