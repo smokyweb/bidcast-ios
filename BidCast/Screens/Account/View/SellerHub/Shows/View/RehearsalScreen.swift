@@ -238,6 +238,43 @@ struct RehearsalScreen: View {
         if let id = showsData.id, id > 0 { return id }
         return 0
     }
+
+    private var liveShowProductCount: Int {
+        max(productData.count, productListData.count)
+    }
+
+    private func mergeProductsIntoLiveShow(_ products: [ProductDataModel1]) {
+        guard !products.isEmpty else { return }
+
+        let existingShowIds = Set(productListData.compactMap { $0.id })
+        let newShowProducts = products.filter { product in
+            guard let id = product.id else { return false }
+            return !existingShowIds.contains(id)
+        }
+
+        if !newShowProducts.isEmpty {
+            productListData.append(contentsOf: newShowProducts)
+        }
+
+        let existingLiveIds = Set(productData.compactMap { $0.id })
+        let newLiveProducts = products.filter { product in
+            guard let id = product.id else { return false }
+            return !existingLiveIds.contains(id)
+        }
+
+        if !newLiveProducts.isEmpty {
+            productData.append(contentsOf: newLiveProducts)
+        }
+
+        productCount = liveShowProductCount
+
+        let mergedIds = productListData
+            .compactMap { $0.id }
+            .map(String.init)
+
+        showsData.product_ids = mergedIds
+        socketManager.addProductsToShow(roomId: roomId, productIds: mergedIds)
+    }
     
     // MARK: - Body
     var body: some View {
@@ -844,6 +881,9 @@ struct RehearsalScreen: View {
                     suddenDeath: isSuddenDeath
                 )
                 showShopSheet = false
+            },
+            onProductsAdded: { products in
+                mergeProductsIntoLiveShow(products)
             }
         )
     }
@@ -868,6 +908,9 @@ struct RehearsalScreen: View {
                 navigateToRandomizer = true
             }, onSurpriseSetUnitSelected: { _, _, _, _, _,_,_   in
                             // Freebie mode - no action needed for surprise sets
+            },
+            onProductsAdded: { products in
+                mergeProductsIntoLiveShow(products)
             }
         )
     }
@@ -1808,11 +1851,11 @@ struct RehearsalScreen: View {
             
             VStack {
                 if hasAuctionStarted, let product = currentProduct, let img = product.images?.first {
-                    StackedImageView(imageURL: img, totalCount: productCount) {
+                    StackedImageView(imageURL: img, totalCount: liveShowProductCount) {
                         showShopSheet = true
                     }
                 } else {
-                    StackedImageView(imageURL: productData.first?.images?.first ?? "", totalCount: productCount) {
+                    StackedImageView(imageURL: productData.first?.images?.first ?? productListData.first?.images?.first ?? "", totalCount: liveShowProductCount) {
                         showShopSheet = true
                     }
                 }
@@ -2214,8 +2257,8 @@ struct RehearsalScreen: View {
         
         SocketManagerService.shared.observeRoomUpdates { newRoom in
             print("🏠 Room updated: \(newRoom.room_id ?? "unknown")")
-            productCount = newRoom.productCount ?? 0
             self.fetchProducts(for: roomId)
+            productCount = liveShowProductCount
         }
 
         socketManager.listenForCoHostVideoHolderChanged { eventRoomId, holderUserId, holderSocketId in
@@ -2698,6 +2741,7 @@ struct RehearsalScreen: View {
         
         if let products = socketRoom.products {
             productData = products
+            productCount = liveShowProductCount
             print("print PRoduct: \(products)")
 //            let currentProducts = productData.filter { $0.isCurrent }
             let currentProducts = productData.first

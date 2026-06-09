@@ -71,6 +71,7 @@ struct ProductShopRehersalScreen: View {
     @State private var showManageProductSheet = false
     @State private var showAddActionSheet = false
     @State private var showCreateSurpriseSheet = false
+    @State private var showInventoryPickerSheet = false
 
     // MARK: - Pagination / filtering
     @State private var isFetchingMore = false
@@ -112,6 +113,7 @@ struct ProductShopRehersalScreen: View {
     @State private var socketListenersConfigured = false
     
     var onProductCreated: (() -> Void)?
+    var onProductsAdded: (([ProductDataModel1]) -> Void)?
     
     @State private var selectedSurpriseSet: ProductSurpriseData?
     
@@ -141,7 +143,8 @@ struct ProductShopRehersalScreen: View {
         onProductSelected: ((ProductDataModel1) -> Void)? = nil,
         onSurpriseSetSelected: ((ProductSurpriseData) -> Void)? = nil,
         onSurpriseSetUnitSelected: ((Int,Int,ProductSurpriseData, String, Int, Int, Bool) -> Void)?,
-        onProductCreated: (() -> Void)? = nil
+        onProductCreated: (() -> Void)? = nil,
+        onProductsAdded: (([ProductDataModel1]) -> Void)? = nil
     ) {
         self.mode = mode
         self.roomId = roomId
@@ -154,6 +157,7 @@ struct ProductShopRehersalScreen: View {
         self.onSurpriseSetSelected = onSurpriseSetSelected
         self.onSurpriseSetUnitSelected = onSurpriseSetUnitSelected
         self.onProductCreated = onProductCreated
+        self.onProductsAdded = onProductsAdded
         
         // Set initial segment based on auctionTypeId. Default to the new
         // "All" tab (Basecamp #7); surprise-set shows still open on Surprise.
@@ -193,7 +197,9 @@ struct ProductShopRehersalScreen: View {
         }
         .sheet(isPresented: $showManageProductSheet) { manageProductSheet }
         .sheet(isPresented: $showCreateSurpriseSheet) { createSurpriseSheet }
+        .sheet(isPresented: $showInventoryPickerSheet) { inventoryPickerSheet }
         .confirmationDialog("What would you like to create?", isPresented: $showAddActionSheet, titleVisibility: .visible) {
+            Button("Choose From Inventory") { showInventoryPickerSheet = true }
             Button("Create Product") { showCreateProductSheet = true }
             Button("Create Surprise Set") { showCreateSurpriseSheet = true }
             Button("Cancel", role: .cancel) {}
@@ -395,13 +401,29 @@ struct ProductShopRehersalScreen: View {
             onCancel: { showCreateProductSheet = false },
             preSelectedCategoryId: nil,
             preSelectedCategoryName: nil,
-            isCategoryLocked: false
+            isCategoryLocked: false,
+            onProductCreated: { product in
+                addProductsToLiveShow([product])
+                showCreateProductSheet = false
+            }
         )
         .onDisappear {
             resetData()
             fetchProduct()
             onProductCreated?()
         }
+    }
+
+    private var inventoryPickerSheet: some View {
+        InventoryScreen(
+            preSelectedProducts: productDataFromEvent,
+            showAuctionTypeId: "\(auctionTypeId)",
+            navigatedFrom: .addProduct,
+            onProductsSelected: { products in
+                addProductsToLiveShow(products)
+                showInventoryPickerSheet = false
+            }
+        )
     }
     
     @ViewBuilder
@@ -506,6 +528,30 @@ struct ProductShopRehersalScreen: View {
         }
 
         displayedProducts = products
+    }
+
+    private func addProductsToLiveShow(_ products: [ProductDataModel1]) {
+        guard !products.isEmpty else { return }
+
+        let existingIds = Set(productDataFromEvent.compactMap { $0.id })
+        let newProducts = products.filter { product in
+            guard let id = product.id else { return false }
+            return !existingIds.contains(id)
+        }
+
+        if !newProducts.isEmpty {
+            productDataFromEvent.append(contentsOf: newProducts)
+        }
+
+        let apiIds = Set(apiProducts.compactMap { $0.id })
+        let missingApiProducts = products.filter { product in
+            guard let id = product.id else { return false }
+            return !apiIds.contains(id)
+        }
+        apiProducts.append(contentsOf: missingApiProducts)
+        updateSortedProducts()
+
+        onProductsAdded?(products)
     }
 }
 

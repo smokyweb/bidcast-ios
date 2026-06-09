@@ -1238,6 +1238,18 @@ extension SocketManagerService {
             logger.info("📦 Emitted next product for room \(roomId): product_id=\(productId)")
         }
     }
+
+    func addProductsToShow(roomId: String, productIds: [String]) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "room_id": roomId,
+                "product_ids": productIds
+            ]
+            socket.emit("add_products_to_show", payload)
+            logger.info("📦 Emitted add products for room \(roomId): product_ids=\(productIds.joined(separator: ","))")
+        }
+    }
+
     func AllowBidForAll(roomId: String, allow_bid_for_all: Bool) {
         performIfConnected {
             let payload: [String: Any] = [
