@@ -31,7 +31,7 @@ struct InventoryScreen: View {
     @State var segment: InventorySegment = .active
     
     @State var inventoryList: [ProductDataModel1] = []
-    @State var request: ProductRequest = ProductRequest(status: "active", marketplace: "false", page: 1)
+    @State var request: ProductRequest = ProductRequest(status: "active", page: 1)
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     var viewModel = InventoryViewModel()
@@ -114,20 +114,6 @@ struct InventoryScreen: View {
     @State private var shouldRefreshAfterEdit = false
     
     
-    // Basecamp #9959447268 (2026-06-03): a product's pricing format, resilient to a
-    // NULL `type`. The `type` column was only populated from ~2026-05-29 onward, so
-    // most products have type=NULL; when type is set we trust it, otherwise we fall
-    // back to the `auction` flag — EXACTLY how the backend derives a default type
-    // (type = auction ? 'live' : 'buy_it_now'). Mirrors the PWA's productIsLive()
-    // in addProduct.blade.php (Basecamp #9948992087 round 2). We deliberately do
-    // NOT use reserve_for_live (that's a reserve-price concept, not the format).
-    private func productIsLive(_ p: ProductDataModel1) -> Bool {
-        let t = (p.type ?? "").lowercased()
-        if t == "live" || t == "auction" || t == "live_auction" { return true }
-        if t == "buy_it_now" || t == "buy_now" || t == "buynow" || t == "buy" { return false }
-        return p.auction ?? false
-    }
-
     // The inventory list to display: when picking products for a show, restrict to
     // the show's pricing format (Live Auction -> live products, Buy Now -> buy-now
     // products). Surprise Sets / unknown / non-picker contexts -> no restriction.
@@ -135,9 +121,9 @@ struct InventoryScreen: View {
         guard navigatedFrom == .addProduct else { return inventoryList }
         switch showAuctionTypeId {
         case "8":  // Live Auction show -> only auction products
-            return inventoryList.filter { productIsLive($0) }
+            return inventoryList.filter { $0.isLiveAuctionProduct }
         case "5":  // Buy Now show -> only buy-it-now products
-            return inventoryList.filter { !productIsLive($0) }
+            return inventoryList.filter { $0.isBuyNowProduct }
         default:   // 9 (Surprise Sets) / empty / unknown -> no restriction
             return inventoryList
         }
@@ -1065,7 +1051,7 @@ struct InventoryScreen: View {
         request.status = segment.rawValue.lowercased()
         request.page = page
         request.search = searchText
-        request.marketplace = "\(marketPlaceSelected)"
+        request.marketplace = nil
         
         // Apply filters
         if !selectedCategoryId.isEmpty {
@@ -1568,11 +1554,7 @@ extension ProductCardView {
     }
 
     private var isAuctionFormat: Bool {
-        let t = (product.type ?? "").lowercased()
-        if t == "live" || t == "auction" { return true }
-        if t == "buy_now" || t == "buy_it_now" || t == "buynow" { return false }
-        // Legacy / no-type: fall back to the `auction` boolean.
-        return product.auction ?? false
+        product.isLiveAuctionProduct
     }
 
     private var productTitle: some View {

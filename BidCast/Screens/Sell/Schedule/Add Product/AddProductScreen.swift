@@ -76,26 +76,13 @@ struct AddProductsScreen: View {
     var didTapEdit : ((ProductDataModel1, LetsPrepareCoordinator) -> Void)?
     @EnvironmentObject var coordinator: LetsPrepareCoordinator
 
-    // Basecamp #5 (PWA refs 89eb86d1, b6794176, 83501a01): filter the inventory
-    // picker to products whose pricing format matches the show's chosen format.
-    //   auction_type_id 5 = Buy Now      -> only buy-it-now products
-    //   auction_type_id 8 = Live Auction -> only auction products
-    //   auction_type_id 9 / Surprise Sets / other -> no restriction
-    // Legacy NULL-type products are classified by the `auction` boolean.
-    private func productIsAuction(_ p: ProductDataModel1) -> Bool {
-        let t = (p.type ?? "").lowercased()
-        if t == "live" || t == "auction" { return true }
-        if t == "buy_now" || t == "buy_it_now" || t == "buynow" { return false }
-        return p.auction ?? false
-    }
-
     private var filteredProducts: [ProductDataModel1] {
         let all = productManager.products
         switch request.auction_type_id {
         case "5":  // Buy Now show -> only buy-it-now products
-            return all.filter { !productIsAuction($0) }
+            return all.filter { $0.isBuyNowProduct }
         case "8":  // Live Auction show -> only auction products
-            return all.filter { productIsAuction($0) }
+            return all.filter { $0.isLiveAuctionProduct }
         default:   // 9 / Surprise Sets / other -> no restriction
             return all
         }

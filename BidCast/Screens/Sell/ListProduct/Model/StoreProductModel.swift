@@ -190,6 +190,7 @@ struct ProductDetailModel: Codable {
     var variant: [ProductVariant]?
     var width, length, weight, height: Int?
     var mailClass, processingCategory, description, quantity: String?
+    var productCondition: String?
     var purchasedQuantity, pricing: String?
     var flashSale, auction, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
@@ -209,6 +210,7 @@ struct ProductDetailModel: Codable {
         case mailClass = "mail_class"
         case processingCategory = "processing_category"
         case description, quantity
+        case productCondition = "product_condition"
         case purchasedQuantity = "purchased_quantity"
         case pricing
         case flashSale = "flash_sale"

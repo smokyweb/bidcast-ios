@@ -316,6 +316,35 @@ private func decodeFlexibleBool<K: CodingKey>(_ c: KeyedDecodingContainer<K>, fo
 }
 
 extension ProductDataModel1 {
+    private static func normalizedFormatValue(_ value: String?) -> String {
+        (value ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+            .replacingOccurrences(of: "-", with: "_")
+            .replacingOccurrences(of: " ", with: "_")
+    }
+
+    var isLiveAuctionProduct: Bool {
+        let formatValues = [
+            Self.normalizedFormatValue(type),
+            Self.normalizedFormatValue(saleFormat)
+        ].filter { !$0.isEmpty }
+
+        if formatValues.contains(where: { ["live", "auction", "live_auction"].contains($0) }) {
+            return true
+        }
+
+        if formatValues.contains(where: { ["buy", "buy_now", "buy_it_now", "buynow", "bin"].contains($0) }) {
+            return false
+        }
+
+        return isAuction ?? auction ?? false
+    }
+
+    var isBuyNowProduct: Bool {
+        !isLiveAuctionProduct
+    }
+
     // Local CodingKeys for the custom init.
     // QA #11 — backend (wave3) emits `purchased_quantity` for sellers; iOS payloads emit `purchasedQuantity`. Accept either.
     private enum FlexCodingKeys: String, CodingKey {

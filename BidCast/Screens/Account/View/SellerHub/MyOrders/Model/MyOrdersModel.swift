@@ -272,6 +272,7 @@ extension MyOrderModel {
             mailClass: p.mailClass,
             processingCategory: p.processingCategory,
             description: p.description,
+            productCondition: p.productCondition,
             quantity: p.quantity,
             purchasedQuantity: p.purchasedQuantity,
             pricing: p.pricing,
@@ -395,6 +396,7 @@ struct ProductDetails: Codable {
     var width, length, height: Double?
     var  mailClass, processingCategory: String?
     var description: String?
+    var productCondition: String?
     var quantity, purchasedQuantity: String?
     var pricing: String?
     var flashSale, acceptOffers, reserveForLive: Bool?
@@ -414,6 +416,7 @@ struct ProductDetails: Codable {
         case mailClass = "mail_class"
         case processingCategory = "processing_category"
         case description, quantity
+        case productCondition = "product_condition"
         case purchasedQuantity = "purchased_quantity"
         case pricing
         case flashSale = "flash_sale"
@@ -444,6 +447,7 @@ extension ProductDetails {
         mailClass = try c.decodeIfPresent(String.self, forKey: .mailClass)
         processingCategory = try c.decodeIfPresent(String.self, forKey: .processingCategory)
         description = try c.decodeIfPresent(String.self, forKey: .description)
+        productCondition = try c.decodeIfPresent(String.self, forKey: .productCondition)
         quantity = try c.decodeIfPresent(String.self, forKey: .quantity)
         purchasedQuantity = try c.decodeIfPresent(String.self, forKey: .purchasedQuantity)
         pricing = try c.decodeIfPresent(String.self, forKey: .pricing)

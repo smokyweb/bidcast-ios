@@ -313,6 +313,11 @@ struct ProfileScreen: View {
                                     navigateToDetail = true
                                     productId = product.id ?? 0
                                 },
+                                onSoldOrderTap: { order in
+                                    guard let soldProductId = order.productID ?? order.product?.id else { return }
+                                    productId = soldProductId
+                                    navigateToDetail = true
+                                },
                                 onProductAppear: { index in
                                     handlePagination(index: index)
                                 },
@@ -1157,6 +1162,7 @@ struct ProfileShopSection: View {
     let onFilterTap: () -> Void
     let onTabChange: (Int) -> Void
     let onProductTap: (ProductDataModel1) -> Void
+    let onSoldOrderTap: (MyOrderModel) -> Void
     let onProductAppear: (Int) -> Void
     let onSoldOrderAppear: (Int) -> Void
 
@@ -1210,8 +1216,11 @@ struct ProfileShopSection: View {
                 } else {
                     if isSoldTab {
                         ForEach(soldOrders.indices, id: \.self) { index in
-                            OrderCardView(order: soldOrders[index], showsCancellationActions: false)
+                            ProfileShopSoldProductCard(order: soldOrders[index])
                                 .padding(.horizontal, 16)
+                                .onTapGesture {
+                                    onSoldOrderTap(soldOrders[index])
+                                }
                                 .onAppear {
                                     onSoldOrderAppear(index)
                                 }
@@ -1320,6 +1329,99 @@ struct ProfileShopProductCard: View {
         case (true, false): return condition
         default: return "Item"
         }
+    }
+}
+
+struct ProfileShopSoldProductCard: View {
+    let order: MyOrderModel
+
+    var body: some View {
+        HStack(spacing: 16) {
+            CustomProfileImage(
+                url: productCardImage,
+                isCircular: false,
+                cornerRadius: 12,
+                size: 92,
+                height: 92,
+                defaultImage: "photo"
+            ) {}
+
+            VStack(alignment: .leading, spacing: 7) {
+                Text(title)
+                    .font(.custom(poppinsBold, size: 20))
+                    .foregroundColor(.black)
+                    .lineLimit(1)
+
+                if !detailLine.isEmpty {
+                    Text(detailLine)
+                        .font(.custom(poppinsRegular, size: 20))
+                        .foregroundColor(.black)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Text(price)
+                    .font(.custom(poppinsRegular, size: 20))
+                    .foregroundColor(.black)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .cornerRadius(10)
+        .shadow(color: .black.opacity(0.10), radius: 8, x: 0, y: 2)
+    }
+
+    private var productCardImage: String {
+        order.product?.thumbnail?.first ?? order.product?.images?.first ?? ""
+    }
+
+    private var title: String {
+        if let title = order.product?.title, !title.isEmpty {
+            return title.capitalizingFirstLetter()
+        }
+        if let name = order.productSetItemUnit?.name, !name.isEmpty {
+            return name.capitalizingFirstLetter()
+        }
+        if let name = order.productSetItem?.name, !name.isEmpty {
+            return name.capitalizingFirstLetter()
+        }
+        if let name = order.productSet?.name, !name.isEmpty {
+            return name.capitalizingFirstLetter()
+        }
+        return "Product"
+    }
+
+    private var detailLine: String {
+        let category = order.product?.category?.name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let condition = (order.product?.productCondition ?? "")
+            .replacingOccurrences(of: "_", with: " ")
+            .capitalizingFirstLetter()
+
+        switch (category.isEmpty, condition.isEmpty) {
+        case (false, false): return "\(category) • \(condition)"
+        case (false, true): return category
+        case (true, false): return condition
+        default: return ""
+        }
+    }
+
+    private var price: String {
+        if let value = order.product?.pricing, let amount = Double(value) {
+            return amount.compactCurrency()
+        }
+        if let amount = order.productSetItemUnit?.price {
+            return amount.compactCurrency()
+        }
+        if let amount = order.productSetItem?.price {
+            return amount.compactCurrency()
+        }
+        if let amount = order.productSet?.price {
+            return amount.compactCurrency()
+        }
+        return "$0.00"
     }
 }
 
