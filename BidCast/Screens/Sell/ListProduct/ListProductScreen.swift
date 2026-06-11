@@ -1494,9 +1494,27 @@ struct DimensionsSection: View {
     @Binding var request: StoreProductParam
     var limits: MailClass? = nil
 
+    // Basecamp #9988324984 — USPS package-size presets.
+    // Default is .custom; selecting a preset fills width/height/length.
+    // Dimensions are always treated as inches in this section (no unit field).
+    @State private var selectedPackagePreset: USPSPackagePreset = .custom
+
     private func maxLabel(_ value: Double?, unit: String) -> String? {
         guard let value, value > 0 else { return nil }
         return "max \(value) \(unit)"
+    }
+
+    private func applyPreset(_ preset: USPSPackagePreset) {
+        guard preset != .custom else { return }
+        request.length = formatDimension(preset.length)
+        request.width  = formatDimension(preset.width)
+        request.height = formatDimension(preset.height)
+    }
+
+    private func formatDimension(_ value: Double) -> String {
+        value.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", value)
+            : String(format: "%g", value)
     }
 
     var body: some View {
@@ -1514,6 +1532,13 @@ struct DimensionsSection: View {
                 Spacer()
             }
             .padding(.horizontal, 16)
+
+            // USPS Package Preset Picker (Basecamp #9988324984)
+            USPSPackagePresetPicker(selectedPreset: $selectedPackagePreset)
+                .padding(.horizontal, 16)
+                .onChange(of: selectedPackagePreset) { newPreset in
+                    applyPreset(newPreset)
+                }
 
             // Dimensions Grid
             VStack(spacing: 12) {

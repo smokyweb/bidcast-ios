@@ -97,7 +97,10 @@ struct CreateProductScreen: View {
     
     @State private var navFromPrepare = false
     @State private var navFromProductLibrary = false
-    
+
+    // Basecamp #9988324984 — USPS package-size preset picker state.
+    @State private var selectedPackagePreset: USPSPackagePreset = .custom
+
     @EnvironmentObject var productManager: ProductManager
     @State var productId = ""
     var body: some View {
@@ -202,7 +205,25 @@ struct CreateProductScreen: View {
                             request.description = message
                         }
                         
-                        AuthTextField(floatingLabel: "Width (cm)".localized, placeholder: "Enter width".localized, icon: .menuProfile, text: $request.width ,isIconDisplay : false,
+                        // Basecamp #9988324984 — USPS package-size preset picker.
+                        // Placed above dimension fields; selecting a preset fills
+                        // width/height/length with the preset's inch values.
+                        // Fields remain editable after selection (no snap-back).
+                        USPSPackagePresetPicker(selectedPreset: $selectedPackagePreset)
+                            .padding([.bottom], 4)
+                            .onChange(of: selectedPackagePreset) { newPreset in
+                                guard newPreset != .custom else { return }
+                                let fmt: (Double) -> String = { v in
+                                    v.truncatingRemainder(dividingBy: 1) == 0
+                                        ? String(format: "%.0f", v)
+                                        : String(format: "%g", v)
+                                }
+                                request.length = fmt(newPreset.length)
+                                request.width  = fmt(newPreset.width)
+                                request.height = fmt(newPreset.height)
+                            }
+
+                        AuthTextField(floatingLabel: "Width (in)".localized, placeholder: "Enter width".localized, icon: .menuProfile, text: $request.width ,isIconDisplay : false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { quantity in
@@ -210,8 +231,8 @@ struct CreateProductScreen: View {
                         })
                         .keyboardType(.decimalPad)
                         .padding([.bottom],4)
-                        
-                        AuthTextField(floatingLabel: "Height (cm)".localized, placeholder: "Enter height".localized, icon: .menuProfile, text: $request.height ,isIconDisplay : false,
+
+                        AuthTextField(floatingLabel: "Height (in)".localized, placeholder: "Enter height".localized, icon: .menuProfile, text: $request.height ,isIconDisplay : false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { quantity in
@@ -219,8 +240,8 @@ struct CreateProductScreen: View {
                         })
                         .keyboardType(.decimalPad)
                         .padding([.bottom],4)
-                        
-                        AuthTextField(floatingLabel: "Length (cm)".localized, placeholder: "Enter length".localized, icon: .menuProfile, text: $request.length ,isIconDisplay : false,
+
+                        AuthTextField(floatingLabel: "Length (in)".localized, placeholder: "Enter length".localized, icon: .menuProfile, text: $request.length ,isIconDisplay : false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { quantity in

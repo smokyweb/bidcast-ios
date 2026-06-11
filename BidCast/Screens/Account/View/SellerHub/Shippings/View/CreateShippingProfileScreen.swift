@@ -67,6 +67,9 @@ struct CreateShippingProfileScreen: View {
     @StateObject private var shippingViewModel = ShippingViewModel()
     @State private var uspsPriceLoaded = false
     @State private var showUspsBoxSheet = false
+
+    // Basecamp #9988324984 — USPS package-size preset picker state.
+    @State private var selectedPackagePreset: USPSPackagePreset = .custom
     
     var body: some View {
         NavigationView {
@@ -240,6 +243,23 @@ struct CreateShippingProfileScreen: View {
 
                                     Text("Box Dimensions")
                                         .font(.custom(poppinsSemiBold, size: 16.0))
+
+                                    // Basecamp #9988324984 — USPS package-size preset picker.
+                                    // Selecting a preset fills boxLength/boxWidth/boxHeight and
+                                    // sets boxscale to "Inch". Fields remain editable afterwards.
+                                    USPSPackagePresetPicker(selectedPreset: $selectedPackagePreset)
+                                        .onChange(of: selectedPackagePreset) { newPreset in
+                                            guard newPreset != .custom else { return }
+                                            let fmt: (Double) -> String = { v in
+                                                v.truncatingRemainder(dividingBy: 1) == 0
+                                                    ? String(format: "%.0f", v)
+                                                    : String(format: "%g", v)
+                                            }
+                                            boxLength = fmt(newPreset.length)
+                                            boxWidth  = fmt(newPreset.width)
+                                            boxHeight = fmt(newPreset.height)
+                                            boxscale  = USPSPackagePreset.unitLabel
+                                        }
 
                                     Button {
                                         showUspsBoxSheet = true
