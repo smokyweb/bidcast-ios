@@ -332,7 +332,10 @@ struct TimePickerView: View {
     }
 
     func filteredSlots(for date : Date) -> [Date] {
-        
+        // #9986417249: use full datetime comparison so that:
+        //   - today + past time → filtered out
+        //   - today + future time → shown
+        //   - any future date + any time → shown (slotDateTime is always after now)
         let now = Date()
         let isToday = calendar.isDateInToday(date)
         var baseSlots:[Date] = []
@@ -344,20 +347,17 @@ struct TimePickerView: View {
             print(currentHour)
             baseSlots = Self.generateTimeSlots(from: "\(currentHour)", to: "23:00", intervalMinutes: intervalMinutes)
         }
-        
+
         return baseSlots.compactMap { baseSlot in
-            let slotDateTime = calendar.date(
+            guard let slotDateTime = calendar.date(
                 bySettingHour: calendar.component(.hour, from: baseSlot),
                 minute: calendar.component(.minute, from: baseSlot),
                 second: 0,
-                of: selectedDate
-            )
-
-            if isToday {
-                return (slotDateTime ?? now) > now ? slotDateTime : nil
-            } else {
-                return slotDateTime
-            }
+                of: date
+            ) else { return nil }
+            // Accept the slot only if its full date+time is strictly after now.
+            // For a future date every hour passes; for today only future hours pass.
+            return slotDateTime > now ? slotDateTime : nil
         }
     }
     
