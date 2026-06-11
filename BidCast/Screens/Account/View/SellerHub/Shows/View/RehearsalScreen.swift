@@ -2768,26 +2768,23 @@ struct RehearsalScreen: View {
             }
 
             let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
-            // Shape: { data: { active_participants: [ { id, user_id, kind, role, name?, ... } ] } }
+            // active_participants entries are raw show_co_hosts rows:
+            // { id, schedule_show_id, host_user_id, co_host_user_id, kind ('device'|'cohost'), role, status, ... }.
+            // Only kind='cohost' rows are invited cohosts; kind='device' rows are the
+            // host's own paired devices and must never be offered for removal.
             let payload = json?["data"] as? [String: Any]
             let participants = payload?["active_participants"] as? [[String: Any]] ?? []
 
-            // Find first participant that is an invited cohost (kind != "owner" / role != "owner").
-            // Defensive: accept any participant that is NOT the owner of the show.
-            let ownerUserId = Self.flexIntValue(payload?["owner_user_id"])
             let cohost = participants.first { entry in
-                let uid = Self.flexIntValue(entry["user_id"]) ?? -1
                 let kind = (entry["kind"] as? String ?? "").lowercased()
-                let role = (entry["role"] as? String ?? "").lowercased()
-                // Exclude the owner (by user_id or by kind/role being "owner").
-                guard uid != ownerUserId, kind != "owner", role != "owner" else { return false }
-                return true
+                guard kind == "cohost" else { return false }
+                return (Self.flexIntValue(entry["co_host_user_id"]) ?? 0) > 0
             }
 
             DispatchQueue.main.async {
                 if let cohost {
                     let rowId = Self.flexIntValue(cohost["id"])
-                    let userId = Self.flexIntValue(cohost["user_id"])
+                    let userId = Self.flexIntValue(cohost["co_host_user_id"])
                     let name: String = {
                         if let n = cohost["name"] as? String, !n.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return n }
                         if let u = cohost["username"] as? String, !u.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return u }
