@@ -2249,7 +2249,9 @@ extension SocketManagerService {
         }
     }
 
-    func leaveInvitedCoHost(roomId: String, userId: Int, showId: String, coHostId: Int?) {
+    // Basecamp #9968303929: added co_host_user_id so the node server can
+    // identify which cohost participant to remove when the host revokes one.
+    func leaveInvitedCoHost(roomId: String, userId: Int, showId: String, coHostId: Int?, coHostUserId: Int? = nil) {
         var payload: [String: Any] = [
             "room_id": roomId,
             "user_id": userId,
@@ -2257,6 +2259,9 @@ extension SocketManagerService {
         ]
         if let coHostId {
             payload["cohost_id"] = coHostId
+        }
+        if let coHostUserId {
+            payload["co_host_user_id"] = coHostUserId
         }
         performIfConnected {
             socket.emit("cohost_leave", payload)

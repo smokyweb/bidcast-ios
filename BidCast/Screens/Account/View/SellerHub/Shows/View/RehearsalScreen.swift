@@ -77,6 +77,11 @@ struct RehearsalScreen: View {
     @State private var showCoHostPairing: Bool = false
     @State private var showInviteCohostPicker: Bool = false
     @State private var cohostInviteCandidates: [CohostInviteCandidate] = []
+    // Basecamp #9968303929: remove cohost flow.
+    @State private var showRemoveCohostConfirm: Bool = false
+    @State private var pendingRemoveCohostRowId: Int? = nil
+    @State private var pendingRemoveCohostUserId: Int? = nil
+    @State private var pendingRemoveCohostName: String = ""
     
 
     @State private var showPollSheet : Bool = false
@@ -687,8 +692,19 @@ struct RehearsalScreen: View {
                     }
                     hasInitialized = false
                 } else if agoraManager.isJoined {
-                    print("❌ Truly leaving - ending show")
-                    self.endShow()
+                    if sameAccountSecondDevice {
+                        // Basecamp #9968303929: second device on same account must
+                        // NOT call endShow() — that would kill the room for everyone.
+                        // Just leave the socket room so the primary device stays live.
+                        print("🔄 Second-device leaving — emitting leave_room only")
+                        if !roomId.isEmpty {
+                            SocketManagerService.shared.leaveRoom(roomId: roomId, userId: UserDefaults.userId)
+                        }
+                        agoraManager.leaveChannel()
+                    } else {
+                        print("❌ Truly leaving - ending show")
+                        self.endShow()
+                    }
                     hasInitialized = false // Reset for next time
                 }
             }
@@ -1152,6 +1168,11 @@ struct RehearsalScreen: View {
                     showSellSheet = false
                     loadCohostInviteCandidates()
                 },
+                onRemoveCohost: {
+                    // Basecamp #9968303929: fetch presence to find active cohost.
+                    showSellSheet = false
+                    removeActiveCohost()
+                },
                 onZoomOut: {
                     print("Zoom Out")
                     var zoomFactor = agoraManager.zoomFactor
@@ -1423,6 +1444,29 @@ struct RehearsalScreen: View {
             }
         } message: { user in
             Text("\(user.username ?? user.name ?? "This viewer") will be removed from your show and won't be able to rejoin until you end the show.")
+        }
+        // Basecamp #9968303929: confirm before removing active cohost.
+        .alert(
+            "Remove Cohost?",
+            isPresented: $showRemoveCohostConfirm
+        ) {
+            Button("Remove", role: .destructive) {
+                if let rowId = pendingRemoveCohostRowId,
+                   let coHostUserId = pendingRemoveCohostUserId {
+                    executeRemoveCohost(rowId: rowId, coHostUserId: coHostUserId)
+                }
+                pendingRemoveCohostRowId = nil
+                pendingRemoveCohostUserId = nil
+                pendingRemoveCohostName = ""
+            }
+            Button("Cancel", role: .cancel) {
+                pendingRemoveCohostRowId = nil
+                pendingRemoveCohostUserId = nil
+                pendingRemoveCohostName = ""
+            }
+        } message: {
+            let name = pendingRemoveCohostName.isEmpty ? "the cohost" : pendingRemoveCohostName
+            Text("\(name) will be removed as cohost from your show.")
         }
     }
 
@@ -2694,6 +2738,111 @@ struct RehearsalScreen: View {
                 }
             }
         }.resume()
+    }
+
+    // MARK: - Remove Cohost (Basecamp #9968303929)
+
+    /// Fetch the presence endpoint to find an active invited cohost.
+    /// If one exists, prompt for confirmation before removing.
+    private func removeActiveCohost() {
+        let scheduleShowId = Int(roomId.split(separator: "_").last ?? "0") ?? Int(showUd) ?? 0
+        guard scheduleShowId > 0 else {
+            showhudMessage("Show not found.")
+            return
+        }
+        guard let url = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/show/\(scheduleShowId)/presence") else {
+            showhudMessage("Could not check cohost presence.")
+            return
+        }
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+
+        URLSession.shared.dataTask(with: req) { data, response, _ in
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            guard (200...299).contains(status), let data else {
+                DispatchQueue.main.async { showhudMessage("Could not check cohost presence.") }
+                return
+            }
+
+            let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            // Shape: { data: { active_participants: [ { id, user_id, kind, role, name?, ... } ] } }
+            let payload = json?["data"] as? [String: Any]
+            let participants = payload?["active_participants"] as? [[String: Any]] ?? []
+
+            // Find first participant that is an invited cohost (kind != "owner" / role != "owner").
+            // Defensive: accept any participant that is NOT the owner of the show.
+            let ownerUserId = Self.flexIntValue(payload?["owner_user_id"])
+            let cohost = participants.first { entry in
+                let uid = Self.flexIntValue(entry["user_id"]) ?? -1
+                let kind = (entry["kind"] as? String ?? "").lowercased()
+                let role = (entry["role"] as? String ?? "").lowercased()
+                // Exclude the owner (by user_id or by kind/role being "owner").
+                guard uid != ownerUserId, kind != "owner", role != "owner" else { return false }
+                return true
+            }
+
+            DispatchQueue.main.async {
+                if let cohost {
+                    let rowId = Self.flexIntValue(cohost["id"])
+                    let userId = Self.flexIntValue(cohost["user_id"])
+                    let name: String = {
+                        if let n = cohost["name"] as? String, !n.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return n }
+                        if let u = cohost["username"] as? String, !u.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return u }
+                        return "Cohost"
+                    }()
+                    pendingRemoveCohostRowId = rowId
+                    pendingRemoveCohostUserId = userId
+                    pendingRemoveCohostName = name
+                    showRemoveCohostConfirm = true
+                } else {
+                    showhudMessage("No active cohost to remove.")
+                }
+            }
+        }.resume()
+    }
+
+    /// Calls the leave REST endpoint and emits cohost_leave socket event.
+    private func executeRemoveCohost(rowId: Int, coHostUserId: Int) {
+        // 1. POST /api/product/co-host/{rowId}/leave
+        guard let leaveUrl = URL(string: "https://backend.bidcast.betaplanets.com/api/product/co-host/\(rowId)/leave") else { return }
+        var leaveReq = URLRequest(url: leaveUrl)
+        leaveReq.httpMethod = "POST"
+        leaveReq.setValue("application/json", forHTTPHeaderField: "Accept")
+        leaveReq.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        leaveReq.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+        leaveReq.httpBody = try? JSONSerialization.data(withJSONObject: [:])
+
+        URLSession.shared.dataTask(with: leaveReq) { _, response, _ in
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            DispatchQueue.main.async {
+                if !(200...299).contains(status) {
+                    showhudMessage("Could not remove cohost (server error).")
+                }
+            }
+        }.resume()
+
+        // 2. Emit cohost_leave so the node server notifies the cohost's device.
+        let showIdStr = roomId.split(separator: "_").last.map(String.init) ?? showUd
+        SocketManagerService.shared.leaveInvitedCoHost(
+            roomId: roomId,
+            userId: UserDefaults.userId,
+            showId: showIdStr,
+            coHostId: rowId,
+            coHostUserId: coHostUserId
+        )
+
+        hudMsg = "Cohost removed."
+        showhudSuccess = true
+    }
+
+    /// Flexible integer decoder (mirrors ShowDetailsScreen.boolValue pattern).
+    private static func flexIntValue(_ any: Any?) -> Int? {
+        if let v = any as? Int { return v }
+        if let v = any as? String { return Int(v) }
+        return nil
     }
 
     private func sendCohostInvite(inviteeUserId: Int) {

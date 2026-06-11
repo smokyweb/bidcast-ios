@@ -26,6 +26,8 @@ struct MoreOptionsScreen: View {
     // Basecamp #9934001770 (2026-05-27): co-host pairing.
     var onPairSecondDevice: (() -> Void)? = nil
     var onInviteCohost: (() -> Void)? = nil
+    // Basecamp #9968303929: host can remove an active cohost.
+    var onRemoveCohost: (() -> Void)? = nil
     var onZoomOut: () -> Void
     var onZoomIn: () -> Void
     var onMicToggle: () -> Void
@@ -184,6 +186,11 @@ struct MoreOptionsScreen: View {
                                 OptionGridButtonView(label: "Invite Cohost", icon: "person.2.fill", isSelected: selectedOption == "Invite Cohost", action: {
                                     selectedOption = "Invite Cohost"
                                     onInviteCohost?()
+                                })
+                                // Basecamp #9968303929: remove an active cohost.
+                                OptionGridButtonView(label: "Remove Cohost", icon: "person.badge.minus", isSelected: selectedOption == "Remove Cohost", action: {
+                                    selectedOption = "Remove Cohost"
+                                    onRemoveCohost?()
                                 })
                             }
                             .padding(.horizontal, 16)

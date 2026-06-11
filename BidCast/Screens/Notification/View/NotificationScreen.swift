@@ -62,13 +62,25 @@ struct NotificationScreen: View {
                             // live API showed null on early inquiry notifications, so fall back to inbox).
                             .contentShape(Rectangle())
                             .onTapGesture {
-                                guard notification.type == "inquiry_message" else { return }
-                                if let refId = notification.referenceId,
-                                   let tid = Int(refId) {
-                                    selectedInquiryThreadId = tid
-                                    navigateToInquiryThread = true
-                                } else {
-                                    navigateToInquiryInbox = true
+                                if notification.type == "inquiry_message" {
+                                    if let refId = notification.referenceId,
+                                       let tid = Int(refId) {
+                                        selectedInquiryThreadId = tid
+                                        navigateToInquiryThread = true
+                                    } else {
+                                        navigateToInquiryInbox = true
+                                    }
+                                } else if notification.type == "cohost_invite" {
+                                    // Basecamp #9968303929: route cohost invite taps via
+                                    // the same observer used by push notifications so
+                                    // TabbarScreen drives the navigation to CoHostJoinScreen.
+                                    if let refId = notification.referenceId,
+                                       let inviteId = Int(refId) {
+                                        NotificationCenter.default.post(
+                                            name: NSNotification.Name("NavToCoHostInvite"),
+                                            object: inviteId
+                                        )
+                                    }
                                 }
                             }
                             .listRowSeparator(.hidden)
