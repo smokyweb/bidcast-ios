@@ -53,9 +53,12 @@ struct BuyNowBottomSheetView: View {
     @State private var giftMsg : String = ""
     @State var orderId : Int = 0
     @State private var showCouponSheet = false
-    
+
     @State private var showAddressSheet = false
     @State private var showCardSheet = false
+    // #9986399911 — navigation targets for "add a card / address" alert actions
+    @State private var navigateToPaymentSettings = false
+    @State private var navigateToAddressSettings = false
     
     @State var request = ProductOrderRequest(shipping_id: 0, product_id: 0, card_id: "", promo_code: "", send_as_gift: 0, shipping_charges: 0, tax_amount: 0, sub_total: 0, total: 0 )
     
@@ -301,8 +304,32 @@ struct BuyNowBottomSheetView: View {
                                    )
                            )
                     
-                    // Confirm Button
+                    // Confirm Button — #9986399911: guard address + payment before submitting
                     Button(action: {
+                        // Client-side validation: require a shipping address
+                        guard shippingID != 0 else {
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "No Shipping Address",
+                                message: "Add a shipping address to continue.",
+                                primaryBtnText: "Add Address",
+                                secondaryBtnText: "Cancel"
+                            )
+                            showError = true
+                            return
+                        }
+                        // Client-side validation: require a payment method
+                        guard !cardArr.isEmpty, cardArr.indices.contains(selectedCardIndex) else {
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "No Payment Method",
+                                message: "Add a payment method to continue.",
+                                primaryBtnText: "Add Card",
+                                secondaryBtnText: "Cancel"
+                            )
+                            showError = true
+                            return
+                        }
                         BuyProductRequest()
                     }) {
                         Text("Confirm Purchase")
@@ -316,6 +343,16 @@ struct BuyNowBottomSheetView: View {
                     
                 }
                 .padding()
+                // #9986399911: deep-link into settings when the validation alerts
+                // are actioned ("Add Address" / "Add Card" primary buttons).
+                CusNavLink(
+                    doNavigate: $navigateToAddressSettings,
+                    destination: AddressesScreen()
+                )
+                CusNavLink(
+                    doNavigate: $navigateToPaymentSettings,
+                    destination: PaymentAndShipping_Screen()
+                )
                 CusNavLink(
                     doNavigate: $navigateToGiftScreen,
                     destination: SendGiftScreen(
@@ -358,10 +395,20 @@ struct BuyNowBottomSheetView: View {
                 topBarCornerRadius: 25,
                 showTopIndicator: false
             ) {
+                // #9986399911: primary action navigates to the relevant settings
+                // screen when the user is missing an address or payment method.
                 CommonBottomSheet(
                     sheetType: $alertType,
                     onPrimaryClick: {
                         withAnimation { showError = false }
+                        switch alertType.primaryBtnText {
+                        case "Add Address":
+                            navigateToAddressSettings = true
+                        case "Add Card":
+                            navigateToPaymentSettings = true
+                        default:
+                            break
+                        }
                     },
                     onSecondaryClick: {
                         withAnimation { showError = false }
@@ -536,21 +583,42 @@ struct BuyNowBottomSheetView: View {
     }
     
     //MARK: BuyProductRequest.
+    // #9986399911: client-side guards are now on the "Confirm Purchase" button
+    // itself; this function is only reached when both address + card are present.
+    // Server 422 responses (missing_shipping_address, missing payment profile)
+    // are surfaced via the bottom-sheet alert so the spinner is always dismissed
+    // and the user always sees a readable message.
     func BuyProductRequest() {
         Task {
-          
             guard cardArr.indices.contains(selectedCardIndex),
                   let selectedCardID = cardArr[selectedCardIndex].cardID else {
-                hudMsg = "No valid card selected"
-                showhud = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "No Payment Method",
+                    message: "Add a payment method to continue.",
+                    primaryBtnText: "Add Card",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
                 return
             }
-           guard Reachability.isConnectedToNetwork() else {
+            guard shippingID != 0 else {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "No Shipping Address",
+                    message: "Add a shipping address to continue.",
+                    primaryBtnText: "Add Address",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+                return
+            }
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
             }
-           
+
             var param = ProductOrderRequest(
                 shipping_id: shippingID,
                 product_id: productId,
@@ -568,15 +636,25 @@ struct BuyNowBottomSheetView: View {
                 param.gift_msg = giftMsg
                 request = param
                 navigateToGiftScreen = true
-            }else{
+            } else {
                 SVProgressHUD.show()
                 request = param
                 viewModel.errorMessage?.removeAll()
                 await viewModel.BuyProductRequest(parameters: param)
                 await SVProgressHUD.dismiss()
-                if let error = viewModel.errorMessage{
-                    hudMsg = error
-                    showhud = true
+                // #9986399911: if the VM captured an error (including server 422s
+                // for missing address / payment profile) show it in the sheet and
+                // do NOT proceed to BuyProductSuccess.
+                if let errorMsg = viewModel.errorMessage, !errorMsg.isEmpty {
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Order Failed",
+                        message: errorMsg,
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                    return
                 }
                 BuyProductSuccess()
             }
@@ -591,15 +669,20 @@ struct BuyNowBottomSheetView: View {
         SVProgressHUD.dismiss()
         let response = viewModel.productOrderResponse
         if response.status == "success" {
-//            navigateToOrderStatus = response.data
             navigateToOrderStatus = true
-            
             orderId = response.data?.id ?? 0
         } else {
-            
-            hudMsg = response.message ?? ""
-                showhud = true
-            
+            // #9986399911: use the bottom-sheet alert (consistent with the rest
+            // of this screen) rather than a transient toast for order failures.
+            let msg = response.message ?? "Something went wrong. Please try again."
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Order Failed",
+                message: msg,
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         }
     }
 }

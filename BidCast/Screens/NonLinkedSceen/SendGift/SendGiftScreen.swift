@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 struct SendGiftScreen: View {
 
@@ -72,6 +73,27 @@ struct SendGiftScreen: View {
             ))
         }
         .background(Color(.backGround).ignoresSafeArea())
+        // #9986399911: surface order errors (including server 422s) via a
+        // readable alert; previously all failures were silent.
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.3,
+            topBarCornerRadius: 25,
+            showTopIndicator: false
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
     }
     @ViewBuilder
     private var headerView: some View {
@@ -205,6 +227,19 @@ struct SendGiftScreen: View {
             SVProgressHUD.show()
             await viewModel.BuyProductRequest(parameters: request)
             await SVProgressHUD.dismiss()
+            // #9986399911: surface server 422 errors (missing address / payment)
+            // via the bottom-sheet alert; never leave the spinner running or fail silently.
+            if let errorMsg = viewModel.errorMessage, !errorMsg.isEmpty {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Order Failed",
+                    message: errorMsg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+                return
+            }
             BuyProductSuccess()
         }
     }
@@ -231,6 +266,17 @@ struct SendGiftScreen: View {
         if response.status == "success" {
             navigateToOrderStatus = true
             orderId = response.data?.id ?? 0
+        } else {
+            // #9986399911: show failure via bottom-sheet alert; prevents silent failure.
+            let msg = response.message ?? "Something went wrong. Please try again."
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Order Failed",
+                message: msg,
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         }
     }
 
