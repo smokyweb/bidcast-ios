@@ -267,132 +267,176 @@ struct SelectShowScreen: View {
 
 //import SwiftUI
 
+// #9986412273: replaced the hourly slot-grid (filteredSlots / LazyVGrid)
+// with a 3-wheel Picker (Hour 1–12 / Minute 00,05,…,55 / AM-PM) to match
+// the PWA clock-style picker.  The struct name, Binding parameters, and
+// onTImeSelected callback are unchanged so SelectShowScreen needs no edits.
+// Validation rule (#9986417249) is preserved: today → past combinations
+// show a warning and do not propagate; future dates → all times allowed.
 struct TimePickerView: View {
     @Binding var selectedDate: Date
-    
     @Binding var selectedTime: Date
+    var onTImeSelected: (Date) -> () = { _ in }
 
-    let intervalMinutes = 60
-    let calendar: Calendar = {
-            var cal = Calendar.current
-            cal.timeZone = TimeZone.current
-            return cal
-        }()
+    // 5-minute minute labels: "00", "05", "10", …, "55"
+    private let minuteLabels: [String] = (0..<12).map { String(format: "%02d", $0 * 5) }
 
-    let columns = [
-        GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())
-    ]
-    var onTImeSelected : (Date ) -> () = {_ in }
+    private let calendar: Calendar = {
+        var cal = Calendar.current
+        cal.timeZone = TimeZone.current
+        return cal
+    }()
+
+    // Picker state stored as indices
+    @State private var hourIdx:  Int = 11  // 0→1, …, 11→12  (default noon)
+    @State private var minIdx:   Int = 0   // 0→"00", …, 11→"55"
+    @State private var ampmIdx:  Int = 1   // 0=AM, 1=PM
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
 
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(filteredSlots(for: selectedDate), id: \.self) { time in
-                    Button(action: {
-                        onTImeSelected(time)
-                        selectedTime = time
-                    }) {
-                        Text(formatTime(time))
-                            .font(.custom("Poppins-SemiBold", size: 13.0))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .foregroundColor(selectedTime == time ? .white : .black)
-                            .background(selectedTime == time ? Color.defaultTheme : Color.white)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
-                            .cornerRadius(10)
+            // Column headers
+            HStack {
+                Text("Hour")
+                    .font(.custom(poppinsSemiBold, size: 12))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity)
+                Text("Min")
+                    .font(.custom(poppinsSemiBold, size: 12))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity)
+                Text("AM / PM")
+                    .font(.custom(poppinsSemiBold, size: 12))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal)
+
+            // 3-wheel row
+            HStack(spacing: 0) {
+                // Hour wheel  1…12
+                Picker("Hour", selection: $hourIdx) {
+                    ForEach(0..<12, id: \.self) { i in
+                        Text("\(i + 1)")
+                            .font(.custom(poppinsSemiBold, size: 17))
+                            .tag(i)
                     }
-                    .frame(height: 40)
-                    .padding([.top, .bottom], 4)
                 }
+                .pickerStyle(.wheel)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .onChange(of: hourIdx)  { _ in commitTime() }
+
+                // Minute wheel  00, 05, …, 55
+                Picker("Minute", selection: $minIdx) {
+                    ForEach(0..<12, id: \.self) { i in
+                        Text(minuteLabels[i])
+                            .font(.custom(poppinsSemiBold, size: 17))
+                            .tag(i)
+                    }
+                }
+                .pickerStyle(.wheel)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .onChange(of: minIdx)   { _ in commitTime() }
+
+                // AM / PM wheel
+                Picker("AM/PM", selection: $ampmIdx) {
+                    Text("AM").font(.custom(poppinsSemiBold, size: 17)).tag(0)
+                    Text("PM").font(.custom(poppinsSemiBold, size: 17)).tag(1)
+                }
+                .pickerStyle(.wheel)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .onChange(of: ampmIdx)  { _ in commitTime() }
             }
-            .padding()
-        }
-        .cornerRadius(16)
-    }
+            .frame(height: 150)
 
-    func isTimeSelected(_ time: Date) -> Bool {
-           let timeHour = calendar.component(.hour, from: time)
-           let timeMinute = calendar.component(.minute, from: time)
-           let selectedHour = calendar.component(.hour, from: selectedTime)
-           let selectedMinute = calendar.component(.minute, from: selectedTime)
-           
-           return timeHour == selectedHour && timeMinute == selectedMinute
-       }
-    
-    func formatTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.timeZone = TimeZone.current
-        let format = DateFormatter.dateFormat(fromTemplate: "j:mm", options: 0, locale: Locale.current)!
-        formatter.dateFormat = format
-        return formatter.string(from: date)
-    }
-
-    func filteredSlots(for date : Date) -> [Date] {
-        // #9986417249: use full datetime comparison so that:
-        //   - today + past time → filtered out
-        //   - today + future time → shown
-        //   - any future date + any time → shown (slotDateTime is always after now)
-        let now = Date()
-        let isToday = calendar.isDateInToday(date)
-        var baseSlots:[Date] = []
-        if !isToday {
-            baseSlots = Self.generateTimeSlots(from: "00:00", to: "23:00", intervalMinutes: intervalMinutes)
-        }
-        else {
-            let currentHour = currentHourStringWithTimeZone()
-            print(currentHour)
-            baseSlots = Self.generateTimeSlots(from: "\(currentHour)", to: "23:00", intervalMinutes: intervalMinutes)
-        }
-
-        return baseSlots.compactMap { baseSlot in
-            guard let slotDateTime = calendar.date(
-                bySettingHour: calendar.component(.hour, from: baseSlot),
-                minute: calendar.component(.minute, from: baseSlot),
-                second: 0,
-                of: date
-            ) else { return nil }
-            // Accept the slot only if its full date+time is strictly after now.
-            // For a future date every hour passes; for today only future hours pass.
-            return slotDateTime > now ? slotDateTime : nil
-        }
-    }
-    
-    
-    func currentHourStringWithTimeZone() -> String {
-        let date = Date()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:00"
-        formatter.timeZone = TimeZone.current  // 👈 ensures it uses the user's local timezone
-        return formatter.string(from: date)
-    }
-
-
-    static func generateTimeSlots(from start: String, to end: String, intervalMinutes: Int) -> [Date] {
-        let formatter = DateFormatter()
-        formatter.timeZone = TimeZone.current
-               formatter.dateFormat = "HH:mm"
-
-        guard
-            let startTime = formatter.date(from: start),
-            let endTime = formatter.date(from: end)
-        else { return [] }
-
-        var times: [Date] = []
-        var currentTime = startTime
-
-        while currentTime <= endTime {
-            times.append(currentTime)
-            if let nextTime = Calendar.current.date(byAdding: .minute, value: intervalMinutes, to: currentTime) {
-                currentTime = nextTime
-            } else {
-                break
+            // Past-time warning — mirrors PWA #timePastWarning / Android timePastWarning
+            if isPastTimeSelected() {
+                Text("Please select a future time.")
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.red)
+                    .padding(.horizontal)
+                    .padding(.top, 2)
             }
         }
+        .onAppear { syncPickersFromSelectedTime() }
+        .onChange(of: selectedDate) { _ in
+            // Re-validate when the user picks a different calendar date
+            commitTime()
+        }
+        .onChange(of: selectedTime) { newTime in
+            // Keep pickers in sync when selectedTime is updated externally
+            // (e.g. loadExistingDateTime on appear)
+            syncFromDate(newTime)
+        }
+    }
 
-        return times
+    // MARK: - Helpers
+
+    /// Convert current picker indices to a 24-hour (hour, minute) pair.
+    private func pickedHour24() -> Int {
+        let h12 = hourIdx + 1          // 1…12
+        let pm  = ampmIdx == 1
+        switch (pm, h12) {
+        case (false, 12): return 0
+        case (true,  12): return 12
+        case (true,   _): return h12 + 12
+        default:          return h12
+        }
+    }
+
+    /// Build a Date for the currently picked time combined with selectedDate.
+    private func pickedDateTime() -> Date? {
+        let h24 = pickedHour24()
+        let min = minIdx * 5
+        return calendar.date(
+            bySettingHour: h24, minute: min, second: 0, of: selectedDate
+        )
+    }
+
+    /// True when the currently selected date is today and the picked time is
+    /// in the past (same rule as #9986417249).
+    private func isPastTimeSelected() -> Bool {
+        guard calendar.isDateInToday(selectedDate) else { return false }
+        guard let dt = pickedDateTime() else { return false }
+        return dt <= Date()
+    }
+
+    /// Push the picked time to the parent only when it is valid (future).
+    private func commitTime() {
+        guard let dt = pickedDateTime() else { return }
+        // For today: reject past times.  For future dates: always accept.
+        if calendar.isDateInToday(selectedDate) && dt <= Date() { return }
+        selectedTime = dt
+        onTImeSelected(dt)
+    }
+
+    /// Sync the three wheel pickers from a given Date value.
+    private func syncFromDate(_ date: Date) {
+        let h24  = calendar.component(.hour,   from: date)
+        let rawM = calendar.component(.minute, from: date)
+        // Snap to nearest 5-min boundary
+        let snappedM = min(55, Int((Double(rawM) / 5.0).rounded()) * 5)
+
+        let newAmpm  = h24 >= 12 ? 1 : 0
+        let h12      = { () -> Int in
+            switch h24 {
+            case 0:  return 12
+            case 13...: return h24 - 12
+            default:    return h24
+            }
+        }()
+        let newHourIdx = h12 - 1          // 0-based (1→0, …, 12→11)
+        let newMinIdx  = snappedM / 5
+
+        if hourIdx  != newHourIdx { hourIdx  = newHourIdx }
+        if minIdx   != newMinIdx  { minIdx   = newMinIdx  }
+        if ampmIdx  != newAmpm    { ampmIdx  = newAmpm    }
+    }
+
+    private func syncPickersFromSelectedTime() {
+        syncFromDate(selectedTime)
     }
 }
