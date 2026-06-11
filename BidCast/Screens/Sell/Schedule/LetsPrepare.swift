@@ -425,18 +425,36 @@ struct LetsPrepare: View {
                     param["randomizer_template_id"] = tmplId
                 }
                 viewModel.errorMessage?.removeAll()
-                try await viewModel.storeScheduleShow(param: param,images: [coordinator.thumbNAil],key: "thumbnail[]")
+                // Basecamp #9986427172 (Bug C): wrap in do-catch so SVProgressHUD
+                // is always dismissed — a thrown error previously escaped the Task
+                // scope before reaching the dismiss call, leaving the spinner running.
+                do {
+                    try await viewModel.storeScheduleShow(param: param, images: [coordinator.thumbNAil], key: "thumbnail[]")
+                } catch {
+                    // errorMessage was already set by the ViewModel; dismiss HUD here
+                    // so the spinner stops even on network/server errors.
+                    await SVProgressHUD.dismiss()
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage ?? error.localizedDescription,
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText: ""
+                    )
+                    showError = true
+                    return
+                }
                 await SVProgressHUD.dismiss()
-                
+
                 if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
                     storeSuccess()
-                }else{
+                } else {
                     alertType = .sheetType(
                         icon: .alert,
                         title: "Error",
                         message: viewModel.errorMessage ?? "",
                         primaryBtnText: AppString.ok.localized,
-                        secondaryBtnText:""
+                        secondaryBtnText: ""
                     )
                     showError = true
                 }
