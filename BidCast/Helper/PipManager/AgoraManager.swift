@@ -289,24 +289,35 @@ class AgoraManager: NSObject, ObservableObject {
         return layer
     }
     
+    // Basecamp #9986388919 (2026-06-11): fix blurry buyer video on iOS.
+    // Removed two parameters that degraded encode quality:
+    //   1. che.video.hardware_encoding:false — this disabled hardware H.264
+    //      encoding, forcing software encoding which runs at lower bitrate
+    //      under CPU pressure and can produce a noticeably softer image.
+    //      Hardware encoding is the correct default for live streaming.
+    //   2. che.video.lowBitRateStreamParameter (320x180 @ 15fps/140kbps) —
+    //      this pre-configures the low-quality dual-stream layer. Leaving it
+    //      present is harmless only if dual-stream is never enabled, but it
+    //      suggested intent to use dual-stream at a very low quality, risking
+    //      future mis-configuration. Removed for clarity.
+    // The main VideoEncoderConfiguration (1080x1920, fps30, standard bitrate,
+    // orientationMode .adaptative) is correct and unchanged.
     func initializeAgoraEngine(asHost: Bool = false) {
         agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: AgoraCred.appId, delegate: self)
-        
+
         // Step 1: Use Agora's "Real-Time Interactive Mode"
         agoraKit?.setChannelProfile(.liveBroadcasting)
         agoraKit?.setParameters("{\"rtc.enable_low_latency_mode\":true}")
         agoraKit?.setParameters("{\"che.audio.live_for_comm\":true}")
-        
-        // Step 2: Disable Hardware Encoding Delay
-        agoraKit?.setParameters("{\"che.video.hardware_encoding\":false}")
-        
-        // Step 3: Set Ultra Low Latency Mode
+
+        // Step 2: Set Ultra Low Latency Mode (hardware encoding left at SDK
+        // default — hardware H.264 is required for HD quality at low latency)
         agoraKit?.setClientRole(.broadcaster)
-        agoraKit?.setParameters("{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}")
         agoraKit?.setCameraZoomFactor(zoomFactor)
         agoraKit?.enableVideo()
-        
-        // Set video encoder configuration
+
+        // Set video encoder configuration: 1080x1920 portrait HD, 30 fps,
+        // standard bitrate (~2000 kbps at this resolution), adaptive orientation.
         let videoConfig = AgoraVideoEncoderConfiguration(
             size: CGSize(width: 1080, height: 1920),
             frameRate: .fps30,
