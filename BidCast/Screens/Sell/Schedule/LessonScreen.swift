@@ -47,7 +47,7 @@ struct LessonScreen: View {
 //            .frame(height: 80)
             
         }
-        .background(.red)
+        .background(.white)
         .frame(height: 40)
             ZStack(alignment: .bottom) {
                 if #available(iOS 17.0, *) {
@@ -71,17 +71,12 @@ struct LessonScreen: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
                         
-                        // Title & subtitle
-                        VStack(spacing: 6) {
-                            Text(lesson.title ?? "")
-                                .font(.custom(poppinsSemiBold, size: 16.0))
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.black)
-                            Text("Watch this lesson to unlock the next chapter")
-                                .font(.custom(poppinsRegular, size: 12.0))
-                                .foregroundColor(.black.opacity(0.7))
-                        }
-                        .padding(.horizontal, 16)
+                        // Title
+                        Text(lesson.title ?? "")
+                            .font(.custom(poppinsSemiBold, size: 16.0))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 16)
                         
                         // Video
                         if let player = player {
