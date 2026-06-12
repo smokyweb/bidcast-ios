@@ -42,11 +42,14 @@ struct LetsPrepare: View {
     // Basecamp #9929871140: randomizer template picker during show creation.
     @State private var showRandomizerPickerInCreate: Bool = false
     // Basecamp #9986427172 (QA round 4): promote sheet for existing-show mode (idx==3).
-    @State private var showPromoteSheetFromPrepare: Bool = false
-    @State private var prepareBoosts: [BoostModel] = []
-    @State private var isPreparePromoting: Bool = false
-    @State private var showPreparePromoteSuccess: Bool = false
-    private var prepareShowsViewModel = ShowsViewModel()
+    // NOTE: not `private` — a private stored property would make the struct's
+    // memberwise initializer private and break LetsPrepare(...) callers in
+    // ShowDetailsScreen/SellingTips (CI failure 2026-06-12).
+    @State var showPromoteSheetFromPrepare: Bool = false
+    @State var prepareBoosts: [BoostModel] = []
+    @State var isPreparePromoting: Bool = false
+    @State var showPreparePromoteSuccess: Bool = false
+    var prepareShowsViewModel = ShowsViewModel()
     
     private var currentProgress: Double {
         guard !coordinator.prepare.isEmpty else { return 0 }
