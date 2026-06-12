@@ -1151,8 +1151,11 @@ struct RehearsalScreen: View {
                 },
                 onRaid: {
                     print("Raid")
-                    showRaidSheet = true
+                    // Basecamp #9986387480 (round 2, iOS): was opening the sheet
+                    // directly without fetching candidates — list was always empty.
+                    // Call getLiveSeller() which fetches then opens the sheet.
                     showSellSheet = false
+                    getLiveSeller()
                 },
                 onCreatePoll: {
                     print("Create Poll")
@@ -3412,7 +3415,10 @@ extension RehearsalScreen {
     
     func getLiveSeller() {
         Task {
-            self.viewModel.errorMessage?.removeAll()
+            // Basecamp #9986387480 (round 2, iOS): nil-out errorMessage before the
+            // request so a stale error from a prior call does not block the sheet.
+            // removeAll() only empties the string when non-nil; it does not reset to nil.
+            self.viewModel.errorMessage = nil
 //            SVProgressHUD.show()
             await viewModel.getLiveSeller()
 //            await SVProgressHUD.dismiss()
@@ -3423,7 +3429,7 @@ extension RehearsalScreen {
                 showRaidSheet = true
                 successSeller()
             }
-            
+
         }
     }
     

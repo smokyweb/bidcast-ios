@@ -57,7 +57,14 @@ struct ShowDetailsScreen: View {
         is_repeat: false,
         language: "english"
     )
-    
+    // Basecamp #9991479337 (iOS): Let's Prepare entry on ShowDetailsScreen.
+    @State private var navigateToPrepare: Bool = false
+    // Basecamp #9991483732 (iOS): Promote Show entry on ShowDetailsScreen.
+    @State private var showPromoteSheet: Bool = false
+    @State private var boosts: [BoostModel] = []
+    @State private var isPromoting: Bool = false
+    @State private var showPromoteSuccess: Bool = false
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -120,11 +127,39 @@ struct ShowDetailsScreen: View {
                 .environmentObject(addProductsManager)
                 .environmentObject(addProductsCoordinator)
             )
+            // Basecamp #9991479337 (iOS): Let's Prepare navigation for this show.
+            // Use addProductsCoordinator (already a LetsPrepareCoordinator StateObject
+            // on this screen) injected as an override so LetsPrepare does not
+            // mutate the app-level coordinator.
+            CusNavLink(
+                doNavigate: $navigateToPrepare,
+                destination: LetsPrepare(backToTabBar: .constant(true))
+                    .environmentObject(addProductsCoordinator)
+            )
         }
         // Basecamp #9934001770 (2026-05-29): host-side pairing ("take-over")
         // popup, now reachable from show-details (was view-all-shows only).
         .sheet(isPresented: $showCoHostPairing) {
             CoHostPairingSheet(scheduleShowId: show.id ?? (Int(showId) ?? 0))
+        }
+        // Basecamp #9991483732 (iOS): Promote Show sheet.
+        .sheet(isPresented: $showPromoteSheet) {
+            PromoteShowSheet(
+                boosts: $boosts,
+                onPromotionSelected: { selectedBoost in
+                    storePromoteShow(boost: selectedBoost)
+                    showPromoteSheet = false
+                },
+                onClose: { showPromoteSheet = false }
+            )
+            .presentationDetents([.fraction(0.70)])
+            .presentationCornerRadius(25)
+            .presentationDragIndicator(.hidden)
+        }
+        .alert("Show Promoted", isPresented: $showPromoteSuccess) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Your show has been promoted successfully.")
         }
         .alert("Would you like to enter and take over video?", isPresented: $showSecondDeviceTakeoverPrompt) {
             Button("No", role: .cancel) {
@@ -170,6 +205,23 @@ struct ShowDetailsScreen: View {
         if response?.status == "success" {
             show = response?.data ?? HomeModel()
             self.products = show.products ?? []
+            // Populate scheduleRequest from the loaded show so that child screens
+            // (ShowTitleTips, AddProductsScreen, LetsPrepare) start pre-filled.
+            scheduleRequest = StoreScheduleShowRequest(
+                show_id: "\(show.id ?? 0)",
+                title: show.title ?? "",
+                date: show.date ?? "",
+                time: show.time ?? "",
+                category_id: "\(show.category_id ?? 0)",
+                auction_type_id: "\(show.auction_type_id ?? 0)",
+                product_ids: show.product_ids ?? [],
+                is_explicit: show.is_explicit ?? false,
+                show_discoverability: show.show_discoverability ?? "",
+                repeat_value: show.repeat_value ?? "",
+                is_repeat: show.is_repeat ?? false,
+                language: show.language ?? "english",
+                thumbnail: show.thumbnail?.first
+            )
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -444,6 +496,62 @@ struct ShowDetailsScreen: View {
             .padding(.horizontal, 16)
             .padding(.top, 4)
 
+            // Basecamp #9991479337 / #9991483732 (iOS): owner-only buttons.
+            if show.user_id == UserDefaults.userId {
+                // Let's Prepare — opens the preparation wizard for this show.
+                Button(action: {
+                    // Pre-seed the coordinator with this show's data so LetsPrepare
+                    // starts with the correct context.
+                    addProductsCoordinator.request = scheduleRequest
+                    addProductsCoordinator.thumbNAil = show.thumbnail?.first ?? ""
+                    navigateToPrepare = true
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checklist")
+                        Text("Let's Prepare")
+                            .font(.custom(poppinsSemiBold, size: 15))
+                    }
+                    .foregroundColor(.defaultTheme)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 32)
+                            .fill(Color.defaultThemeLight)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 32)
+                            .stroke(Color.defaultTheme, lineWidth: 1.5)
+                    )
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
+
+                // Promote Show — opens the promotion tier picker.
+                Button(action: {
+                    loadAndShowPromote()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "megaphone.fill")
+                        Text(show.is_promoted == true ? "Promoted" : "Promote Show")
+                            .font(.custom(poppinsSemiBold, size: 15))
+                    }
+                    .foregroundColor(show.is_promoted == true ? .white : .defaultTheme)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 32)
+                            .fill(show.is_promoted == true ? Color.defaultTheme : Color.defaultThemeLight)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 32)
+                            .stroke(Color.defaultTheme, lineWidth: 1.5)
+                    )
+                }
+                .disabled(isPromoting)
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
+            }
+
             HStack(spacing: 12) {
                 // Edit Show Button
                 Button(action: {
@@ -594,6 +702,69 @@ struct ShowDetailsScreen: View {
             return dateFormatter.string(from: date)
         }
         return timeString // fallback
+    }
+
+    // Basecamp #9991483732 (iOS): fetch promote tiers then open the sheet.
+    private func loadAndShowPromote() {
+        Task {
+            isPromoting = true
+            viewModel.errorMessage = nil
+            await viewModel.getPromoteShows()
+            isPromoting = false
+            if let msg = viewModel.errorMessage, !msg.isEmpty {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: "OK"
+                )
+                showError = true
+            } else if let tiers = viewModel.promoteShow?.data {
+                boosts = tiers
+                showPromoteSheet = true
+            }
+        }
+    }
+
+    // Basecamp #9991483732 (iOS): call the promote endpoint for the selected tier.
+    private func storePromoteShow(boost: BoostModel) {
+        guard let promoteId = boost.id else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: "Could not identify promotion tier.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK"
+            )
+            showError = true
+            return
+        }
+        let showIdInt = show.id ?? (Int(showId) ?? 0)
+        guard showIdInt > 0 else { return }
+        let req = StorePromoteShowRequest(
+            scheduleShowId: "\(showIdInt)",
+            promoteShowId: "\(promoteId)"
+        )
+        Task {
+            isPromoting = true
+            viewModel.errorMessage = nil
+            await viewModel.storePromoteShow(parameters: req)
+            isPromoting = false
+            if let msg = viewModel.errorMessage, !msg.isEmpty {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: "OK"
+                )
+                showError = true
+            } else if viewModel.storePromoteShowModel?.status == "success" {
+                show.is_promoted = true
+                showPromoteSuccess = true
+            }
+        }
     }
 }
 
