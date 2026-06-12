@@ -3511,10 +3511,14 @@ extension RehearsalScreen {
     /// stop the scheduler, and clean up local state.
     @MainActor
     private func performRaidHostCleanup(targetRoomId: String) async {
+        print("RAID_QA: [SELLER] performRaidHostCleanup — targetRoomId=\(targetRoomId), agoraIsJoined=\(agoraManager.isJoined), isHost=\(isHost)")
         hasCheckedRandomizerReleaseOnEnd = true
 
         if agoraManager.isJoined {
             agoraManager.leaveChannel()
+            print("RAID_QA: [SELLER] agoraManager.leaveChannel() called")
+        } else {
+            print("RAID_QA: [SELLER] agoraManager was not joined — skipping leaveChannel")
         }
 
         // Do NOT call endStreaming — server already ended the source room on raid.
@@ -3538,7 +3542,9 @@ extension RehearsalScreen {
 
         // Give the navigation stack a moment to settle before posting the
         // notification so HomeViewScreen is visible and can handle it.
+        print("RAID_QA: [SELLER] presentationMode.dismiss() called, scheduling bidcastRaidToViewer notification in 350ms")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            print("RAID_QA: [SELLER] posting bidcastRaidToViewer — targetRoomId=\(targetRoomId)")
             NotificationCenter.default.post(
                 name: .bidcastRaidToViewer,
                 object: nil,

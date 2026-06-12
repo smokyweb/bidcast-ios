@@ -302,6 +302,25 @@ class AgoraManager: NSObject, ObservableObject {
     //      future mis-configuration. Removed for clarity.
     // The main VideoEncoderConfiguration (1080x1920, fps30, standard bitrate,
     // orientationMode .adaptative) is correct and unchanged.
+    //
+    // Basecamp #9986387480 (round 4, 2026-06-12): RAID VIDEO FIX.
+    // This function previously ALWAYS called setClientRole(.broadcaster)
+    // regardless of whether `asHost` was true or false (the parameter was
+    // accepted but never used). The Agora engine is a process-wide singleton
+    // (AgoraRtcEngineKit.sharedEngine). When a seller hosted their own show
+    // as a broadcaster and then raided another show, initializeAgoraEngine()
+    // was called again on the new AgoraManager(asHost: false) instance —
+    // but it unconditionally set .broadcaster again, leaving the engine in
+    // broadcaster mode. joinChannel() does pass options.clientRoleType=.audience
+    // correctly, but the engine-level setClientRole(.broadcaster) overrides
+    // that for the JOIN phase, causing the seller to arrive as an accidental
+    // broadcaster rendering their own frozen camera frame instead of the
+    // remote seller's stream.
+    //
+    // FIX: use `self.isHost` (set in init before this is called) to set the
+    // correct engine-level client role at initialization time. joinChannel()
+    // also sets options.clientRoleType correctly, so both layers are now
+    // consistent for both paths.
     func initializeAgoraEngine(asHost: Bool = false) {
         agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: AgoraCred.appId, delegate: self)
 
@@ -310,9 +329,13 @@ class AgoraManager: NSObject, ObservableObject {
         agoraKit?.setParameters("{\"rtc.enable_low_latency_mode\":true}")
         agoraKit?.setParameters("{\"che.audio.live_for_comm\":true}")
 
-        // Step 2: Set Ultra Low Latency Mode (hardware encoding left at SDK
-        // default — hardware H.264 is required for HD quality at low latency)
-        agoraKit?.setClientRole(.broadcaster)
+        // Step 2: Set the correct engine-level client role.
+        // MUST match the join intent: broadcaster for hosts, audience for viewers.
+        // self.isHost is set in init(asHost:) before initializeAgoraEngine() is called.
+        let engineRole: AgoraClientRole = self.isHost ? .broadcaster : .audience
+        agoraKit?.setClientRole(engineRole)
+        print("RAID_QA: initializeAgoraEngine — isHost=\(self.isHost), engineRole=\(self.isHost ? "broadcaster" : "audience")")
+
         agoraKit?.setCameraZoomFactor(zoomFactor)
         agoraKit?.enableVideo()
 
@@ -378,13 +401,17 @@ class AgoraManager: NSObject, ObservableObject {
         options.publishCameraTrack = asHost
         options.publishMicrophoneTrack = asHost
         options.audienceLatencyLevel = .ultraLowLatency
-        
+
+        // RAID_QA: log the join parameters for diagnosability.
+        print("RAID_QA: joinChannel — channel=\(channelName), asHost=\(asHost), tokenEmpty=\(token.isEmpty), publishCamera=\(asHost), role=\(asHost ? "broadcaster" : "audience")")
+
         agoraKit.joinChannel(
             byToken: token,
             channelId: channelName,
             uid: 0,
             mediaOptions: options
         ) { [weak self] (channel, uid, elapsed) in
+            print("RAID_QA: joinChannel callback — channel=\(channel), uid=\(uid), asHost=\(asHost)")
             print("✅ Joined channel: \(channel), UID: \(uid)")
             DispatchQueue.main.async {
                 self?.isJoined = true
@@ -496,6 +523,7 @@ class AgoraManager: NSObject, ObservableObject {
         // ensures frames actually flow to the newly bound canvas.
         agoraKit.muteRemoteVideoStream(uid, mute: false)
 
+        print("RAID_QA: setupRemoteVideo — uid=\(uid), view=\(remoteVideoView)")
         print("✅ Remote video canvas bound: uid=\(uid), view=\(remoteVideoView)")
     }
 }

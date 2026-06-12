@@ -2367,6 +2367,7 @@ extension LiveStream {
     private func listenForRaidEvents() {
         socketManagerChat.listenForRaidEvent { raidInfo in
             guard let info = raidInfo else {
+                print("RAID_QA: [BUYER] receiveRaid fired but raidInfo was nil")
                 print("No Raid Info")
                 return
             }
@@ -2381,7 +2382,11 @@ extension LiveStream {
             // normal home-card tap.  If the server does provide rtcToken in the
             // receiveRaid payload we still propagate it so joinStreamUsingSocket can
             // use it as a fallback via the @Binding agoraToken.
+            let payloadToken = info.rtcToken ?? ""
+            print("RAID_QA: [BUYER] receiveRaid — target=\(info.target_room_id ?? "nil"), payloadTokenEmpty=\(payloadToken.isEmpty), source=\(info.source_room_id ?? "nil")")
+
             logoutRoom()
+            print("RAID_QA: [BUYER] logoutRoom() complete, leaving source room, joining target")
 
             if let msg = info.message, !msg.isEmpty {
                 hudMsg = msg
@@ -2392,8 +2397,11 @@ extension LiveStream {
             currentRoomID = targetRoom
             // Propagate any server-supplied token; if absent, joinStreamUsingSocket
             // will read the token from the room model (standard path).
-            if let token = info.rtcToken, !token.isEmpty {
-                agoraToken = token
+            if !payloadToken.isEmpty {
+                agoraToken = payloadToken
+                print("RAID_QA: [BUYER] using payload rtcToken (non-empty)")
+            } else {
+                print("RAID_QA: [BUYER] no payload rtcToken — will read from room model in joinStreamUsingSocket")
             }
 
             joinChatRoom(roomId: targetRoom)
@@ -3003,10 +3011,15 @@ extension LiveStream {
             .first(where: { $0 > 0 }) ?? 0
         sellerId = "\(resolvedSellerId)"
         auctionTypeId = currentRoomData.auction_type_id ?? 0
-        self.agoraToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
+        let roomModelToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
+        self.agoraToken = roomModelToken
+        print("RAID_QA: [JOIN] joinStreamUsingSocket — room=\(roomId), roomModelTokenEmpty=\(roomModelToken.isEmpty), isHost=\(isHost)")
         if !agoraToken.isEmpty && !roomId.isEmpty {
             print("🎥 Joining Agora with token: \(agoraToken)")
+            print("RAID_QA: [JOIN] calling agoraManager.joinChannel asHost=\(isHost)")
             agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
+        } else {
+            print("RAID_QA: [JOIN] WARNING — skipping joinChannel: agoraTokenEmpty=\(agoraToken.isEmpty), roomIdEmpty=\(roomId.isEmpty)")
         }
         
         self.roomID = socketRooms.compactMap { $0.room_id }
