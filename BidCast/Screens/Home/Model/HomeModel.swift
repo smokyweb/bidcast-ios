@@ -68,6 +68,26 @@ struct HomeModel: Codable, Identifiable {
     // Basecamp #9929113636 (2026-05-29): backend now surfaces recording URL
     // per-row on get-my-schedule-show so clients can skip a second API round-trip.
     var file_url: String?
+    // Basecamp #9991372302: per-product stream quantities stored as a
+    // JSON-encoded string by the server, e.g. "{\"1016\":2}".
+    // May be null/absent for shows created before this feature.
+    var product_stream_quantities: String?
+
+    /// Parse product_stream_quantities from its server-side JSON string into a
+    /// [productId: qty] dictionary. Returns empty dict when absent or unparseable.
+    var parsedStreamQuantities: [String: Int] {
+        guard let raw = product_stream_quantities,
+              let data = raw.data(using: .utf8),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { return [:] }
+        var result: [String: Int] = [:]
+        for (key, val) in obj {
+            if let intVal = val as? Int { result[key] = intVal }
+            else if let dblVal = val as? Double { result[key] = Int(dblVal) }
+            else if let strVal = val as? String, let intVal = Int(strVal) { result[key] = intVal }
+        }
+        return result
+    }
 }
 
 struct AuctionData : Codable {
@@ -131,5 +151,7 @@ extension HomeModel {
         promotion_end_at = try c.decodeIfPresent(String.self, forKey: .promotion_end_at)
         sub_category = try c.decodeIfPresent(SubCategoryDataModel.self, forKey: .sub_category)
         file_url = try c.decodeIfPresent(String.self, forKey: .file_url)
+        // Basecamp #9991372302: JSON-encoded string from the server.
+        product_stream_quantities = try c.decodeIfPresent(String.self, forKey: .product_stream_quantities)
     }
 }

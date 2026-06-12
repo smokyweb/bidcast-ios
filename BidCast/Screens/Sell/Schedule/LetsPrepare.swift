@@ -417,8 +417,15 @@ struct LetsPrepare: View {
 //                    param["product_ids[\(index)]"] = product
 //                }
                 
-                let prodIds = request.product_ids.joined(separator: ",")
-                param["product_ids"] = prodIds
+                // Basecamp #9991372302: send product_ids[] and product_stream_quantities[]
+                // as positionally aligned indexed multipart fields (mirrors PWA wire format).
+                // Stream quantities are stored on the coordinator by AddProductsScreen
+                // (fromPrepare path). Fall back to 1 for any product without an explicit qty.
+                let prodIds = request.product_ids
+                for (i, pid) in prodIds.enumerated() {
+                    param["product_ids[\(i)]"] = pid
+                    param["product_stream_quantities[\(i)]"] = coordinator.streamQuantities[pid] ?? 1
+                }
                 // Basecamp #9929871140: attach randomizer template if the seller
                 // picked one via the optional picker row above the step cards.
                 if let tmplId = coordinator.randomizerTemplateId {
@@ -551,7 +558,7 @@ extension String {
 
 
 final class LetsPrepareCoordinator: ObservableObject {
-    
+
     @Published var request = StoreScheduleShowRequest(
         title: "", date: "", time: "", category_id: "",
         auction_type_id: "", product_ids: [],
@@ -565,6 +572,10 @@ final class LetsPrepareCoordinator: ObservableObject {
     /// Basecamp #9929871140: randomizer template to attach to the show on store.
     @Published var randomizerTemplateId: Int? = nil
     @Published var shouldNavigateBackToPrepare = false
+    // Basecamp #9991372302: per-product stream quantities set by AddProductsScreen
+    // when coming from the LetsPrepare wizard (fromPrepare == true). Keyed by
+    // product-id string, values >= 1.
+    @Published var streamQuantities: [String: Int] = [:]
 
 //    func didUpdateRequest(_ request: StoreScheduleShowRequest, thumbNail: String) {
 //        print("📍 didUpdateRequest called")

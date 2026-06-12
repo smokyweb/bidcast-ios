@@ -128,6 +128,7 @@ struct AddProductsScreen: View {
 //        productDataList.removeAll()
         selectedProductIDs.removeAll()
         productManager.selectedProductIDs.removeAll()
+        productManager.streamQuantities.removeAll()
         request.product_ids.removeAll()
         print("🗑️ Cleared all products")
     }
@@ -214,28 +215,32 @@ struct AddProductsScreen: View {
                                     let data = filteredProducts[index]
                                     let idStr = "\(data.id ?? -1)"
                                     let isSelected = productManager.selectedProductIDs.contains(idStr)
-                                    
+                                    let availQty = max(1, data.availableQuantity)
+
+                                    // Basecamp #9991372302: bind stream qty from
+                                    // productManager so changes persist immediately.
+                                    let streamQtyBinding = Binding<Int>(
+                                        get: {
+                                            productManager.streamQuantities[idStr] ?? availQty
+                                        },
+                                        set: { newVal in
+                                            productManager.setStreamQuantity(newVal, forProductId: idStr, max: availQty)
+                                        }
+                                    )
+
                                     ProductItemCard(
                                         product: data,
                                         isSelected: isSelected,
+                                        streamQuantity: streamQtyBinding,
                                         onTapCard: {
-//                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-//                                                if isSelected {
-//                                                    selectedProductIDs.remove(idStr)
-//                                                } else {
-//                                                    selectedProductIDs.insert(idStr)
-//                                                }
-//                                                request.product_ids = selectedProductIDs.joined(separator: ",")
-//                                            }
                                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                                                 productManager.toggleSelection(for: idStr)
-                                                request.product_ids =  Array(productManager.selectedProductIDs)
+                                                request.product_ids = Array(productManager.selectedProductIDs)
                                             }
                                         },
                                         onTapEdit: {
                                             editingProduct = data
                                             navigateToEditListProduct = true
-                                           
                                         },
                                         onTapDelete: {
                                             deletedIndex = index
@@ -406,8 +411,7 @@ struct AddProductsScreen: View {
                     showAuctionTypeId: request.auction_type_id,
                     navigatedFrom: .addProduct,
                     onProductsSelected: { products in
-                        productManager.products.removeAll()
-                        productManager.selectedProductIDs.removeAll()
+                        productManager.clearAll()
                         productManager.addProducts(products)
                         request.product_ids = Array(productManager.selectedProductIDs)
                     }
@@ -542,23 +546,28 @@ extension AddProductsScreen {
 //            return
 //        }
         if fromPrepare {
-//               backToPrepare = false
             print("request: \(request)")
-//            print("delegate: \(delegate)")
-            
-            Task { @MainActor  in
-//                delegate.didUpdateRequest(request, thumbNail: thumbNail)
+
+            Task { @MainActor in
                 coordinator.request = request
                 coordinator.thumbNAil = thumbNail
 
+                // Basecamp #9991372302: persist stream quantities to coordinator so
+                // LetsPrepare.storeScheduleSHow() can include them in the API call.
+                let (orderedIds, orderedQtys) = productManager.orderedProductIdsAndQuantities()
+                var qtysDict: [String: Int] = [:]
+                for (id, qty) in zip(orderedIds, orderedQtys) {
+                    qtysDict[id] = qty
+                }
+                coordinator.streamQuantities = qtysDict
+
                 coordinator.markCurrentStepCompleted()
                 coordinator.shouldNavigateBackToPrepare = true
-                
+
                 // Pop this screen (it was pushed via `CusNavLink`).
                 backToCreateProduct = false
-                productManager.selectedProductIDs.removeAll()
-                productManager.products.removeAll()
-                
+                productManager.clearAll()
+
                 print("✅ Delegate call completed")
             }
                return
@@ -601,8 +610,7 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
-                productManager.selectedProductIDs.removeAll()
-                productManager.products.removeAll()
+                productManager.clearAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
                     title: "Success",
@@ -647,18 +655,17 @@ extension AddProductsScreen {
                 }
             }
 
-            // Convert product IDs
-//            let prodIds = Array(productManager.selectedProductIDs)
-//            for (index, product) in prodIds.enumerated() {
-//                params["product_ids[]"] = product
-//            }
-            let prodIds = productManager.selectedProductIDs.joined(separator: ",")
-            params["product_ids"] = prodIds
+            // Basecamp #9991372302: send product_ids[] and product_stream_quantities[]
+            // as positionally aligned indexed multipart fields (mirrors PWA wire format).
+            let (orderedIds, orderedQtys) = productManager.orderedProductIdsAndQuantities()
+            for (i, pid) in orderedIds.enumerated() {
+                params["product_ids[\(i)]"] = pid
+                params["product_stream_quantities[\(i)]"] = orderedQtys[i]
+            }
 
             if let templateId = request.randomizer_template_id {
                 params["randomizer_template_id"] = templateId
             }
-
 
             viewModel.errorMessage = ""
 
@@ -686,8 +693,7 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
-                productManager.selectedProductIDs.removeAll()
-                productManager.products.removeAll()
+                productManager.clearAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
                     title: "Success",
@@ -729,15 +735,13 @@ extension AddProductsScreen {
                     params["tags[\(i)]"] = tag
                 }
             }
-//            let prodIds = productManager.selectedProductIDs.compactMap { Int($0) }
-//            params["product_ids"] = prodIds
-            // Convert product IDs
-//            let prodIds = Array(productManager.selectedProductIDs)
-//            for (index, product) in prodIds.enumerated() {
-//                params["product_ids[\(index)]"] = product
-//            }
-            let prodIds = productManager.selectedProductIDs.joined(separator: ",")
-            params["product_ids"] = prodIds
+            // Basecamp #9991372302: send product_ids[] and product_stream_quantities[]
+            // as positionally aligned indexed multipart fields (mirrors PWA wire format).
+            let (orderedIds, orderedQtys) = productManager.orderedProductIdsAndQuantities()
+            for (i, pid) in orderedIds.enumerated() {
+                params["product_ids[\(i)]"] = pid
+                params["product_stream_quantities[\(i)]"] = orderedQtys[i]
+            }
 
             if let templateId = request.randomizer_template_id {
                 params["randomizer_template_id"] = templateId
@@ -884,87 +888,133 @@ struct BottomSheetConfig {
 struct ProductItemCard: View {
     let product: ProductDataModel1
     let isSelected: Bool
+    // Basecamp #9991372302: stream quantity stepper (how many units offered
+    // during the show). Only shown when product is selected and availableQty > 1.
+    @Binding var streamQuantity: Int
     let onTapCard: () -> Void
     let onTapEdit: () -> Void
     let onTapDelete: () -> Void
 
     var body: some View {
-        HStack(spacing: 14) {
-            // Product Image
-            CustomProfileImage(
-                url: product.images?.first ?? "",
-                isCircular: false,
-                cornerRadius: 12,
-                size: 70,
-                height: 70,
-                defaultImage: "fashion"
-            ) {}
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.black.opacity(0.08), lineWidth: 1)
-            )
-            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 14) {
+                // Product Image
+                CustomProfileImage(
+                    url: product.images?.first ?? "",
+                    isCircular: false,
+                    cornerRadius: 12,
+                    size: 70,
+                    height: 70,
+                    defaultImage: "fashion"
+                ) {}
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
 
-            // Product Details
-            VStack(alignment: .leading, spacing: 6) {
-                Text(product.title ?? "Untitled")
-                    .font(.custom(poppinsSemiBold, size: 15))
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
+                // Product Details
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(product.title ?? "Untitled")
+                        .font(.custom(poppinsSemiBold, size: 15))
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
 
-                Text(product.category?.name ?? "Unknown Category")
-                    .font(.custom(poppinsMedium, size: 13))
-                    .foregroundColor(.secondary)
+                    Text(product.category?.name ?? "Unknown Category")
+                        .font(.custom(poppinsMedium, size: 13))
+                        .foregroundColor(.secondary)
 
-                // Basecamp #9963271582 (2026-06-04): show AVAILABLE quantity
-                // (listed - purchased), not the raw listed quantity, so the card
-                // agrees with the server's sold-out rule at schedule time. When a
-                // product is sold out, surface a clear "Sold out" badge instead of a
-                // misleading positive number.
-                if product.isSoldOut {
-                    HStack(spacing: 4) {
-                        Text("Qty:")
-                            .font(.custom(poppinsRegular, size: 12))
-                            .foregroundColor(.secondary)
+                    // Basecamp #9963271582 (2026-06-04): show AVAILABLE quantity
+                    // (listed - purchased), not the raw listed quantity, so the card
+                    // agrees with the server's sold-out rule at schedule time. When a
+                    // product is sold out, surface a clear "Sold out" badge instead of a
+                    // misleading positive number.
+                    if product.isSoldOut {
+                        HStack(spacing: 4) {
+                            Text("Qty:")
+                                .font(.custom(poppinsRegular, size: 12))
+                                .foregroundColor(.secondary)
 
-                        Text("Sold out")
-                            .font(.custom(poppinsSemiBold, size: 12))
-                            .foregroundColor(.red)
+                            Text("Sold out")
+                                .font(.custom(poppinsSemiBold, size: 12))
+                                .foregroundColor(.red)
+                        }
+                    } else {
+                        HStack(spacing: 4) {
+                            Text("Qty:")
+                                .font(.custom(poppinsRegular, size: 12))
+                                .foregroundColor(.secondary)
+
+                            Text("\(product.availableQuantity)")
+                                .font(.custom(poppinsSemiBold, size: 12))
+                                .foregroundColor(.primary)
+                        }
                     }
-                } else {
-                    HStack(spacing: 4) {
-                        Text("Qty:")
-                            .font(.custom(poppinsRegular, size: 12))
-                            .foregroundColor(.secondary)
+                }
 
-                        Text("\(product.availableQuantity)")
-                            .font(.custom(poppinsSemiBold, size: 12))
-                            .foregroundColor(.primary)
+                Spacer()
+
+                // Action Buttons
+                VStack(spacing: 12) {
+                    Button(action: onTapEdit) {
+                        Image(systemName: "square.and.pencil")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.defaultTheme)
+                            .frame(width: 36, height: 36)
+                            .background(Color.defaultThemeLight)
+                            .cornerRadius(10)
+                    }
+
+                    Button(action: onTapDelete) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.red)
+                            .frame(width: 36, height: 36)
+                            .background(Color.red.opacity(0.1))
+                            .cornerRadius(10)
                     }
                 }
             }
 
-            Spacer()
+            // Basecamp #9991372302: stream qty stepper — shown only when
+            // product is selected and available qty > 1 (nothing to choose
+            // when there is only one unit).
+            if isSelected && product.availableQuantity > 1 {
+                Divider()
+                    .padding(.top, 10)
 
-            // Action Buttons
-            VStack(spacing: 12) {
-                Button(action: onTapEdit) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.defaultTheme)
-                        .frame(width: 36, height: 36)
-                        .background(Color.defaultThemeLight)
-                        .cornerRadius(10)
-                }
+                HStack(spacing: 8) {
+                    Text("Show qty:")
+                        .font(.custom(poppinsRegular, size: 13))
+                        .foregroundColor(.secondary)
 
-                Button(action: onTapDelete) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.red)
-                        .frame(width: 36, height: 36)
-                        .background(Color.red.opacity(0.1))
-                        .cornerRadius(10)
+                    Spacer()
+
+                    Button(action: {
+                        if streamQuantity > 1 { streamQuantity -= 1 }
+                    }) {
+                        Image(systemName: "minus.circle.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(streamQuantity > 1 ? .defaultTheme : .gray.opacity(0.4))
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("\(streamQuantity)")
+                        .font(.custom(poppinsSemiBold, size: 16))
+                        .foregroundColor(.primary)
+                        .frame(minWidth: 28)
+                        .multilineTextAlignment(.center)
+
+                    Button(action: {
+                        if streamQuantity < product.availableQuantity { streamQuantity += 1 }
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(streamQuantity < product.availableQuantity ? .defaultTheme : .gray.opacity(0.4))
+                    }
+                    .buttonStyle(.plain)
                 }
+                .padding(.top, 8)
             }
         }
         .padding(14)

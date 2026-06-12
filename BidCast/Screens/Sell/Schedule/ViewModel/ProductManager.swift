@@ -11,7 +11,11 @@ import SwiftUI
 class ProductManager: ObservableObject {
     @Published var products: [ProductDataModel1] = []
     @Published var selectedProductIDs: Set<String> = []
-    
+    // Basecamp #9991372302: per-product stream quantity (how many units offered
+    // during the show). Keyed by product-id string. When absent the caller
+    // should fall back to the product's full available quantity.
+    @Published var streamQuantities: [String: Int] = [:]
+
     func addProduct(_ product: ProductDataModel1) {
         let productIdStr = "\(product.id ?? -1)"
         
@@ -58,7 +62,9 @@ class ProductManager: ObservableObject {
         guard products.indices.contains(index) else { return }
         let removedProduct = products.remove(at: index)
         if let id = removedProduct.id {
-            selectedProductIDs.remove("\(id)")
+            let idStr = "\(id)"
+            selectedProductIDs.remove(idStr)
+            streamQuantities.removeValue(forKey: idStr)
         }
         print("🗑️ Removed product from list. Remaining: \(products.count)")
     }
@@ -67,12 +73,33 @@ class ProductManager: ObservableObject {
     func removeProduct(withId id: String) {
         products.removeAll { "\($0.id ?? -1)" == id }
         selectedProductIDs.remove(id)
+        streamQuantities.removeValue(forKey: id)
     }
-    
+
+    /// Set the stream quantity for a product (clamped to 1…availableQty)
+    func setStreamQuantity(_ qty: Int, forProductId id: String, max availableQty: Int) {
+        let clamped = min(max(1, qty), max(1, availableQty))
+        streamQuantities[id] = clamped
+    }
+
+    /// Return stream quantities as positional arrays aligned with selectedProductIDs.
+    /// Both arrays share the same ordering so the server receives them in lockstep.
+    func orderedProductIdsAndQuantities() -> (ids: [String], quantities: [Int]) {
+        let ids = Array(selectedProductIDs)
+        let qtys = ids.map { id -> Int in
+            if let q = streamQuantities[id] { return q }
+            // Fallback: product's full available quantity (or 1 when unavailable)
+            let product = products.first { "\($0.id ?? -1)" == id }
+            return max(1, product?.availableQuantity ?? 1)
+        }
+        return (ids, qtys)
+    }
+
     /// Clear all products (after successful show creation)
     func clearAll() {
         products.removeAll()
         selectedProductIDs.removeAll()
+        streamQuantities.removeAll()
         print("🗑️ Cleared all products")
     }
     

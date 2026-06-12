@@ -474,6 +474,14 @@ struct ShowDetailsScreen: View {
                 // Seed the product manager from the products already on this show
                 addProductsManager.clearAll()
                 addProductsManager.addProducts(products)
+                // Basecamp #9991372302: prefill per-product stream quantities
+                // from the show payload (JSON-encoded string → [productId: qty]).
+                for (idStr, qty) in show.parsedStreamQuantities {
+                    if let product = products.first(where: { "\($0.id ?? -1)" == idStr }) {
+                        let availQty = max(1, product.availableQuantity)
+                        addProductsManager.setStreamQuantity(qty, forProductId: idStr, max: availQty)
+                    }
+                }
                 navigateToAddProducts = true
             }) {
                 HStack(spacing: 6) {
