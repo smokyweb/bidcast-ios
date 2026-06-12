@@ -1506,7 +1506,9 @@ extension ProductCardView {
         }
         .padding(.leading,12)
         .padding(.trailing, 6)
-        .padding(.vertical, 16)
+        // Basecamp #9986437322 (round 3, 2026-06-12): reduced vertical padding
+        // from 16→10 to match Android card density (~110dp image, compact rows).
+        .padding(.vertical, 10)
         .scaleEffect(scaleAmount)
         .opacity(opacityAmount)
     }
@@ -1523,6 +1525,8 @@ extension ProductCardView {
 // MARK: - Product Image Extension
 extension ProductCardView {
     var productImageView: some View {
+          // Basecamp #9986437322 (round 3, 2026-06-12): reduced from 120→100 to
+          // match Android InventoryAdapter's ~110dp image + tighter card density.
           let imageURL =
               product.thumbnail?.first ??
               product.images?.first
@@ -1530,9 +1534,9 @@ extension ProductCardView {
           return CustomProfileImage(
               url: imageURL,
               isCircular: false,
-              size: 120
+              size: 100
           )
-          .frame(width: 120, height: 120)
+          .frame(width: 100, height: 100)
       }
 }
 
@@ -1540,8 +1544,10 @@ extension ProductCardView {
 extension ProductCardView {
     // Basecamp #9986437322 (round 2): reordered to match Android exactly:
     //   title → condition•category line → type pill → price → bids → Stock: N (bottom-right)
+    // Basecamp #9986437322 (round 3, 2026-06-12): reduced internal spacing 8→5
+    // to tighten vertical density to match Android compact layout.
     var productDetailsView: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 5) {
             productTitle
             productMetadata
             formatBadge

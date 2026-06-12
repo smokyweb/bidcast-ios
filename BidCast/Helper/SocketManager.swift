@@ -945,4 +945,15 @@ struct RaidInfo: Codable {
     var message: String?
     var source_room_id: String?
     var target_room_id: String?
+    // Basecamp #9986387480 (round 3, 2026-06-12): server may supply the RTC token
+    // for the target room in the receiveRaid payload so viewers can join Agora
+    // directly without waiting for the room-updated event.
+    var rtcToken: String?
+
+    enum CodingKeys: String, CodingKey {
+        case message
+        case source_room_id
+        case target_room_id
+        case rtcToken = "rtc_token"
+    }
 }

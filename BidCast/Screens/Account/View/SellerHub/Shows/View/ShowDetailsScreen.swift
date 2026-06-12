@@ -508,10 +508,30 @@ struct ShowDetailsScreen: View {
             if show.user_id == UserDefaults.userId {
                 // Let's Prepare — opens the preparation wizard for this show.
                 Button(action: {
-                    // Pre-seed the coordinator with this show's data so LetsPrepare
-                    // starts with the correct context.
+                    // Basecamp #9986427172 (round 3, 2026-06-12): pre-seed the
+                    // coordinator with this show's existing data so LetsPrepare
+                    // shows steps 1 and 2 as already complete when the show already
+                    // has a schedule and products (mirrors PWA fetchShowContext logic).
                     addProductsCoordinator.request = scheduleRequest
                     addProductsCoordinator.thumbNAil = show.thumbnail?.first ?? ""
+                    // Derive step completion: step 0 = schedule complete (has date+time),
+                    // step 1 = products complete (has at least 1 product_id). Mirror PWA
+                    // sellerTrainingLetsPrepareShow.blade.php lines 226-242.
+                    let hasSchedule = !(scheduleRequest.date.isEmpty) && !(scheduleRequest.time.isEmpty)
+                    let hasProducts = !(scheduleRequest.product_ids.isEmpty)
+                    // Apply derived completion to the coordinator's prepare array.
+                    // The prepare steps are loaded lazily by LetsPrepare, but we can
+                    // seed the coordinator's currentIndex so it starts at the first
+                    // incomplete step, and mark steps done so they render correctly once
+                    // the API response arrives in LetsPrepare.success().
+                    // We store the derived counts in the coordinator and let
+                    // LetsPrepare.success() apply them after the API fetch completes.
+                    let derivedComplete: Int = {
+                        if hasSchedule && hasProducts { return 2 }
+                        if hasSchedule { return 1 }
+                        return 0
+                    }()
+                    addProductsCoordinator.currentIndex = derivedComplete
                     navigateToPrepare = true
                 }) {
                     HStack(spacing: 6) {

@@ -521,6 +521,19 @@ struct HomeViewScreen: View {
                 userName = show.user?.username ?? ""
             }
         }
+        // Basecamp #9986387480 (round 3, 2026-06-12): after a successful raid the
+        // seller host is sent to the target show as a viewer using the same
+        // NavigationLink / join path that a buyer uses when tapping a live-show card.
+        .onReceive(NotificationCenter.default.publisher(for: .bidcastRaidToViewer)) { notification in
+            guard let targetRoomId = notification.userInfo?["roomId"] as? String,
+                  !targetRoomId.isEmpty else { return }
+            tabBarRouter.selectedTab = 0
+            currentRoomId = targetRoomId
+            // agoraToken will be fetched via joinStreamUsingSocket from the socket
+            // room data — same path as the normal buyer join.
+            agoraToken = ""
+            navigateToLiveStream = true
+        }
     }
     
     // MARK: - Category Scroll View

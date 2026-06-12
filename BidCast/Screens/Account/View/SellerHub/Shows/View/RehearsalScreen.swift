@@ -3485,13 +3485,65 @@ extension RehearsalScreen {
             return
         }
         selectedSellers = nil
-        //send raid
-        SocketManagerService.shared.sendRaidEvent(sourceRoomId: self.roomId,
-                                                  targetRoomId: seller.room_id ?? "",
-                                                  sourceHostId: "\(showsData.user?.id ?? 0)" ,
-                                                  targetHostId: "\(seller.id ?? 0)")
-        
-        //leave room
-        endShow()
+        let targetRoomId = seller.room_id ?? ""
+
+        // Basecamp #9986387480 (round 3, 2026-06-12): emit the raid event first,
+        // then tear down the host session WITHOUT calling endStreaming — the server
+        // closes the source room as part of the raid, so a second endRoom emit
+        // would be a no-op at best and could interfere with the target room.
+        // After cleanup, dismiss this screen and post a notification so
+        // HomeViewScreen navigates the seller into the target show as a viewer
+        // (same join path a buyer uses when tapping a live-show card on Home).
+        SocketManagerService.shared.sendRaidEvent(
+            sourceRoomId: self.roomId,
+            targetRoomId: targetRoomId,
+            sourceHostId: "\(showsData.user?.id ?? 0)",
+            targetHostId: "\(seller.id ?? 0)"
+        )
+
+        Task { @MainActor in
+            await performRaidHostCleanup(targetRoomId: targetRoomId)
+        }
+    }
+
+    /// Tears down the host session after a raid without re-emitting endRoom.
+    /// The server already closed the source room; we only need to leave Agora,
+    /// stop the scheduler, and clean up local state.
+    @MainActor
+    private func performRaidHostCleanup(targetRoomId: String) async {
+        hasCheckedRandomizerReleaseOnEnd = true
+
+        if agoraManager.isJoined {
+            agoraManager.leaveChannel()
+        }
+
+        // Do NOT call endStreaming — server already ended the source room on raid.
+        SocketManagerService.shared.stopLiveScheduler()
+        SocketManagerService.shared.removeChatListener()
+        SocketManagerService.shared.chats.removeAll()
+        comments.removeAll()
+
+        if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.roomId }) {
+            SocketManagerService.shared.rooms.remove(at: idx)
+        }
+
+        isSurpriseSetAuctionActive = false
+        currentSurpriseSetData = nil
+        productData.removeAll()
+        currentPrice = 0.0
+        hasInitialized = false
+
+        // Dismiss back to the presenting navigation stack (showsData / ShowDetails).
+        presentationMode.wrappedValue.dismiss()
+
+        // Give the navigation stack a moment to settle before posting the
+        // notification so HomeViewScreen is visible and can handle it.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            NotificationCenter.default.post(
+                name: .bidcastRaidToViewer,
+                object: nil,
+                userInfo: ["roomId": targetRoomId]
+            )
+        }
     }
 }

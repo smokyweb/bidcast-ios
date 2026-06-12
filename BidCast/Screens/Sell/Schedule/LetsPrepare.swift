@@ -479,20 +479,33 @@ struct LetsPrepare: View {
         let dict = viewModel.lessonsResponse
         if dict?.status == "success" {
             var steps = dict?.data ?? []
-                 
-                    if steps.indices.contains(0) {
-                        steps[0].status = "unlocked"
-                    }
 
-                    for idx in 1..<steps.count {
-                        steps[idx].status = "locked"
-                    }
+            // Basecamp #9986427172 (round 3, 2026-06-12): respect the
+            // coordinator.currentIndex that ShowDetailsScreen pre-seeded from
+            // the show's existing data (derivedComplete steps).  Steps before
+            // currentIndex are marked done+unlocked; the current step is
+            // unlocked (active); steps after are locked.
+            let seededIndex = coordinator.currentIndex
 
-                    coordinator.prepare = steps
+            for idx in 0..<steps.count {
+                if idx < seededIndex {
+                    // Already completed
+                    steps[idx].isDone = true
+                    steps[idx].status = "unlocked"
+                } else if idx == seededIndex {
+                    // Current active step
+                    steps[idx].status = "unlocked"
+                } else {
+                    // Future steps remain locked
+                    steps[idx].status = "locked"
+                }
+            }
+
+            coordinator.prepare = steps
         } else {
             print("API error: \(dict?.status ?? "")")
         }
-        
+
     }
     
     func storeSuccess(){

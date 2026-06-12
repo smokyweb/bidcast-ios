@@ -2370,18 +2370,33 @@ extension LiveStream {
                 print("No Raid Info")
                 return
             }
-            
+
+            // Basecamp #9986387480 (round 3, 2026-06-12): rebuild the viewer join
+            // using the standard path (joinChatRoom → joinStreamUsingSocket) which
+            // reads the RTC token from the room-updated socket event.
+            // Previously the code patched agoraToken from the raid payload
+            // (info.rtcToken) which was always nil/empty — Agora joined with an empty
+            // token causing black video. The standard path reads rtc_token from the
+            // room model populated by the server's roomUpdated broadcast, same as a
+            // normal home-card tap.  If the server does provide rtcToken in the
+            // receiveRaid payload we still propagate it so joinStreamUsingSocket can
+            // use it as a fallback via the @Binding agoraToken.
             logoutRoom()
-            
-            if ((info.message?.isEmpty) == nil) {
-                hudMsg = info.message ?? ""
+
+            if let msg = info.message, !msg.isEmpty {
+                hudMsg = msg
                 showHud = true
             }
-            
-            currentRoomID = info.target_room_id ?? ""
-            agoraToken = info.rtcToken ?? ""
-            
-            joinChatRoom(roomId: currentRoomID)
+
+            let targetRoom = info.target_room_id ?? ""
+            currentRoomID = targetRoom
+            // Propagate any server-supplied token; if absent, joinStreamUsingSocket
+            // will read the token from the room model (standard path).
+            if let token = info.rtcToken, !token.isEmpty {
+                agoraToken = token
+            }
+
+            joinChatRoom(roomId: targetRoom)
         }
     }
 

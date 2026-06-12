@@ -93,14 +93,19 @@ struct SelectShowScreen: View {
                 request.time = selectedTimeStr
                 print(request)
                 if comeFromPrepareScreen {
-//                    delegate?.didUpdateRequest(request, thumbNail: "")
+                    // Basecamp #9986427172 (round 3, 2026-06-12): markCurrentStepCompleted()
+                    // is @MainActor and must complete before dismiss() fires so the
+                    // coordinator's prepare/currentIndex mutations are visible to LetsPrepare
+                    // when onAppear runs.  Previously dismiss() was called synchronously
+                    // outside the Task — the Task body ran after the dismiss, so LetsPrepare
+                    // saw stale state (step 1 still locked) and the Continue button on step 1
+                    // was never shown.
                     Task { @MainActor in
                         coordinator.request = request
                         coordinator.thumbNAil = ""
-
                         coordinator.markCurrentStepCompleted()
+                        presentationMode.wrappedValue.dismiss()
                     }
-                    presentationMode.wrappedValue.dismiss()
                 }else{
                     guard !request.title.isEmpty else {
                         hudMsg = "Please enter title"
