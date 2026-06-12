@@ -41,6 +41,12 @@ struct LetsPrepare: View {
     @State var showId : String = ""
     // Basecamp #9929871140: randomizer template picker during show creation.
     @State private var showRandomizerPickerInCreate: Bool = false
+    // Basecamp #9986427172 (QA round 4): promote sheet for existing-show mode (idx==3).
+    @State private var showPromoteSheetFromPrepare: Bool = false
+    @State private var prepareBoosts: [BoostModel] = []
+    @State private var isPreparePromoting: Bool = false
+    @State private var showPreparePromoteSuccess: Bool = false
+    private var prepareShowsViewModel = ShowsViewModel()
     
     private var currentProgress: Double {
         guard !coordinator.prepare.isEmpty else { return 0 }
@@ -91,9 +97,24 @@ struct LetsPrepare: View {
                                 navigateToRehearsal = true
                                 rehearsalNavigation = true
                             }else if idx == 3{
-                                storeScheduleSHow()
+                                // Basecamp #9986427172 (QA round 4): existing-show mode
+                                // must NOT call storeScheduleShow — open PromoteShowSheet
+                                // for this show instead.  Creation mode keeps original behaviour.
+                                if let existingId = coordinator.existingShowId, !existingId.isEmpty {
+                                    loadAndShowPreparePromote(showIdStr: existingId)
+                                } else {
+                                    storeScheduleSHow()
+                                }
                             }else if idx == 4{
-                                navigateForLive = true
+                                // Basecamp #9986427172 (QA round 4): existing-show mode —
+                                // LetsPrepare was PUSHED from ShowDetailsScreen, so dismiss
+                                // back to it.  Start Show lives on ShowDetailsScreen.
+                                // Creation mode keeps the original RehearsalScreen navigation.
+                                if coordinator.existingShowId != nil {
+                                    presentationMode.wrappedValue.dismiss()
+                                } else {
+                                    navigateForLive = true
+                                }
                             }
                             //                            goToNextStep()
                         }
@@ -199,6 +220,30 @@ struct LetsPrepare: View {
         // Basecamp #9929871140: randomizer template picker sheet for show creation.
         .sheet(isPresented: $showRandomizerPickerInCreate) {
             RandomizerTemplatePickerSheet(selectedTemplateId: $coordinator.randomizerTemplateId)
+        }
+        // Basecamp #9986427172 (QA round 4): promote sheet for existing-show mode (idx==3).
+        .sheet(isPresented: $showPromoteSheetFromPrepare, onDismiss: {
+            // Mark step 3 complete after the sheet dismisses, regardless of purchase.
+            if coordinator.currentIndex == 3 {
+                coordinator.markCurrentStepCompleted()
+            }
+        }) {
+            PromoteShowSheet(
+                boosts: $prepareBoosts,
+                onPromotionSelected: { selectedBoost in
+                    storePreparePromoteShow(boost: selectedBoost)
+                    showPromoteSheetFromPrepare = false
+                },
+                onClose: { showPromoteSheetFromPrepare = false }
+            )
+            .presentationDetents([.fraction(0.70)])
+            .presentationCornerRadius(25)
+            .presentationDragIndicator(.hidden)
+        }
+        .alert("Show Promoted", isPresented: $showPreparePromoteSuccess) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Your show has been promoted successfully.")
         }
         .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
             if let error = viewModel.errorMessage, !error.isEmpty {
@@ -347,6 +392,60 @@ struct LetsPrepare: View {
 //        print("📍 didUpdateRequest - END")
 //    }
     
+    // Basecamp #9986427172 (QA round 4): fetch promote tiers then open PromoteShowSheet.
+    // Called from idx==3 action when coordinator.existingShowId != nil.
+    private func loadAndShowPreparePromote(showIdStr: String) {
+        Task {
+            isPreparePromoting = true
+            prepareShowsViewModel.errorMessage = nil
+            await prepareShowsViewModel.getPromoteShows()
+            isPreparePromoting = false
+            if let msg = prepareShowsViewModel.errorMessage, !msg.isEmpty {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            } else if let tiers = prepareShowsViewModel.promoteShow?.data {
+                prepareBoosts = tiers
+                showPromoteSheetFromPrepare = true
+            }
+        }
+    }
+
+    // Basecamp #9986427172 (QA round 4): call the promote endpoint for the selected tier.
+    // Called from the PromoteShowSheet onPromotionSelected closure when in existing-show mode.
+    private func storePreparePromoteShow(boost: BoostModel) {
+        guard let promoteId = boost.id,
+              let existingId = coordinator.existingShowId,
+              let showIdInt = Int(existingId), showIdInt > 0 else { return }
+        let req = StorePromoteShowRequest(
+            scheduleShowId: "\(showIdInt)",
+            promoteShowId: "\(promoteId)"
+        )
+        Task {
+            isPreparePromoting = true
+            prepareShowsViewModel.errorMessage = nil
+            await prepareShowsViewModel.storePromoteShow(parameters: req)
+            isPreparePromoting = false
+            if let msg = prepareShowsViewModel.errorMessage, !msg.isEmpty {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            } else if prepareShowsViewModel.storePromoteShowModel?.status == "success" {
+                showPreparePromoteSuccess = true
+            }
+        }
+    }
+
     func storeScheduleSHow(){
         let request = coordinator.request
         guard !request.title.isEmpty else {
@@ -594,6 +693,14 @@ final class LetsPrepareCoordinator: ObservableObject {
     // when coming from the LetsPrepare wizard (fromPrepare == true). Keyed by
     // product-id string, values >= 1.
     @Published var streamQuantities: [String: Int] = [:]
+
+    // Basecamp #9986427172 (QA round 4): when LetsPrepare is entered from
+    // ShowDetailsScreen for an existing show, set this to the show's string ID.
+    // nil means creation/training mode (the original flow). When non-nil:
+    //   - idx==3 ("Bring in buyers"): present PromoteShowSheet instead of storeScheduleShow
+    //   - idx==4 ("Preview show and go live"): dismiss back to ShowDetailsScreen
+    //   - storeScheduleShow() is gated on existingShowId == nil
+    @Published var existingShowId: String? = nil
 
 //    func didUpdateRequest(_ request: StoreScheduleShowRequest, thumbNail: String) {
 //        print("📍 didUpdateRequest called")

@@ -532,6 +532,11 @@ struct ShowDetailsScreen: View {
                         return 0
                     }()
                     addProductsCoordinator.currentIndex = derivedComplete
+                    // Basecamp #9986427172 (QA round 4): flag the coordinator so
+                    // LetsPrepare knows it is in existing-show mode and must NOT call
+                    // storeScheduleShow, presenting PromoteShowSheet at idx==3 and
+                    // dismissing at idx==4 instead.
+                    addProductsCoordinator.existingShowId = showId
                     navigateToPrepare = true
                 }) {
                     HStack(spacing: 6) {
