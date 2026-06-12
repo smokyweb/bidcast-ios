@@ -420,11 +420,16 @@ struct LetsPrepare: View {
                 // Basecamp #9991372302: send product_ids[] and product_stream_quantities[]
                 // as positionally aligned indexed multipart fields (mirrors PWA wire format).
                 // Stream quantities are stored on the coordinator by AddProductsScreen
-                // (fromPrepare path). Fall back to 1 for any product without an explicit qty.
+                // (fromPrepare path). If the picker was never visited the map is empty:
+                // OMIT the field entirely so the server defaults to full stock —
+                // sending a hard-coded 1 would wrongly cap every product at one unit.
                 let prodIds = request.product_ids
+                let qtys = coordinator.streamQuantities
                 for (i, pid) in prodIds.enumerated() {
                     param["product_ids[\(i)]"] = pid
-                    param["product_stream_quantities[\(i)]"] = coordinator.streamQuantities[pid] ?? 1
+                    if !qtys.isEmpty {
+                        param["product_stream_quantities[\(i)]"] = qtys[pid] ?? 1
+                    }
                 }
                 // Basecamp #9929871140: attach randomizer template if the seller
                 // picked one via the optional picker row above the step cards.
