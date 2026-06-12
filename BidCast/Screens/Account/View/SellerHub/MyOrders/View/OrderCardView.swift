@@ -336,14 +336,24 @@ struct OrderCardView: View {
     }
     
     // MARK: - Status label (M2)
-    /// Prefer the backend's human status_label; fall back to the legacy
-    /// "<status> Review" string when the field is absent (old/cached data).
+    /// Prefer the backend's human status_label (e.g. "Needs Processing",
+    /// "Shipping Label Created", "In Transit", "Delivered/Completed",
+    /// "Pending Shipping", "Cancelled"). Fall back to a cleaned-up raw
+    /// status string when the field is absent (old/cached data).
+    /// Basecamp #9986437322 (round 2): removed the " Review" suffix that was
+    /// being appended to the raw status in the fallback path — Android
+    /// (OrdersAdapter) never appends "Review"; it shows the status_label
+    /// directly, or formats the raw status via replace("_"," ").asCapital().
     private var displayStatusLabel: String {
         if let label = order.statusLabel?.trimmingCharacters(in: .whitespacesAndNewlines),
            !label.isEmpty {
             return label
         }
-        return "\(order.status?.capitalizingFirstLetter() ?? "Pending") Review"
+        // Fallback: clean up the raw machine status (e.g. "needs_processing" → "Needs Processing")
+        let raw = order.status ?? "Pending"
+        return raw
+            .replacingOccurrences(of: "_", with: " ")
+            .capitalizingFirstLetter()
     }
 
     // MARK: - Status Colors

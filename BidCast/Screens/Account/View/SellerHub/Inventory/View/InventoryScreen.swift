@@ -1291,26 +1291,32 @@ struct ProductCardView: View {
     
     // MARK: - Main Content
     private var mainContent: some View {
-        ZStack(alignment: .topTrailing) {
-            cardContainer
-        }
+        cardContainer
     }
     
     // MARK: - Card Container
+    // Basecamp #9986437322 (round 2): 3-dots moved to TOP-RIGHT corner to match Android.
+    // Menu button is overlaid via ZStack in mainContent rather than inline in the HStack.
     private var cardContainer: some View {
-        HStack {
-            cardContent
-            Spacer()
+        ZStack(alignment: .topTrailing) {
+            HStack {
+                cardContent
+                // Reserve space on the right so the card text doesn't underlap the menu button
+                if !isSelectionMode {
+                    Spacer().frame(width: 40)
+                }
+            }
+            .background(cardBackground)
+            .overlay(cardBorder)
+            .onTapGesture {
+                onSelect?(product)
+            }
+
             if !isSelectionMode {
                 menuButton
+                    .padding(.top, 4)
+                    .padding(.trailing, 4)
             }
-        }
-        .background(cardBackground)
-        .overlay(cardBorder)
-        .onTapGesture {
-//            if isSelectionMode {
-                onSelect?(product)
-//            }
         }
     }
     
@@ -1426,11 +1432,12 @@ struct ProductCardView: View {
     }
     
     // MARK: - Menu Button Label
+    // Basecamp #9986437322 (round 2): removed .padding(.top, 12) — button is now
+    // anchored top-right via ZStack in cardContainer, so no artificial push needed.
     private var menuButtonLabel: some View {
         Image(systemName: "ellipsis")
             .font(.system(size: 18, weight: .semibold))
             .foregroundColor(.gray)
-            .padding(.top, 12)
             .frame(width: 32, height: 32)
             .background(Color(.systemBackground))
             .clipShape(Circle())
@@ -1531,20 +1538,29 @@ extension ProductCardView {
 
 // MARK: - Product Details Extension
 extension ProductCardView {
+    // Basecamp #9986437322 (round 2): reordered to match Android exactly:
+    //   title → condition•category line → type pill → price → bids → Stock: N (bottom-right)
     var productDetailsView: some View {
         VStack(alignment: .leading, spacing: 8) {
             productTitle
-            formatBadge
             productMetadata
-            productQuantity
+            formatBadge
             priceSectionView
+            // "Stock: N" anchored bottom-right inside the detail column
+            HStack {
+                Spacer()
+                productStockLabel
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // Basecamp #5 (PWA refs 89eb86d1, b6794176, 83501a01): per-product format
-    // badge — red "Live Auction" for auction products, blue "Buy Now" for
-    // buy-it-now. Legacy/no-type rows fall back to the `auction` boolean.
+    // Basecamp #9986437322 (round 2): pill logic now mirrors Android exactly —
+    // check the authoritative `auction` boolean FIRST (before inspecting the
+    // `type`/`saleFormat` text hint), so products whose `auction=true` always
+    // show "Live Auction" regardless of the `type` string value.
+    // Android reference: Product.kt isLiveAuctionFormat() — first branch is
+    //   `if (auction == true || reserveForLive == true || isAuction == true) return true`
     @ViewBuilder private var formatBadge: some View {
         if isAuctionFormat {
             badgeView(title: "Live Auction", color: .red)
@@ -1553,8 +1569,26 @@ extension ProductCardView {
         }
     }
 
+    // Basecamp #9986437322 (round 2): `auction` bool is AUTHORITATIVE per house
+    // rule. Check it and the equivalent `isAuction`/`reserveForLive` flags first,
+    // then fall through to the text-based type/saleFormat hints for backward compat.
     private var isAuctionFormat: Bool {
-        product.isLiveAuctionProduct
+        // Priority 1 — boolean flags (same order as Android isLiveAuctionFormat)
+        if product.auction == true || product.reserveForLive == true || product.isAuction == true {
+            return true
+        }
+        // Priority 2 — text hints (backward compat for older records)
+        let normalized = { (v: String?) -> String in
+            (v ?? "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+                .replacingOccurrences(of: "-", with: "_")
+                .replacingOccurrences(of: " ", with: "_")
+        }
+        let liveSet: Set<String> = ["live", "auction", "live_auction", "reserve_for_live", "reserveforlive"]
+        if liveSet.contains(normalized(product.type)) { return true }
+        if liveSet.contains(normalized(product.saleFormat)) { return true }
+        return false
     }
 
     private var productTitle: some View {
@@ -1563,38 +1597,34 @@ extension ProductCardView {
             .foregroundColor(.black)
             .lineLimit(2)
     }
-    
+
     private var productMetadata: some View {
         HStack(spacing: 6) {
             Text(product.productCondition ?? "New")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.darkGray)
                 .lineLimit(1)
-            
+
             Circle()
                 .fill(Color.secondary)
                 .frame(width: 3, height: 3)
-            
+
             Text(product.category?.name ?? "Category")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.darkGray)
         }
     }
-    
-    private var productQuantity: some View {
-        // QA #11 — show remaining stock (quantity - purchased_quantity) so the badge updates after a sale.
-        // Falls back to quantity when purchased_quantity is missing; clamps at 0 so we never show negatives.
-        Text("Quantity: \(availableStockString)")
+
+    // Basecamp #9986437322 (round 2): renamed "Quantity" → "Stock" and moved to
+    // bottom-right of the card, matching Android's InventoryAdapter which shows
+    // `"Stock: " + item?.quantity` (raw quantity field, NOT quantity-purchasedQty).
+    // The prior iOS logic subtracted purchasedQuantity which caused "Stock: 0"
+    // when the server returned purchasedQuantity == quantity even though remaining
+    // inventory was still available in the v1 payload's `quantity` field.
+    private var productStockLabel: some View {
+        Text("Stock: \(product.quantity ?? "0")")
             .font(.custom(poppinsRegular, size: 13))
             .foregroundColor(.darkGray)
-    }
-
-    private var availableStockString: String {
-        let totalString = product.quantity ?? "0"
-        let purchasedString = product.purchasedQuantity ?? "0"
-        guard let total = Int(totalString) else { return totalString }
-        let purchased = Int(purchasedString) ?? 0
-        return "\(max(total - purchased, 0))"
     }
 }
 
@@ -1622,12 +1652,13 @@ extension ProductCardView {
 
 // MARK: - Price Section Extension
 extension ProductCardView {
+    // Basecamp #9986437322 (round 2): left-aligned to match Android card layout.
     var priceSectionView: some View {
-        VStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             Text("\(formatCurrencyCompact(Double(product.pricing ?? "0.0") ?? 0.0))")
                 .font(.custom(poppinsSemiBold, size: 16))
                 .foregroundColor(.primary)
-            
+
             Text("\(product.bidCount ?? 0) Bids")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
