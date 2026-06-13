@@ -65,7 +65,18 @@ class OfferViewController: UIViewController {
     
     //MARK: - configureHeaderView.
     func configureHeaderView(){
-        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: true,headerName: AppString.VCName.offer)
+        self.headerView.headerViewSetup(
+            rightButtonHidden: true,
+            leftButtonHidden: false,
+            headerName: AppString.VCName.offer,
+            setAppBtnImage: UIImage(named: "ic_back"),
+            appButtonAction: didTabBack
+        )
+    }
+
+    //MARK: - didTabBack.
+    @objc private func didTabBack() {
+        self.goToBack()
     }
 }
 
