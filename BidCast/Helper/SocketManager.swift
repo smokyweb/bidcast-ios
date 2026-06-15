@@ -650,6 +650,11 @@ final class SocketManagerService: NSObject, ObservableObject {
             guard let self,
                   let json = data.first as? [String: Any],
                   let roomId = (json["room_end"] as? String) ?? (json["room_id"] as? String) else { return }
+
+            if (json["raid"] as? Bool) == true {
+                logger.info("🏁 Ignoring raid source-room end: \(roomId)")
+                return
+            }
             
             logger.info("🏁 Room ended: \(roomId)")
             
@@ -907,6 +912,7 @@ final class SocketManagerService: NSObject, ObservableObject {
        }
     
     func listenForRaidEvent(completion: @escaping (_ raidInfo: RaidInfo?) -> Void) {
+        socket.off("receiveRaid")
         socket.on("receiveRaid") { [weak self] data, _ in
             guard let self else { return }
             guard let json = data.first as? [String: Any] else {
@@ -920,10 +926,8 @@ final class SocketManagerService: NSObject, ObservableObject {
                 let raidInfo = try JSONDecoder().decode(RaidInfo.self, from: jsonData)
                 print("📥 Received Raid Info:", raidInfo)
                 
-                // ✅ Example: stop listening for roomEnded in this room
                 if let sourceRoom = raidInfo.source_room_id {
-                    socket.off("roomEnded")
-                    logger.info("🛑 Source room \(sourceRoom) stopped listening for roomEnded due to raid")
+                    logger.info("🛑 Raid transition from source room \(sourceRoom)")
                 }
 
                 completion(raidInfo)

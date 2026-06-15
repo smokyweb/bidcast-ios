@@ -2547,6 +2547,7 @@ extension LiveStream {
         socketManagerChat.listenForChat(roomId: roomId)
         socketManagerChat.listenForViewerCount()
         socketManagerChat.listenForBidTimer(roomId: roomId)
+        listenForRaidEvents()
 
         // Basecamp #9933402746 (2026-05-27): wire the buyer-side show-notes
         // listener. Previously this was only called in RehearsalScreen (seller),
@@ -2615,8 +2616,8 @@ extension LiveStream {
         }
 
         socketManagerChat.listenForRoomEnded { endedRoomId in
-            logoutRoom()
             guard roomId == endedRoomId else { return }
+            logoutRoom()
             presentError(title: "Stream Ended", message: "The host has ended the live stream.")
             hasHostEndedRoom = true
         }
@@ -3023,8 +3024,9 @@ extension LiveStream {
         sellerId = "\(resolvedSellerId)"
         auctionTypeId = currentRoomData.auction_type_id ?? 0
         let roomModelToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
-        self.agoraToken = roomModelToken
-        print("RAID_QA: [JOIN] joinStreamUsingSocket — room=\(roomId), roomModelTokenEmpty=\(roomModelToken.isEmpty), isHost=\(isHost)")
+        let resolvedToken = roomModelToken.isEmpty ? self.agoraToken : roomModelToken
+        self.agoraToken = resolvedToken
+        print("RAID_QA: [JOIN] joinStreamUsingSocket — room=\(roomId), roomModelTokenEmpty=\(roomModelToken.isEmpty), resolvedTokenEmpty=\(resolvedToken.isEmpty), isHost=\(isHost)")
         if !agoraToken.isEmpty && !roomId.isEmpty {
             print("🎥 Joining Agora with token: \(agoraToken)")
             print("RAID_QA: [JOIN] calling agoraManager.joinChannel asHost=\(isHost)")
