@@ -2216,12 +2216,23 @@ struct LiveStream: View {
             showHud = true
             return
         }
+        guard UserDefaults.hasCardAdded,
+              let cardId = UserDefaults.default_card.card_id,
+              !cardId.isEmpty else {
+            hudMsg = "Add a payment card before purchasing a show promotion."
+            showHud = true
+            return
+        }
         
             let showId = liveShowsData[currentIndex].show_id ?? ""
         Task {
             if isInternetAvailable() {
                 SVProgressHUD.show()
-                let request = StorePromoteShowRequest(scheduleShowId: "\(showId)", promoteShowId: "\(promoteId)")
+                let request = StorePromoteShowRequest(
+                    scheduleShowId: "\(showId)",
+                    promoteShowId: "\(promoteId)",
+                    customerPaymentProfileId: cardId
+                )
                 await viewModel.storePromoteShow(parameters: request)
                 await SVProgressHUD.dismiss()
                 successPromoteShow()

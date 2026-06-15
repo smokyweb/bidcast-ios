@@ -775,9 +775,23 @@ struct ShowDetailsScreen: View {
         }
         let showIdInt = show.id ?? (Int(showId) ?? 0)
         guard showIdInt > 0 else { return }
+        guard UserDefaults.hasCardAdded,
+              let cardId = UserDefaults.default_card.card_id,
+              !cardId.isEmpty else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Payment Method Required",
+                message: "Add a payment card before purchasing a show promotion.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK"
+            )
+            showError = true
+            return
+        }
         let req = StorePromoteShowRequest(
             scheduleShowId: "\(showIdInt)",
-            promoteShowId: "\(promoteId)"
+            promoteShowId: "\(promoteId)",
+            customerPaymentProfileId: cardId
         )
         Task {
             isPromoting = true

@@ -49,6 +49,7 @@ struct LetsPrepare: View {
     @State var prepareBoosts: [BoostModel] = []
     @State var isPreparePromoting: Bool = false
     @State var showPreparePromoteSuccess: Bool = false
+    @State var didCompletePreparePromotion: Bool = false
     var prepareShowsViewModel = ShowsViewModel()
     
     private var currentProgress: Double {
@@ -226,10 +227,11 @@ struct LetsPrepare: View {
         }
         // Basecamp #9986427172 (QA round 4): promote sheet for existing-show mode (idx==3).
         .sheet(isPresented: $showPromoteSheetFromPrepare, onDismiss: {
-            // Mark step 3 complete after the sheet dismisses, regardless of purchase.
-            if coordinator.currentIndex == 3 {
+            // Mark step 3 complete only after a real promotion purchase succeeds.
+            if didCompletePreparePromotion && coordinator.currentIndex == 3 {
                 coordinator.markCurrentStepCompleted()
             }
+            didCompletePreparePromotion = false
         }) {
             PromoteShowSheet(
                 boosts: $prepareBoosts,
@@ -425,9 +427,23 @@ struct LetsPrepare: View {
         guard let promoteId = boost.id,
               let existingId = coordinator.existingShowId,
               let showIdInt = Int(existingId), showIdInt > 0 else { return }
+        guard UserDefaults.hasCardAdded,
+              let cardId = UserDefaults.default_card.card_id,
+              !cardId.isEmpty else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Payment Method Required",
+                message: "Add a payment card before purchasing a show promotion.",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            return
+        }
         let req = StorePromoteShowRequest(
             scheduleShowId: "\(showIdInt)",
-            promoteShowId: "\(promoteId)"
+            promoteShowId: "\(promoteId)",
+            customerPaymentProfileId: cardId
         )
         Task {
             isPreparePromoting = true
@@ -444,6 +460,10 @@ struct LetsPrepare: View {
                 )
                 showError = true
             } else if prepareShowsViewModel.storePromoteShowModel?.status == "success" {
+                didCompletePreparePromotion = true
+                if coordinator.currentIndex == 3 {
+                    coordinator.markCurrentStepCompleted()
+                }
                 showPreparePromoteSuccess = true
             }
         }
