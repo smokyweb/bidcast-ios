@@ -71,10 +71,18 @@ struct LoginScreen: View {
         // makes the transition a smooth, single-color fade.
         ScrollView(showsIndicators: false) {
             ZStack {
-                VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
-                    Image(.logo1)
-                        .frame(width: screenWidth, height: screenHeight/3.8)
-                        .edgesIgnoringSafeArea(.top)
+                VStack(alignment: .center) {
+                    ZStack {
+                        Color.white
+                        Image(.logo1)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: min(screenWidth - 40, 325))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: screenHeight / 3.8)
+                    .clipped()
+                    .ignoresSafeArea(edges: .top)
                     Spacer()
                 }
                 VStack(alignment: .leading, spacing: 16) {

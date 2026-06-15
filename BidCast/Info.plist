@@ -90,7 +90,7 @@
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
-		<string>LaunchBackground</string>
+		<string>LaunchLogoBackground</string>
 		<key>UIImageName</key>
 		<string>logo1</string>
 	</dict>
