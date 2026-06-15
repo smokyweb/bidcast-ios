@@ -674,6 +674,10 @@ struct RehearsalScreen: View {
                     }
                 } else if comeFromPrepare && !comeForLive {
                     showReadyModal = false
+                    showWelcomeDialog = false
+                    showButton = true
+                    showPreLiveControls = true
+                    showLiveControls = false
                 } else {
                     showReadyModal = true
                 }
@@ -1722,7 +1726,7 @@ struct RehearsalScreen: View {
     private var startOrContinueButtons: some View {
         VStack {
             if showButton {
-                if !isLive {
+                if !isLive && !(comeFromPrepare && !comeForLive) {
                     Button(action: {
                         fetchAgoraToken()
                         

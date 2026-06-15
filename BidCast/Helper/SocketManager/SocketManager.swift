@@ -166,6 +166,36 @@ struct RaidInfo: Codable {
     var source_room_id: String?
     var target_room_id: String?
     var rtcToken: String?
+
+    enum CodingKeys: String, CodingKey {
+        case message
+        case source_room_id
+        case target_room_id
+        case rtcToken = "rtc_token"
+    }
+
+    enum FallbackCodingKeys: String, CodingKey {
+        case rtcToken
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        message = try container.decodeIfPresent(String.self, forKey: .message)
+        source_room_id = try container.decodeIfPresent(String.self, forKey: .source_room_id)
+        target_room_id = try container.decodeIfPresent(String.self, forKey: .target_room_id)
+        rtcToken = try container.decodeIfPresent(String.self, forKey: .rtcToken)
+        if rtcToken == nil {
+            let fallback = try decoder.container(keyedBy: FallbackCodingKeys.self)
+            rtcToken = try fallback.decodeIfPresent(String.self, forKey: .rtcToken)
+        }
+    }
+
+    init(message: String? = nil, source_room_id: String? = nil, target_room_id: String? = nil, rtcToken: String? = nil) {
+        self.message = message
+        self.source_room_id = source_room_id
+        self.target_room_id = target_room_id
+        self.rtcToken = rtcToken
+    }
 }
 
 
