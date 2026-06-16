@@ -9,6 +9,8 @@ workflows:
       vars:
         BUNDLE_ID: io.bidcast
         TEAM_ID: YQGQU3RV34
+        IOS_MARKETING_VERSION: 1.0.1
+        IOS_MIN_BUILD_NUMBER: 403
       xcode: "26.4"
     scripts:
       - name: Inspect Xcode project layout
@@ -25,11 +27,89 @@ workflows:
             --create -v
           keychain add-certificates
           xcode-project use-profiles --project BidCast.xcodeproj
-      - name: Set unique TestFlight build number
+      - name: Set TestFlight version and build number
         script: |
-          BUILD_NUMBER="$(date -u +%y%m%d%H%M%S)"
+          MARKETING_VERSION="${IOS_MARKETING_VERSION:-1.0.1}"
+          MIN_BUILD_NUMBER="${IOS_MIN_BUILD_NUMBER:-403}"
+
+          cat >/tmp/next_ios_build_number.rb <<'RUBY'
+          require "base64"
+          require "json"
+          require "net/http"
+          require "openssl"
+          require "uri"
+
+          def b64url(value)
+            Base64.urlsafe_encode64(value).delete("=")
+          end
+
+          def asc_token
+            private_key = ENV.fetch("APP_STORE_CONNECT_PRIVATE_KEY").gsub("\\n", "\n")
+            key = OpenSSL::PKey::EC.new(private_key)
+            header = {
+              alg: "ES256",
+              kid: ENV.fetch("APP_STORE_CONNECT_KEY_IDENTIFIER"),
+              typ: "JWT"
+            }
+            payload = {
+              iss: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
+              exp: Time.now.to_i + 900,
+              aud: "appstoreconnect-v1"
+            }
+            unsigned = "#{b64url(header.to_json)}.#{b64url(payload.to_json)}"
+            der_signature = key.dsa_sign_asn1(OpenSSL::Digest::SHA256.digest(unsigned))
+            signature_parts = OpenSSL::ASN1.decode(der_signature).value.map(&:value)
+            signature = signature_parts.map { |part| part.to_s(2).rjust(32, "\0") }.join
+            "#{unsigned}.#{b64url(signature)}"
+          end
+
+          def asc_get(path, token)
+            uri = URI("https://api.appstoreconnect.apple.com#{path}")
+            request = Net::HTTP::Get.new(uri)
+            request["Authorization"] = "Bearer #{token}"
+            response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+              http.request(request)
+            end
+            unless response.is_a?(Net::HTTPSuccess)
+              warn response.body
+              raise "App Store Connect request failed: #{response.code} #{path}"
+            end
+            JSON.parse(response.body)
+          end
+
+          token = asc_token
+          bundle_id = ENV.fetch("BUNDLE_ID")
+          version = ENV.fetch("MARKETING_VERSION")
+          minimum = ENV.fetch("MIN_BUILD_NUMBER").to_i
+
+          apps = asc_get("/v1/apps?filter[bundleId]=#{URI.encode_www_form_component(bundle_id)}", token)
+          app_id = apps.fetch("data").first&.fetch("id")
+          raise "No App Store Connect app found for #{bundle_id}" unless app_id
+
+          max_uploaded = 0
+          path = "/v1/builds?filter[app]=#{app_id}&filter[version]=#{URI.encode_www_form_component(version)}&limit=200"
+          loop do
+            payload = asc_get(path, token)
+            payload.fetch("data").each do |build|
+              raw = build.dig("attributes", "version").to_s
+              max_uploaded = [max_uploaded, raw.to_i].max if raw.match?(/\A\d+\z/)
+            end
+            next_link = payload.dig("links", "next")
+            break unless next_link
+            path = URI(next_link).request_uri
+          end
+
+          puts [minimum, max_uploaded + 1].max
+          RUBY
+
+          export MARKETING_VERSION
+          export MIN_BUILD_NUMBER
+          BUILD_NUMBER="$(ruby /tmp/next_ios_build_number.rb)"
+          /bin/echo "Setting MARKETING_VERSION=${MARKETING_VERSION}"
           /bin/echo "Setting CURRENT_PROJECT_VERSION=${BUILD_NUMBER}"
+          /usr/bin/perl -0pi -e "s/MARKETING_VERSION = [0-9.]+;/MARKETING_VERSION = ${MARKETING_VERSION};/g" BidCast.xcodeproj/project.pbxproj
           /usr/bin/perl -0pi -e "s/CURRENT_PROJECT_VERSION = [0-9]+;/CURRENT_PROJECT_VERSION = ${BUILD_NUMBER};/g" BidCast.xcodeproj/project.pbxproj
+          /usr/bin/grep -n "MARKETING_VERSION" BidCast.xcodeproj/project.pbxproj
           /usr/bin/grep -n "CURRENT_PROJECT_VERSION" BidCast.xcodeproj/project.pbxproj
       - name: Build iOS
         script: |
