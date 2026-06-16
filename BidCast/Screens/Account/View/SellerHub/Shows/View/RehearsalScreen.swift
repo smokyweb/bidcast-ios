@@ -307,6 +307,7 @@ struct RehearsalScreen: View {
         currentPrice = Double(auctionedProductData.pricing ?? "") ?? 0
         auctionTypeId = 5
         categoryName = auctionedProductData.category?.name ?? "Practice"
+        productId = auctionedProductData.id ?? 0
         hasAuctionStarted = true
         isLive = true
         showButton = true
@@ -317,7 +318,7 @@ struct RehearsalScreen: View {
         winnerAmount = String(format: "%.2f", currentPrice + 2)
         socketManager.chats.removeAll()
         appendPrepareRehearsalChat(name: "Sample Buyer", message: "Can you show the details?")
-        appendPrepareRehearsalChat(name: "Practice Bidder", message: "Ready for the next bid.")
+        appendPrepareRehearsalChat(name: "Practice Bidder", message: "Bid placed at $\(winnerAmount)")
         appendPrepareRehearsalChat(name: "Demo Viewer", message: "This is a rehearsal chat.")
     }
 
@@ -1694,11 +1695,13 @@ struct RehearsalScreen: View {
         VStack {
             Spacer()
             VStack(spacing: 4) {
-                if showLiveControls {
+                if isPrepareRehearsal {
+                    prepareRehearsalSideButtons
+                } else if showLiveControls {
                     liveSideButtons
                 }
 
-                if showPreLiveControls {
+                if !isPrepareRehearsal && showPreLiveControls {
                     preLiveSideButtons
                 }
             }
@@ -1818,7 +1821,7 @@ struct RehearsalScreen: View {
             
             if comeFromPrepare && !comeForLive {
                 Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                    Text("Continue")
+                    Text("End Rehearsal")
                         .font(.custom(poppinsBold, size: 13))
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -1982,6 +1985,62 @@ struct RehearsalScreen: View {
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var prepareRehearsalSideButtons: some View {
+        VStack(spacing: 4) {
+            Button(action: {
+                isMicOn.toggle()
+                agoraManager.toggleAudioMute()
+            }) {
+                VStack {
+                    Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 25, height: 24)
+                        .foregroundColor(.white)
+                    Text(isMicOn ? "Mic Test" : "Muted")
+                        .font(.custom(poppinsRegular, size: 8))
+                        .foregroundColor(.white)
+                }
+                .padding()
+            }
+
+            Button(action: {
+                isUsingFrontCamera.toggle()
+                agoraManager.switchCamera()
+            }) {
+                VStack {
+                    Image(.camera)
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 25, height: 24)
+                        .foregroundColor(.white)
+                    Text("Switch")
+                        .font(.custom(poppinsRegular, size: 8))
+                        .foregroundColor(.white)
+                }
+                .padding()
+            }
+
+            VStack {
+                StackedImageView(
+                    imageURL: auctionedProductData.images?.first
+                        ?? productData.first?.images?.first
+                        ?? "",
+                    totalCount: liveShowProductCount
+                ) {
+                    showProductSheet = true
+                }
+                Text("Shop")
+                    .font(.custom(poppinsRegular, size: 8))
+                    .foregroundColor(.white)
+            }
+            .padding(.top, 4)
         }
     }
 

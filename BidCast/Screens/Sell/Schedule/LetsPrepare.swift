@@ -51,6 +51,9 @@ struct LetsPrepare: View {
     @State var isPreparePromoting: Bool = false
     @State var showPreparePromoteSuccess: Bool = false
     @State var didCompletePreparePromotion: Bool = false
+    @State private var pendingPreparePromotionBoost: BoostModel?
+    @State private var showPreparePromotionConfirm: Bool = false
+    @StateObject private var prepareCardViewModel = StripeCardViewModel()
     var prepareShowsViewModel = ShowsViewModel()
     
     private var currentProgress: Double {
@@ -238,7 +241,7 @@ struct LetsPrepare: View {
             PromoteShowSheet(
                 boosts: $prepareBoosts,
                 onPromotionSelected: { selectedBoost in
-                    storePreparePromoteShow(boost: selectedBoost)
+                    selectPreparePromotion(boost: selectedBoost)
                     showPromoteSheetFromPrepare = false
                 },
                 onClose: { showPromoteSheetFromPrepare = false },
@@ -253,6 +256,21 @@ struct LetsPrepare: View {
             .presentationDetents([.fraction(0.70)])
             .presentationCornerRadius(25)
             .presentationDragIndicator(.hidden)
+        }
+        .alert(
+            "Confirm Purchase",
+            isPresented: $showPreparePromotionConfirm,
+            presenting: pendingPreparePromotionBoost
+        ) { boost in
+            Button("Confirm Purchase") {
+                storePreparePromoteShow(boost: boost)
+                pendingPreparePromotionBoost = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingPreparePromotionBoost = nil
+            }
+        } message: { boost in
+            Text(preparePromotionConfirmationMessage(for: boost))
         }
         .alert("Show Promoted", isPresented: $showPreparePromoteSuccess) {
             Button("OK", role: .cancel) { }
@@ -414,6 +432,7 @@ struct LetsPrepare: View {
             isPreparePromoting = true
             prepareShowsViewModel.errorMessage = nil
             await prepareShowsViewModel.getPromoteShows()
+            try? await prepareCardViewModel.getCards()
             isPreparePromoting = false
             if let msg = prepareShowsViewModel.errorMessage, !msg.isEmpty {
                 alertType = .sheetType(
@@ -431,15 +450,65 @@ struct LetsPrepare: View {
         }
     }
 
+    private var selectedPreparePaymentCard: CardDataModel? {
+        let cards = prepareCardViewModel.cards?.data ?? []
+        return cards.first(where: { $0.isDefault == true }) ?? cards.first
+    }
+
+    private var selectedPreparePaymentCardId: String? {
+        if let cardId = selectedPreparePaymentCard?.cardID, !cardId.isEmpty {
+            return cardId
+        }
+        if UserDefaults.hasCardAdded,
+           let cardId = UserDefaults.default_card.card_id,
+           !cardId.isEmpty {
+            return cardId
+        }
+        return nil
+    }
+
+    private func selectPreparePromotion(boost: BoostModel) {
+        guard selectedPreparePaymentCardId != nil else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Payment Method Required",
+                message: "Add a payment card before purchasing a show promotion.",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            return
+        }
+        pendingPreparePromotionBoost = boost
+        showPreparePromotionConfirm = true
+    }
+
+    private func preparePromotionConfirmationMessage(for boost: BoostModel) -> String {
+        let planTitle = boost.title ?? "Show Promotion"
+        let subtitle = boost.sub_title?.isEmpty == false ? "\n\(boost.sub_title ?? "")" : ""
+        let price = "$\(boost.price ?? "0")"
+        let card = selectedPreparePaymentCard
+        let last4 = card?.last4 ?? UserDefaults.default_card.last4 ?? "----"
+        let expMonth = card?.expMonth ?? UserDefaults.default_card.exp_month ?? 0
+        let expYear = card?.expYear ?? UserDefaults.default_card.exp_year ?? 0
+        return """
+        Plan: \(planTitle)\(subtitle)
+
+        Payment method:
+        **** **** **** \(last4)
+        Expires \(expMonth)/\(expYear)
+
+        Total: \(price)
+        """
+    }
+
     // Basecamp #9986427172 (QA round 4): call the promote endpoint for the selected tier.
     // Called from the PromoteShowSheet onPromotionSelected closure when in existing-show mode.
     private func storePreparePromoteShow(boost: BoostModel) {
         guard let promoteId = boost.id,
               let existingId = coordinator.existingShowId,
               let showIdInt = Int(existingId), showIdInt > 0 else { return }
-        guard UserDefaults.hasCardAdded,
-              let cardId = UserDefaults.default_card.card_id,
-              !cardId.isEmpty else {
+        guard let cardId = selectedPreparePaymentCardId else {
             alertType = .sheetType(
                 icon: .alert,
                 title: "Payment Method Required",
