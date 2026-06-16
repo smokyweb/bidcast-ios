@@ -109,6 +109,9 @@ struct RehearsalScreen: View {
     
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
+    @State private var isPrepareRehearsalStarted: Bool = false
+    @State private var prepareRehearsalElapsedSeconds: Int = 0
+    @State private var prepareRehearsalTimer: Timer?
     
     var tabBarHeight: CGFloat {
         Self.safeAreaBottomInset ?? 49
@@ -303,23 +306,102 @@ struct RehearsalScreen: View {
         productData = samples
         productListData = samples
         productCount = samples.count
-        auctionedProductData = samples.first ?? ProductDataModel1()
-        currentPrice = Double(auctionedProductData.pricing ?? "") ?? 0
+        auctionedProductData = ProductDataModel1()
+        currentPrice = 0
         auctionTypeId = 5
-        categoryName = auctionedProductData.category?.name ?? "Practice"
-        productId = auctionedProductData.id ?? 0
-        hasAuctionStarted = true
-        isLive = true
+        categoryName = "Practice"
+        productId = 0
+        hasAuctionStarted = false
+        isLive = false
         showButton = true
         showLiveControls = true
         showPreLiveControls = false
         socketManager.bidTime = "12s"
-        winnerName = "Sample Buyer"
-        winnerAmount = String(format: "%.2f", currentPrice + 2)
+        winnerName = ""
+        winnerAmount = ""
         socketManager.chats.removeAll()
-        appendPrepareRehearsalChat(name: "Sample Buyer", message: "Can you show the details?")
-        appendPrepareRehearsalChat(name: "Practice Bidder", message: "Bid placed at $\(winnerAmount)")
-        appendPrepareRehearsalChat(name: "Demo Viewer", message: "This is a rehearsal chat.")
+        socketManager.viewerCount = 0
+        socketManager.showTime = "00:00:00"
+    }
+
+    private func startPrepareRehearsal() {
+        guard isPrepareRehearsal else { return }
+        isPrepareRehearsalStarted = true
+        showButton = true
+        showLiveControls = true
+        showPreLiveControls = false
+        socketManager.viewerCount = 0
+        socketManager.chats.removeAll()
+        appendPrepareRehearsalChat(name: "System", message: "Rehearsal started. Tap Shop to start your demo auction.", userId: "practice-system")
+        startPrepareRehearsalTimer()
+    }
+
+    private func endPrepareRehearsal() {
+        stopPrepareRehearsalTimer()
+        presentationMode.wrappedValue.dismiss()
+    }
+
+    private func startPrepareAuction(at index: Int = 0) {
+        guard isPrepareRehearsalStarted else {
+            hudMsg = "Please start rehearsal first"
+            showhud = true
+            return
+        }
+        guard productData.indices.contains(index) else { return }
+        auctionedProductData = productData[index]
+        currentPrice = Double(auctionedProductData.pricing ?? "") ?? 0
+        productId = auctionedProductData.id ?? 0
+        categoryName = auctionedProductData.category?.name ?? "Practice"
+        hasAuctionStarted = true
+        winnerName = "Sample Buyer"
+        winnerAmount = String(format: "%.2f", currentPrice)
+        socketManager.bidTime = "12s"
+        appendPrepareRehearsalChat(name: "System", message: "Auction started for \(auctionedProductData.title ?? "sample product").", userId: "practice-system")
+    }
+
+    private func runNextPrepareProduct() {
+        let currentId = auctionedProductData.id
+        let nextIndex: Int
+        if let currentId,
+           let currentIndex = productData.firstIndex(where: { $0.id == currentId }) {
+            nextIndex = (currentIndex + 1) % max(productData.count, 1)
+        } else {
+            nextIndex = 0
+        }
+        startPrepareAuction(at: nextIndex)
+        appendPrepareRehearsalChat(name: "System", message: "Moved to next product simulation.", userId: "practice-system")
+    }
+
+    private func startPrepareRehearsalTimer() {
+        stopPrepareRehearsalTimer()
+        prepareRehearsalTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            guard isPrepareRehearsalStarted else { return }
+            prepareRehearsalElapsedSeconds += 1
+            socketManager.showTime = formatPrepareRehearsalElapsed(prepareRehearsalElapsedSeconds)
+
+            if prepareRehearsalElapsedSeconds % 7 == 0 {
+                socketManager.viewerCount = Int.random(in: 1...12)
+            }
+
+            if hasAuctionStarted && prepareRehearsalElapsedSeconds % 4 == 0 {
+                currentPrice += Double(Int.random(in: 1...3))
+                winnerAmount = String(format: "%.2f", currentPrice)
+                winnerName = "Sample Buyer"
+                appendPrepareRehearsalChat(name: "Practice Bidder", message: "Practice bid updated to $\(winnerAmount)")
+            }
+        }
+    }
+
+    private func stopPrepareRehearsalTimer() {
+        prepareRehearsalTimer?.invalidate()
+        prepareRehearsalTimer = nil
+    }
+
+    private func formatPrepareRehearsalElapsed(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        let remainingSeconds = seconds % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, remainingSeconds)
     }
 
     private func mergeProductsIntoLiveShow(_ products: [ProductDataModel1]) {
@@ -390,6 +472,15 @@ struct RehearsalScreen: View {
                     productData: $productData,
                     productShowType: .shop,
                     onLiveStreamStart: { selectedID in
+                        if isPrepareRehearsal {
+                            showProductSheet = false
+                            if let selectedIndex = productData.firstIndex(where: { "\($0.id ?? 0)" == selectedID }) {
+                                startPrepareAuction(at: selectedIndex)
+                            } else {
+                                startPrepareAuction(at: 0)
+                            }
+                            return
+                        }
 //                        guard Reachability.isConnectedToNetwork() else {
 //                            hudMsg = "No Internet Connection"
 //                            showhud = true
@@ -756,6 +847,12 @@ struct RehearsalScreen: View {
             }
         }
         .onDisappear {
+            if isPrepareRehearsal {
+                stopPrepareRehearsalTimer()
+                hasInitialized = false
+                return
+            }
+
             guard !shouldPreventReload else {
                 print("🔄 Just navigating to edit - keeping everything alive")
                 return // ⚠️ DON'T RUN endShow()
@@ -1375,7 +1472,7 @@ struct RehearsalScreen: View {
                         .font(.custom(poppinsSemiBold, size: 14))
                         .foregroundColor(.white)
 
-                    Text("Show Time \(socketManager.showTime)")
+                    Text(isPrepareRehearsal ? "Rehearsal Time \(socketManager.showTime)" : "Show Time \(socketManager.showTime)")
                         .font(.custom(poppinsRegular, size: 11))
                         .foregroundColor(.white)
                 }
@@ -1550,7 +1647,7 @@ struct RehearsalScreen: View {
     }
 
     private var liveBadge: some View {
-        Text(isLive ? "Live" : "Rehearsal")
+        Text(isPrepareRehearsal ? "Rehearsal" : (isLive ? "Live" : "Rehearsal"))
             .font(.custom(poppinsRegular, size: 12))
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -1561,7 +1658,9 @@ struct RehearsalScreen: View {
 
     private var closeButton: some View {
         Button {
-            if isLive {
+            if isPrepareRehearsal {
+                endPrepareRehearsal()
+            } else if isLive {
                 currentBottomSheet = .endShow
                 showSellSheet = true
             } else {
@@ -1731,7 +1830,9 @@ struct RehearsalScreen: View {
             if showLiveControls {
                 VStack(alignment: .leading, spacing: 12) {
                     
-                    chatInputRow
+                    if !isPrepareRehearsal || isPrepareRehearsalStarted {
+                        chatInputRow
+                    }
                     
                     pollPreviewSection
                     
@@ -1776,7 +1877,13 @@ struct RehearsalScreen: View {
                                 hasWon: $socketManager.hasWon,
                                 sellerId: $sellerId,
                                 onTap: { showItemDetailSheet = true },
-                                onTapRunNext: { socketManager.runNextProduct(roomId: roomId) }
+                                onTapRunNext: {
+                                    if isPrepareRehearsal {
+                                        runNextPrepareProduct()
+                                    } else {
+                                        socketManager.runNextProduct(roomId: roomId)
+                                    }
+                                }
                             )
                             .frame(maxWidth: .infinity)
                             .background(Color.black.opacity(0.3))
@@ -1799,7 +1906,25 @@ struct RehearsalScreen: View {
     @ViewBuilder
     private var startOrContinueButtons: some View {
         VStack {
-            if showButton {
+            if isPrepareRehearsal {
+                Button(action: {
+                    if isPrepareRehearsalStarted {
+                        endPrepareRehearsal()
+                    } else {
+                        startPrepareRehearsal()
+                    }
+                }) {
+                    Text(isPrepareRehearsalStarted ? "End Rehearsal" : "Start Rehearsal")
+                        .font(.custom(poppinsBold, size: 13))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.defaultTheme)
+                        .foregroundColor(.white)
+                        .cornerRadius(32)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 30)
+            } else if showButton {
                 if !isLive && !(comeFromPrepare && !comeForLive) {
                     Button(action: {
                         fetchAgoraToken()
@@ -1816,21 +1941,6 @@ struct RehearsalScreen: View {
                     .padding(.horizontal)
                     .padding(.bottom, 28)
                 }
-            }
-            
-            
-            if comeFromPrepare && !comeForLive {
-                Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                    Text("End Rehearsal")
-                        .font(.custom(poppinsBold, size: 13))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.defaultTheme)
-                        .foregroundColor(.white)
-                        .cornerRadius(32)
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 30)
             }
             
         }
@@ -2034,7 +2144,12 @@ struct RehearsalScreen: View {
                         ?? "",
                     totalCount: liveShowProductCount
                 ) {
-                    showProductSheet = true
+                    if isPrepareRehearsalStarted {
+                        showProductSheet = true
+                    } else {
+                        hudMsg = "Please start rehearsal first"
+                        showhud = true
+                    }
                 }
                 Text("Shop")
                     .font(.custom(poppinsRegular, size: 8))
