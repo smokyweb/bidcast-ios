@@ -25,6 +25,12 @@ workflows:
             --create -v
           keychain add-certificates
           xcode-project use-profiles --project BidCast.xcodeproj
+      - name: Set unique TestFlight build number
+        script: |
+          BUILD_NUMBER="$(date -u +%y%m%d%H%M%S)"
+          /bin/echo "Setting CURRENT_PROJECT_VERSION=${BUILD_NUMBER}"
+          /usr/bin/perl -0pi -e "s/CURRENT_PROJECT_VERSION = [0-9]+;/CURRENT_PROJECT_VERSION = ${BUILD_NUMBER};/g" BidCast.xcodeproj/project.pbxproj
+          /usr/bin/grep -n "CURRENT_PROJECT_VERSION" BidCast.xcodeproj/project.pbxproj
       - name: Build iOS
         script: |
           # Find the manual provisioning profile downloaded by the prior
