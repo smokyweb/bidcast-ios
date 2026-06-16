@@ -19,6 +19,15 @@ enum SwitchStreamType{
     case none
 }
 
+private struct AgoraViewerTokenResponse: Decodable {
+    let status: String?
+    let data: AgoraViewerTokenData?
+}
+
+private struct AgoraViewerTokenData: Decodable {
+    let token: String?
+}
+
 struct CommentModel: Codable, Identifiable, Equatable {
     let id = UUID()
     let image: String?
@@ -151,6 +160,7 @@ struct LiveStream: View {
     @State private var showSystemShareSheet = false
     @State var showHud = false
     @State var hudMsg = ""
+    @State private var roomFallbackHydrationInFlight: Set<String> = []
     
     @State private var currentPrice: Double = 1.0
     @State private var nextBidPrice: Double = 1.0
@@ -2419,6 +2429,96 @@ extension LiveStream {
         }
     }
 
+    private func scheduleShowId(from roomId: String) -> String {
+        guard roomId.hasPrefix("live_room_"),
+              let showId = roomId.split(separator: "_").last,
+              showId.allSatisfy({ $0.isNumber }) else {
+            return ""
+        }
+        return String(showId)
+    }
+
+    private func fetchViewerAgoraToken(roomId: String) async -> String? {
+        guard !roomId.isEmpty,
+              let url = URL(string: "https://backend.bidcast.betaplanets.com/api/agora-token") else {
+            return nil
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: [
+            "channel": roomId,
+            "uid": 0
+        ])
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let decoded = try JSONDecoder().decode(AgoraViewerTokenResponse.self, from: data)
+            guard decoded.status == "success", let token = decoded.data?.token, !token.isEmpty else {
+                return nil
+            }
+            return token
+        } catch {
+            print("RAID_QA: [JOIN] viewer Agora token fetch failed for \(roomId): \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    @MainActor
+    private func hydrateRaidFallbackRoomAndJoin(roomId: String) {
+        guard !roomId.isEmpty else { return }
+        guard !roomFallbackHydrationInFlight.contains(roomId) else { return }
+        roomFallbackHydrationInFlight.insert(roomId)
+
+        Task {
+            let token = await fetchViewerAgoraToken(roomId: roomId)
+            await MainActor.run {
+                roomFallbackHydrationInFlight.remove(roomId)
+                guard let token, !token.isEmpty else {
+                    presentError(
+                        title: "Stream Not Available",
+                        message: "We could not connect to the live stream video. Please try again."
+                    )
+                    return
+                }
+
+                agoraToken = token
+                let fallbackRoom = RoomModel(
+                    products: nil,
+                    room_id: roomId,
+                    rtc_token: token,
+                    seller: nil,
+                    show_detail: nil,
+                    thumbnail: nil,
+                    viewer_count: "0",
+                    highest_bid: nil,
+                    is_live: true,
+                    time: nil,
+                    show_id: scheduleShowId(from: roomId),
+                    allow_bid_for_all: true,
+                    bid_count_down: nil,
+                    show_timer: nil,
+                    is_room_created: true,
+                    productCount: nil,
+                    auction_type_id: nil,
+                    category_id: nil,
+                    date: nil,
+                    is_verified_only: nil
+                )
+
+                socketManagerChat.rooms.removeAll { $0.room_id == roomId }
+                socketManagerChat.rooms.append(fallbackRoom)
+                liveShowsData.removeAll { $0.room_id == roomId }
+                liveShowsData.append(fallbackRoom)
+
+                print("RAID_QA: [JOIN] hydrated fallback room and retrying join — room=\(roomId)")
+                joinStreamUsingSocket(roomId: roomId)
+            }
+        }
+    }
+
     @MainActor
     private func fetchSellerIfAvailable() async {
 //        guard let product = liveShowsData[currentIndex].products?.first else {
@@ -2990,18 +3090,14 @@ extension LiveStream {
         let socketRooms = socketManagerChat.rooms
         
         guard !socketRooms.isEmpty else {
-            presentError(
-                title: "No Active Streams",
-                message: "There are no live streams available at the moment."
-            )
+            print("RAID_QA: [JOIN] rooms empty for \(roomId); hydrating fallback room")
+            hydrateRaidFallbackRoomAndJoin(roomId: roomId)
             return
         }
         
         guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
-            presentError(
-                title: "Stream Not Found",
-                message: "The requested stream is not available right now."
-            )
+            print("RAID_QA: [JOIN] target room missing from socket rooms for \(roomId); hydrating fallback room")
+            hydrateRaidFallbackRoomAndJoin(roomId: roomId)
             return
         }
         let currentRoomData = socketRooms[matchingRoomIndex]
@@ -3032,7 +3128,9 @@ extension LiveStream {
             print("RAID_QA: [JOIN] calling agoraManager.joinChannel asHost=\(isHost)")
             agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
         } else {
-            print("RAID_QA: [JOIN] WARNING — skipping joinChannel: agoraTokenEmpty=\(agoraToken.isEmpty), roomIdEmpty=\(roomId.isEmpty)")
+            print("RAID_QA: [JOIN] WARNING — missing token for \(roomId); hydrating fallback room")
+            hydrateRaidFallbackRoomAndJoin(roomId: roomId)
+            return
         }
         
         self.roomID = socketRooms.compactMap { $0.room_id }
