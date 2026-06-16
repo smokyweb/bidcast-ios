@@ -248,6 +248,79 @@ struct RehearsalScreen: View {
         max(productData.count, productListData.count)
     }
 
+    private var isPrepareRehearsal: Bool {
+        comeFromPrepare && !comeForLive
+    }
+
+    private func prepareRehearsalProducts() -> [ProductDataModel1] {
+        let images = [
+            "https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=800",
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800",
+            "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"
+        ]
+
+        return Array(ProductDataModel1.sampleProducts.prefix(3)).enumerated().map { index, sample in
+            var product = sample
+            product.id = 9000 + index
+            product.title = ["Practice Vintage Jacket", "Practice Retro Sneakers", "Practice Crossbody Bag"][index]
+            product.pricing = ["24.00", "31.00", "42.00"][index]
+            product.quantity = ["3", "2", "1"][index]
+            product.type = "live_auction"
+            product.saleFormat = "live_auction"
+            product.auction = true
+            product.images = [images[index]]
+            product.thumbnail = [images[index]]
+            return product
+        }
+    }
+
+    private func rehearsalComment(name: String, message: String, userId: String) -> CommentModel? {
+        let payload: [String: Any] = [
+            "user_image": "",
+            "user_name": name,
+            "message": message,
+            "user_id": userId,
+            "room_id": roomId
+        ]
+        guard
+            let data = try? JSONSerialization.data(withJSONObject: payload),
+            let comment = try? JSONDecoder().decode(CommentModel.self, from: data)
+        else {
+            return nil
+        }
+        return comment
+    }
+
+    private func appendPrepareRehearsalChat(name: String, message: String, userId: String = "practice-buyer") {
+        guard let comment = rehearsalComment(name: name, message: message, userId: userId) else { return }
+        socketManager.chats.append(comment)
+    }
+
+    private func seedPrepareRehearsalSimulation() {
+        let samples = prepareRehearsalProducts()
+        roomId = "prepare_rehearsal_\(UserDefaults.userId)"
+        liveRoomId = roomId
+        productData = samples
+        productListData = samples
+        productCount = samples.count
+        auctionedProductData = samples.first ?? ProductDataModel1()
+        currentPrice = Double(auctionedProductData.pricing ?? "") ?? 0
+        auctionTypeId = 5
+        categoryName = auctionedProductData.category?.name ?? "Practice"
+        hasAuctionStarted = true
+        isLive = true
+        showButton = true
+        showLiveControls = true
+        showPreLiveControls = false
+        socketManager.bidTime = "12s"
+        winnerName = "Sample Buyer"
+        winnerAmount = String(format: "%.2f", currentPrice + 2)
+        socketManager.chats.removeAll()
+        appendPrepareRehearsalChat(name: "Sample Buyer", message: "Can you show the details?")
+        appendPrepareRehearsalChat(name: "Practice Bidder", message: "Ready for the next bid.")
+        appendPrepareRehearsalChat(name: "Demo Viewer", message: "This is a rehearsal chat.")
+    }
+
     private func mergeProductsIntoLiveShow(_ products: [ProductDataModel1]) {
         guard !products.isEmpty else { return }
 
@@ -675,9 +748,7 @@ struct RehearsalScreen: View {
                 } else if comeFromPrepare && !comeForLive {
                     showReadyModal = false
                     showWelcomeDialog = false
-                    showButton = true
-                    showPreLiveControls = true
-                    showLiveControls = false
+                    seedPrepareRehearsalSimulation()
                 } else {
                     showReadyModal = true
                 }
@@ -1967,6 +2038,16 @@ struct RehearsalScreen: View {
     private func sendChatMessage() {
         hideKeyboard()
         if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            if isPrepareRehearsal {
+                appendPrepareRehearsalChat(
+                    name: UserDefaults.userName,
+                    message: commentText,
+                    userId: "\(UserDefaults.userId)"
+                )
+                commentText = ""
+                return
+            }
+
             let userId = UserDefaults.userId
             let userName = UserDefaults.userName
             let userImage = UserDefaults.profileURL

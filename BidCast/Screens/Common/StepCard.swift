@@ -14,6 +14,21 @@ struct StepCard: View {
     let isCurrent: Bool
     var action: () -> Void
     
+    private var canAct: Bool {
+        !prepare.isLocked && (isCurrent || (prepare.isDone ?? false))
+    }
+
+    private var actionTitle: String {
+        guard prepare.isDone ?? false else { return "Continue" }
+        if (prepare.title ?? "").localizedCaseInsensitiveContains("rehearse") {
+            return "Rehearse Again"
+        }
+        if (prepare.title ?? "").localizedCaseInsensitiveContains("buyers") {
+            return "Change Promotion"
+        }
+        return "Change"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             
@@ -55,8 +70,8 @@ struct StepCard: View {
             }
             
             .padding(.all,12)
-            if isCurrent && !prepare.isLocked {
-                PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
+            if canAct {
+                PrimaryButton(title: actionTitle,isOutLine: false,onButtonClick: {
                     action()
                 },cornerRadius: 32,btnTextColor: .white)
                 .padding(.horizontal,8)

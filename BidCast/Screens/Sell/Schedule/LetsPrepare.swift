@@ -39,6 +39,7 @@ struct LetsPrepare: View {
     @State var navigateForLive = false
     @State var productIds: [String] = []
     @State var showId : String = ""
+    @State var prepareRehearsalShowId: String = ""
     // Basecamp #9929871140: randomizer template picker during show creation.
     @State private var showRandomizerPickerInCreate: Bool = false
     // Basecamp #9986427172 (QA round 4): promote sheet for existing-show mode (idx==3).
@@ -98,6 +99,7 @@ struct LetsPrepare: View {
                                 navigateToshowTitle = true
 //                                navigateToCreateScreen = true
                             }else if idx == 2{
+                                prepareRehearsalShowId = coordinator.existingShowId ?? showId
                                 navigateToRehearsal = true
                                 rehearsalNavigation = true
                             }else if idx == 3{
@@ -190,7 +192,7 @@ struct LetsPrepare: View {
             CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $coordinator.request, thumbNail: $coordinator.thumbNAil, comeFromPrepareScreen: .constant(true)))
             
             CusNavLink(doNavigate: $navigateToRehearsal,
-                       destination: RehearsalScreen(showUd: .constant(""),
+                       destination: RehearsalScreen(showUd: $prepareRehearsalShowId,
                                                     productListData: .constant([ProductDataModel1]()),
                                                     comeFromPrepare: true,
                                                     backToTabBar: .constant(true),
