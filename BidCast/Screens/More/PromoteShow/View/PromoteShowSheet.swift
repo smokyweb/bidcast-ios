@@ -102,7 +102,8 @@ struct PromoteShowSheet: View {
     @Binding var  boosts : [BoostModel]
     
     var onPromotionSelected: ((BoostModel) -> Void)?
-        var onClose: () -> Void
+    var onClose: () -> Void
+    var onSkipPromotion: (() -> Void)? = nil
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: 0) {
@@ -156,6 +157,24 @@ struct PromoteShowSheet: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
 //                    .background(Color(.systemGray6).opacity(0.3))
+
+                if let onSkipPromotion {
+                    Button {
+                        onSkipPromotion()
+                    } label: {
+                        Text("I don't want to promote my show")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .foregroundColor(.primary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .fill(Color(.systemGray6))
+                            )
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+                }
             }
         }
         .background(.backGround)

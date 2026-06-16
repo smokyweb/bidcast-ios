@@ -239,7 +239,14 @@ struct LetsPrepare: View {
                     storePreparePromoteShow(boost: selectedBoost)
                     showPromoteSheetFromPrepare = false
                 },
-                onClose: { showPromoteSheetFromPrepare = false }
+                onClose: { showPromoteSheetFromPrepare = false },
+                onSkipPromotion: {
+                    markBringInBuyersComplete()
+                    if coordinator.currentIndex == 3 {
+                        coordinator.markCurrentStepCompleted()
+                    }
+                    showPromoteSheetFromPrepare = false
+                }
             )
             .presentationDetents([.fraction(0.70)])
             .presentationCornerRadius(25)
@@ -290,6 +297,7 @@ struct LetsPrepare: View {
                 }
             }else{
                 if rehearsalNavigation{
+                    markRehearsedComplete()
                     if coordinator.prepare.indices.contains(coordinator.currentIndex) {
                         coordinator.prepare[coordinator.currentIndex].isDone = true
                     }
@@ -460,6 +468,7 @@ struct LetsPrepare: View {
                 )
                 showError = true
             } else if prepareShowsViewModel.storePromoteShowModel?.status == "success" {
+                markBringInBuyersComplete()
                 didCompletePreparePromotion = true
                 if coordinator.currentIndex == 3 {
                     coordinator.markCurrentStepCompleted()
@@ -467,6 +476,16 @@ struct LetsPrepare: View {
                 showPreparePromoteSuccess = true
             }
         }
+    }
+
+    private func markRehearsedComplete() {
+        guard let showId = coordinator.existingShowId, !showId.isEmpty else { return }
+        UserDefaults.standard.set(true, forKey: "bidcast_prepare_rehearsed_\(showId)")
+    }
+
+    private func markBringInBuyersComplete() {
+        guard let showId = coordinator.existingShowId, !showId.isEmpty else { return }
+        UserDefaults.standard.set(true, forKey: "bidcast_prepare_bring_in_buyers_\(showId)")
     }
 
     func storeScheduleSHow(){

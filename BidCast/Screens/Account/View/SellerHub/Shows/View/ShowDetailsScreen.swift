@@ -519,6 +519,9 @@ struct ShowDetailsScreen: View {
                     // sellerTrainingLetsPrepareShow.blade.php lines 226-242.
                     let hasSchedule = !(scheduleRequest.date.isEmpty) && !(scheduleRequest.time.isEmpty)
                     let hasProducts = !(scheduleRequest.product_ids.isEmpty)
+                    let hasRehearsed = UserDefaults.standard.bool(forKey: "bidcast_prepare_rehearsed_\(showId)")
+                    let hasBringInBuyers = (show.is_promoted == true)
+                        || UserDefaults.standard.bool(forKey: "bidcast_prepare_bring_in_buyers_\(showId)")
                     // Apply derived completion to the coordinator's prepare array.
                     // The prepare steps are loaded lazily by LetsPrepare, but we can
                     // seed the coordinator's currentIndex so it starts at the first
@@ -527,9 +530,8 @@ struct ShowDetailsScreen: View {
                     // We store the derived counts in the coordinator and let
                     // LetsPrepare.success() apply them after the API fetch completes.
                     let derivedComplete: Int = {
-                        if hasSchedule && hasProducts { return 2 }
-                        if hasSchedule { return 1 }
-                        return 0
+                        let flags = [hasSchedule, hasProducts, hasRehearsed, hasBringInBuyers]
+                        return flags.prefix { $0 }.count
                     }()
                     addProductsCoordinator.currentIndex = derivedComplete
                     // Basecamp #9986427172 (QA round 4): flag the coordinator so
