@@ -12,6 +12,7 @@ struct RandomizerTemplatePickerSheet: View {
     /// Currently selected template ID (nil = None)
     @Binding var selectedTemplateId: Int?
     var allowsProductMapping: Bool = true
+    var onTemplateSelected: ((RandomizerTemplate?) -> Void)? = nil
 
     @State private var templates: [RandomizerTemplate] = []
     @State private var isLoading = true
@@ -77,6 +78,7 @@ struct RandomizerTemplatePickerSheet: View {
             // "None" option — detach template
             Button {
                 selectedTemplateId = nil
+                onTemplateSelected?(nil)
             } label: {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
@@ -100,6 +102,7 @@ struct RandomizerTemplatePickerSheet: View {
             ForEach(templates) { template in
                 Button {
                     selectedTemplateId = template.id
+                    onTemplateSelected?(template)
                 } label: {
                     HStack(spacing: 10) {
                         // Color swatch strip

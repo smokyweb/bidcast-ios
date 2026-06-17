@@ -115,7 +115,9 @@ struct ShowTitleTips: View {
                                 selectedTemplateId = newId
                                 request.randomizer_template_id = newId
                             }
-                        ))
+                        ), onTemplateSelected: { template in
+                            selectedTemplateName = template?.name
+                        })
                     }
 
                     VStack(alignment:.leading,spacing: 24){
