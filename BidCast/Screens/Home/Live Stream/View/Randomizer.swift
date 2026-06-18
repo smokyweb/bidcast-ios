@@ -782,7 +782,8 @@ struct RandomizerEnterTopView: View {
     @Binding var isPresented: Bool
     @Binding var roomId: String
     @Binding var winnerUser: FreebieUser
-    var didEnterFreBie: () -> Void
+    @Binding var activeFreebieId: Int?
+    var didEnterFreBie: (_ activeFreebieId: Int?, _ entryCost: Double?) -> Void
 
     // MARK: - Shuffle State
     @State private var isShuffling = false
@@ -906,9 +907,9 @@ struct RandomizerEnterTopView: View {
                         )
                     } else {
                         Button(action: {
-                            didEnterFreBie()
+                            didEnterFreBie(activeFreebieId, templateEntryCost)
                         }) {
-                            Text("Enter Freebie")
+                            Text(enterButtonTitle)
                                 .font(.custom(poppinsSemiBold, size: 14))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -944,6 +945,7 @@ struct RandomizerEnterTopView: View {
             // Subscribe to template-based freebie events (Build 313)
             socketManager.listenForTemplateFreebieData { payload in
                 guard payload.freebie?.room_id == roomId else { return }
+                activeFreebieId = payload.freebie?.id
                 if let typeStr = payload.template_type {
                     templateType = RandomizerType(rawValue: typeStr)
                 }
@@ -961,6 +963,14 @@ struct RandomizerEnterTopView: View {
         }
         .transition(.move(edge: .top))
         .animation(.easeInOut, value: isPresented)
+    }
+
+    private var enterButtonTitle: String {
+        guard let cost = templateEntryCost, cost > 0 else {
+            return "Enter Freebie"
+        }
+
+        return String(format: "Enter for $%.2f", cost)
     }
 
     // MARK: - PUBLIC METHOD (CALL THIS WHEN SELLER SPINS)

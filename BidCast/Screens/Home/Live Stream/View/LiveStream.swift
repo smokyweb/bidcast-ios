@@ -327,6 +327,7 @@ struct LiveStream: View {
     @State var usersCount = 0
     
     @State private var freebieWinner = FreebieUser()
+    @State private var activeRandomizerFreebieId: Int? = nil
     
     // Add these state variables to LiveStream struct
     @State private var isSurpriseSetAuctionActive: Bool = false
@@ -605,11 +606,23 @@ struct LiveStream: View {
             isPresented: $navigateToRandomizer,
             roomId: $currentRoomID,
             winnerUser: $freebieWinner,
-            didEnterFreBie: {
-                socketManagerChat.enterInFreebie(
-                    room_id: currentRoomID,
-                    userId: UserDefaults.userId
-                )
+            activeFreebieId: $activeRandomizerFreebieId,
+            didEnterFreBie: { activeFreebieId, _ in
+                Task {
+                    do {
+                        if let activeFreebieId {
+                            try await RandomizerService.shared.enterActiveFreebie(id: activeFreebieId)
+                        }
+
+                        socketManagerChat.enterInFreebie(
+                            room_id: currentRoomID,
+                            userId: UserDefaults.userId
+                        )
+                    } catch {
+                        toastMessage = error.localizedDescription
+                        showToast = true
+                    }
+                }
             },
             onShuffleEnd: { winner in
                    print("Winner is: \(winner.name ?? "Unknown")")
@@ -2778,6 +2791,7 @@ extension LiveStream {
                 return
             }
             freebieWinner = FreebieUser()
+            activeRandomizerFreebieId = freebie.id
             isFreebieActive = true
             self.wheelTitles = user
             let title = user.map { $0.name ?? ""}

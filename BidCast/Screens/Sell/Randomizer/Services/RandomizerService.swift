@@ -128,6 +128,23 @@ final class RandomizerService: ObservableObject {
         let _ = try await session.data(for: req)
     }
 
+    // MARK: - Enter active randomizer/freebie
+    // Paid randomizers are charged server-side against the buyer's saved/default
+    // payment method. Only emit the live socket entry after this call succeeds.
+    func enterActiveFreebie(id: Int) async throws {
+        let req = try makeRequest(path: "/randomizer/active/\(id)/enter", method: "POST")
+        let (data, response) = try await session.data(for: req)
+
+        if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
+            let message = RandomizerAPIError.message(from: data)
+            throw NSError(
+                domain: "RandomizerService",
+                code: http.statusCode,
+                userInfo: [NSLocalizedDescriptionKey: message]
+            )
+        }
+    }
+
     // MARK: - Upload a custom slot image (#9960173707 Phase 4)
     // Multipart field name "image"; returns the hosted url to store on the slot.
     func uploadSlotImage(imageData: Data, filename: String = "slot.jpg", mimeType: String = "image/jpeg") async throws -> String {
@@ -190,4 +207,20 @@ private struct ProductListResp: Codable {
     var status: String?
     var data: [SlotProduct]?
     var total: Int?
+}
+
+private enum RandomizerAPIError {
+    static func message(from data: Data) -> String {
+        guard
+            let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else {
+            return "Unable to enter randomizer. Please try again."
+        }
+
+        if let message = object["message"] as? String, !message.isEmpty {
+            return message
+        }
+
+        return "Unable to enter randomizer. Please try again."
+    }
 }
