@@ -168,6 +168,7 @@ struct RandomizerTemplatePickerSheet: View {
         return (template.slots ?? []).contains { $0.product_id != nil }
     }
 
+
     // Basecamp #9929871140 / #9931107836 (2026-05-27 round 2):
     // "+ Create new template" row at the top of the picker.
     @ViewBuilder
@@ -282,8 +283,7 @@ struct ShowRandomizersManagementSheet: View {
                         template: template,
                         isAttached: true,
                         onMapProducts: {
-                            builderTemplate = template
-                            showBuilder = true
+                            openShowScopedProductMapper(template)
                         },
                         action: { detach(template) }
                     )
@@ -329,8 +329,7 @@ struct ShowRandomizersManagementSheet: View {
                     template: template,
                     isAttached: false,
                     onMapProducts: {
-                        builderTemplate = template
-                        showBuilder = true
+                        openShowScopedProductMapper(template)
                     },
                     action: { attach(template) }
                 )
@@ -367,6 +366,26 @@ struct ShowRandomizersManagementSheet: View {
         Task {
             do {
                 try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId)
+                loadData()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func openShowScopedProductMapper(_ template: RandomizerTemplate) {
+        guard let templateId = template.id else { return }
+        if template.show_scoped_show_id == showId {
+            builderTemplate = template
+            showBuilder = true
+            return
+        }
+
+        Task {
+            do {
+                let scopedId = try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId, copyForShow: true) ?? templateId
+                builderTemplate = try await RandomizerService.shared.getTemplate(id: scopedId)
+                showBuilder = true
                 loadData()
             } catch {
                 errorMessage = error.localizedDescription

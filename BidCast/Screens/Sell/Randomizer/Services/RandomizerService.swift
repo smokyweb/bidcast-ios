@@ -95,10 +95,13 @@ final class RandomizerService: ObservableObject {
     }
 
     // MARK: - Attach template to show
-    func attachTemplate(showId: Int, templateId: Int) async throws {
-        let body = AttachTemplateRequest(template_id: templateId)
+    @discardableResult
+    func attachTemplate(showId: Int, templateId: Int, copyForShow: Bool = false) async throws -> Int? {
+        let body = AttachTemplateRequest(template_id: templateId, copy_for_show: copyForShow ? true : nil)
         let req = try makeRequest(path: "/shows/\(showId)/randomizer-template", method: "PUT", body: body)
-        let _ = try await session.data(for: req)
+        let (data, _) = try await session.data(for: req)
+        let decoded = try? JSONDecoder().decode(AttachTemplateResponse.self, from: data)
+        return decoded?.data?.attached_template_id
     }
 
     // MARK: - Detach template from show (all)

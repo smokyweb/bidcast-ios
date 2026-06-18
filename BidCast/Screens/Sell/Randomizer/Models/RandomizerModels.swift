@@ -177,11 +177,13 @@ struct RandomizerTemplate: Codable, Identifiable {
     var prize_product: SlotProduct?  // optional embedded prize product detail
     var slot_count: Int
     var slots: [RandomizerSlot]?
+    var source_template_id: Int?
+    var show_scoped_show_id: Int?
     var created_at: String?
     var updated_at: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, user_id, name, type, entry_cost, prize_product_id, prize_product, slot_count, slots, created_at, updated_at
+        case id, user_id, name, type, entry_cost, prize_product_id, prize_product, slot_count, slots, source_template_id, show_scoped_show_id, created_at, updated_at
     }
 
     init(from decoder: Decoder) throws {
@@ -195,6 +197,8 @@ struct RandomizerTemplate: Codable, Identifiable {
         prize_product = try? c.decodeIfPresent(SlotProduct.self, forKey: .prize_product)
         slot_count = (try? c.decodeIfPresent(Int.self, forKey: .slot_count)) ?? 6
         slots = try? c.decodeIfPresent([RandomizerSlot].self, forKey: .slots)
+        source_template_id = try? c.decodeIfPresent(Int.self, forKey: .source_template_id)
+        show_scoped_show_id = try? c.decodeIfPresent(Int.self, forKey: .show_scoped_show_id)
         created_at = try? c.decodeIfPresent(String.self, forKey: .created_at)
         updated_at = try? c.decodeIfPresent(String.self, forKey: .updated_at)
     }
@@ -243,6 +247,16 @@ struct RandomizerSlotRequest: Encodable {
 // MARK: - Show-attach request
 struct AttachTemplateRequest: Encodable {
     var template_id: Int
+    var copy_for_show: Bool? = nil
+}
+
+struct AttachTemplateResponse: Codable {
+    var success: Bool?
+    var data: AttachTemplatePayload?
+}
+
+struct AttachTemplatePayload: Codable {
+    var attached_template_id: Int?
 }
 
 // MARK: - Single-detach request (#9960173707 Phase 4: multiple-per-show)
