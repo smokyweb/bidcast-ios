@@ -783,7 +783,7 @@ struct RandomizerEnterTopView: View {
     @Binding var roomId: String
     @Binding var winnerUser: FreebieUser
     @Binding var activeFreebieId: Int?
-    var didEnterFreBie: (_ activeFreebieId: Int?, _ entryCost: Double?) -> Void
+    var didEnterFreBie: (_ activeFreebieId: Int?, _ entryCost: Double?, _ selectedSlot: TemplateWheelSlot?) -> Void
 
     // MARK: - Shuffle State
     @State private var isShuffling = false
@@ -794,6 +794,7 @@ struct RandomizerEnterTopView: View {
     @State private var templateSlots: [TemplateWheelSlot] = []
     @State private var templateType: RandomizerType? = nil
     @State private var templateEntryCost: Double? = nil
+    @State private var selectedSlotIndex: Int? = nil
     @State private var wheelRotation: Double = 0
     @State private var wheelIsSpinning = false
     @StateObject private var socketManager = SocketManagerService.shared
@@ -863,11 +864,26 @@ struct RandomizerEnterTopView: View {
                                 .overlay(RoundedRectangle(cornerRadius: wSize/2).stroke(Color.white, lineWidth: 5))
                                 .shadow(radius: 6)
                                 .animation(.timingCurve(0.51, 0.97, 0.56, 0.99, duration: wheelAnimDuration), value: wheelRotation)
+                                .simultaneousGesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onEnded { value in
+                                            selectedSlotIndex = slotIndex(at: value.location, wheelSize: wSize)
+                                        }
+                                )
                                 SpinWheelBolt()
                             }
                             SpinWheelPointer(pointerColor: Color(hex: "DA4533"))
                         }
                         .padding(.vertical, 8)
+                        if let selectedSlotIndex, selectedSlotIndex < templateSlots.count {
+                            Text("Selected slot \(templateSlots[selectedSlotIndex].position + 1)")
+                                .font(.custom(poppinsBold, size: 12))
+                                .foregroundColor(.defaultTheme)
+                        } else {
+                            Text("Tap a wheel slot, then enter")
+                                .font(.custom(poppinsRegular, size: 12))
+                                .foregroundColor(.gray)
+                        }
                         if let type = templateType {
                             Text(type.displayName)
                                 .font(.custom(poppinsBold, size: 12))
@@ -907,7 +923,10 @@ struct RandomizerEnterTopView: View {
                         )
                     } else {
                         Button(action: {
-                            didEnterFreBie(activeFreebieId, templateEntryCost)
+                            let selectedSlot = selectedSlotIndex.flatMap { idx in
+                                idx < templateSlots.count ? templateSlots[idx] : nil
+                            }
+                            didEnterFreBie(activeFreebieId, templateEntryCost, selectedSlot)
                         }) {
                             Text(enterButtonTitle)
                                 .font(.custom(poppinsSemiBold, size: 14))
@@ -971,6 +990,22 @@ struct RandomizerEnterTopView: View {
         }
 
         return String(format: "Enter for $%.2f", cost)
+    }
+
+    private func slotIndex(at location: CGPoint, wheelSize: CGFloat) -> Int? {
+        guard !templateSlots.isEmpty else { return nil }
+        let center = CGPoint(x: wheelSize / 2, y: wheelSize / 2)
+        let dx = location.x - center.x
+        let dy = location.y - center.y
+        let radius = sqrt(dx * dx + dy * dy)
+        guard radius > 24, radius <= wheelSize / 2 else { return nil }
+        let angle = atan2(dy, dx)
+        var normalized = angle + (.pi / 2) - (wheelRotation * .pi / 180)
+        let full = 2 * Double.pi
+        normalized = normalized.truncatingRemainder(dividingBy: full)
+        if normalized < 0 { normalized += full }
+        let index = Int(floor(normalized / (full / Double(templateSlots.count))))
+        return min(max(index, 0), templateSlots.count - 1)
     }
 
     // MARK: - PUBLIC METHOD (CALL THIS WHEN SELLER SPINS)

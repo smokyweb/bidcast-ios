@@ -131,8 +131,12 @@ final class RandomizerService: ObservableObject {
     // MARK: - Enter active randomizer/freebie
     // Paid randomizers are charged server-side against the buyer's saved/default
     // payment method. Only emit the live socket entry after this call succeeds.
-    func enterActiveFreebie(id: Int) async throws {
-        let req = try makeRequest(path: "/randomizer/active/\(id)/enter", method: "POST")
+    func enterActiveFreebie(id: Int, selectedSlot: TemplateWheelSlot? = nil) async throws {
+        let body = EnterRandomizerRequest(
+            selected_slot_id: selectedSlot?.id,
+            selected_slot_position: selectedSlot?.position
+        )
+        let req = try makeRequest(path: "/randomizer/active/\(id)/enter", method: "POST", body: body)
         let (data, response) = try await session.data(for: req)
 
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
@@ -201,6 +205,11 @@ final class RandomizerService: ObservableObject {
         let (data, _) = try await session.data(for: req)
         return try JSONDecoder().decode(ProductListResp.self, from: data)
     }
+}
+
+private struct EnterRandomizerRequest: Encodable {
+    var selected_slot_id: Int?
+    var selected_slot_position: Int?
 }
 
 private struct ProductListResp: Codable {

@@ -21,6 +21,7 @@ struct RandomizerTemplatePickerSheet: View {
     // template builder. Pushing onto navigation stack instead of opening
     // a separate screen keeps the show-create / live-show flow intact.
     @State private var showBuilder: Bool = false
+    @State private var builderTemplate: RandomizerTemplate? = nil
 
     var body: some View {
         NavigationView {
@@ -53,7 +54,7 @@ struct RandomizerTemplatePickerSheet: View {
             // the show-create / live flow.
             .background(
                 NavigationLink(isActive: $showBuilder, destination: {
-                    RandomizerTemplateBuilderView(editingTemplate: nil, allowsProductMapping: allowsProductMapping)
+                    RandomizerTemplateBuilderView(editingTemplate: builderTemplate, allowsProductMapping: allowsProductMapping)
                         .onDisappear { loadTemplates() }
                 }, label: { EmptyView() })
             )
@@ -100,10 +101,7 @@ struct RandomizerTemplatePickerSheet: View {
             .buttonStyle(.plain)
 
             ForEach(templates) { template in
-                Button {
-                    selectedTemplateId = template.id
-                    onTemplateSelected?(template)
-                } label: {
+                HStack(spacing: 10) {
                     HStack(spacing: 10) {
                         // Color swatch strip
                         HStack(spacing: 2) {
@@ -142,11 +140,32 @@ struct RandomizerTemplatePickerSheet: View {
                         }
                     }
                     .padding(.vertical, 4)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedTemplateId = template.id
+                        onTemplateSelected?(template)
+                    }
+
+                    if allowsProductMapping {
+                        Button {
+                            builderTemplate = template
+                            showBuilder = true
+                        } label: {
+                            Text(templateHasProducts(template) ? "Edit products" : "Add products")
+                                .font(.custom(poppinsBold, size: 11))
+                                .foregroundColor(.defaultTheme)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
-                .buttonStyle(.plain)
             }
         }
         .listStyle(.plain)
+    }
+
+    private func templateHasProducts(_ template: RandomizerTemplate) -> Bool {
+        if template.prize_product_id != nil { return true }
+        return (template.slots ?? []).contains { $0.product_id != nil }
     }
 
     // Basecamp #9929871140 / #9931107836 (2026-05-27 round 2):
@@ -154,6 +173,7 @@ struct RandomizerTemplatePickerSheet: View {
     @ViewBuilder
     private var createNewRow: some View {
         Button {
+            builderTemplate = nil
             showBuilder = true
         } label: {
             HStack(spacing: 10) {
@@ -203,6 +223,7 @@ struct ShowRandomizersManagementSheet: View {
     @State private var isLoading = true
     @State private var errorMessage: String? = nil
     @State private var showBuilder = false
+    @State private var builderTemplate: RandomizerTemplate? = nil
 
     var body: some View {
         NavigationView {
@@ -220,7 +241,7 @@ struct ShowRandomizersManagementSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .background(
                 NavigationLink(isActive: $showBuilder, destination: {
-                    RandomizerTemplateBuilderView(editingTemplate: nil, allowsProductMapping: true)
+                    RandomizerTemplateBuilderView(editingTemplate: builderTemplate, allowsProductMapping: true)
                         .onDisappear { loadData() }
                 }, label: { EmptyView() })
             )
@@ -231,6 +252,7 @@ struct ShowRandomizersManagementSheet: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
+                        builderTemplate = nil
                         showBuilder = true
                     } label: {
                         Image(systemName: "plus")
@@ -256,9 +278,15 @@ struct ShowRandomizersManagementSheet: View {
                 .padding(.vertical, 8)
             } else {
                 ForEach(attachedTemplates) { template in
-                    ShowRandomizerRow(template: template, isAttached: true) {
-                        detach(template)
-                    }
+                    ShowRandomizerRow(
+                        template: template,
+                        isAttached: true,
+                        onMapProducts: {
+                            builderTemplate = template
+                            showBuilder = true
+                        },
+                        action: { detach(template) }
+                    )
                 }
             }
         } header: {
@@ -270,6 +298,7 @@ struct ShowRandomizersManagementSheet: View {
     private var availableSection: some View {
         Section {
             Button {
+                builderTemplate = nil
                 showBuilder = true
             } label: {
                 HStack {
@@ -296,9 +325,15 @@ struct ShowRandomizersManagementSheet: View {
             ForEach(sellerTemplates.filter { template in
                 !attachedTemplates.contains(where: { $0.id == template.id })
             }) { template in
-                ShowRandomizerRow(template: template, isAttached: false) {
-                    attach(template)
-                }
+                ShowRandomizerRow(
+                    template: template,
+                    isAttached: false,
+                    onMapProducts: {
+                        builderTemplate = template
+                        showBuilder = true
+                    },
+                    action: { attach(template) }
+                )
             }
         } header: {
             Text("Available Templates")
@@ -355,6 +390,7 @@ struct ShowRandomizersManagementSheet: View {
 private struct ShowRandomizerRow: View {
     let template: RandomizerTemplate
     let isAttached: Bool
+    let onMapProducts: () -> Void
     let action: () -> Void
 
     var body: some View {
@@ -380,6 +416,12 @@ private struct ShowRandomizerRow: View {
 
             Spacer()
 
+            Button(templateHasProducts ? "Edit products" : "Add products") {
+                onMapProducts()
+            }
+            .font(.custom(poppinsBold, size: 11))
+            .foregroundColor(.defaultTheme)
+
             Button(isAttached ? "Remove" : "Add") {
                 action()
             }
@@ -387,5 +429,10 @@ private struct ShowRandomizerRow: View {
             .foregroundColor(isAttached ? .red : .defaultTheme)
         }
         .padding(.vertical, 5)
+    }
+
+    private var templateHasProducts: Bool {
+        if template.prize_product_id != nil { return true }
+        return (template.slots ?? []).contains { $0.product_id != nil }
     }
 }

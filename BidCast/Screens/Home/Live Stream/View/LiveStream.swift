@@ -607,11 +607,11 @@ struct LiveStream: View {
             roomId: $currentRoomID,
             winnerUser: $freebieWinner,
             activeFreebieId: $activeRandomizerFreebieId,
-            didEnterFreBie: { activeFreebieId, _ in
+            didEnterFreBie: { activeFreebieId, _, selectedSlot in
                 Task {
                     do {
                         if let activeFreebieId {
-                            try await RandomizerService.shared.enterActiveFreebie(id: activeFreebieId)
+                            try await RandomizerService.shared.enterActiveFreebie(id: activeFreebieId, selectedSlot: selectedSlot)
                         }
 
                         socketManagerChat.enterInFreebie(
