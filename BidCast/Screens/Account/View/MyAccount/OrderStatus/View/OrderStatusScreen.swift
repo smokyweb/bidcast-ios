@@ -116,6 +116,27 @@ struct OrderStatusScreen: View {
                             .frame(height: 44)
                         }
                         .padding(.vertical, 8)
+
+                        if canViewCurrentLabel {
+                            Button(action: { shareCurrentLabel() }) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "printer")
+                                    Text("View / Print USPS Label")
+                                }
+                                .font(.custom(poppinsSemiBold, size: 14))
+                                .foregroundColor(.defaultTheme)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .background(Color.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 22)
+                                        .stroke(Color.defaultTheme, lineWidth: 1)
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 22))
+                            }
+                            .disabled(workflowVM.isWorking)
+                            .padding(.bottom, 4)
+                        }
                         
                     }
                     
@@ -131,6 +152,9 @@ struct OrderStatusScreen: View {
                                 showhud = true
                                 // Refresh the order so the new status reflects in the UI.
                                 fetchOrderDetail()
+                            },
+                            onLabelCreated: { data in
+                                applyCreatedLabel(data)
                             },
                             onLabelReady: { items in
                                 labelShareItems = items
@@ -324,6 +348,76 @@ struct OrderStatusScreen: View {
         }
     }
     
+
+    private var canViewCurrentLabel: Bool {
+        if let label = workflowVM.lastLabel {
+            if let image = label.labelImage, !image.isEmpty { return true }
+            if let url = label.labelURL, !url.isEmpty { return true }
+        }
+
+        if let url = productDetail?.label_url, !url.isEmpty { return true }
+        return false
+    }
+
+    private func applyCreatedLabel(_ data: CreateLabelData) {
+        if let tracking = data.trackingNumber, !tracking.isEmpty {
+            productDetail?.tracking_number = tracking
+            productDetail?.shipping_status = "label_created"
+        }
+        if let labelURL = data.labelURL, !labelURL.isEmpty {
+            productDetail?.label_url = labelURL
+        }
+    }
+
+    private func shareCurrentLabel() {
+        let id = productDetail?.id ?? orderId
+
+        if let base64 = workflowVM.lastLabel?.labelImage, !base64.isEmpty {
+            shareLabelPDF(base64: base64, orderId: id)
+            return
+        }
+
+        if let urlString = workflowVM.lastLabel?.labelURL,
+           let url = URL(string: urlString) {
+            shareLabelURL(url, orderId: id)
+            return
+        }
+
+        if let urlString = productDetail?.label_url,
+           let url = URL(string: urlString) {
+            shareLabelURL(url, orderId: id)
+            return
+        }
+
+        hudMsg = "No label available yet — tap Create Shipping Label first."
+        showhud = true
+    }
+
+    private func shareLabelPDF(base64: String, orderId: Int) {
+        guard let fileURL = OrderWorkflowViewModel.writeLabelPDFToTempFile(base64, orderId: orderId) else {
+            hudMsg = "Could not decode label PDF."
+            showhud = true
+            return
+        }
+        labelShareItems = [fileURL]
+        showLabelShareSheet = true
+    }
+
+    private func shareLabelURL(_ url: URL, orderId: Int) {
+        Task {
+            if let fileURL = await OrderWorkflowViewModel.downloadLabelPDF(from: url, orderId: orderId) {
+                await MainActor.run {
+                    labelShareItems = [fileURL]
+                    showLabelShareSheet = true
+                }
+            } else {
+                await MainActor.run {
+                    labelShareItems = [url]
+                    showLabelShareSheet = true
+                }
+            }
+        }
+    }
 
     
     func fetchOrderDetail(){
@@ -777,6 +871,8 @@ struct SellerOrderWorkflowSection: View {
     @ObservedObject var workflowVM: OrderWorkflowViewModel
     /// Called after a successful API mutation; parent re-fetches the order to refresh UI.
     var onActionFeedback: (String) -> Void
+    /// Called as soon as create-label succeeds so the parent can expose the saved label immediately.
+    var onLabelCreated: (CreateLabelData) -> Void
     /// Called when createLabel returns a base64 PDF; parent presents the share sheet.
     var onLabelReady: ([Any]) -> Void
     
@@ -902,6 +998,7 @@ struct SellerOrderWorkflowSection: View {
                     _ = await workflowVM.changeStatus(orderId: id, status: "out_for_delivery", trackingNumber: trk)
                 }
                 await MainActor.run {
+                    onLabelCreated(data)
                     presentLabel(data: data, orderId: id)
                     onActionFeedback("Shipping label created. Tracking: \(data.trackingNumber ?? "—")")
                 }
