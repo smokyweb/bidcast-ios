@@ -806,8 +806,11 @@ struct SellerOrderWorkflowSection: View {
         currentStatus == "processing" && (order.tracking_number ?? "").isEmpty
     }
     private var showDownloadLabel: Bool {
-        // Label was created (server set tracking_number) — let seller re-download / share it.
-        !(order.tracking_number ?? "").isEmpty || workflowVM.lastLabel?.labelImage != nil
+        // Label was created (server set tracking_number / label_url) — let seller view, print, or share it.
+        !(order.tracking_number ?? "").isEmpty ||
+        !(order.label_url ?? "").isEmpty ||
+        workflowVM.lastLabel?.labelImage != nil ||
+        workflowVM.lastLabel?.labelURL != nil
     }
     
     var body: some View {
@@ -846,7 +849,7 @@ struct SellerOrderWorkflowSection: View {
             if showDownloadLabel {
                 HStack(spacing: 12) {
                     Button(action: { shareExistingLabel() }) {
-                        progressButtonLabel(text: "Share Label", primary: false)
+                        progressButtonLabel(text: "View / Print Label", primary: false)
                     }
                     .disabled(workflowVM.isWorking)
                 }
@@ -899,7 +902,7 @@ struct SellerOrderWorkflowSection: View {
                     _ = await workflowVM.changeStatus(orderId: id, status: "out_for_delivery", trackingNumber: trk)
                 }
                 await MainActor.run {
-                    presentLabelPDF(base64: data.labelImage, orderId: id)
+                    presentLabel(data: data, orderId: id)
                     onActionFeedback("Shipping label created. Tracking: \(data.trackingNumber ?? "—")")
                 }
             } else {
@@ -918,11 +921,23 @@ struct SellerOrderWorkflowSection: View {
     private func shareExistingLabel() {
         if let base64 = workflowVM.lastLabel?.labelImage {
             presentLabelPDF(base64: base64, orderId: order.id ?? 0)
+        } else if let urlString = workflowVM.lastLabel?.labelURL, let url = URL(string: urlString) {
+            presentLabelURL(url, orderId: order.id ?? 0)
         } else if let urlString = order.label_url, let url = URL(string: urlString) {
-            // Server already persisted label_url on the Order — share that URL.
-            onLabelReady([url])
+            // Server already persisted label_url on the Order — download/share the PDF.
+            presentLabelURL(url, orderId: order.id ?? 0)
         } else {
             onActionFeedback("No label available yet — tap Create Shipping Label first.")
+        }
+    }
+
+    private func presentLabel(data: CreateLabelData, orderId: Int) {
+        if let base64 = data.labelImage {
+            presentLabelPDF(base64: base64, orderId: orderId)
+        } else if let urlString = data.labelURL, let url = URL(string: urlString) {
+            presentLabelURL(url, orderId: orderId)
+        } else {
+            onActionFeedback("Label created, but the label file is not available yet. Reopen this order and tap View / Print Label.")
         }
     }
     
@@ -934,6 +949,21 @@ struct SellerOrderWorkflowSection: View {
             return
         }
         onLabelReady([fileURL])
+    }
+
+    private func presentLabelURL(_ url: URL, orderId: Int) {
+        Task {
+            if let fileURL = await OrderWorkflowViewModel.downloadLabelPDF(from: url, orderId: orderId) {
+                await MainActor.run {
+                    onLabelReady([fileURL])
+                }
+            } else {
+                await MainActor.run {
+                    // Fallback still lets the seller open the persisted label link.
+                    onLabelReady([url])
+                }
+            }
+        }
     }
     
     // MARK: - Helpers

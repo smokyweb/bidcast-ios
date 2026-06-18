@@ -57,8 +57,18 @@ final class MyOrdersViewModel: ObservableObject {
 struct CreateLabelData: Codable {
     var trackingNumber: String?
     var shipmentId: String?
+    var shippingStatus: String?
+    var labelURL: String?
     /// Base64-encoded PDF of the label. Decoded on-device before display / share.
     var labelImage: String?
+
+    enum CodingKeys: String, CodingKey {
+        case trackingNumber
+        case shipmentId
+        case shippingStatus = "shipping_status"
+        case labelURL = "label_url"
+        case labelImage
+    }
 }
 
 /// USPS tracking response — backend forwards the raw tracking blob; we treat it as
@@ -237,6 +247,23 @@ final class OrderWorkflowViewModel: ObservableObject {
         do {
             try data.write(to: tmp, options: .atomic)
             return tmp
+        } catch {
+            return nil
+        }
+    }
+
+    /// Download the persisted label URL into a local temporary PDF so iOS exposes
+    /// the native preview/share/print actions instead of only sharing a web link.
+    static func downloadLabelPDF(from remoteURL: URL, orderId: Int) async -> URL? {
+        do {
+            let (downloadedURL, _) = try await URLSession.shared.download(from: remoteURL)
+            let destination = FileManager.default.temporaryDirectory
+                .appendingPathComponent("bidcast-label-\(orderId)-\(Int(Date().timeIntervalSince1970)).pdf")
+            if FileManager.default.fileExists(atPath: destination.path) {
+                try FileManager.default.removeItem(at: destination)
+            }
+            try FileManager.default.moveItem(at: downloadedURL, to: destination)
+            return destination
         } catch {
             return nil
         }
