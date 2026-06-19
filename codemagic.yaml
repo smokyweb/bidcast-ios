@@ -9,8 +9,8 @@ workflows:
       vars:
         BUNDLE_ID: io.bidcast
         TEAM_ID: YQGQU3RV34
-        IOS_MARKETING_VERSION: 1.0.1
-        IOS_MIN_BUILD_NUMBER: 408
+        IOS_MARKETING_VERSION: 1.0
+        IOS_MIN_BUILD_NUMBER: 403
       xcode: "26.4"
     scripts:
       - name: Inspect Xcode project layout
@@ -29,8 +29,8 @@ workflows:
           xcode-project use-profiles --project BidCast.xcodeproj
       - name: Set TestFlight version and build number
         script: |
-          MARKETING_VERSION="${IOS_MARKETING_VERSION:-1.0.1}"
-          MIN_BUILD_NUMBER="${IOS_MIN_BUILD_NUMBER:-404}"
+          MARKETING_VERSION="${IOS_MARKETING_VERSION:-1.0}"
+          MIN_BUILD_NUMBER="${IOS_MIN_BUILD_NUMBER:-403}"
 
           cat >/tmp/next_ios_build_number.rb <<'RUBY'
           require "base64"
@@ -86,17 +86,22 @@ workflows:
           app_id = apps.fetch("data").first&.fetch("id")
           raise "No App Store Connect app found for #{bundle_id}" unless app_id
 
+          pre_versions = asc_get("/v1/preReleaseVersions?filter[app]=#{app_id}&filter[version]=#{URI.encode_www_form_component(version)}", token)
+          pre_version_id = pre_versions.fetch("data").first&.fetch("id")
+
           max_uploaded = 0
-          path = "/v1/builds?filter[app]=#{app_id}&filter[version]=#{URI.encode_www_form_component(version)}&limit=200"
-          loop do
-            payload = asc_get(path, token)
-            payload.fetch("data").each do |build|
-              raw = build.dig("attributes", "version").to_s
-              max_uploaded = [max_uploaded, raw.to_i].max if raw.match?(/\A\d+\z/)
+          if pre_version_id
+            path = "/v1/builds?filter[preReleaseVersion]=#{pre_version_id}&limit=200"
+            loop do
+              payload = asc_get(path, token)
+              payload.fetch("data").each do |build|
+                raw = build.dig("attributes", "version").to_s
+                max_uploaded = [max_uploaded, raw.to_i].max if raw.match?(/\A\d+\z/)
+              end
+              next_link = payload.dig("links", "next")
+              break unless next_link
+              path = URI(next_link).request_uri
             end
-            next_link = payload.dig("links", "next")
-            break unless next_link
-            path = URI(next_link).request_uri
           end
 
           puts [minimum, max_uploaded + 1].max
