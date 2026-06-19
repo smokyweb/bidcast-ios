@@ -2791,7 +2791,7 @@ extension LiveStream {
                 return
             }
             freebieWinner = FreebieUser()
-            activeRandomizerFreebieId = freebie.id
+            activeRandomizerFreebieId = freebie.randomizer_active_freebie_id
             isFreebieActive = true
             self.wheelTitles = user
             let title = user.map { $0.name ?? ""}

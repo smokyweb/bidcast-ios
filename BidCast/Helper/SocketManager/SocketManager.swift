@@ -8,10 +8,18 @@
 // MARK: - 🎁 Freebie Model -
 struct FreebieModel: Codable, Identifiable {
     var id: Int?
+    var freebie_id: Int?
+    var randomizer_active_freebie_id: Int?
+    var randomizer_template_id: Int?
+    var template_id: Int?
     var show_id: String?
     var product_id: String?
     var duration: String?
     var room_id : String?
+    var entry_cost: Double?
+    var template_type: String?
+    var randomizer_slots: [RandomizerSlot]?
+    var slots: [RandomizerSlot]?
     
 }
 struct FreebieSocketPayload: Codable {

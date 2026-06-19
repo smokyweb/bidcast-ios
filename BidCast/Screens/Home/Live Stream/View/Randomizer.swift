@@ -964,7 +964,7 @@ struct RandomizerEnterTopView: View {
             // Subscribe to template-based freebie events (Build 313)
             socketManager.listenForTemplateFreebieData { payload in
                 guard payload.freebie?.room_id == roomId else { return }
-                activeFreebieId = payload.freebie?.id
+                activeFreebieId = payload.freebie?.randomizer_active_freebie_id
                 if let typeStr = payload.template_type {
                     templateType = RandomizerType(rawValue: typeStr)
                 }
