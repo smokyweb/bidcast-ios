@@ -24,6 +24,18 @@ private func decodeStringArrayFlexible<K: CodingKey>(_ c: KeyedDecodingContainer
     return nil
 }
 
+private func decodeBoolFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) throws -> Bool? {
+    if let value = try? c.decodeIfPresent(Bool.self, forKey: key) { return value }
+    if let value = try? c.decodeIfPresent(Int.self, forKey: key) { return value != 0 }
+    if let value = try? c.decodeIfPresent(Double.self, forKey: key) { return value != 0 }
+    if let value = try? c.decodeIfPresent(String.self, forKey: key) {
+        let normalized = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if ["1", "true", "yes", "y", "live"].contains(normalized) { return true }
+        if ["0", "false", "no", "n", "ended", "inactive"].contains(normalized) { return false }
+    }
+    return nil
+}
+
 
 struct UpdateStatusModel : Codable {
         var id: Int?
@@ -100,7 +112,7 @@ struct UpdateStatusModel : Codable {
             auction_type_id = try c.decodeIfPresent(Int.self, forKey: .auction_type_id)
             thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
             img_thumbnail = try c.decodeIfPresent([String].self, forKey: .img_thumbnail)
-            is_live = try c.decodeIfPresent(Bool.self, forKey: .is_live)
+            is_live = try decodeBoolFlexible(c, forKey: .is_live)
             viewer_count = try c.decodeIfPresent(Int.self, forKey: .viewer_count)
             products = try c.decodeIfPresent([ProductModelData].self, forKey: .products)
             bid_won_user = try c.decodeIfPresent(String.self, forKey: .bid_won_user)

@@ -45,6 +45,8 @@ struct ListProductScreen: View {
     @State private var profiles: [StoreShippingModel] = []
     @State var shippingProfileNames: [String] = []
     @State var selectedShippingProfileName: String = ""
+    @State private var showShippingProfileSheet = false
+    @State private var selectedShippingProfileOption: Set<String> = []
     @StateObject private var shippingViewModel = ShippingViewModel()
 
     @StateObject var viewModel = ListProductViewModel()
@@ -120,6 +122,20 @@ struct ListProductScreen: View {
         let selected = request.mail_class.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !selected.isEmpty else { return nil }
         return mailClasses.first(where: { $0.label == selected })
+    }
+
+    private func applyShippingProfile(_ value: String) {
+        selectedShippingProfileName = value
+        selectedShippingProfileOption = value.isEmpty ? [] : [value]
+        if let profile = profiles.first(where: { $0.name == value }) {
+            request.shipping_profile_id = profile.id != nil ? "\(profile.id!)" : ""
+        } else {
+            request.shipping_profile_id = ""
+        }
+
+        if isUsingShippingProfile {
+            request.mail_class = ""
+        }
     }
 
     private var selectedFormatIsAuction: Bool {
@@ -298,33 +314,36 @@ struct ListProductScreen: View {
                         .padding([.top,.bottom],4)
 //
 
-                        // Shipping Profile (optional). If selected, Mail Class + Dimensions become optional.
-                        DropDownSelection(
-                            options: $shippingProfileNames,
-                            floatingLabel: "Shipping Profile",
-                            hint: "Select",
-                            selected: $selectedShippingProfileName,
-                            anchor: .bottom,
-                            custFontName: robotoMedium,
-                            custFontSize:  14.0,
-                            custCategory : robotoRegular,
-                            custCategorySize : 13.0,
-                            onOptionSelected: { value in
-                                selectedShippingProfileName = value
-                                if let profile = profiles.first(where: { $0.name == value }) {
-                                    request.shipping_profile_id = profile.id != nil ? "\(profile.id!)" : ""
-                                } else {
-                                    request.shipping_profile_id = ""
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Shipping Profile")
+                                .font(.custom(robotoMedium, fixedSize: 14.0))
+                                .foregroundStyle(.text)
+                            Button {
+                                selectedShippingProfileOption = selectedShippingProfileName.isEmpty ? [] : [selectedShippingProfileName]
+                                showShippingProfileSheet = true
+                            } label: {
+                                HStack {
+                                    Text(selectedShippingProfileName.isEmpty ? "Select" : selectedShippingProfileName)
+                                        .font(.custom(robotoRegular, fixedSize: 13.0))
+                                        .foregroundStyle(selectedShippingProfileName.isEmpty ? .gray : .text)
+                                    Spacer()
+                                    Image(.arrowForward)
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 16, height: 16)
+                                        .foregroundStyle(.text)
+                                        .rotationEffect(.degrees(90))
                                 }
-
-                                if isUsingShippingProfile {
-                                    // When using shipping profile, Mail Class + Dimensions are not required.
-                                    request.mail_class = ""
-                                }
+                                .padding(.horizontal, 16)
+                                .frame(height: 50)
+                                .background(Color.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 24))
+                                .shadow(color: .gray.opacity(0.7), radius: 1, x: 0, y: 0)
                             }
-                        )
+                            .buttonStyle(.plain)
+                        }
                         .padding([.leading,.trailing],16)
-                        .zIndex(1202.0)
 
                         if isUsingShippingProfile {
                             Button(action: {
@@ -715,6 +734,30 @@ struct ListProductScreen: View {
                             }
                         )
 
+                    }
+                )
+                .bottomSheet(
+                    isPresented: $showShippingProfileSheet,
+                    height: screenHeight * 0.45,
+                    topBarCornerRadius: 25,
+                    showTopIndicator: false,
+                    onDismiss: {
+                        showShippingProfileSheet = false
+                    },
+                    content: {
+                        SelectionBottomSheet(
+                            title: "Shipping Profile",
+                            message: "Select a shipping profile for this product.",
+                            options: $shippingProfileNames,
+                            selectedOptions: $selectedShippingProfileOption,
+                            onSelectionDone: { selectedIndexes in
+                                if let index = selectedIndexes.first,
+                                   shippingProfileNames.indices.contains(index) {
+                                    applyShippingProfile(shippingProfileNames[index])
+                                }
+                                showShippingProfileSheet = false
+                            }
+                        )
                     }
                 )
                 .toast(isPresenting: $showhud) {

@@ -14,7 +14,6 @@ struct AuthTextField: View {
     }
     
     @State var floatingLabel: String = ""
-    @State private var rawPriceDigits: String = ""
     @State var isRequired: Bool = false
     @State var isMandatory: Bool = false
     @State var placeholder: String = ""
@@ -122,7 +121,6 @@ struct AuthTextField: View {
                                         self.enteredText?(text)
                                     }
                                 }
-                                .ignoresSafeArea(.keyboard, edges: .bottom)
                         }
                         else {
                             HStack(spacing: 0) {
@@ -150,9 +148,7 @@ struct AuthTextField: View {
                                         // view appeared (sync prefill). Async prefill (value arrives
                                         // after onAppear) is handled by the isFocused-gated onChange.
                                         if isForPrice && !text.isEmpty {
-                                            if let dollars = Double(text) {
-                                                let normalized = String(format: "%.2f", dollars)
-                                                rawPriceDigits = normalized.filter { $0.isNumber }
+                                            if let normalized = normalizedPriceText(text) {
                                                 if text != normalized {
                                                     text = normalized
                                                     self.enteredText?(text)
@@ -161,62 +157,21 @@ struct AuthTextField: View {
                                         }
                                     }
                                     .onChange(of: text, perform: { value in
-                                        // Basecamp #9940184831 (2026-05-29 RETURN): root-cause fix.
-                                        //
-                                        // The PREVIOUS fix (round 1) put the dollar-normalisation in
-                                        // onAppear. That only helped when text was already set at view
-                                        // creation time. When the product is fetched asynchronously
-                                        // (common path), onAppear fires while text is still empty, then
-                                        // `request.pricing` is set later → onChange fires. The old
-                                        // onChange ALWAYS ran the cents-accumulation formatter
-                                        // (strip decimal, treat all digits as cents) regardless of
-                                        // whether the field was focused. So "50.0" became "500" → "5.00".
-                                        //
-                                        // FIX: gate the cents-accumulation formatter on isFocused.
-                                        // • !isFocused  → programmatic write (async/sync prefill).
-                                        //                  Interpret value as dollars, normalise %.2f.
-                                        // • isFocused   → user is actively typing. Run cent-accumulation.
                                         if isForPrice {
                                             if !isFocused {
-                                                // Programmatic prefill — value is a dollar amount.
-                                                // Normalise without rescaling.
-                                                if let dollars = Double(value) {
-                                                    let normalized = String(format: "%.2f", dollars)
-                                                    rawPriceDigits = normalized.filter { $0.isNumber }
+                                                if let normalized = normalizedPriceText(value) {
                                                     if text != normalized {
                                                         text = normalized
                                                         self.enteredText?(text)
                                                     }
                                                 }
-                                                // If Double(value) fails (e.g. empty string), leave it.
                                                 return
                                             }
-                                            // isFocused == true → user is typing → cent-accumulation.
-                                            let newFiltered = value.filter { $0.isNumber }
-                                            if newFiltered != rawPriceDigits {
-                                                rawPriceDigits = newFiltered
-                                                var digitsToFormat = rawPriceDigits
-                                                while digitsToFormat.count > 1 && digitsToFormat.first == "0" {
-                                                    digitsToFormat.removeFirst()
-                                                }
-                                                let formattedText: String
-                                                if digitsToFormat.isEmpty {
-                                                    formattedText = ""
-                                                } else if digitsToFormat.count == 1 {
-                                                    formattedText = "0.0\(digitsToFormat)"
-                                                } else if digitsToFormat.count == 2 {
-                                                    formattedText = "0.\(digitsToFormat)"
-                                                } else {
-                                                    let idx = digitsToFormat.index(digitsToFormat.endIndex, offsetBy: -2)
-                                                    let beforeDecimal = digitsToFormat[..<idx]
-                                                    let afterDecimal = digitsToFormat[idx...]
-                                                    formattedText = "\(beforeDecimal).\(afterDecimal)"
-                                                }
-                                                if text != formattedText {
-                                                    text = formattedText
-                                                    self.enteredText?(text)
-                                                }
+                                            let sanitized = sanitizePriceInput(value)
+                                            if text != sanitized {
+                                                text = sanitized
                                             }
+                                            self.enteredText?(sanitized)
                                             return
                                         }
                                         // Non-price field handling (CVV / expiry / card number / plain)
@@ -256,11 +211,10 @@ struct AuthTextField: View {
                                     .onSubmit {
                                         if let onSubmit = onSubmit {
                                             onSubmit()
-                                        } else {
-                                            self.enteredText?(text)
-                                        }
+                                    } else {
+                                        self.enteredText?(text)
                                     }
-                                    .ignoresSafeArea(.keyboard, edges: .bottom)
+                                }
                             }
                         }
                         
@@ -304,6 +258,40 @@ struct AuthTextField: View {
         }
       
         .padding([.leading,.trailing],Leading)
+    }
+
+    private func sanitizePriceInput(_ value: String) -> String {
+        var sanitized = ""
+        var hasDecimal = false
+
+        for character in value {
+            if character.isNumber {
+                sanitized.append(character)
+            } else if (character == "." || character == ",") && !hasDecimal {
+                sanitized.append(".")
+                hasDecimal = true
+            }
+        }
+
+        if sanitized.hasPrefix(".") {
+            sanitized = "0" + sanitized
+        }
+
+        if let decimalIndex = sanitized.firstIndex(of: ".") {
+            let beforeDecimal = sanitized[..<decimalIndex]
+            let afterDecimal = sanitized[sanitized.index(after: decimalIndex)...].prefix(2)
+            sanitized = String(beforeDecimal) + "." + String(afterDecimal)
+        }
+
+        return sanitized
+    }
+
+    private func normalizedPriceText(_ value: String) -> String? {
+        let sanitized = sanitizePriceInput(value)
+        guard !sanitized.isEmpty, sanitized != ".", let dollars = Double(sanitized) else {
+            return value.isEmpty ? "" : nil
+        }
+        return String(format: "%.2f", dollars)
     }
     
     
