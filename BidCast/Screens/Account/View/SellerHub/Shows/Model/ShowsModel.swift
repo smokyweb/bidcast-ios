@@ -7,6 +7,22 @@
 
 import Foundation
 
+private func decodeStringArrayFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) throws -> [String]? {
+    if let values = try? c.decodeIfPresent([String].self, forKey: key) { return values }
+    if let values = try? c.decodeIfPresent([Int].self, forKey: key) { return values.map(String.init) }
+    if let values = try? c.decodeIfPresent([Double].self, forKey: key) {
+        return values.map { value in
+            value.rounded() == value ? String(Int(value)) : String(value)
+        }
+    }
+    if let value = try? c.decodeIfPresent(String.self, forKey: key) {
+        return value
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+    return nil
+}
 
 
 struct UpdateStatusModel : Codable {
@@ -27,6 +43,71 @@ struct UpdateStatusModel : Codable {
         var highest_bid: String?
         var user: User?
         var category: Category?
+
+        enum CodingKeys: String, CodingKey {
+            case id, title, date, time, user_id, category_id, product_ids, auction_type_id
+            case thumbnail, img_thumbnail, is_live, viewer_count, products, bid_won_user
+            case highest_bid, user, category
+        }
+
+        init(
+            id: Int? = nil,
+            title: String? = nil,
+            date: String? = nil,
+            time: String? = nil,
+            user_id: Int? = nil,
+            category_id: Int? = nil,
+            product_ids: [String]? = nil,
+            auction_type_id: Int? = nil,
+            thumbnail: [String]? = nil,
+            img_thumbnail: [String]? = nil,
+            is_live: Bool? = nil,
+            viewer_count: Int? = nil,
+            products: [ProductModelData]? = nil,
+            bid_won_user: String? = nil,
+            highest_bid: String? = nil,
+            user: User? = nil,
+            category: Category? = nil
+        ) {
+            self.id = id
+            self.title = title
+            self.date = date
+            self.time = time
+            self.user_id = user_id
+            self.category_id = category_id
+            self.product_ids = product_ids
+            self.auction_type_id = auction_type_id
+            self.thumbnail = thumbnail
+            self.img_thumbnail = img_thumbnail
+            self.is_live = is_live
+            self.viewer_count = viewer_count
+            self.products = products
+            self.bid_won_user = bid_won_user
+            self.highest_bid = highest_bid
+            self.user = user
+            self.category = category
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            id = try c.decodeIfPresent(Int.self, forKey: .id)
+            title = try c.decodeIfPresent(String.self, forKey: .title)
+            date = try c.decodeIfPresent(String.self, forKey: .date)
+            time = try c.decodeIfPresent(String.self, forKey: .time)
+            user_id = try c.decodeIfPresent(Int.self, forKey: .user_id)
+            category_id = try c.decodeIfPresent(Int.self, forKey: .category_id)
+            product_ids = try decodeStringArrayFlexible(c, forKey: .product_ids)
+            auction_type_id = try c.decodeIfPresent(Int.self, forKey: .auction_type_id)
+            thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
+            img_thumbnail = try c.decodeIfPresent([String].self, forKey: .img_thumbnail)
+            is_live = try c.decodeIfPresent(Bool.self, forKey: .is_live)
+            viewer_count = try c.decodeIfPresent(Int.self, forKey: .viewer_count)
+            products = try c.decodeIfPresent([ProductModelData].self, forKey: .products)
+            bid_won_user = try c.decodeIfPresent(String.self, forKey: .bid_won_user)
+            highest_bid = try c.decodeIfPresent(String.self, forKey: .highest_bid)
+            user = try c.decodeIfPresent(User.self, forKey: .user)
+            category = try c.decodeIfPresent(Category.self, forKey: .category)
+        }
     }
 
     struct ProductModelData: Codable {

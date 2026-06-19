@@ -22,6 +22,23 @@ private func decodeBoolFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, fo
     return nil
 }
 
+private func decodeStringArrayFlexible<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) throws -> [String]? {
+    if let values = try? c.decodeIfPresent([String].self, forKey: key) { return values }
+    if let values = try? c.decodeIfPresent([Int].self, forKey: key) { return values.map(String.init) }
+    if let values = try? c.decodeIfPresent([Double].self, forKey: key) {
+        return values.map { value in
+            value.rounded() == value ? String(Int(value)) : String(value)
+        }
+    }
+    if let value = try? c.decodeIfPresent(String.self, forKey: key) {
+        return value
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+    return nil
+}
+
 struct HomeModel: Codable, Identifiable {
     var id: Int?
     var title: String?
@@ -125,7 +142,7 @@ extension HomeModel {
         user_id = try c.decodeIfPresent(Int.self, forKey: .user_id)
         show_discoverability = try c.decodeIfPresent(String.self, forKey: .show_discoverability)
         category_id = try c.decodeIfPresent(Int.self, forKey: .category_id)
-        product_ids = try c.decodeIfPresent([String].self, forKey: .product_ids)
+        product_ids = try decodeStringArrayFlexible(c, forKey: .product_ids)
         auction_type_id = try c.decodeIfPresent(Int.self, forKey: .auction_type_id)
         thumbnail = try c.decodeIfPresent([String].self, forKey: .thumbnail)
         products = try c.decodeIfPresent([ProductDataModel1].self, forKey: .products)
