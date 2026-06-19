@@ -30,6 +30,7 @@ struct RandomizerTemplateBuilderView: View {
     @State private var hudMsg = ""
     @State private var showHud = false
     @State private var isSaving = false
+    @State private var showNameError = false
 
     // Buyer Raffle: single prize product (mirrored to all slots)
     // Basecamp #9955991396 — hide per-slot picker, show one prize picker
@@ -43,51 +44,74 @@ struct RandomizerTemplateBuilderView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Name
-                    nameSectionView
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 18) {
+                        nameSectionView
+                        typeSectionView
 
-                    // Type picker
-                    typeSectionView
+                        if allowsProductMapping && selectedType == .buyerRaffle {
+                            buyerRafflePrizeSection
+                        }
 
-                    // Buyer Raffle: single prize product picker
-                    // Basecamp #9955991396
-                    if allowsProductMapping && selectedType == .buyerRaffle {
-                        buyerRafflePrizeSection
+                        if selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle {
+                            pricingSectionView
+                        }
+
+                        slotCountSectionView
+                        slotGridSection
                     }
-
-                    // Paid/free entry mode for raffle types
-                    if selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle {
-                        entryModeSectionView
-                    }
-
-                    if isPaidEntry && (selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle) {
-                        entryCostSectionView
-                    }
-
-                    // Slot count stepper
-                    slotCountSectionView
-
-                    // Slot grid
-                    slotGridSection
+                    .padding(16)
                 }
-                .padding(16)
+
+                HStack(spacing: 12) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Cancel")
+                            .font(.custom(poppinsBold, size: 15))
+                            .foregroundColor(.primary)
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.25), lineWidth: 1))
+                    }
+
+                    Button {
+                        saveTemplate()
+                    } label: {
+                        Text("Save Template")
+                            .font(.custom(poppinsBold, size: 15))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                            .background(isSaving ? Color.gray.opacity(0.5) : Color.defaultTheme)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    .disabled(isSaving)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.backGround)
             }
             .background(Color.backGround)
-            .navigationTitle(isEditMode ? "Edit Template" : "New Template")
+            .navigationTitle(isEditMode ? "Edit Randomizer Template" : "New Randomizer Template")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") { dismiss() }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.gray)
+                    }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isEditMode ? "Save" : "Create") {
+                    Button("Save") {
                         saveTemplate()
                     }
                     .font(.custom(poppinsBold, size: 15))
-                    .foregroundColor(isSaving ? .gray : .defaultTheme)
-                    .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .foregroundColor(isSaving ? .gray : .white)
+                    .disabled(isSaving)
                 }
             }
             .sheet(isPresented: $showingSlotEditor) {
@@ -125,69 +149,74 @@ struct RandomizerTemplateBuilderView: View {
 
     // MARK: - Name Section
     private var nameSectionView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Template Name")
-                .font(.custom(poppinsBold, size: 14))
-                .foregroundColor(.primary)
+        sectionCard {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Template name")
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.primary)
 
-            TextField("e.g. Summer Giveaway", text: $name)
-                .font(.custom(poppinsRegular, size: 15))
-                .padding(12)
-                .background(Color.white)
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                )
+                TextField("e.g. Saturday Night Raffle", text: $name)
+                    .font(.custom(poppinsRegular, size: 15))
+                    .padding(12)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.25), lineWidth: 1))
+                    .onChange(of: name) { _ in
+                        if !name.trimmingCharacters(in: .whitespaces).isEmpty {
+                            showNameError = false
+                        }
+                    }
+
+                if showNameError {
+                    Text("Template name is required.")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.red)
+                }
+            }
         }
     }
 
     // MARK: - Type Picker
     private var typeSectionView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Randomizer Type")
-                .font(.custom(poppinsBold, size: 14))
-                .foregroundColor(.primary)
+        sectionCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Type")
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.primary)
 
-            VStack(spacing: 0) {
                 ForEach(RandomizerType.allCases) { type in
-                    typeOptionRow(
-                        for: type,
-                        showsDivider: type != RandomizerType.allCases.last
-                    )
+                    typeOptionRow(for: type)
                 }
             }
-            .background(Color.white)
-            .cornerRadius(10)
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
         }
     }
 
-    @ViewBuilder
-    private func typeOptionRow(for type: RandomizerType, showsDivider: Bool) -> some View {
+    private func typeOptionRow(for type: RandomizerType) -> some View {
         Button {
             selectedType = type
         } label: {
-            HStack(spacing: 12) {
-                typeSelectionIndicator(isSelected: selectedType == type)
+            HStack(alignment: .center, spacing: 12) {
                 typeOptionText(for: type)
                 Spacer()
+                typeSelectionIndicator(isSelected: selectedType == type)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(selectedType == type ? Color.defaultTheme : Color.primary, lineWidth: selectedType == type ? 2 : 1)
+            )
         }
         .buttonStyle(.plain)
-
-        if showsDivider {
-            Divider().padding(.horizontal, 14)
-        }
     }
 
     private func typeSelectionIndicator(isSelected: Bool) -> some View {
         Circle()
-            .fill(isSelected ? Color.defaultTheme : Color.clear)
+            .fill(isSelected ? Color.defaultTheme : Color.white)
             .frame(width: 18, height: 18)
-            .overlay(Circle().stroke(Color.defaultTheme, lineWidth: 2))
+            .overlay(Circle().stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.55), lineWidth: 1.5))
             .overlay {
                 if isSelected {
                     Circle()
@@ -199,118 +228,152 @@ struct RandomizerTemplateBuilderView: View {
 
     private func typeOptionText(for type: RandomizerType) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(type.displayName)
+            Text(typeOptionTitle(type))
                 .font(.custom(poppinsBold, size: 13))
                 .foregroundColor(.primary)
-            Text(type.description)
+            Text(typeOptionDescription(type))
                 .font(.custom(poppinsRegular, size: 11))
                 .foregroundColor(.gray)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
-    // MARK: - Entry Cost
-    private var entryModeSectionView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Entry Mode")
-                .font(.custom(poppinsBold, size: 14))
-                .foregroundColor(.primary)
-
-            Picker("Entry Mode", selection: $isPaidEntry) {
-                Text("Free").tag(false)
-                Text("Paid").tag(true)
-            }
-            .pickerStyle(.segmented)
-            .padding(8)
-            .background(Color.white)
-            .cornerRadius(10)
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+    private func typeOptionTitle(_ type: RandomizerType) -> String {
+        switch type {
+        case .productRaffle: return "🎁 Product Raffle"
+        case .blindProductRaffle: return "🙈 Blind Product Raffle"
+        case .buyerRaffle: return "👥 Buyer Raffle"
+        case .wheelBinAuction: return "🔨 Wheel BIN / Auction"
         }
     }
 
-    private var entryCostSectionView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Entry Cost")
-                .font(.custom(poppinsBold, size: 14))
-                .foregroundColor(.primary)
-
-            HStack {
-                Text("$")
-                    .font(.custom(poppinsBold, size: 16))
-                    .foregroundColor(.gray)
-                    .padding(.leading, 12)
-
-                TextField("0.00", text: $entryCost)
-                    .font(.custom(poppinsRegular, size: 15))
-                    .keyboardType(.decimalPad)
-                    .padding(.vertical, 12)
-                    .padding(.trailing, 12)
-            }
-            .background(Color.white)
-            .cornerRadius(10)
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+    private func typeOptionDescription(_ type: RandomizerType) -> String {
+        switch type {
+        case .productRaffle:
+            return "Each slot shows a product. Winner gets that product."
+        case .blindProductRaffle:
+            return "Products hidden from buyers — icons only until the winner is revealed."
+        case .buyerRaffle:
+            return "Slots are buyers. One center product goes to the winner."
+        case .wheelBinAuction:
+            return "Wheel spins alongside the existing auction / Buy-It-Now flow for visual flair."
         }
+    }
+
+    private func sectionCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        content()
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.gray.opacity(0.12), lineWidth: 1))
+            .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
+    }
+
+    // MARK: - Pricing
+    private var pricingSectionView: some View {
+        sectionCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Pricing")
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.primary)
+
+                HStack(spacing: 12) {
+                    pricingOption(title: "Free", isSelected: !isPaidEntry) {
+                        isPaidEntry = false
+                        entryCost = ""
+                    }
+                    pricingOption(title: "Paid", isSelected: isPaidEntry) {
+                        isPaidEntry = true
+                    }
+                }
+
+                if isPaidEntry {
+                    HStack {
+                        Text("$")
+                            .font(.custom(poppinsBold, size: 16))
+                            .foregroundColor(.gray)
+                            .padding(.leading, 12)
+
+                        TextField("0.00", text: $entryCost)
+                            .font(.custom(poppinsRegular, size: 15))
+                            .keyboardType(.decimalPad)
+                            .padding(.vertical, 12)
+                            .padding(.trailing, 12)
+                    }
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.25), lineWidth: 1))
+                }
+            }
+        }
+    }
+
+    private func pricingOption(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                typeSelectionIndicator(isSelected: isSelected)
+                Text(title)
+                    .font(.custom(poppinsRegular, size: 14))
+                    .foregroundColor(.primary)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isSelected ? Color.defaultTheme : Color.primary, lineWidth: isSelected ? 2 : 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Slot Count
     private var slotCountSectionView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Number of Slots")
-                .font(.custom(poppinsBold, size: 14))
-                .foregroundColor(.primary)
+        sectionCard {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Number of slots")
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.primary)
 
-            HStack {
-                Text("\(slotCount) slots")
-                    .font(.custom(poppinsBold, size: 15))
-                    .frame(minWidth: 80, alignment: .leading)
-
-                Spacer()
-
-                HStack(spacing: 0) {
-                    Button {
-                        guard slotCount > minSlots else { return }
-                        slotCount -= 1
-                        syncSlots()
-                    } label: {
-                        Image(systemName: "minus")
-                            .frame(width: 44, height: 44)
-                            .foregroundColor(slotCount > minSlots ? .defaultTheme : .gray)
+                Menu {
+                    ForEach(minSlots...maxSlots, id: \.self) { value in
+                        Button("\(value) slots") {
+                            slotCount = value
+                            syncSlots()
+                        }
                     }
-
-                    Text("\(slotCount)")
-                        .font(.custom(poppinsBold, size: 16))
-                        .frame(width: 44)
-
-                    Button {
-                        guard slotCount < maxSlots else { return }
-                        slotCount += 1
-                        syncSlots()
-                    } label: {
-                        Image(systemName: "plus")
-                            .frame(width: 44, height: 44)
-                            .foregroundColor(slotCount < maxSlots ? .defaultTheme : .gray)
+                } label: {
+                    HStack {
+                        Text("\(slotCount) slots")
+                            .font(.custom(poppinsRegular, size: 15))
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.primary)
                     }
+                    .padding(.horizontal, 12)
+                    .frame(maxWidth: .infinity, minHeight: 48)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.25), lineWidth: 1))
                 }
-                .background(Color.white)
-                .cornerRadius(10)
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(Color.white)
-            .cornerRadius(10)
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
         }
     }
 
     // MARK: - Slot Grid
     private var slotGridSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Slots  — tap to customize")
-                .font(.custom(poppinsBold, size: 14))
-                .foregroundColor(.primary)
+        sectionCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Slots")
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.primary)
 
-            let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 3)
-            LazyVGrid(columns: columns, spacing: 10) {
                 ForEach(slots.indices, id: \.self) { idx in
                     SlotCardView(
                         slot: slots[idx],
@@ -339,62 +402,64 @@ struct RandomizerTemplateBuilderView: View {
 
     /// Template-level prize product row shown only for buyer_raffle.
     private var buyerRafflePrizeSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Prize Product")
-                .font(.custom(poppinsBold, size: 14))
-                .foregroundColor(.primary)
+        sectionCard {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Prize Product")
+                    .font(.custom(poppinsBold, size: 14))
+                    .foregroundColor(.primary)
 
-            Text("One product for the whole raffle — goes to whichever buyer-slot wins.")
-                .font(.custom(poppinsRegular, size: 12))
-                .foregroundColor(.gray)
+                Text("One product for the whole raffle — goes to whichever buyer-slot wins.")
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.gray)
 
-            Button {
-                showingPrizeProductPicker = true
-            } label: {
-                HStack(spacing: 12) {
-                    if let pid = buyerRaffleProductId,
-                       let prod = availableProducts.first(where: { $0.id == pid }) {
-                        AsyncImage(url: prod.thumbnailURL) { img in
-                            img.resizable().scaledToFill()
-                        } placeholder: {
-                            Color.gray.opacity(0.15)
-                        }
-                        .frame(width: 40, height: 40)
-                        .cornerRadius(8)
-                        .clipped()
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(prod.title ?? "Product #\(pid)")
-                                .font(.custom(poppinsBold, size: 13))
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                            if let price = prod.pricing {
-                                Text("$\(price)")
-                                    .font(.custom(poppinsRegular, size: 11))
-                                    .foregroundColor(.gray)
+                Button {
+                    showingPrizeProductPicker = true
+                } label: {
+                    HStack(spacing: 12) {
+                        if let pid = buyerRaffleProductId,
+                           let prod = availableProducts.first(where: { $0.id == pid }) {
+                            AsyncImage(url: prod.thumbnailURL) { img in
+                                img.resizable().scaledToFill()
+                            } placeholder: {
+                                Color.gray.opacity(0.15)
                             }
-                        }
-                    } else {
-                        Image(systemName: "photo.badge.plus")
-                            .font(.system(size: 20))
-                            .foregroundColor(.defaultTheme)
                             .frame(width: 40, height: 40)
+                            .cornerRadius(8)
+                            .clipped()
 
-                        Text("Select prize product")
-                            .font(.custom(poppinsRegular, size: 14))
-                            .foregroundColor(.defaultTheme)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(prod.title ?? "Product #\(pid)")
+                                    .font(.custom(poppinsBold, size: 13))
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                if let price = prod.pricing {
+                                    Text("$\(price)")
+                                        .font(.custom(poppinsRegular, size: 11))
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        } else {
+                            Image(systemName: "photo.badge.plus")
+                                .font(.system(size: 20))
+                                .foregroundColor(.defaultTheme)
+                                .frame(width: 40, height: 40)
+
+                            Text("Select prize product")
+                                .font(.custom(poppinsRegular, size: 14))
+                                .foregroundColor(.defaultTheme)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray.opacity(0.5))
+                            .font(.system(size: 12, weight: .semibold))
                     }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.gray.opacity(0.5))
-                        .font(.system(size: 12, weight: .semibold))
+                    .padding(12)
+                    .background(Color.white)
+                    .cornerRadius(10)
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
                 }
-                .padding(12)
-                .background(Color.white)
-                .cornerRadius(10)
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2)))
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
     }
 
@@ -478,10 +543,12 @@ struct RandomizerTemplateBuilderView: View {
     private func saveTemplate() {
         let trimmedName = name.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else {
+            showNameError = true
             hudMsg = "Please enter a template name"
             showHud = true
             return
         }
+        showNameError = false
         let cost = isPaidEntry ? Double(entryCost.trimmingCharacters(in: .whitespaces)) : 0
         if isPaidEntry && (cost ?? 0) <= 0 {
             hudMsg = "Please enter an entry cost for paid randomizers"
@@ -549,42 +616,72 @@ struct SlotCardView: View {
     var isBuyerSlot: Bool = false
 
     var body: some View {
-        VStack(spacing: 6) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(hex: slot.color))
-                    .frame(height: 64)
+        HStack(spacing: 12) {
+            Text("\(position + 1)")
+                .font(.custom(poppinsBold, size: 13))
+                .foregroundColor(.gray)
+                .frame(width: 22)
 
-                // #9960173707 Phase 4: custom slot image fills the card when set.
+            Circle()
+                .fill(Color(hex: slot.color))
+                .frame(width: 30, height: 30)
+                .overlay(Circle().stroke(Color.white, lineWidth: 3))
+
+            Text((slot.icon?.isEmpty == false) ? slot.icon! : "+")
+                .font(.system(size: 16))
+                .frame(width: 32, height: 32)
+                .background(Color.white)
+                .clipShape(Circle())
+                .overlay(Circle().stroke(Color.gray.opacity(0.2), lineWidth: 1))
+
+            ZStack {
+                RoundedRectangle(cornerRadius: 7)
+                    .fill(Color.white)
+                    .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+
                 if let img = slot.image, !img.isEmpty, let url = URL(string: img) {
                     AsyncImage(url: url) { image in
                         image.resizable().scaledToFill()
                     } placeholder: {
-                        Color.clear
+                        Image(systemName: "camera.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
                     }
-                    .frame(height: 64)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
-
-                VStack(spacing: 2) {
-                    if slot.image == nil || slot.image?.isEmpty == true, let icon = slot.icon {
-                        Text(icon).font(.system(size: 24))
-                    }
-                    // Hide product name overlay for buyer_raffle (prize is shown at template level)
-                    if !isBuyerSlot, let prod = product, let title = prod.title {
-                        Text(title)
-                            .font(.custom(poppinsRegular, size: 9))
-                            .foregroundColor(.white.opacity(0.9))
-                            .lineLimit(1)
-                            .padding(.horizontal, 4)
-                    }
+                    .frame(width: 32, height: 32)
+                    .clipShape(RoundedRectangle(cornerRadius: 7))
+                } else {
+                    Image(systemName: "camera.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
                 }
             }
+            .frame(width: 32, height: 32)
 
-            Text(isBuyerSlot ? "Buyer \(position + 1)" : "Slot \(position + 1)")
-                .font(.custom(poppinsRegular, size: 11))
+            Text(productTitle)
+                .font(.custom(poppinsRegular, size: 14))
                 .foregroundColor(.gray)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
+                .padding(.horizontal, 12)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2), lineWidth: 1))
         }
+        .padding(.horizontal, 12)
+        .frame(maxWidth: .infinity, minHeight: 58)
+        .background(Color.backGround.opacity(0.75))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.08), lineWidth: 1))
+    }
+
+    private var productTitle: String {
+        if isBuyerSlot {
+            return "Buyer slot"
+        }
+        if let title = product?.title, !title.isEmpty {
+            return title
+        }
+        return "No product"
     }
 }
 
