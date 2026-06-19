@@ -86,26 +86,6 @@ struct ShowsScreen: View {
 
             // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: ShowScreenSegment.allCases)
-                .onChange(of: segment) { newSegment in
-                    Task{
-                        SVProgressHUD.show()
-                        if segment == .pastShows{
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            showsData.removeAll()
-                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past", page: "1"))
-                        }else{
-                            showsData.removeAll()
-                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming", page: "1"))
-                        }
-                       
-                        await SVProgressHUD.dismiss()
-                        scheduleSuccess()
-                    }
-                }
                 .padding(.horizontal)
             
             // MARK: - Scrollable Content
@@ -196,54 +176,56 @@ struct ShowsScreen: View {
             AlertToast(type: .regular, title: hudMsg)
         }
         .onAppear {
-            Task {
-                guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-
-                SVProgressHUD.show()
-
-                currentPage = 1
-                isLastPage = false
-                showsData.removeAll()
-
-                let type = segment == .pastShows ? "past" : "upcoming"
-                await viewModel.getLiveSHows(
-                    param: GetLiveShowsRequest(type: type, page: "\(currentPage)")
-                )
-
-                await SVProgressHUD.dismiss()
-                scheduleSuccess()
-            }
+            loadShows(reset: true)
         }
         .onChange(of: segment) { _ in
-            Task {
-                guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-
-                SVProgressHUD.show()
-
-                // Reset pagination
-                currentPage = 1
-                isLastPage = false
-                showsData.removeAll()
-
-                let type = segment == .pastShows ? "past" : "upcoming"
-                await viewModel.getLiveSHows(
-                    param: GetLiveShowsRequest(type: type, page: "\(currentPage)")
-                )
-
-                await SVProgressHUD.dismiss()
-                scheduleSuccess(isPagination: false)
-            }
+            loadShows(reset: true)
         }
 
 
+    }
+
+    func loadShows(reset: Bool) {
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                isPaginating = false
+                return
+            }
+
+            SVProgressHUD.show()
+            if reset {
+                currentPage = 1
+                isLastPage = false
+                showsData.removeAll()
+            }
+
+            let requestSegment = segment
+            let requestPage = currentPage
+            let type = requestSegment == .pastShows ? "past" : "upcoming"
+            await viewModel.getLiveSHows(
+                param: GetLiveShowsRequest(type: type, page: "\(requestPage)")
+            )
+
+            await SVProgressHUD.dismiss()
+            guard segment == requestSegment else {
+                if !reset {
+                    isPaginating = false
+                }
+                return
+            }
+            scheduleSuccess(isPagination: !reset)
+
+            if let error = viewModel.errorMessage, !error.isEmpty {
+                hudMsg = error
+                showhud = true
+                viewModel.errorMessage = nil
+            }
+            if !reset {
+                isPaginating = false
+            }
+        }
     }
     func scheduleSuccess(isPagination: Bool = false) {
         guard let response = viewModel.scheduledShow else { return }
@@ -268,15 +250,7 @@ struct ShowsScreen: View {
 
         isPaginating = true
         currentPage += 1
-
-        Task {
-            let type = segment == .pastShows ? "past" : "upcoming"
-            await viewModel.getLiveSHows(
-                param: GetLiveShowsRequest(type: type, page: "\(currentPage)")
-            )
-            scheduleSuccess(isPagination: true)
-            isPaginating = false
-        }
+        loadShows(reset: false)
     }
 
 }
@@ -295,6 +269,3 @@ enum ShowScreenSegment: String, CaseIterable, CustomStringConvertible {
 //#Preview {
 //    ShowsScreen()
 //}
-
-
-
