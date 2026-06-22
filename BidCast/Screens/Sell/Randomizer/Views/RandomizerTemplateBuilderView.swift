@@ -13,6 +13,8 @@ struct RandomizerTemplateBuilderView: View {
     // nil = create mode; non-nil = edit mode
     let editingTemplate: RandomizerTemplate?
     var allowsProductMapping: Bool = false
+    var showId: Int? = nil
+    var onSaved: ((RandomizerTemplate) -> Void)? = nil
 
     // Form state
     @State private var name: String = ""
@@ -591,16 +593,20 @@ struct RandomizerTemplateBuilderView: View {
             entry_cost: cost,
             prize_product_id: prizeId,
             slot_count: slotCount,
-            slots: requestSlots
+            slots: requestSlots,
+            show_id: allowsProductMapping ? showId : nil,
+            is_show_copy: allowsProductMapping ? true : nil
         )
 
         Task {
             do {
+                let saved: RandomizerTemplate
                 if let id = editingTemplate?.id {
-                    _ = try await RandomizerService.shared.updateTemplate(id: id, body: body)
+                    saved = try await RandomizerService.shared.updateTemplate(id: id, body: body)
                 } else {
-                    _ = try await RandomizerService.shared.createTemplate(body)
+                    saved = try await RandomizerService.shared.createTemplate(body)
                 }
+                onSaved?(saved)
                 dismiss()
             } catch {
                 hudMsg = "Save failed: \(error.localizedDescription)"

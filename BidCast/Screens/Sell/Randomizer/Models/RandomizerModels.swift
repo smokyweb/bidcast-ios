@@ -234,6 +234,8 @@ struct RandomizerTemplateRequest: Encodable {
     var prize_product_id: Int?    // #9960173707 Phase 4: buyer_raffle prize product
     var slot_count: Int
     var slots: [RandomizerSlotRequest]
+    var show_id: Int? = nil
+    var is_show_copy: Bool? = nil
 }
 
 struct RandomizerSlotRequest: Encodable {

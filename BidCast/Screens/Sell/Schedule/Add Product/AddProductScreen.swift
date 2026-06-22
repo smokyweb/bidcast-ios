@@ -54,6 +54,9 @@ struct AddProductsScreen: View {
     @State private var navigateToEditListProduct: Bool = false
     @State private var editingProduct: ProductDataModel1? = nil
     @State private var showRandomizerPicker = false
+    @State private var showPostCreateRandomizerMapper = false
+    @State private var postCreateRandomizerShowId: Int? = nil
+    @State private var postCreateRandomizerTemplateId: Int? = nil
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -317,8 +320,17 @@ struct AddProductsScreen: View {
                         request.randomizer_template_id = newId
                     }
                 ),
-                allowsProductMapping: true
+                allowsProductMapping: false
             )
+        }
+        .sheet(isPresented: $showPostCreateRandomizerMapper, onDismiss: {
+            postCreateRandomizerShowId = nil
+            postCreateRandomizerTemplateId = nil
+            navigateToTab = true
+        }) {
+            if let showId = postCreateRandomizerShowId {
+                ShowRandomizersManagementSheet(showId: showId, autoOpenTemplateId: postCreateRandomizerTemplateId)
+            }
         }
         .overlay(
             CustomBottomSheetView(
@@ -331,7 +343,11 @@ struct AddProductsScreen: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                                 // ⭐ CHANGED: Clear products after successful submit
                                 productManager.clearAll()
-                                navigateToTab = true
+                                if postCreateRandomizerShowId != nil && postCreateRandomizerTemplateId != nil {
+                                    showPostCreateRandomizerMapper = true
+                                } else {
+                                    navigateToTab = true
+                                }
                             }
                         }
                     }
@@ -610,6 +626,14 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
+                if let templateId = request.randomizer_template_id,
+                   let showId = response?.data.id {
+                    postCreateRandomizerShowId = showId
+                    postCreateRandomizerTemplateId = templateId
+                } else {
+                    postCreateRandomizerShowId = nil
+                    postCreateRandomizerTemplateId = nil
+                }
                 productManager.clearAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
@@ -693,6 +717,14 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
+                if let templateId = request.randomizer_template_id,
+                   let showId = response?.data.id {
+                    postCreateRandomizerShowId = showId
+                    postCreateRandomizerTemplateId = templateId
+                } else {
+                    postCreateRandomizerShowId = nil
+                    postCreateRandomizerTemplateId = nil
+                }
                 productManager.clearAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",

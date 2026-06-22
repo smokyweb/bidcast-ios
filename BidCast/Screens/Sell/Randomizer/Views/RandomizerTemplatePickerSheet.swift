@@ -218,6 +218,7 @@ struct ShowRandomizersManagementSheet: View {
     @Environment(\.dismiss) var dismiss
 
     let showId: Int
+    var autoOpenTemplateId: Int? = nil
 
     @State private var attachedTemplates: [RandomizerTemplate] = []
     @State private var sellerTemplates: [RandomizerTemplate] = []
@@ -225,6 +226,7 @@ struct ShowRandomizersManagementSheet: View {
     @State private var errorMessage: String? = nil
     @State private var showBuilder = false
     @State private var builderTemplate: RandomizerTemplate? = nil
+    @State private var didAutoOpenTemplate = false
 
     var body: some View {
         NavigationView {
@@ -242,7 +244,14 @@ struct ShowRandomizersManagementSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .background(
                 NavigationLink(isActive: $showBuilder, destination: {
-                    RandomizerTemplateBuilderView(editingTemplate: builderTemplate, allowsProductMapping: true)
+                    RandomizerTemplateBuilderView(
+                        editingTemplate: builderTemplate,
+                        allowsProductMapping: true,
+                        showId: showId,
+                        onSaved: { saved in
+                            attachSavedShowTemplate(saved)
+                        }
+                    )
                         .onDisappear { loadData() }
                 }, label: { EmptyView() })
             )
@@ -354,6 +363,10 @@ struct ShowRandomizersManagementSheet: View {
                 async let templates = RandomizerService.shared.listTemplates()
                 attachedTemplates = try await attached
                 sellerTemplates = try await templates
+                if let autoOpenTemplateId, !didAutoOpenTemplate {
+                    didAutoOpenTemplate = true
+                    openShowScopedProductMapper(templateId: autoOpenTemplateId)
+                }
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -363,9 +376,14 @@ struct ShowRandomizersManagementSheet: View {
 
     private func attach(_ template: RandomizerTemplate) {
         guard let templateId = template.id else { return }
+        openShowScopedProductMapper(templateId: templateId)
+    }
+
+    private func attachSavedShowTemplate(_ template: RandomizerTemplate) {
+        guard let templateId = template.id else { return }
         Task {
             do {
-                try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId)
+                _ = try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId, copyForShow: true)
                 loadData()
             } catch {
                 errorMessage = error.localizedDescription
@@ -383,14 +401,29 @@ struct ShowRandomizersManagementSheet: View {
 
         Task {
             do {
-                let scopedId = try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId, copyForShow: true) ?? templateId
-                builderTemplate = try await RandomizerService.shared.getTemplate(id: scopedId)
-                showBuilder = true
-                loadData()
+                try await prepareAndOpenShowScopedTemplate(templateId: templateId)
             } catch {
                 errorMessage = error.localizedDescription
             }
         }
+    }
+
+    private func openShowScopedProductMapper(templateId: Int) {
+        guard templateId > 0 else { return }
+        Task {
+            do {
+                try await prepareAndOpenShowScopedTemplate(templateId: templateId)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func prepareAndOpenShowScopedTemplate(templateId: Int) async throws {
+        let scopedId = try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId, copyForShow: true) ?? templateId
+        builderTemplate = try await RandomizerService.shared.getTemplate(id: scopedId)
+        showBuilder = true
+        loadData()
     }
 
     private func detach(_ template: RandomizerTemplate) {

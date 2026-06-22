@@ -42,6 +42,9 @@ struct LetsPrepare: View {
     @State var prepareRehearsalShowId: String = ""
     // Basecamp #9929871140: randomizer template picker during show creation.
     @State private var showRandomizerPickerInCreate: Bool = false
+    @State private var showPostCreateRandomizerMapper: Bool = false
+    @State private var postCreateRandomizerShowId: Int? = nil
+    @State private var postCreateRandomizerTemplateId: Int? = nil
     // Basecamp #9986427172 (QA round 4): promote sheet for existing-show mode (idx==3).
     // NOTE: not `private` — a private stored property would make the struct's
     // memberwise initializer private and break LetsPrepare(...) callers in
@@ -228,7 +231,17 @@ struct LetsPrepare: View {
         .toolbar(.hidden,for: .tabBar)
         // Basecamp #9929871140: randomizer template picker sheet for show creation.
         .sheet(isPresented: $showRandomizerPickerInCreate) {
-            RandomizerTemplatePickerSheet(selectedTemplateId: $coordinator.randomizerTemplateId)
+            RandomizerTemplatePickerSheet(selectedTemplateId: $coordinator.randomizerTemplateId, allowsProductMapping: false)
+        }
+        .sheet(isPresented: $showPostCreateRandomizerMapper, onDismiss: {
+            postCreateRandomizerShowId = nil
+            postCreateRandomizerTemplateId = nil
+            navigateToReferScreen = true
+            referScreenNavigation = true
+        }) {
+            if let showId = postCreateRandomizerShowId {
+                ShowRandomizersManagementSheet(showId: showId, autoOpenTemplateId: postCreateRandomizerTemplateId)
+            }
         }
         // Basecamp #9986427172 (QA round 4): promote sheet for existing-show mode (idx==3).
         .sheet(isPresented: $showPromoteSheetFromPrepare, onDismiss: {
@@ -288,8 +301,12 @@ struct LetsPrepare: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                        navigateToReferScreen = true
-                        referScreenNavigation = true
+                        if postCreateRandomizerShowId != nil && postCreateRandomizerTemplateId != nil {
+                            showPostCreateRandomizerMapper = true
+                        } else {
+                            navigateToReferScreen = true
+                            referScreenNavigation = true
+                        }
                         withAnimation { showError = false }
                         
                     }else{
@@ -726,6 +743,14 @@ struct LetsPrepare: View {
         if response?.status == "success"{
             productIds = response?.data.product_ids ?? []
             showId = "\(response?.data.id ?? 0)"
+            if let templateId = coordinator.randomizerTemplateId,
+               let createdShowId = response?.data.id {
+                postCreateRandomizerShowId = createdShowId
+                postCreateRandomizerTemplateId = templateId
+            } else {
+                postCreateRandomizerShowId = nil
+                postCreateRandomizerTemplateId = nil
+            }
             print("showID \(self.showId)/n \(response?.data ?? HomeModel())")
             showsData = response?.data ?? HomeModel()
             alertType = .sheetType(
