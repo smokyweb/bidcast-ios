@@ -783,6 +783,9 @@ struct RandomizerEnterTopView: View {
     @Binding var roomId: String
     @Binding var winnerUser: FreebieUser
     @Binding var activeFreebieId: Int?
+    var initialTemplateSlots: [TemplateWheelSlot] = []
+    var initialTemplateType: RandomizerType? = nil
+    var initialEntryCost: Double? = nil
     var didEnterFreBie: (_ activeFreebieId: Int?, _ entryCost: Double?, _ selectedSlot: TemplateWheelSlot?) -> Void
 
     // MARK: - Shuffle State
@@ -795,6 +798,8 @@ struct RandomizerEnterTopView: View {
     @State private var templateType: RandomizerType? = nil
     @State private var templateEntryCost: Double? = nil
     @State private var selectedSlotIndex: Int? = nil
+    @State private var pendingEntrySlot: TemplateWheelSlot? = nil
+    @State private var showEntryConfirmation = false
     @State private var wheelRotation: Double = 0
     @State private var wheelIsSpinning = false
     @StateObject private var socketManager = SocketManagerService.shared
@@ -867,7 +872,10 @@ struct RandomizerEnterTopView: View {
                                 .simultaneousGesture(
                                     DragGesture(minimumDistance: 0)
                                         .onEnded { value in
-                                            selectedSlotIndex = slotIndex(at: value.location, wheelSize: wSize)
+                                            if let idx = slotIndex(at: value.location, wheelSize: wSize) {
+                                                selectedSlotIndex = idx
+                                                queueEntry(slot: templateSlots[idx])
+                                            }
                                         }
                                 )
                                 SpinWheelBolt()
@@ -926,7 +934,7 @@ struct RandomizerEnterTopView: View {
                             let selectedSlot = selectedSlotIndex.flatMap { idx in
                                 idx < templateSlots.count ? templateSlots[idx] : nil
                             }
-                            didEnterFreBie(activeFreebieId, templateEntryCost, selectedSlot)
+                            queueEntry(slot: selectedSlot)
                         }) {
                             Text(enterButtonTitle)
                                 .font(.custom(poppinsSemiBold, size: 14))
@@ -951,6 +959,17 @@ struct RandomizerEnterTopView: View {
                 Spacer()
             }
         }
+        .alert(entryConfirmationTitle, isPresented: $showEntryConfirmation) {
+            Button(entryConfirmationButtonTitle) {
+                didEnterFreBie(activeFreebieId, templateEntryCost, pendingEntrySlot)
+                pendingEntrySlot = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingEntrySlot = nil
+            }
+        } message: {
+            Text(entryConfirmationMessage)
+        }
         .onChange(of: winnerId) { _,_ in
                     startShuffle(winner: winnerUser)
             }
@@ -961,6 +980,7 @@ struct RandomizerEnterTopView: View {
             if winnerUser.id != nil {
                 startShuffle(winner: winnerUser)
             }
+            applyInitialTemplateSnapshot()
             // Subscribe to template-based freebie events (Build 313)
             socketManager.listenForTemplateFreebieData { payload in
                 guard payload.freebie?.room_id == roomId else { return }
@@ -971,7 +991,7 @@ struct RandomizerEnterTopView: View {
                 templateEntryCost = payload.entry_cost
                 if let rawSlots = payload.slots {
                     templateSlots = rawSlots.map { s in
-                        TemplateWheelSlot(id: s.id, position: s.position, color: s.color, icon: s.icon, product_id: s.product_id, product: s.product)
+                        TemplateWheelSlot(id: s.id, position: s.position, color: s.color, icon: s.icon, image: s.image, product_id: s.product_id, product: s.product)
                     }
                 }
             }
@@ -990,6 +1010,47 @@ struct RandomizerEnterTopView: View {
         }
 
         return String(format: "Enter for $%.2f", cost)
+    }
+
+    private var entryConfirmationTitle: String {
+        guard let cost = templateEntryCost, cost > 0 else {
+            return "Enter this slot?"
+        }
+        return String(format: "Enter for $%.2f?", cost)
+    }
+
+    private var entryConfirmationButtonTitle: String {
+        guard let cost = templateEntryCost, cost > 0 else {
+            return "Enter"
+        }
+        return String(format: "Pay $%.2f", cost)
+    }
+
+    private var entryConfirmationMessage: String {
+        let slotText = pendingEntrySlot.map { "slot \($0.position + 1)" } ?? "this randomizer"
+        guard let cost = templateEntryCost, cost > 0 else {
+            return "You will be entered into \(slotText)."
+        }
+        return String(format: "Your saved payment method will be charged $%.2f for %@.", cost, slotText)
+    }
+
+    private func queueEntry(slot: TemplateWheelSlot?) {
+        if isAlreadyEntered { return }
+        if hasTemplateData && slot == nil { return }
+        pendingEntrySlot = slot
+        showEntryConfirmation = true
+    }
+
+    private func applyInitialTemplateSnapshot() {
+        if templateSlots.isEmpty && !initialTemplateSlots.isEmpty {
+            templateSlots = initialTemplateSlots
+        }
+        if templateType == nil {
+            templateType = initialTemplateType
+        }
+        if templateEntryCost == nil {
+            templateEntryCost = initialEntryCost
+        }
     }
 
     private func slotIndex(at location: CGPoint, wheelSize: CGFloat) -> Int? {

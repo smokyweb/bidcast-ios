@@ -374,6 +374,13 @@ struct RandomizerTemplateBuilderView: View {
                     .font(.custom(poppinsBold, size: 14))
                     .foregroundColor(.primary)
 
+                if !allowsProductMapping {
+                    Text("You will choose the products for this randomizer once you add it to a show.")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
                 ForEach(slots.indices, id: \.self) { idx in
                     SlotCardView(
                         slot: slots[idx],

@@ -328,6 +328,9 @@ struct LiveStream: View {
     
     @State private var freebieWinner = FreebieUser()
     @State private var activeRandomizerFreebieId: Int? = nil
+    @State private var activeRandomizerSlots: [TemplateWheelSlot] = []
+    @State private var activeRandomizerType: RandomizerType? = nil
+    @State private var activeRandomizerEntryCost: Double? = nil
     
     // Add these state variables to LiveStream struct
     @State private var isSurpriseSetAuctionActive: Bool = false
@@ -607,6 +610,9 @@ struct LiveStream: View {
             roomId: $currentRoomID,
             winnerUser: $freebieWinner,
             activeFreebieId: $activeRandomizerFreebieId,
+            initialTemplateSlots: activeRandomizerSlots,
+            initialTemplateType: activeRandomizerType,
+            initialEntryCost: activeRandomizerEntryCost,
             didEnterFreBie: { activeFreebieId, _, selectedSlot in
                 Task {
                     do {
@@ -616,7 +622,11 @@ struct LiveStream: View {
 
                         socketManagerChat.enterInFreebie(
                             room_id: currentRoomID,
-                            userId: UserDefaults.userId
+                            userId: UserDefaults.userId,
+                            randomizerActiveFreebieId: activeFreebieId,
+                            selectedSlotId: selectedSlot?.id,
+                            selectedSlotPosition: selectedSlot?.position,
+                            paymentConfirmed: true
                         )
                     } catch {
                         toastMessage = error.localizedDescription
@@ -2792,6 +2802,19 @@ extension LiveStream {
             }
             freebieWinner = FreebieUser()
             activeRandomizerFreebieId = freebie.randomizer_active_freebie_id
+            activeRandomizerEntryCost = freebie.entry_cost
+            activeRandomizerType = freebie.template_type.flatMap { RandomizerType(rawValue: $0) }
+            activeRandomizerSlots = (freebie.randomizer_slots ?? freebie.slots ?? []).map { slot in
+                TemplateWheelSlot(
+                    id: slot.id,
+                    position: slot.position,
+                    color: slot.color,
+                    icon: slot.icon,
+                    image: slot.image,
+                    product_id: slot.product_id,
+                    product: slot.product
+                )
+            }
             isFreebieActive = true
             self.wheelTitles = user
             let title = user.map { $0.name ?? ""}

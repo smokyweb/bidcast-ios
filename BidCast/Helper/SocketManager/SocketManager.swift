@@ -2025,12 +2025,31 @@ extension SocketManagerService {
         }
     }
 
-    func enterInFreebie(room_id: String, userId: Int) {
+    func enterInFreebie(
+        room_id: String,
+        userId: Int,
+        randomizerActiveFreebieId: Int? = nil,
+        selectedSlotId: Int? = nil,
+        selectedSlotPosition: Int? = nil,
+        paymentConfirmed: Bool = false
+    ) {
         performIfConnected {
-            let payload: [String: Any] = [
+            var payload: [String: Any] = [
                 "room_id": room_id,
                 "user_id": "\(userId)"
             ]
+            if let randomizerActiveFreebieId {
+                payload["randomizer_active_freebie_id"] = randomizerActiveFreebieId
+            }
+            if let selectedSlotId {
+                payload["selected_slot_id"] = selectedSlotId
+            }
+            if let selectedSlotPosition {
+                payload["selected_slot_position"] = selectedSlotPosition
+            }
+            if paymentConfirmed {
+                payload["payment_confirmed"] = true
+            }
             
             socket.emit("enter-in-freebie", payload)
             logger.info("🙋‍♂️ Sent enter-in-freebie: \(payload)")
