@@ -862,18 +862,22 @@ struct RandomizerEnterTopView: View {
                                 )
                                 .frame(width: wSize, height: wSize)
                                 .animation(.timingCurve(0.51, 0.97, 0.56, 0.99, duration: wheelAnimDuration), value: wheelRotation)
-                                .simultaneousGesture(
-                                    DragGesture(minimumDistance: 0)
-                                        .onEnded { value in
-                                            if let idx = slotIndex(at: value.location, wheelSize: wSize) {
-                                                selectedSlotIndex = idx
-                                                queueEntry(slot: templateSlots[idx])
-                                            }
-                                        }
-                                )
                                 SpinWheelBolt()
+                                    .allowsHitTesting(false)
                             }
+                            .frame(width: wSize, height: wSize)
+                            .contentShape(Circle())
+                            .highPriorityGesture(
+                                DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                                    .onEnded { value in
+                                        if let idx = slotIndex(at: value.location, wheelSize: wSize) {
+                                            selectedSlotIndex = idx
+                                            queueEntry(slot: templateSlots[idx])
+                                        }
+                                    }
+                            )
                             SpinWheelPointer(pointerColor: Color(hex: "DA4533"))
+                                .allowsHitTesting(false)
                         }
                         .padding(.vertical, 8)
                         if let selectedSlotIndex, selectedSlotIndex < templateSlots.count {
