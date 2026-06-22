@@ -78,12 +78,7 @@ struct RandomizerView: View {
                     }
                     .background(Color.backGround)
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 24)
-                        .fill(Color.clear)
-                        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: -10)
-                )
-                .cornerRadius(24, corners: [.topLeft, .topRight])
+                .background(Color.clear)
                 .offset(y: offset)
                 .gesture(
                     DragGesture()
@@ -866,8 +861,6 @@ struct RandomizerEnterTopView: View {
                                     rotationDegrees: wheelRotation
                                 )
                                 .frame(width: wSize, height: wSize)
-                                .overlay(RoundedRectangle(cornerRadius: wSize/2).stroke(Color.white, lineWidth: 5))
-                                .shadow(radius: 6)
                                 .animation(.timingCurve(0.51, 0.97, 0.56, 0.99, duration: wheelAnimDuration), value: wheelRotation)
                                 .simultaneousGesture(
                                     DragGesture(minimumDistance: 0)
@@ -948,10 +941,14 @@ struct RandomizerEnterTopView: View {
                         }
                     }
                 }
-                .padding(14)
+                .padding(hasTemplateData ? 0 : 14)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.defaultThemeLight)
+                    Group {
+                        if !hasTemplateData {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.defaultThemeLight)
+                        }
+                    }
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, screenWidth / 3)

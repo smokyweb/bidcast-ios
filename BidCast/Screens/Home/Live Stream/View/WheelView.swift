@@ -61,10 +61,6 @@ public struct FortuneWheel: View {
                 SpinWheelView(data: (0..<titles.count).map { _ in Double(100/titles.count) },
                               labels: titles, colors: colors)
                     .frame(width: size, height: size)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: size/2).stroke(lineWidth: strokeWidth)
-                            .foregroundColor(strokeColor)
-                    )
                     .rotationEffect(.degrees(viewModel.degree))
                 SpinWheelBolt()
             }

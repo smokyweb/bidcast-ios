@@ -54,8 +54,7 @@ struct RandomizerWheelView: View {
 
                     Spacer().frame(height: 24)
                 }
-                .background(Color.backGround)
-                .cornerRadius(24, corners: [.topLeft, .topRight])
+                .background(Color.clear)
             }
         }
         .onAppear { vm.subscribe(roomId: roomId) }
@@ -72,11 +71,6 @@ struct RandomizerWheelView: View {
                 // Wheel body
                 TemplateWheelCanvas(slots: vm.slots, size: size, rotationDegrees: vm.rotationDegrees)
                     .frame(width: size, height: size)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: size / 2)
-                            .stroke(Color.white, lineWidth: 6)
-                    )
-                    .shadow(radius: 8)
 
                 // Center bolt
                 SpinWheelBolt()
