@@ -375,7 +375,7 @@ struct RandomizerTemplateBuilderView: View {
                     .foregroundColor(.primary)
 
                 if !allowsProductMapping {
-                    Text("You will choose the products for this randomizer once you add it to a show.")
+                    Text("you will choose the products for this randomizer once you add it to a show.")
                         .font(.custom(poppinsRegular, size: 12))
                         .foregroundColor(.red)
                         .fixedSize(horizontal: false, vertical: true)
@@ -569,22 +569,19 @@ struct RandomizerTemplateBuilderView: View {
         }
 
         isSaving = true
-        let shouldPreserveExistingProductMapping = !allowsProductMapping && editingTemplate != nil
-        let requestSlots = slots.map { s in
-            RandomizerSlotRequest(
-                position: s.position,
-                color: s.color,
-                icon: s.icon,
-                image: s.image,
-                product_id: (allowsProductMapping || shouldPreserveExistingProductMapping) ? s.product_id : nil
-            )
-        }
+            let requestSlots = slots.map { s in
+                RandomizerSlotRequest(
+                    position: s.position,
+                    color: s.color,
+                    icon: s.icon,
+                    image: s.image,
+                    product_id: allowsProductMapping ? s.product_id : nil
+                )
+            }
         // #9960173707 Phase 4: send the buyer_raffle prize as the template-level field.
         let prizeId: Int?
         if allowsProductMapping && selectedType == .buyerRaffle {
             prizeId = buyerRaffleProductId
-        } else if shouldPreserveExistingProductMapping {
-            prizeId = editingTemplate?.prize_product_id
         } else {
             prizeId = nil
         }
