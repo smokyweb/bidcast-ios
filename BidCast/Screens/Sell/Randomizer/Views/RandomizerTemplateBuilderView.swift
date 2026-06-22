@@ -388,7 +388,8 @@ struct RandomizerTemplateBuilderView: View {
                         slot: slots[idx],
                         position: idx,
                         product: selectedType == .buyerRaffle || !allowsProductMapping ? nil : productForSlot(slots[idx]),
-                        isBuyerSlot: selectedType == .buyerRaffle
+                        isBuyerSlot: selectedType == .buyerRaffle,
+                        showProductField: allowsProductMapping && selectedType != .buyerRaffle
                     )
                     .onTapGesture {
                         editingSlotIndex = idx
@@ -624,6 +625,7 @@ struct SlotCardView: View {
     let product: SlotProduct?
     /// When true, label shows "Buyer N" and product overlay is hidden (buyer_raffle mode)
     var isBuyerSlot: Bool = false
+    var showProductField: Bool = true
 
     var body: some View {
         HStack(spacing: 12) {
@@ -667,15 +669,19 @@ struct SlotCardView: View {
             }
             .frame(width: 32, height: 32)
 
-            Text(productTitle)
-                .font(.custom(poppinsRegular, size: 14))
-                .foregroundColor(.gray)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
-                .padding(.horizontal, 12)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+            if showProductField {
+                Text(productTitle)
+                    .font(.custom(poppinsRegular, size: 14))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+            } else {
+                Spacer(minLength: 0)
+            }
         }
         .padding(.horizontal, 12)
         .frame(maxWidth: .infinity, minHeight: 58)

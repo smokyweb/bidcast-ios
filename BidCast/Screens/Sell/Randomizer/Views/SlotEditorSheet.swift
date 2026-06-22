@@ -131,7 +131,13 @@ struct SlotEditorSheet: View {
                 .shadow(radius: 4)
 
             VStack(alignment: .leading, spacing: 4) {
-                if let pid = selectedProductId,
+                if hideProductPicker {
+                    Text("Slot \(slot.position + 1)")
+                        .font(.custom(poppinsBold, size: 14))
+                    Text("Appearance only")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                } else if let pid = selectedProductId,
                    let prod = availableProducts.first(where: { $0.id == pid }) {
                     Text(prod.title ?? "Product #\(pid)")
                         .font(.custom(poppinsBold, size: 14))

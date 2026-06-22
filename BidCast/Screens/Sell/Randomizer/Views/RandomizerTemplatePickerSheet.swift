@@ -11,7 +11,7 @@ struct RandomizerTemplatePickerSheet: View {
 
     /// Currently selected template ID (nil = None)
     @Binding var selectedTemplateId: Int?
-    var allowsProductMapping: Bool = true
+    var allowsProductMapping: Bool = false
     var onTemplateSelected: ((RandomizerTemplate?) -> Void)? = nil
 
     @State private var templates: [RandomizerTemplate] = []
