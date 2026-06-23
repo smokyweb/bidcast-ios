@@ -885,7 +885,7 @@ struct RandomizerEnterTopView: View {
                                 .font(.custom(poppinsBold, size: 12))
                                 .foregroundColor(.defaultTheme)
                         } else {
-                            Text("Tap a wheel slot, then enter")
+                            Text("Tap a wheel slot to enter")
                                 .font(.custom(poppinsRegular, size: 12))
                                 .foregroundColor(.gray)
                         }
@@ -926,7 +926,7 @@ struct RandomizerEnterTopView: View {
                             RoundedRectangle(cornerRadius: 32)
                                 .fill(Color.white.opacity(0.12))
                         )
-                    } else {
+                    } else if !hasTemplateData {
                         Button(action: {
                             let selectedSlot = selectedSlotIndex.flatMap { idx in
                                 idx < templateSlots.count ? templateSlots[idx] : nil
