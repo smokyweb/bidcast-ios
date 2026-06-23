@@ -53,10 +53,10 @@ struct AddProductsScreen: View {
     @State private var navigateToListProduct: Bool = false
     @State private var navigateToEditListProduct: Bool = false
     @State private var editingProduct: ProductDataModel1? = nil
-    @State private var showRandomizerPicker = false
     @State private var showPostCreateRandomizerMapper = false
     @State private var postCreateRandomizerShowId: Int? = nil
     @State private var postCreateRandomizerTemplateId: Int? = nil
+    @State private var selectedRandomizerTemplateName: String? = nil
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -183,9 +183,7 @@ struct AddProductsScreen: View {
                                 }
                             }
 
-                            randomizerProductOption {
-                                showRandomizerPicker = true
-                            }
+                            randomizerProductOption(action: handleRandomizerTapped)
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 16)
@@ -311,25 +309,20 @@ struct AddProductsScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .sheet(isPresented: $showRandomizerPicker) {
-            RandomizerTemplatePickerSheet(
-                selectedTemplateId: Binding(
-                    get: { coordinator.randomizerTemplateId },
-                    set: { newId in
-                        coordinator.randomizerTemplateId = newId
-                        request.randomizer_template_id = newId
-                    }
-                ),
-                allowsProductMapping: false
-            )
-        }
         .sheet(isPresented: $showPostCreateRandomizerMapper, onDismiss: {
             postCreateRandomizerShowId = nil
             postCreateRandomizerTemplateId = nil
-            navigateToTab = true
         }) {
             if let showId = postCreateRandomizerShowId {
-                ShowRandomizersManagementSheet(showId: showId, autoOpenTemplateId: postCreateRandomizerTemplateId)
+                ShowRandomizersManagementSheet(
+                    showId: showId,
+                    autoOpenTemplateId: postCreateRandomizerTemplateId,
+                    onTemplateReady: { template in
+                        coordinator.randomizerTemplateId = template.id
+                        request.randomizer_template_id = template.id
+                        selectedRandomizerTemplateName = template.name
+                    }
+                )
             }
         }
         .overlay(
@@ -504,11 +497,11 @@ struct AddProductsScreen: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(coordinator.randomizerTemplateId == nil ? "Add Randomizer Template" : "Randomizer Template #\(coordinator.randomizerTemplateId!)")
+                    Text(randomizerDisplayTitle)
                         .font(.custom(poppinsSemiBold, size: 15))
                         .foregroundColor(.primary)
                         .lineLimit(2)
-                    Text("Choose a saved template or create a new wheel")
+                    Text(coordinator.randomizerTemplateId == nil ? "Choose a saved template or create a new wheel" : "Tap to edit template products for this show")
                         .font(.custom(poppinsRegular, size: 12))
                         .foregroundColor(.gray)
                         .lineLimit(2)
@@ -532,6 +525,16 @@ struct AddProductsScreen: View {
         }
         .buttonStyle(ScaleButtonStyle())
     }
+
+    private var randomizerDisplayTitle: String {
+        if let name = selectedRandomizerTemplateName, !name.isEmpty {
+            return "Randomizer: \(name)"
+        }
+        if let id = coordinator.randomizerTemplateId {
+            return "Randomizer Template #\(id)"
+        }
+        return "Add Randomizer Template"
+    }
     struct ScaleButtonStyle: ButtonStyle {
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
@@ -545,6 +548,26 @@ struct AddProductsScreen: View {
 extension AddProductsScreen {
     
     // ⭐ REMOVED: All fetch functions since we're not calling API on load
+
+    func handleRandomizerTapped() {
+        if let error = validateRequest() {
+            hudMsg = error
+            showhud = true
+            return
+        }
+
+        if fromPrepare {
+            coordinator.request = request
+            coordinator.thumbNAil = thumbNail
+            hudMsg = "Randomizer products can be managed after the show is saved."
+            showhud = true
+            return
+        }
+
+        Task {
+            await prepareShowAndOpenRandomizers()
+        }
+    }
     
     func handleFinishTapped() {
         print("🚀 Submitting with products: \(productManager.products.count)")
@@ -598,6 +621,43 @@ extension AddProductsScreen {
         }
     }
 
+    func prepareShowAndOpenRandomizers() async {
+        await performAPICalls(
+            isConcurrent: false,
+            showLoader: true,
+            onError: { error in
+                hudMsg = errorDesc(error: error, message: viewModel.errorMessage)
+                showhud = true
+            },
+            onSuccess: {
+                guard let showId = resolvedScheduleShowId() else {
+                    hudMsg = "Could not prepare this show for randomizers."
+                    showhud = true
+                    return
+                }
+                request.show_id = "\(showId)"
+                postCreateRandomizerShowId = showId
+                postCreateRandomizerTemplateId = coordinator.randomizerTemplateId ?? request.randomizer_template_id
+                showPostCreateRandomizerMapper = true
+            }
+        ) {
+            viewModel.errorMessage = ""
+            if request.show_id != "" && request.show_id != nil {
+                try await viewModel.updateScheduleShow(
+                    param: scheduleShowParams(includeShowId: true),
+                    images: [thumbNail],
+                    key: "thumbnail[]"
+                )
+            } else {
+                try await viewModel.storeScheduleShow(
+                    param: scheduleShowParams(includeShowId: false),
+                    images: [thumbNail],
+                    key: "thumbnail[]"
+                )
+            }
+        }
+    }
+
     func validateRequest() -> String? {
         if request.title.isEmpty { return "Please enter title" }
         if request.category_id.isEmpty { return "Please enter category type" }
@@ -626,14 +686,8 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
-                if let templateId = request.randomizer_template_id,
-                   let showId = response?.data.id {
-                    postCreateRandomizerShowId = showId
-                    postCreateRandomizerTemplateId = templateId
-                } else {
-                    postCreateRandomizerShowId = nil
-                    postCreateRandomizerTemplateId = nil
-                }
+                postCreateRandomizerShowId = nil
+                postCreateRandomizerTemplateId = nil
                 productManager.clearAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
@@ -647,54 +701,10 @@ extension AddProductsScreen {
                 showError = true
             }
         ) {
-            var params: [String: Any] = [
-                "show_id": request.show_id ?? "",
-                "title": request.title,
-                "date": request.date,
-                "time": request.time,
-                "category_id": request.category_id,
-                "auction_type_id": request.auction_type_id,
-                "show_discoverability": request.show_discoverability,
-                "repeat_value": request.repeat_value,
-                "language": request.language,
-                "sub_category_id":request.sub_category_id ?? ""
-            ]
-            if request.is_explicit {
-                params["is_explicit"] = 1
-            } else {
-                params["is_explicit"] = 0
-            }
-            
-            if request.is_repeat {
-                params["is_repeat"] = 1
-            } else {
-                params["is_repeat"] = 0
-            }
-
-            // Browse-filter bundle (Basecamp #9928367737): attach tags as `tags[i]` keys
-            // so the multipart body posts a real array to /api/v1/store-schedule-show.
-            if let tags = request.tags, !tags.isEmpty {
-                for (i, tag) in tags.enumerated() {
-                    params["tags[\(i)]"] = tag
-                }
-            }
-
-            // Basecamp #9991372302: send product_ids[] and product_stream_quantities[]
-            // as positionally aligned indexed multipart fields (mirrors PWA wire format).
-            let (orderedIds, orderedQtys) = productManager.orderedProductIdsAndQuantities()
-            for (i, pid) in orderedIds.enumerated() {
-                params["product_ids[\(i)]"] = pid
-                params["product_stream_quantities[\(i)]"] = orderedQtys[i]
-            }
-
-            if let templateId = request.randomizer_template_id {
-                params["randomizer_template_id"] = templateId
-            }
-
             viewModel.errorMessage = ""
 
             try await viewModel.updateScheduleShow(
-                param: params,
+                param: scheduleShowParams(includeShowId: true),
                 images: [thumbNail],
                 key: "thumbnail[]"
             )
@@ -717,14 +727,8 @@ extension AddProductsScreen {
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
-                if let templateId = request.randomizer_template_id,
-                   let showId = response?.data.id {
-                    postCreateRandomizerShowId = showId
-                    postCreateRandomizerTemplateId = templateId
-                } else {
-                    postCreateRandomizerShowId = nil
-                    postCreateRandomizerTemplateId = nil
-                }
+                postCreateRandomizerShowId = nil
+                postCreateRandomizerTemplateId = nil
                 productManager.clearAll()
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
@@ -738,55 +742,62 @@ extension AddProductsScreen {
                 showError = true
             }
         ) {
-            var params: [String: Any] = [
-                "title": request.title,
-                "date": request.date,
-                "time": request.time,
-                "category_id": request.category_id,
-                "auction_type_id": request.auction_type_id,
-                "show_discoverability": request.show_discoverability,
-                "repeat_value": request.repeat_value,
-                "language": request.language,
-                "sub_category_id":request.sub_category_id ?? ""
-            ]
-            if request.is_explicit {
-                params["is_explicit"] = 1
-            } else {
-                params["is_explicit"] = 0
-            }
-            
-            if request.is_repeat {
-                params["is_repeat"] = 1
-            } else {
-                params["is_repeat"] = 0
-            }
-            // Browse-filter bundle (Basecamp #9928367737): attach tags as `tags[i]` keys
-            // so the multipart body posts a real array to /api/v1/store-schedule-show.
-            if let tags = request.tags, !tags.isEmpty {
-                for (i, tag) in tags.enumerated() {
-                    params["tags[\(i)]"] = tag
-                }
-            }
-            // Basecamp #9991372302: send product_ids[] and product_stream_quantities[]
-            // as positionally aligned indexed multipart fields (mirrors PWA wire format).
-            let (orderedIds, orderedQtys) = productManager.orderedProductIdsAndQuantities()
-            for (i, pid) in orderedIds.enumerated() {
-                params["product_ids[\(i)]"] = pid
-                params["product_stream_quantities[\(i)]"] = orderedQtys[i]
-            }
-
-            if let templateId = request.randomizer_template_id {
-                params["randomizer_template_id"] = templateId
-            }
-
             viewModel.errorMessage = ""
 
             try await viewModel.storeScheduleShow(
-                param: params,
+                param: scheduleShowParams(includeShowId: false),
                 images: [thumbNail],
                 key: "thumbnail[]"
             )
         }
+    }
+
+    func scheduleShowParams(includeShowId: Bool) -> [String: Any] {
+        var params: [String: Any] = [
+            "title": request.title,
+            "date": request.date,
+            "time": request.time,
+            "category_id": request.category_id,
+            "auction_type_id": request.auction_type_id,
+            "show_discoverability": request.show_discoverability,
+            "repeat_value": request.repeat_value,
+            "language": request.language,
+            "sub_category_id": request.sub_category_id ?? "",
+            "is_explicit": request.is_explicit ? 1 : 0,
+            "is_repeat": request.is_repeat ? 1 : 0
+        ]
+
+        if includeShowId {
+            params["show_id"] = request.show_id ?? ""
+        }
+
+        if let tags = request.tags, !tags.isEmpty {
+            for (i, tag) in tags.enumerated() {
+                params["tags[\(i)]"] = tag
+            }
+        }
+
+        let (orderedIds, orderedQtys) = productManager.orderedProductIdsAndQuantities()
+        for (i, pid) in orderedIds.enumerated() {
+            params["product_ids[\(i)]"] = pid
+            params["product_stream_quantities[\(i)]"] = orderedQtys[i]
+        }
+
+        if let templateId = request.randomizer_template_id {
+            params["randomizer_template_id"] = templateId
+        }
+
+        return params
+    }
+
+    func resolvedScheduleShowId() -> Int? {
+        if let id = viewModel.storeShowResponse?.data.id, id > 0 {
+            return id
+        }
+        if let existing = Int(request.show_id ?? ""), existing > 0 {
+            return existing
+        }
+        return nil
     }
     
     

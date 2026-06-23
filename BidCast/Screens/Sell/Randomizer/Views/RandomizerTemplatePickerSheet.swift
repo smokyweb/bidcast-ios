@@ -427,8 +427,22 @@ struct ShowRandomizersManagementSheet: View {
     }
 
     private func prepareAndOpenShowScopedTemplate(templateId: Int) async throws {
-        let scopedId = try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId, copyForShow: true) ?? templateId
-        builderTemplate = try await RandomizerService.shared.getTemplate(id: scopedId)
+        guard let scopedId = try await RandomizerService.shared.attachTemplate(showId: showId, templateId: templateId, copyForShow: true) else {
+            throw NSError(
+                domain: "Randomizer",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: "Could not create a show-only copy of this randomizer."]
+            )
+        }
+        let scopedTemplate = try await RandomizerService.shared.getTemplate(id: scopedId)
+        if scopedTemplate.id == templateId && scopedTemplate.show_scoped_show_id != showId {
+            throw NSError(
+                domain: "Randomizer",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: "Could not create a show-only copy of this randomizer."]
+            )
+        }
+        builderTemplate = scopedTemplate
         productMappingOnly = true
         showBuilder = true
         loadData()

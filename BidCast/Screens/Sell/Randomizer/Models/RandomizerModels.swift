@@ -114,11 +114,11 @@ struct SlotProduct: Codable, Identifiable {
     }
 
     var quantityValue: Int {
-        Int(quantity ?? "0") ?? 0
+        Int(Double(quantity ?? "0") ?? 0)
     }
 
     var availableQuantityValue: Int {
-        let purchased = Int(purchasedQuantity ?? "0") ?? 0
+        let purchased = Int(Double(purchasedQuantity ?? "0") ?? 0)
         return max(0, quantityValue - purchased)
     }
 
