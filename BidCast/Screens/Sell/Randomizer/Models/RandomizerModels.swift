@@ -117,6 +117,11 @@ struct SlotProduct: Codable, Identifiable {
         Int(quantity ?? "0") ?? 0
     }
 
+    var availableQuantityValue: Int {
+        let purchased = Int(purchasedQuantity ?? "0") ?? 0
+        return max(0, quantityValue - purchased)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case id, title, images, thumbnail, pricing, quantity, purchasedQuantity
         case purchased_quantity

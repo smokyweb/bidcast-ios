@@ -14,6 +14,7 @@ struct RandomizerTemplateBuilderView: View {
     let editingTemplate: RandomizerTemplate?
     var allowsProductMapping: Bool = false
     var showId: Int? = nil
+    var productMappingOnly: Bool = false
     var onSaved: ((RandomizerTemplate) -> Void)? = nil
 
     // Form state
@@ -49,18 +50,24 @@ struct RandomizerTemplateBuilderView: View {
             VStack(spacing: 0) {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 18) {
-                        nameSectionView
-                        typeSectionView
+                        if !productMappingOnly {
+                            nameSectionView
+                            typeSectionView
+                        } else {
+                            productMappingIntroSection
+                        }
 
                         if allowsProductMapping && selectedType == .buyerRaffle {
                             buyerRafflePrizeSection
                         }
 
-                        if selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle {
+                        if !productMappingOnly && (selectedType == .buyerRaffle || selectedType == .productRaffle || selectedType == .blindProductRaffle) {
                             pricingSectionView
                         }
 
-                        slotCountSectionView
+                        if !productMappingOnly {
+                            slotCountSectionView
+                        }
                         slotGridSection
                     }
                     .padding(16)
@@ -82,7 +89,7 @@ struct RandomizerTemplateBuilderView: View {
                     Button {
                         saveTemplate()
                     } label: {
-                        Text("Save Template")
+                        Text(productMappingOnly ? "Save Products" : "Save Template")
                             .font(.custom(poppinsBold, size: 15))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 48)
@@ -96,7 +103,7 @@ struct RandomizerTemplateBuilderView: View {
                 .background(Color.backGround)
             }
             .background(Color.backGround)
-            .navigationTitle(isEditMode ? "Edit Randomizer Template" : "New Randomizer Template")
+            .navigationTitle(productMappingOnly ? "Add Products" : (isEditMode ? "Edit Randomizer Template" : "New Randomizer Template"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -174,6 +181,20 @@ struct RandomizerTemplateBuilderView: View {
                         .font(.custom(poppinsRegular, size: 12))
                         .foregroundColor(.red)
                 }
+            }
+        }
+    }
+
+    private var productMappingIntroSection: some View {
+        sectionCard {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Products for this show")
+                    .font(.custom(poppinsBold, size: 15))
+                    .foregroundColor(.primary)
+                Text("Choose products for this show only. These products will not be saved back to the master template.")
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.gray)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -380,6 +401,11 @@ struct RandomizerTemplateBuilderView: View {
                     Text("you will choose the products for this randomizer once you add it to a show.")
                         .font(.custom(poppinsRegular, size: 12))
                         .foregroundColor(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else if availableProducts.isEmpty {
+                    Text("Loading available products. If this remains empty, create or restock inventory first.")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 

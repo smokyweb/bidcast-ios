@@ -498,7 +498,13 @@ struct RehearsalScreen: View {
         
         .sheet(isPresented: $navigateToRandomizer) { randomizerSheet }
         .sheet(isPresented: $showRandomizerPicker) {
-            ShowRandomizersManagementSheet(showId: currentScheduleShowId)
+            ShowRandomizersManagementSheet(
+                showId: currentScheduleShowId,
+                onTemplateReady: { template in
+                    showRandomizerPicker = false
+                    startRandomizerTemplate(template)
+                }
+            )
         }
         // Basecamp #9934001770 (2026-05-27): co-host pairing sheet.
         // showId derived from roomId which has format live_room_<userId>_<showId>.
@@ -1138,6 +1144,38 @@ struct RehearsalScreen: View {
         .presentationCornerRadius(25)
         .presentationDragIndicator(.hidden)
         .presentationBackground(Color.black.opacity(0.1))
+    }
+
+    private func startRandomizerTemplate(_ template: RandomizerTemplate) {
+        let productIds = randomizerProductIds(from: template)
+
+        guard !productIds.isEmpty else {
+            selectedRandomizerTemplateId = template.id
+            hudMsg = "Add products before starting this randomizer."
+            showhudAlert = true
+            showRandomizerPicker = true
+            return
+        }
+
+        selectedRandomizerTemplateId = template.id
+        freebieActive = true
+        socketManager.createRandomizerFreebie(
+            room_id: roomId,
+            productIds: productIds,
+            time: 100,
+            template: template
+        )
+        navigateToRandomizer = true
+    }
+
+    private func randomizerProductIds(from template: RandomizerTemplate) -> [String] {
+        var ids: [Int] = []
+        if let prizeProductId = template.prize_product_id {
+            ids.append(prizeProductId)
+        }
+        ids.append(contentsOf: (template.slots ?? []).compactMap { $0.product_id })
+        var seen = Set<Int>()
+        return ids.filter { seen.insert($0).inserted }.map { "\($0)" }
     }
 
     @ViewBuilder

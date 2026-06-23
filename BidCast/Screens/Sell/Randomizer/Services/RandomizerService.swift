@@ -10,6 +10,7 @@ final class RandomizerService: ObservableObject {
     static let shared = RandomizerService()
 
     private let baseURL = "https://backend.bidcast.betaplanets.com/api/v1"
+    private let legacyAPIBaseURL = "https://backend.bidcast.betaplanets.com/api"
     private let session: URLSession = {
         let cfg = URLSessionConfiguration.ephemeral
         cfg.timeoutIntervalForRequest = 30
@@ -26,6 +27,20 @@ final class RandomizerService: ObservableObject {
 
     private func makeRequest(path: String, method: String, body: Encodable? = nil) throws -> URLRequest {
         guard let url = URL(string: "\(baseURL)\(path)") else {
+            throw URLError(.badURL)
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = method
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(authHeader, forHTTPHeaderField: "Authorization")
+        if let body = body {
+            req.httpBody = try JSONEncoder().encode(body)
+        }
+        return req
+    }
+
+    private func makeLegacyAPIRequest(path: String, method: String, body: Encodable? = nil) throws -> URLRequest {
+        guard let url = URL(string: "\(legacyAPIBaseURL)\(path)") else {
             throw URLError(.badURL)
         }
         var req = URLRequest(url: url)
@@ -178,16 +193,16 @@ final class RandomizerService: ObservableObject {
     func listSellerProducts() async throws -> [SlotProduct] {
         var products: [SlotProduct] = []
         var page = 1
-        var total = Int.max
+        var totalPages = 1
 
-        while products.count < total {
+        while page <= totalPages {
             let pageResponse = try await listSellerProductsPage(page: page)
-            total = pageResponse.total ?? products.count + (pageResponse.data?.count ?? 0)
+            totalPages = max(1, pageResponse.totalPage ?? pageResponse.total_page ?? pageResponse.lastPage ?? page)
 
             let pageItems = pageResponse.data ?? []
             guard !pageItems.isEmpty else { break }
 
-            products.append(contentsOf: pageItems.filter { $0.quantityValue > 0 })
+            products.append(contentsOf: pageItems.filter { $0.availableQuantityValue > 0 })
             page += 1
         }
 
@@ -196,14 +211,13 @@ final class RandomizerService: ObservableObject {
 
     private func listSellerProductsPage(page: Int) async throws -> ProductListResp {
         struct ProductListRequest: Encodable {
-            let status: String
             let page: Int
         }
 
-        let req = try makeRequest(
-            path: "/get-product",
+        let req = try makeLegacyAPIRequest(
+            path: "/get-user-product",
             method: "POST",
-            body: ProductListRequest(status: "active", page: page)
+            body: ProductListRequest(page: page)
         )
         let (data, _) = try await session.data(for: req)
         return try JSONDecoder().decode(ProductListResp.self, from: data)
@@ -219,6 +233,10 @@ private struct ProductListResp: Codable {
     var status: String?
     var data: [SlotProduct]?
     var total: Int?
+    var totalPage: Int?
+    var total_page: Int?
+    var lastPage: Int?
+    var currentPage: Int?
 }
 
 private enum RandomizerAPIError {

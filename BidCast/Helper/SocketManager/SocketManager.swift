@@ -1877,6 +1877,53 @@ extension SocketManagerService {
         }
     }
 
+    func createRandomizerFreebie(room_id: String, productIds: [String], time: Int, template: RandomizerTemplate) {
+        performIfConnected {
+            guard let firstProductId = productIds.first else { return }
+
+            let slotsPayload: [[String: Any]] = (template.slots ?? []).map { slot in
+                var slotPayload: [String: Any] = [
+                    "position": slot.position,
+                    "color": slot.color
+                ]
+                if let id = slot.id { slotPayload["id"] = id }
+                if let icon = slot.icon { slotPayload["icon"] = icon }
+                if let image = slot.image { slotPayload["image"] = image }
+                if let productId = slot.product_id { slotPayload["product_id"] = productId }
+                if let product = slot.product {
+                    var productPayload: [String: Any] = [:]
+                    if let id = product.id { productPayload["id"] = id }
+                    if let title = product.title { productPayload["title"] = title }
+                    if let pricing = product.pricing { productPayload["pricing"] = pricing }
+                    if let thumbnail = product.thumbnail { productPayload["thumbnail"] = thumbnail }
+                    if let images = product.images { productPayload["images"] = images }
+                    slotPayload["product"] = productPayload
+                }
+                return slotPayload
+            }
+
+            var payload: [String: Any] = [
+                "room_id": room_id,
+                "product_id": firstProductId,
+                "product_ids": productIds,
+                "time": time,
+                "template_type": template.type,
+                "entry_cost": template.entry_cost ?? 0,
+                "randomizer_slots": slotsPayload,
+                "slots": slotsPayload
+            ]
+            if let templateId = template.id {
+                payload["randomizer_template_id"] = templateId
+            }
+            if let prizeProductId = template.prize_product_id {
+                payload["prize_product_id"] = prizeProductId
+            }
+
+            socket.emit("create-freebie", payload)
+            logger.info("🎁 Sent template create-freebie: \(payload)")
+        }
+    }
+
     func listenForFreebie(
         completion: ((_ freebie: FreebieModel, _ users: [FreebieUser]) -> Void)? = nil
     ) {
