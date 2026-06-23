@@ -66,6 +66,7 @@ struct CoHostJoinScreen: View {
     @State private var coHostCommentText: String = ""
     @State private var showCoHostProducts = false
     @State private var coHostShowProducts: [ProductDataModel1] = []
+    @State private var isHostEndedCleanup = false
 
     // MARK: - Co-host Live State
     @State private var isLive: Bool        = false
@@ -684,6 +685,11 @@ struct CoHostJoinScreen: View {
 
     // MARK: - Leave Co-Host
     private func leaveCoHost() {
+        guard !isHostEndedCleanup else {
+            handleHostEndedShow()
+            return
+        }
+
         agoraManager.leaveChannel()
         if !activeRoomId.isEmpty {
             SocketManagerService.shared.leaveInvitedCoHost(
@@ -698,6 +704,24 @@ struct CoHostJoinScreen: View {
         }
         SocketManagerService.shared.removeChatListener()
         isLive = false
+        presentationMode.wrappedValue.dismiss()
+    }
+
+    private func handleHostEndedShow() {
+        guard !isHostEndedCleanup else { return }
+
+        isHostEndedCleanup = true
+        if agoraManager.isJoined {
+            agoraManager.leaveChannel()
+        }
+        if !activeRoomId.isEmpty {
+            SocketManagerService.shared.leaveRoom(roomId: activeRoomId, userId: UserDefaults.userId)
+        }
+        SocketManagerService.shared.removeChatListener()
+        SocketManagerService.shared.removeRoomEndedListener()
+        isLive = false
+        hudMsg = "The host ended the show."
+        showhud = true
         presentationMode.wrappedValue.dismiss()
     }
 
@@ -1019,7 +1043,7 @@ struct CoHostJoinScreen: View {
                 SocketManagerService.shared.listenForChat(roomId: channelName)
                 SocketManagerService.shared.listenForRoomEnded { endedRoomId in
                     guard endedRoomId == channelName else { return }
-                    leaveCoHost()
+                    handleHostEndedShow()
                 }
                 SocketManagerService.shared.joinAsInvitedCoHost(
                     roomId: channelName,
