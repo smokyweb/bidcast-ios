@@ -64,6 +64,7 @@ struct ShowDetailsScreen: View {
     @State private var boosts: [BoostModel] = []
     @State private var isPromoting: Bool = false
     @State private var showPromoteSuccess: Bool = false
+    @State private var attachedRandomizers: [RandomizerTemplate] = []
 
     var body: some View {
         VStack(spacing: 0) {
@@ -81,6 +82,10 @@ struct ShowDetailsScreen: View {
                     
                     // Content Info Card
                     contentInfoCard
+
+                    if !attachedRandomizers.isEmpty {
+                        randomizerDetailsCard
+                    }
                     
                     // Added Products Card
                     addedProductsCard
@@ -222,6 +227,7 @@ struct ShowDetailsScreen: View {
                 language: show.language ?? "english",
                 thumbnail: show.thumbnail?.first
             )
+            loadAttachedRandomizers()
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -231,6 +237,21 @@ struct ShowDetailsScreen: View {
                 secondaryBtnText:""
             )
             showError = true
+        }
+    }
+
+    private func loadAttachedRandomizers() {
+        let sid = show.id ?? (Int(showId) ?? 0)
+        guard sid > 0 else {
+            attachedRandomizers = []
+            return
+        }
+        Task {
+            do {
+                attachedRandomizers = try await RandomizerService.shared.listShowTemplates(showId: sid)
+            } catch {
+                attachedRandomizers = []
+            }
         }
     }
    
@@ -383,6 +404,62 @@ struct ShowDetailsScreen: View {
                 .fill(Color(.systemBackground))
                 .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
         )
+    }
+
+    private var randomizerDetailsCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Randomizers")
+                    .font(.custom(poppinsBold, size: 18))
+                    .foregroundColor(.primary)
+                Spacer()
+                Text("\(attachedRandomizers.count)")
+                    .font(.custom(poppinsSemiBold, size: 16))
+                    .foregroundColor(.secondary)
+            }
+
+            VStack(spacing: 10) {
+                ForEach(attachedRandomizers) { template in
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 8) {
+                            Text(template.name)
+                                .font(.custom(poppinsBold, size: 14))
+                                .foregroundColor(.black)
+                                .lineLimit(1)
+                            Spacer()
+                            Text(template.formattedEntryCost)
+                                .font(.custom(poppinsSemiBold, size: 12))
+                                .foregroundColor(.defaultTheme)
+                        }
+
+                        Text("\(template.randomizerType.displayName) · \(template.slot_count) slots")
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(.darkGray)
+
+                        let mappedCount = mappedProductCount(for: template)
+                        Text(mappedCount == 0 ? "Products not mapped yet" : "\(mappedCount) mapped product\(mappedCount == 1 ? "" : "s")")
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(mappedCount == 0 ? .orange : .secondary)
+                    }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.defaultThemeLight.opacity(0.55))
+                    )
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+        )
+    }
+
+    private func mappedProductCount(for template: RandomizerTemplate) -> Int {
+        let slotProducts = (template.slots ?? []).filter { $0.product_id != nil }.count
+        return slotProducts + (template.prize_product_id == nil ? 0 : 1)
     }
     
     // MARK: - Added Products Card

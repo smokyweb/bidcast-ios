@@ -165,6 +165,17 @@ private func randomizerDecodeFlexibleDouble<K: CodingKey>(_ c: KeyedDecodingCont
     return nil
 }
 
+private func randomizerDecodeFlexibleBool<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> Bool? {
+    if let b = try? c.decodeIfPresent(Bool.self, forKey: key) { return b }
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i != 0 }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key) {
+        let v = s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if ["1", "true", "yes"].contains(v) { return true }
+        if ["0", "false", "no"].contains(v) { return false }
+    }
+    return nil
+}
+
 private func randomizerDecodeFlexibleStringArray<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> [String]? {
     if let values = try? c.decodeIfPresent([String].self, forKey: key) { return values }
     if let value = try? c.decodeIfPresent(String.self, forKey: key), !value.isEmpty { return [value] }
@@ -184,11 +195,13 @@ struct RandomizerTemplate: Codable, Identifiable {
     var slots: [RandomizerSlot]?
     var source_template_id: Int?
     var show_scoped_show_id: Int?
+    var show_id: Int?
+    var is_show_copy: Bool?
     var created_at: String?
     var updated_at: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, user_id, name, type, entry_cost, prize_product_id, prize_product, slot_count, slots, source_template_id, show_scoped_show_id, created_at, updated_at
+        case id, user_id, name, type, entry_cost, prize_product_id, prize_product, slot_count, slots, source_template_id, show_scoped_show_id, show_id, is_show_copy, created_at, updated_at
     }
 
     init(from decoder: Decoder) throws {
@@ -204,12 +217,18 @@ struct RandomizerTemplate: Codable, Identifiable {
         slots = try? c.decodeIfPresent([RandomizerSlot].self, forKey: .slots)
         source_template_id = try? c.decodeIfPresent(Int.self, forKey: .source_template_id)
         show_scoped_show_id = try? c.decodeIfPresent(Int.self, forKey: .show_scoped_show_id)
+        show_id = try? c.decodeIfPresent(Int.self, forKey: .show_id)
+        is_show_copy = randomizerDecodeFlexibleBool(c, forKey: .is_show_copy)
         created_at = try? c.decodeIfPresent(String.self, forKey: .created_at)
         updated_at = try? c.decodeIfPresent(String.self, forKey: .updated_at)
     }
 
     var randomizerType: RandomizerType {
         RandomizerType(rawValue: type) ?? .productRaffle
+    }
+
+    var isShowScopedCopy: Bool {
+        is_show_copy == true || (show_scoped_show_id ?? 0) > 0 || (show_id ?? 0) > 0 || (source_template_id ?? 0) > 0
     }
 
     var formattedEntryCost: String {

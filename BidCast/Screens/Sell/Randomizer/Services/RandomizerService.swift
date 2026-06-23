@@ -58,7 +58,7 @@ final class RandomizerService: ObservableObject {
         let req = try makeRequest(path: "/randomizer/templates", method: "GET")
         let (data, _) = try await session.data(for: req)
         let decoded = try JSONDecoder().decode(RandomizerTemplateListResponse.self, from: data)
-        return decoded.data ?? []
+        return (decoded.data ?? []).filter { !$0.isShowScopedCopy }
     }
 
     // MARK: - Get single template
