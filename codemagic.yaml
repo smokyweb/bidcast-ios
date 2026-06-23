@@ -29,6 +29,7 @@ workflows:
           xcode-project use-profiles --project BidCast.xcodeproj
       - name: Set TestFlight version and build number
         script: |
+          set -euo pipefail
           MARKETING_VERSION="${IOS_MARKETING_VERSION:-1.0}"
           MIN_BUILD_NUMBER="${IOS_MIN_BUILD_NUMBER:-403}"
 
@@ -65,10 +66,25 @@ workflows:
 
           def asc_get(path, token)
             uri = URI("https://api.appstoreconnect.apple.com#{path}")
-            request = Net::HTTP::Get.new(uri)
-            request["Authorization"] = "Bearer #{token}"
-            response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-              http.request(request)
+            attempts = 0
+            begin
+              attempts += 1
+              request = Net::HTTP::Get.new(uri)
+              request["Authorization"] = "Bearer #{token}"
+              response = Net::HTTP.start(
+                uri.hostname,
+                uri.port,
+                use_ssl: true,
+                open_timeout: 20,
+                read_timeout: 60
+              ) do |http|
+                http.request(request)
+              end
+            rescue Net::OpenTimeout, Net::ReadTimeout, EOFError, Errno::ECONNRESET => error
+              raise if attempts >= 3
+              warn "App Store Connect timeout for #{path}; retrying #{attempts}/3 (#{error.class})"
+              sleep(attempts * 5)
+              retry
             end
             unless response.is_a?(Net::HTTPSuccess)
               warn response.body
@@ -110,6 +126,10 @@ workflows:
           export MARKETING_VERSION
           export MIN_BUILD_NUMBER
           BUILD_NUMBER="$(ruby /tmp/next_ios_build_number.rb)"
+          if ! [[ "$BUILD_NUMBER" =~ ^[0-9]+$ ]]; then
+            /bin/echo "ERROR: App Store Connect build number resolver returned '${BUILD_NUMBER}'"
+            exit 1
+          fi
           /bin/echo "Setting MARKETING_VERSION=${MARKETING_VERSION}"
           /bin/echo "Setting CURRENT_PROJECT_VERSION=${BUILD_NUMBER}"
           /bin/echo "IOS_RESOLVED_BUILD_NUMBER=${BUILD_NUMBER}" >> "$CM_ENV"
