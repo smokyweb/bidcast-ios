@@ -11,7 +11,7 @@ import Combine
 // Viewer view:
 struct LivePollViewerView: View {
     @State var poll: PollModel
-    var onVote: ((_ poll: PollModel) -> Void)? // emit socket
+    var onVote: ((_ poll: PollModel, _ optionIndex: Int) -> Void)? // emit socket
     var onRequestRefresh: (() -> Void)? // optional: ask server for updated stats
 
     // local viewer state
@@ -27,7 +27,7 @@ struct LivePollViewerView: View {
     @Namespace private var ns
 
     init(poll: PollModel,
-         onVote: ((_ poll: PollModel) -> Void)? = nil,
+         onVote: ((_ poll: PollModel, _ optionIndex: Int) -> Void)? = nil,
          onRequestRefresh: (() -> Void)? = nil)
     {
         _poll = State(initialValue: poll)
@@ -195,7 +195,7 @@ struct LivePollViewerView: View {
 
         // call socket emitter / API callback
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            onVote?(updated)
+            onVote?(updated, optionIndex)
             isSubmitting = false
         }
     }

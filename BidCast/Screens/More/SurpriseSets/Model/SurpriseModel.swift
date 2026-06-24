@@ -7,6 +7,30 @@
 
 import Foundation
 
+private extension KeyedDecodingContainer {
+    func decodeFlexibleIntIfPresent(forKey key: Key) -> Int? {
+        if let value = try? decodeIfPresent(Int.self, forKey: key) {
+            return value
+        }
+        if let doubleValue = try? decodeIfPresent(Double.self, forKey: key) {
+            return Int(doubleValue)
+        }
+        if let stringValue = try? decodeIfPresent(String.self, forKey: key) {
+            let normalized = stringValue
+                .replacingOccurrences(of: "$", with: "")
+                .replacingOccurrences(of: ",", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if let intValue = Int(normalized) {
+                return intValue
+            }
+            if let doubleValue = Double(normalized) {
+                return Int(doubleValue)
+            }
+        }
+        return nil
+    }
+}
+
 struct SurpriseRequest: Encodable {
     var name: String
     var type: String
@@ -52,6 +76,16 @@ struct ProductSetUnit: Codable {
         case status
         case price
     }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = c.decodeFlexibleIntIfPresent(forKey: .id) ?? 0
+        productSetItemId = c.decodeFlexibleIntIfPresent(forKey: .productSetItemId)
+        name = try? c.decodeIfPresent(String.self, forKey: .name)
+        description = try? c.decodeIfPresent(String.self, forKey: .description)
+        status = try? c.decodeIfPresent(String.self, forKey: .status)
+        price = c.decodeFlexibleIntIfPresent(forKey: .price)
+    }
 }
 
 
@@ -76,6 +110,38 @@ struct ProductItemResponse: Codable {
         case description
         case status
         case units
+    }
+
+    init(
+        id: Int,
+        productSetId: Int? = nil,
+        name: String? = nil,
+        quantity: Int? = nil,
+        soldQuantity: Int? = nil,
+        description: String? = nil,
+        status: String? = nil,
+        units: [ProductSetUnit]? = nil
+    ) {
+        self.id = id
+        self.productSetId = productSetId
+        self.name = name
+        self.quantity = quantity
+        self.soldQuantity = soldQuantity
+        self.description = description
+        self.status = status
+        self.units = units
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = c.decodeFlexibleIntIfPresent(forKey: .id) ?? 0
+        productSetId = c.decodeFlexibleIntIfPresent(forKey: .productSetId)
+        name = try? c.decodeIfPresent(String.self, forKey: .name)
+        quantity = c.decodeFlexibleIntIfPresent(forKey: .quantity)
+        soldQuantity = c.decodeFlexibleIntIfPresent(forKey: .soldQuantity)
+        description = try? c.decodeIfPresent(String.self, forKey: .description)
+        status = try? c.decodeIfPresent(String.self, forKey: .status)
+        units = try? c.decodeIfPresent([ProductSetUnit].self, forKey: .units)
     }
 }
 
@@ -125,7 +191,47 @@ struct ProductSurpriseData: Codable {
         case id
         case items
     }
-    
+
+    init(
+        name: String? = nil,
+        type: String? = nil,
+        description: String? = nil,
+        price: Int? = nil,
+        shippingProfileId: Int? = nil,
+        quickSpin: Int? = nil,
+        autoRandomizer: Int? = nil,
+        userId: Int? = nil,
+        isLiveBid: Int? = nil,
+        id: Int,
+        items: [ProductItemResponse]? = nil
+    ) {
+        self.name = name
+        self.type = type
+        self.description = description
+        self.price = price
+        self.shippingProfileId = shippingProfileId
+        self.quickSpin = quickSpin
+        self.autoRandomizer = autoRandomizer
+        self.userId = userId
+        self.isLiveBid = isLiveBid
+        self.id = id
+        self.items = items
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        name = try? c.decodeIfPresent(String.self, forKey: .name)
+        type = try? c.decodeIfPresent(String.self, forKey: .type)
+        description = try? c.decodeIfPresent(String.self, forKey: .description)
+        price = c.decodeFlexibleIntIfPresent(forKey: .price)
+        shippingProfileId = c.decodeFlexibleIntIfPresent(forKey: .shippingProfileId)
+        quickSpin = c.decodeFlexibleIntIfPresent(forKey: .quickSpin)
+        autoRandomizer = c.decodeFlexibleIntIfPresent(forKey: .autoRandomizer)
+        userId = c.decodeFlexibleIntIfPresent(forKey: .userId)
+        isLiveBid = c.decodeFlexibleIntIfPresent(forKey: .isLiveBid)
+        id = c.decodeFlexibleIntIfPresent(forKey: .id) ?? 0
+        items = try? c.decodeIfPresent([ProductItemResponse].self, forKey: .items)
+    }
 }
 
 
@@ -200,6 +306,19 @@ struct ProductSet: Codable {
     var description: String?
     var price: Int?
     var type: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, description, price, type
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = c.decodeFlexibleIntIfPresent(forKey: .id)
+        name = try? c.decodeIfPresent(String.self, forKey: .name)
+        description = try? c.decodeIfPresent(String.self, forKey: .description)
+        price = c.decodeFlexibleIntIfPresent(forKey: .price)
+        type = try? c.decodeIfPresent(String.self, forKey: .type)
+    }
 }
 
 struct ProductSetItem: Codable {

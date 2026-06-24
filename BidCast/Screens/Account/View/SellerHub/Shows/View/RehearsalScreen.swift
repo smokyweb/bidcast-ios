@@ -673,23 +673,6 @@ struct RehearsalScreen: View {
             .presentationCornerRadius(25)              // ✅ Rounded top corners
             .presentationDragIndicator(.hidden)        // optional
         }
-        .sheet(isPresented: $showRaidSheet) {
-            SellerScreen(
-                sellers: $sellers,
-                selectedSellerID: $selectedSellers,
-                onRaidCreated: { selectedSellers in
-                    // Handle the selected sellers when raid is created
-                    print("Raid created with sellers: \(String(describing: selectedSellers))")
-                    handleRaid(selectedSeller: selectedSellers)
-                },onCancel: {
-                    showRaidSheet = false
-                    selectedSellers = nil
-                }
-            )
-            .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
-            .presentationCornerRadius(25)              // ✅ Rounded top corners
-            .presentationDragIndicator(.hidden)        // optional
-        }
         .overlay(
             Group {
                 if let selectedChat = selectedChatMessage {

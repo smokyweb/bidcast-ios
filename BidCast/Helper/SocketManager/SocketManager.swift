@@ -1804,27 +1804,14 @@ extension SocketManagerService {
             print("🛑 Sent end_poll:", payload)
         }
     }
-    func votePoll(poll: PollModel) {
+    func votePoll(poll: PollModel, selectedOptionIndex: Int) {
         performIfConnected {
-            var payload: [String: Any] = [
+            let payload: [String: Any] = [
                 "poll_id": poll.pollId,
                 "room_id": poll.roomId,
-                "question": poll.question,
-                "total_votes": poll.totalVotes,
-                "remaining_time": poll.remainingTime,
-                "is_active": poll.isActive
+                "user_id": UserDefaults.userId,
+                "option_index": selectedOptionIndex
             ]
-            var optionPayload: [[String: Any]] = [[:]]
-            for opt in poll.options {
-                optionPayload.append(
-                    [
-                        "text": opt.text,
-                        "vote_count": opt.voteCount,
-                        "percentage": opt.percentage
-                    ]
-                )
-            }
-            payload["options"] = optionPayload
             socket.emit("vote_poll", payload)
             print("🗳️ Sent vote_poll:", payload)
         }
@@ -1936,7 +1923,24 @@ extension SocketManagerService {
 
             do {
                 let decodedData = try JSONSerialization.data(withJSONObject: json)
-                let payload = try JSONDecoder().decode(FreebieSocketPayload.self, from: decodedData)
+                var payload: FreebieSocketPayload
+                if let nestedPayload = try? JSONDecoder().decode(FreebieSocketPayload.self, from: decodedData) {
+                    payload = nestedPayload
+                } else {
+                    let freebie = try JSONDecoder().decode(FreebieModel.self, from: decodedData)
+                    let users = (try? JSONDecoder().decode(RandomizerFreebiePayload.self, from: decodedData).users_list) ?? []
+                    payload = FreebieSocketPayload(freebie: freebie, users_list: users)
+                }
+                if let templatePayload = try? JSONDecoder().decode(RandomizerFreebiePayload.self, from: decodedData) {
+                    payload.freebie.entry_cost = payload.freebie.entry_cost ?? templatePayload.entry_cost
+                    payload.freebie.template_type = payload.freebie.template_type ?? templatePayload.template_type
+                    if payload.freebie.slots == nil {
+                        payload.freebie.slots = templatePayload.slots
+                    }
+                    if payload.freebie.randomizer_slots == nil {
+                        payload.freebie.randomizer_slots = templatePayload.slots
+                    }
+                }
 
                 DispatchQueue.main.async {
                     self.currentFreebie = payload.freebie

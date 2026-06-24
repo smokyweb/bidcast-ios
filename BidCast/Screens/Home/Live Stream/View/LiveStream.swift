@@ -1892,6 +1892,22 @@ struct LiveStream: View {
                     .presentationCornerRadius(25)
                     .presentationDragIndicator(.hidden)
             }
+            .sheet(isPresented: $showLivePollScreen) {
+                if let poll = currentPollModel {
+                    LivePollViewerView(
+                        poll: poll,
+                        onVote: { updatedPoll, optionIndex in
+                            socketManagerChat.votePoll(
+                                poll: updatedPoll,
+                                selectedOptionIndex: optionIndex
+                            )
+                        }
+                    )
+                    .presentationDetents([.fraction(0.70)])
+                    .presentationCornerRadius(25)
+                    .presentationDragIndicator(.visible)
+                }
+            }
 //            .sheet(isPresented: $navigateToRandomizer) {
 //                RandomizerSheet
 //               
@@ -2738,6 +2754,14 @@ extension LiveStream {
             }
         }
 
+        socketManagerChat.observeVoteError { _, errorRoomId, message in
+            guard errorRoomId == roomId || errorRoomId.isEmpty else { return }
+            DispatchQueue.main.async {
+                self.toastMessage = message
+                self.showToast = true
+            }
+        }
+
         socketManagerChat.listenForRoomEnded { endedRoomId in
             guard roomId == endedRoomId else { return }
             logoutRoom()
@@ -2915,11 +2939,8 @@ extension LiveStream {
                 self.isSurpriseSetAuctionActive = false
                 self.currentSurpriseSetData = nil
                 if userid == UserDefaults.userId {
-                    self.toastMessage = message + " Choose another payment method."
+                    self.toastMessage = message
                     self.showToast = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                        self.navigateToEditPayment = true
-                    }
                 }
             }
         }
