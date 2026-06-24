@@ -97,15 +97,12 @@ struct SellerScreen: View {
     }
     
     private func createRaid() {
-        isRaidCreating = true // Disable button and show loading state
-        print("Creating raid with selected sellers: \(selectedSellerID)")
-        
-        // Simulate a delay (replace with real raid creation logic)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            // Raid created successfully, trigger closure with selected sellers
-            onRaidCreated(selectedSellerData)
-            isRaidCreating = false
-        }
+        guard selectedSellerID != nil else { return }
+        isRaidCreating = true
+        let selected = selectedSellerData ?? sellers.first { $0.id == selectedSellerID }
+        print("Creating raid with selected seller: \(String(describing: selected?.id)), room: \(selected?.room_id ?? "")")
+        onRaidCreated(selected)
+        isRaidCreating = false
     }
     
     // Back Button

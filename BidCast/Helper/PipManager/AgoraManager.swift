@@ -258,10 +258,12 @@ class AgoraManager: NSObject, ObservableObject {
     private var agoraKit: AgoraRtcEngineKit?
     @Published var isJoined: Bool = false
     @Published var remoteUserId: UInt?
+    @Published var secondaryRemoteUserId: UInt?
     
     // Video Views (bridged for SwiftUI)
     @Published var localVideoView = UIView()
     @Published var remoteVideoView = UIView()
+    @Published var secondaryRemoteVideoView = UIView()
     
     @Published private(set) var isAudioMuted = false
     @Published var isFrontCamera = true
@@ -458,7 +460,9 @@ class AgoraManager: NSObject, ObservableObject {
         //
         // FIX: capture remoteUserId BEFORE clearing it, then use the captured value.
         let lastRemoteUid = remoteUserId  // capture BEFORE nil-assignment
+        let lastSecondaryRemoteUid = secondaryRemoteUserId
         remoteUserId = nil
+        secondaryRemoteUserId = nil
         isJoined = false
 
         // Stop local video preview.
@@ -473,6 +477,13 @@ class AgoraManager: NSObject, ObservableObject {
             clearCanvas.view = nil
             agoraKit?.setupRemoteVideo(clearCanvas)
             print("🧹 Cleared Agora canvas for uid \(uid) on leave")
+        }
+        if let uid = lastSecondaryRemoteUid, uid != 0 {
+            let clearCanvas = AgoraRtcVideoCanvas()
+            clearCanvas.uid = uid
+            clearCanvas.view = nil
+            agoraKit?.setupRemoteVideo(clearCanvas)
+            print("🧹 Cleared secondary Agora canvas for uid \(uid) on leave")
         }
         // Also clear any uid=0 canvas that was registered (from old setupRemoteVideoCanvas calls).
         let clearZero = AgoraRtcVideoCanvas()
@@ -512,9 +523,18 @@ class AgoraManager: NSObject, ObservableObject {
             return
         }
 
+        let targetView: UIView
+        if remoteUserId == nil || remoteUserId == uid {
+            remoteUserId = uid
+            targetView = remoteVideoView
+        } else {
+            secondaryRemoteUserId = uid
+            targetView = secondaryRemoteVideoView
+        }
+
         let videoCanvas = AgoraRtcVideoCanvas()
         videoCanvas.uid = uid
-        videoCanvas.view = remoteVideoView
+        videoCanvas.view = targetView
         videoCanvas.renderMode = .hidden
         agoraKit.setupRemoteVideo(videoCanvas)
 
@@ -523,8 +543,8 @@ class AgoraManager: NSObject, ObservableObject {
         // ensures frames actually flow to the newly bound canvas.
         agoraKit.muteRemoteVideoStream(uid, mute: false)
 
-        print("RAID_QA: setupRemoteVideo — uid=\(uid), view=\(remoteVideoView)")
-        print("✅ Remote video canvas bound: uid=\(uid), view=\(remoteVideoView)")
+        print("RAID_QA: setupRemoteVideo — uid=\(uid), view=\(targetView)")
+        print("✅ Remote video canvas bound: uid=\(uid), view=\(targetView)")
     }
 }
 
@@ -534,9 +554,6 @@ extension AgoraManager: AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
         DispatchQueue.main.async {
             print("✅ Remote user joined: \(uid)")
-            self.remoteUserId = uid
-            
-            // ✅ FIXED: Only setup once
             self.setupRemoteVideo(uid: uid)
         }
     }
@@ -546,6 +563,9 @@ extension AgoraManager: AgoraRtcEngineDelegate {
             print("⚠️ Remote user left: \(uid)")
             if self.remoteUserId == uid {
                 self.remoteUserId = nil
+            }
+            if self.secondaryRemoteUserId == uid {
+                self.secondaryRemoteUserId = nil
             }
         }
     }
@@ -572,7 +592,6 @@ extension AgoraManager: AgoraRtcEngineDelegate {
         // the freshly-laid-out view receives frames.
         if state == .decoding || state == .starting {
             DispatchQueue.main.async {
-                self.remoteUserId = uid
                 self.setupRemoteVideo(uid: uid)
             }
         }
@@ -583,7 +602,6 @@ extension AgoraManager: AgoraRtcEngineDelegate {
         // Re-bind the canvas to the current on-screen view on the first decoded
         // frame, covering the re-join-while-app-open black-video case (#9958806477).
         DispatchQueue.main.async {
-            self.remoteUserId = uid
             self.setupRemoteVideo(uid: uid)
         }
     }

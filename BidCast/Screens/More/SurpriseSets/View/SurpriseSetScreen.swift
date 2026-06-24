@@ -16,6 +16,7 @@ struct SurpriseSetScreen: View {
     @StateObject var viewModel = SurpriseViewModel()
     
     @State private var navigateToProductDetail = false
+    @State private var selectedSurprise: ProductSurpriseData?
 
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -47,6 +48,7 @@ struct SurpriseSetScreen: View {
                         ForEach(surprises, id: \.id) { surprise in
                             SurpriseCardView(surprise: surprise)
                                 .onTapGesture {
+                                    selectedSurprise = surprise
                                     navigateToProductDetail.toggle()
                                 }
                         }
@@ -65,7 +67,7 @@ struct SurpriseSetScreen: View {
             .padding(.bottom,12)
             
             CusNavLink(doNavigate: $navigateToCreate, destination: CreateSurpriseScreen())
-            CusNavLink(doNavigate: $navigateToProductDetail, destination: ProductDetail())
+            CusNavLink(doNavigate: $navigateToProductDetail, destination: ProductDetail(surprise: selectedSurprise))
         }
         .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
                      onDismiss: {

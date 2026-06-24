@@ -661,6 +661,9 @@ struct CoHostJoinScreen: View {
                                     Text("$\(product.pricing ?? "0.00")")
                                         .font(.custom(poppinsRegular, size: 13))
                                         .foregroundColor(.gray)
+                                    Text("Host controls bidding")
+                                        .font(.custom(poppinsSemiBold, size: 11))
+                                        .foregroundColor(.gray)
                                 }
                                 Spacer()
                             }
@@ -1041,6 +1044,7 @@ struct CoHostJoinScreen: View {
                     coHostShowProducts = room.products ?? []
                 }
                 SocketManagerService.shared.listenForChat(roomId: channelName)
+                SocketManagerService.shared.loadChatHistory(roomId: channelName)
                 SocketManagerService.shared.listenForRoomEnded { endedRoomId in
                     guard endedRoomId == channelName else { return }
                     handleHostEndedShow()

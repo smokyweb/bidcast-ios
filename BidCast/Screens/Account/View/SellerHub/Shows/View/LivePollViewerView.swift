@@ -10,7 +10,7 @@ import Combine
 
 // Viewer view:
 struct LivePollViewerView: View {
-    @State var poll: PollModel
+    @Binding var poll: PollModel
     var onVote: ((_ poll: PollModel, _ optionIndex: Int) -> Void)? // emit socket
     var onRequestRefresh: (() -> Void)? // optional: ask server for updated stats
 
@@ -26,12 +26,12 @@ struct LivePollViewerView: View {
     // animation namespace (optional)
     @Namespace private var ns
 
-    init(poll: PollModel,
+    init(poll: Binding<PollModel>,
          onVote: ((_ poll: PollModel, _ optionIndex: Int) -> Void)? = nil,
          onRequestRefresh: (() -> Void)? = nil)
     {
-        _poll = State(initialValue: poll)
-        _remainingSeconds = State(initialValue: timerStringToSeconds(poll.remainingTime) ?? 0)
+        _poll = poll
+        _remainingSeconds = State(initialValue: timerStringToSeconds(poll.wrappedValue.remainingTime))
         self.onVote = onVote
         self.onRequestRefresh = onRequestRefresh
     }
@@ -108,6 +108,22 @@ struct LivePollViewerView: View {
         }
         .onAppear {
             remainingSeconds = timerStringToSeconds(poll.remainingTime)
+        }
+        .onChange(of: poll.pollId) { _ in
+            selectedOption = nil
+            hasVoted = false
+            isSubmitting = false
+            remainingSeconds = timerStringToSeconds(poll.remainingTime)
+        }
+        .onChange(of: poll.remainingTime) { newValue in
+            let serverSeconds = timerStringToSeconds(newValue)
+            if !poll.isActive {
+                remainingSeconds = serverSeconds
+            } else if serverSeconds <= remainingSeconds + 2 {
+                remainingSeconds = serverSeconds
+            } else {
+                poll.remainingTime = timeString(from: remainingSeconds)
+            }
         }
     }
 
@@ -197,19 +213,6 @@ struct LivePollViewerView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             onVote?(updated, optionIndex)
             isSubmitting = false
-        }
-    }
-
-    // When server sends updated poll (call this externally)
-    func applyServerUpdate(_ updatedPoll: PollModel) {
-        // ensure state persistence — preserve viewer's selected option / hasVoted
-        // server is authoritative for counts & percentages
-        withAnimation(.easeInOut(duration: 0.35)) {
-            self.poll = updatedPoll
-            // if server shows viewer has voted, optionally set hasVoted true
-            if let sel = selectedOption, updatedPoll.options.contains(where: { $0.text == sel && $0.voteCount > 0 }) {
-                hasVoted = true
-            }
         }
     }
 

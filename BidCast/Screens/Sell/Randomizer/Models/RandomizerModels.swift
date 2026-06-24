@@ -96,6 +96,31 @@ struct RandomizerSlot: Codable, Identifiable {
         self.image = image
         self.product_id = product_id
     }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = randomizerDecodeFlexibleInt(c, forKey: .id)
+        template_id = randomizerDecodeFlexibleInt(c, forKey: .template_id)
+        position = randomizerDecodeFlexibleInt(c, forKey: .position) ?? 0
+        color = randomizerDecodeFlexibleString(c, forKey: .color) ?? "#339AF0"
+        icon = randomizerDecodeFlexibleString(c, forKey: .icon)
+        image = randomizerDecodeFlexibleString(c, forKey: .image)
+        product_id = randomizerDecodeFlexibleInt(c, forKey: .product_id)
+        product = try? c.decodeIfPresent(SlotProduct.self, forKey: .product)
+        localId = UUID()
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try? c.encodeIfPresent(id, forKey: .id)
+        try? c.encodeIfPresent(template_id, forKey: .template_id)
+        try c.encode(position, forKey: .position)
+        try c.encode(color, forKey: .color)
+        try? c.encodeIfPresent(icon, forKey: .icon)
+        try? c.encodeIfPresent(image, forKey: .image)
+        try? c.encodeIfPresent(product_id, forKey: .product_id)
+        try? c.encodeIfPresent(product, forKey: .product)
+    }
 }
 
 // MARK: - Slim product info embedded in slot
@@ -162,6 +187,16 @@ private func randomizerDecodeFlexibleDouble<K: CodingKey>(_ c: KeyedDecodingCont
     if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return d }
     if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return Double(i) }
     if let s = try? c.decodeIfPresent(String.self, forKey: key) { return Double(s.trimmingCharacters(in: .whitespaces)) }
+    return nil
+}
+
+private func randomizerDecodeFlexibleInt<K: CodingKey>(_ c: KeyedDecodingContainer<K>, forKey key: K) -> Int? {
+    if let i = try? c.decodeIfPresent(Int.self, forKey: key) { return i }
+    if let d = try? c.decodeIfPresent(Double.self, forKey: key) { return Int(d) }
+    if let s = try? c.decodeIfPresent(String.self, forKey: key),
+       let d = Double(s.trimmingCharacters(in: .whitespacesAndNewlines)) {
+        return Int(d)
+    }
     return nil
 }
 
@@ -313,6 +348,19 @@ struct RandomizerFreebiePayload: Codable {
     var template_type: String?
     var slots: [RandomizerSlot]?
     var entry_cost: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case freebie, users_list, template_type, slots, entry_cost
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        freebie = try? c.decodeIfPresent(FreebieModel.self, forKey: .freebie)
+        users_list = try? c.decodeIfPresent([FreebieUser].self, forKey: .users_list)
+        template_type = randomizerDecodeFlexibleString(c, forKey: .template_type)
+        slots = try? c.decodeIfPresent([RandomizerSlot].self, forKey: .slots)
+        entry_cost = randomizerDecodeFlexibleDouble(c, forKey: .entry_cost)
+    }
 }
 
 // Extend FreebieModel to include optional template metadata
@@ -337,5 +385,30 @@ struct TemplateWheelSlot: Codable, Identifiable {
     var imageURL: URL? {
         guard let image = image, !image.isEmpty else { return nil }
         return URL(string: image)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, position, color, icon, image, product_id, product
+    }
+
+    init(id: Int? = nil, position: Int, color: String, icon: String? = nil, image: String? = nil, product_id: Int? = nil, product: SlotProduct? = nil) {
+        self.id = id
+        self.position = position
+        self.color = color
+        self.icon = icon
+        self.image = image
+        self.product_id = product_id
+        self.product = product
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = randomizerDecodeFlexibleInt(c, forKey: .id)
+        position = randomizerDecodeFlexibleInt(c, forKey: .position) ?? 0
+        color = randomizerDecodeFlexibleString(c, forKey: .color) ?? "#339AF0"
+        icon = randomizerDecodeFlexibleString(c, forKey: .icon)
+        image = randomizerDecodeFlexibleString(c, forKey: .image)
+        product_id = randomizerDecodeFlexibleInt(c, forKey: .product_id)
+        product = try? c.decodeIfPresent(SlotProduct.self, forKey: .product)
     }
 }

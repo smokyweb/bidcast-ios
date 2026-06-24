@@ -2230,6 +2230,21 @@ struct RehearsalScreen: View {
         }
     }
 
+    private func pollTimeString(from seconds: Int) -> String {
+        let safe = max(0, seconds)
+        return String(format: "%02d:%02d", safe / 60, safe % 60)
+    }
+
+    private func normalizedPollUpdate(_ pollModel: PollModel) -> (poll: PollModel, remaining: Int) {
+        var nextPoll = pollModel
+        let incomingSeconds = timerStringToSeconds(pollModel.remainingTime)
+        let currentSeconds = remainingTimer ?? timerStringToSeconds(currentPollModel?.remainingTime ?? "")
+        let isSameActivePoll = pollModel.isActive && currentPollModel?.pollId == pollModel.pollId
+        let remaining = (isSameActivePoll && incomingSeconds > currentSeconds + 2) ? currentSeconds : incomingSeconds
+        nextPoll.remainingTime = pollTimeString(from: remaining)
+        return (nextPoll, remaining)
+    }
+
     private func sendChatMessage() {
         hideKeyboard()
         if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -2679,9 +2694,10 @@ struct RehearsalScreen: View {
         socketManager.observePollVoteUpdate { pollModel in
             guard pollModel.roomId == self.roomId else { return }
             print(pollModel)
-            self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
-            self.currentPollModel = pollModel
-            if pollModel.isActive{
+            let normalized = self.normalizedPollUpdate(pollModel)
+            self.remainingTimer = normalized.remaining
+            self.currentPollModel = normalized.poll
+            if normalized.poll.isActive{
                 showPollCard = true
             }else{
                 showPollCard = false
@@ -2805,6 +2821,10 @@ struct RehearsalScreen: View {
                 self.isSurpriseSetAuctionActive = false
 //                self.currentSurpriseSetData = nil
             }
+        }
+        socketManager.requestActiveAuction(roomId: roomId)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            socketManager.requestActiveAuction(roomId: roomId)
         }
         
         socketManager.listenForBidFinalizedBreakSpot { roomID, productSetId, productSetItemId, productSetItemUnitId, winner in
@@ -3777,6 +3797,12 @@ extension RehearsalScreen {
         }
         selectedSellers = nil
         let targetRoomId = seller.room_id ?? ""
+        guard !targetRoomId.isEmpty else {
+            hudMsg = "This seller's live room is not available for a raid yet."
+            showhud = true
+            showRaidSheet = false
+            return
+        }
 
         // Basecamp #9986387480 (round 3, 2026-06-12): emit the raid event first,
         // then tear down the host session WITHOUT calling endStreaming — the server

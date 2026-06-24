@@ -13,13 +13,45 @@ struct ProductDetail: View {
     @State private var selectedTab: Int = 0
     @State private var showItems: Bool = true
     @State private var showSold: Bool = true
+    let surprise: ProductSurpriseData?
+    
+    private var items: [ProductItemResponse] {
+        surprise?.items ?? []
+    }
+    
+    private var availableItems: [ProductItemResponse] {
+        items.filter { item in
+            let remaining = (item.quantity ?? 0) - (item.soldQuantity ?? 0)
+            return remaining > 0 && item.status?.lowercased() != "sold"
+        }
+    }
+    
+    private var soldItems: [ProductItemResponse] {
+        items.filter { item in
+            let remaining = (item.quantity ?? 0) - (item.soldQuantity ?? 0)
+            return remaining <= 0 || item.status?.lowercased() == "sold"
+        }
+    }
+    
+    private var totalQuantity: Int {
+        items.reduce(0) { $0 + ($1.quantity ?? 0) }
+    }
+    
+    private var soldQuantity: Int {
+        items.reduce(0) { $0 + ($1.soldQuantity ?? 0) }
+    }
+    
+    private var progressValue: Double {
+        guard totalQuantity > 0 else { return 0 }
+        return min(max(Double(soldQuantity) / Double(totalQuantity), 0), 1)
+    }
     
     var body: some View {
         
         VStack{
             
             PrimaryHeader(
-                title: "Product Deatil",
+                title: "Surprise Set Detail",
                 isForLogo : false, leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
                 onClickLeading: { _ in
@@ -36,66 +68,28 @@ struct ProductDetail: View {
                 
                 // MARK: - Title
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Test")
+                    Text(surprise?.name?.capitalizingFirstLetter() ?? "Surprise Set")
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    Text("est")
+                    Text(surprise?.description ?? "No description available")
                         .foregroundColor(.gray)
                     
                     // Progress Bar
                     VStack(alignment: .leading, spacing: 6) {
-                        ProgressView(value: 0.6)
+                        ProgressView(value: progressValue)
                             .tint(.green)
                         
-                        Text("3/5 left")
+                        Text("\(max(totalQuantity - soldQuantity, 0))/\(totalQuantity) left")
                             .foregroundColor(.gray)
                             .font(.subheadline)
                     }
                     
-                    Text("Starting from $5.00")
+                    Text("Starting from \((surprise?.price ?? 0).description.toDouble?.compactCurrency() ?? "$0.00")")
                         .foregroundColor(.gray)
                 }
                 
-                // MARK: - Seller Card
-                VStack(spacing: 0) {
-                    
-                    HStack {
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 50, height: 50)
-                        
-                        Text("androiduser")
-                            .font(.headline)
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    
-                    Divider()
-                    HStack(spacing: 0) {
-                        SellerStatView(icon: "star.fill", value: "0.0", title: "Rating")
-                        
-                        Divider()
-                            .frame(height: 40)
-                        
-                        SellerStatView(value: "0", title: "Reviews")
-                        
-                        Divider()
-                            .frame(height: 40)
-                        
-                        SellerStatView(value: "6.0", title: "Sold")
-                        
-                        Divider()
-                            .frame(height: 40)
-                        
-                        SellerStatView(icon: "truck", value: "0", title: "Avg ship")
-                    }
-                    .frame(height: 70)
-
-                }
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(20)
+                summaryCard
                 
                 // MARK: - Tabs
                 HStack {
@@ -162,7 +156,7 @@ struct ProductDetail: View {
 
 #Preview {
     NavigationStack {
-        ProductDetail()
+        ProductDetail(surprise: nil)
     }
 }
 
@@ -175,7 +169,7 @@ extension ProductDetail {
             VStack(alignment: .leading, spacing: 10) {
                 
                 HStack {
-                    Text("Items (3)")
+                    Text("Items (\(availableItems.count))")
                         .font(.title3)
                         .fontWeight(.bold)
                     
@@ -190,16 +184,13 @@ extension ProductDetail {
                 }
                 
                 if showItems {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("tes")
-                            Text("Qty: 3")
-                                .foregroundColor(.gray)
+                    if availableItems.isEmpty {
+                        Text("No available items")
+                            .foregroundColor(.gray)
+                    } else {
+                        ForEach(availableItems, id: \.id) { item in
+                            itemRow(item: item, statusText: "Available")
                         }
-                        
-                        Spacer()
-                        
-                        Text("Available")
                     }
                 }
             }
@@ -208,7 +199,7 @@ extension ProductDetail {
             VStack(alignment: .leading, spacing: 10) {
                 
                 HStack {
-                    Text("Sold (2)")
+                    Text("Sold (\(soldItems.count))")
                         .font(.title3)
                         .fontWeight(.bold)
                     
@@ -223,24 +214,89 @@ extension ProductDetail {
                 }
                 
                 if showSold {
-                    HStack {
-                        Text("#327")
-                        Spacer()
-                        Text("$5.00")
-                    }
-                    
-                    HStack {
-                        Text("#328")
-                        Spacer()
-                        Text("$2.00")
+                    if soldItems.isEmpty {
+                        Text("No sold items")
+                            .foregroundColor(.gray)
+                    } else {
+                        ForEach(soldItems, id: \.id) { item in
+                            itemRow(item: item, statusText: "Sold")
+                        }
                     }
                 }
             }
             
-            Text("Posted 6 days ago")
+            Text((surprise?.type ?? "surprise_set").replacingOccurrences(of: "_", with: " ").capitalized)
                 .foregroundColor(.gray)
                 .padding(.top)
         }
+    }
+    
+    private var summaryCard: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Circle()
+                    .fill(Color.defaultTheme.opacity(0.14))
+                    .overlay(
+                        Image(systemName: "gift.fill")
+                            .foregroundColor(.defaultTheme)
+                    )
+                    .frame(width: 50, height: 50)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(surprise?.name?.capitalizingFirstLetter() ?? "Surprise Set")
+                        .font(.headline)
+                    Text("\(totalQuantity) total items")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+            }
+            .padding()
+            
+            Divider()
+            HStack(spacing: 0) {
+                SellerStatView(icon: "shippingbox", value: "\(availableItems.count)", title: "Available")
+                
+                Divider()
+                    .frame(height: 40)
+                
+                SellerStatView(value: "\(soldItems.count)", title: "Sold")
+                
+                Divider()
+                    .frame(height: 40)
+                
+                SellerStatView(icon: "dollarsign.circle", value: (surprise?.price ?? 0).description.toDouble?.compactCurrency() ?? "$0.00", title: "Start")
+            }
+            .frame(height: 70)
+        }
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(20)
+    }
+    
+    private func itemRow(item: ProductItemResponse, statusText: String) -> some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(item.name?.capitalizingFirstLetter() ?? "Item #\(item.id)")
+                    .font(.custom(poppinsSemiBold, size: 14))
+                if let description = item.description, !description.isEmpty {
+                    Text(description)
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                        .lineLimit(2)
+                }
+                Text("Qty: \(item.quantity ?? 0) | Sold: \(item.soldQuantity ?? 0)")
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.gray)
+            }
+            
+            Spacer()
+            
+            Text(statusText)
+                .font(.custom(poppinsSemiBold, size: 12))
+                .foregroundColor(statusText == "Sold" ? .gray : .defaultTheme)
+        }
+        .padding(.vertical, 8)
     }
 }
 

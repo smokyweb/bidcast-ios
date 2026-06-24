@@ -123,6 +123,7 @@ struct LiveStream: View {
     @State private var navigateToEditPayment = false
     @State private var navigateToEditAddress = false
     @State private var navigateToProductList = false
+    @State private var suppressPaymentPromptAfterAuctionWin = false
     @State private var showReportSheet = false
     @State var socket: SocketIOClient!
     @State var socketManager: SocketManager!
@@ -726,14 +727,42 @@ struct LiveStream: View {
 //    }
     @ViewBuilder
     private var videoPlayerView: some View {
-        // ✅ FIXED: Always show the view so Agora can attach video to it
         ZStack {
-            // Always render the video container
             VideoContainerView(uiView: agoraManager.remoteVideoView)
                 .frame(width: screenWidth, height: screenHeight)
                 .ignoresSafeArea()
                 .background(Color.black)
-            
+
+            if agoraManager.secondaryRemoteUserId != nil {
+                VStack {
+                    HStack {
+                        Spacer()
+                        ZStack(alignment: .bottomLeading) {
+                            VideoContainerView(uiView: agoraManager.secondaryRemoteVideoView)
+                                .frame(width: 120, height: 160)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white.opacity(0.55), lineWidth: 1)
+                                )
+                                .shadow(radius: 8)
+
+                            Text("CO-HOST")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .background(Color.black.opacity(0.65))
+                                .cornerRadius(4)
+                                .padding(6)
+                        }
+                        .padding(.top, 80)
+                        .padding(.trailing, 16)
+                    }
+                    Spacer()
+                }
+            }
+
             // Show loading indicator until remote user joins
 //            if agoraManager.remoteUserId == nil && agoraManager.isJoined {
 //                VStack(spacing: 16) {
@@ -1573,6 +1602,7 @@ struct LiveStream: View {
     }
 
     private func handleWalletAction() {
+        suppressPaymentPromptAfterAuctionWin = false
         // Basecamp #9933877362 (2026-05-27): only enforce identity verification
         // when the seller has opted this show into verified-buyers-only.
         if currentShowRequiresVerification && UserDefaults.buyerVerafied != "verified" {
@@ -1591,6 +1621,7 @@ struct LiveStream: View {
         }
     }
     private func handleBidding() -> Bool {
+        suppressPaymentPromptAfterAuctionWin = false
         // MC cmpaj2fex0000w5hgq64jp9k4 / Basecamp 9922137425 (2026-05-24):
         // Refuse to let the logged-in user place a bid or Buy Now on their
         // own product. Previously there was no client-side guard — the host
@@ -1895,7 +1926,10 @@ struct LiveStream: View {
             .sheet(isPresented: $showLivePollScreen) {
                 if let poll = currentPollModel {
                     LivePollViewerView(
-                        poll: poll,
+                        poll: Binding(
+                            get: { currentPollModel ?? poll },
+                            set: { currentPollModel = $0 }
+                        ),
                         onVote: { updatedPoll, optionIndex in
                             socketManagerChat.votePoll(
                                 poll: updatedPoll,
@@ -2145,8 +2179,8 @@ struct LiveStream: View {
                         navigateToBuyer = true
                         showVerificationSheet = false
                     }
-                    
                     if !showVerificationSheet {
+                        guard !suppressPaymentPromptAfterAuctionWin else { return }
                         if !navigateToBuyer {
                             if UserDefaults.sellerAddress == false {
                                 showPaymentShipping = true
@@ -2169,6 +2203,7 @@ struct LiveStream: View {
     
     private func handleVerificationDismiss() {
         if !showVerificationSheet {
+            guard !suppressPaymentPromptAfterAuctionWin else { return }
             if UserDefaults.sellerAddress == false {
                 showPaymentShipping = true
                 titleText = "Add Address"
@@ -2635,6 +2670,21 @@ extension LiveStream {
         return (minutes * 60) + seconds
     }
 
+    private func pollTimeString(from seconds: Int) -> String {
+        let safe = max(0, seconds)
+        return String(format: "%02d:%02d", safe / 60, safe % 60)
+    }
+
+    private func normalizedPollUpdate(_ pollModel: PollModel) -> (poll: PollModel, remaining: Int) {
+        var nextPoll = pollModel
+        let incomingSeconds = timerStringToSeconds(pollModel.remainingTime)
+        let currentSeconds = remainingTimer ?? timerStringToSeconds(currentPollModel?.remainingTime ?? "")
+        let isSameActivePoll = pollModel.isActive && currentPollModel?.pollId == pollModel.pollId
+        let remaining = (isSameActivePoll && incomingSeconds > currentSeconds + 2) ? currentSeconds : incomingSeconds
+        nextPoll.remainingTime = pollTimeString(from: remaining)
+        return (nextPoll, remaining)
+    }
+
     func getProfileSuccess() {
         let response = homeViewModel.accountInfo
         if response.status == "success" {
@@ -2725,18 +2775,20 @@ extension LiveStream {
             // future caller wants to use that instead.)
             guard pollModel.roomId == roomId else { return }
             DispatchQueue.main.async {
-                self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
-                self.currentPollModel = pollModel
-                self.showPollView = pollModel.isActive
+                let normalized = self.normalizedPollUpdate(pollModel)
+                self.remainingTimer = normalized.remaining
+                self.currentPollModel = normalized.poll
+                self.showPollView = normalized.poll.isActive
             }
         }
 
         socketManagerChat.observePollVoteUpdate { pollModel in
             guard pollModel.roomId == roomId else { return }
             DispatchQueue.main.async {
-                self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
-                self.currentPollModel = pollModel
-                self.showPollView = pollModel.isActive
+                let normalized = self.normalizedPollUpdate(pollModel)
+                self.remainingTimer = normalized.remaining
+                self.currentPollModel = normalized.poll
+                self.showPollView = normalized.poll.isActive
             }
         }
 
@@ -2920,6 +2972,7 @@ extension LiveStream {
                     if !self.winnerName.isEmpty {
                         self.showWinnerOnParent = true
                         if self.winnerProfileID == UserDefaults.userId {
+                            self.stayInLiveStreamAfterAuctionWin()
                             self.randomWinner = "You"
                         } else {
                             self.randomWinner = self.winnerName.capitalizingFirstLetter()
@@ -3066,6 +3119,7 @@ extension LiveStream {
         if !winnerName.isEmpty {
             showWinnerOnParent = true
             if winnerProfileID == UserDefaults.userId {
+                stayInLiveStreamAfterAuctionWin()
                 randomWinner = "You"
             } else {
                 randomWinner = winnerName.capitalizingFirstLetter()
@@ -3073,6 +3127,15 @@ extension LiveStream {
             randomWinnerImage = winnerProfileImage
             currentPrice = Double(winnerAmount) ?? 0.0
         }
+    }
+
+    private func stayInLiveStreamAfterAuctionWin() {
+        suppressPaymentPromptAfterAuctionWin = true
+        showPaymentShipping = false
+        navigateToShipping = false
+        navigateToAddCardScreen = false
+        navigateToEditPayment = false
+        navigateToEditAddress = false
     }
 
 //    private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
@@ -3246,6 +3309,10 @@ extension LiveStream {
                 
                 self.auctionStartedRooms.remove(roomId)
             }
+        }
+        socketManagerChat.requestActiveAuction(roomId: roomId)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            socketManagerChat.requestActiveAuction(roomId: roomId)
         }
     }
 

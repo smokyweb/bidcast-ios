@@ -20,7 +20,85 @@ struct FreebieModel: Codable, Identifiable {
     var template_type: String?
     var randomizer_slots: [RandomizerSlot]?
     var slots: [RandomizerSlot]?
-    
+
+    enum CodingKeys: String, CodingKey {
+        case id, freebie_id, randomizer_active_freebie_id, randomizer_template_id
+        case template_id, show_id, product_id, duration, room_id, entry_cost
+        case template_type, randomizer_slots, slots
+    }
+
+    init(
+        id: Int? = nil,
+        freebie_id: Int? = nil,
+        randomizer_active_freebie_id: Int? = nil,
+        randomizer_template_id: Int? = nil,
+        template_id: Int? = nil,
+        show_id: String? = nil,
+        product_id: String? = nil,
+        duration: String? = nil,
+        room_id: String? = nil,
+        entry_cost: Double? = nil,
+        template_type: String? = nil,
+        randomizer_slots: [RandomizerSlot]? = nil,
+        slots: [RandomizerSlot]? = nil
+    ) {
+        self.id = id
+        self.freebie_id = freebie_id
+        self.randomizer_active_freebie_id = randomizer_active_freebie_id
+        self.randomizer_template_id = randomizer_template_id
+        self.template_id = template_id
+        self.show_id = show_id
+        self.product_id = product_id
+        self.duration = duration
+        self.room_id = room_id
+        self.entry_cost = entry_cost
+        self.template_type = template_type
+        self.randomizer_slots = randomizer_slots
+        self.slots = slots
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = Self.flexInt(c, .id)
+        freebie_id = Self.flexInt(c, .freebie_id)
+        randomizer_active_freebie_id = Self.flexInt(c, .randomizer_active_freebie_id)
+        randomizer_template_id = Self.flexInt(c, .randomizer_template_id)
+        template_id = Self.flexInt(c, .template_id)
+        show_id = Self.flexString(c, .show_id)
+        product_id = Self.flexString(c, .product_id)
+        duration = Self.flexString(c, .duration)
+        room_id = Self.flexString(c, .room_id)
+        entry_cost = Self.flexDouble(c, .entry_cost)
+        template_type = Self.flexString(c, .template_type)
+        randomizer_slots = try? c.decodeIfPresent([RandomizerSlot].self, forKey: .randomizer_slots)
+        slots = try? c.decodeIfPresent([RandomizerSlot].self, forKey: .slots)
+    }
+
+    private static func flexString<K: CodingKey>(_ c: KeyedDecodingContainer<K>, _ key: K) -> String? {
+        if let value = try? c.decodeIfPresent(String.self, forKey: key) { return value.isEmpty ? nil : value }
+        if let value = try? c.decodeIfPresent(Int.self, forKey: key) { return String(value) }
+        if let value = try? c.decodeIfPresent(Double.self, forKey: key) { return String(value) }
+        return nil
+    }
+
+    private static func flexInt<K: CodingKey>(_ c: KeyedDecodingContainer<K>, _ key: K) -> Int? {
+        if let value = try? c.decodeIfPresent(Int.self, forKey: key) { return value }
+        if let value = try? c.decodeIfPresent(Double.self, forKey: key) { return Int(value) }
+        if let value = try? c.decodeIfPresent(String.self, forKey: key) {
+            guard let number = Double(value.trimmingCharacters(in: .whitespacesAndNewlines)) else { return nil }
+            return Int(number)
+        }
+        return nil
+    }
+
+    private static func flexDouble<K: CodingKey>(_ c: KeyedDecodingContainer<K>, _ key: K) -> Double? {
+        if let value = try? c.decodeIfPresent(Double.self, forKey: key) { return value }
+        if let value = try? c.decodeIfPresent(Int.self, forKey: key) { return Double(value) }
+        if let value = try? c.decodeIfPresent(String.self, forKey: key) {
+            return Double(value.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        return nil
+    }
 }
 struct FreebieSocketPayload: Codable {
     var freebie: FreebieModel
@@ -480,10 +558,19 @@ extension SocketManagerService {
             let payload = ["room_id": roomId, "user_id": userId] as [String : Any]
             socket.emit("join_room", payload)
             logger.info("📡 Joined room \(roomId)")
+            self.requestActiveAuction(roomId: roomId)
             observeRoomUpdates(completion: { room in
+                guard room.room_id == roomId else { return }
                 completion()
             })
           
+        }
+    }
+
+    func requestActiveAuction(roomId: String) {
+        performIfConnected {
+            socket.emit("request_active_auction", ["room_id": roomId])
+            logger.info("📡 Requested active auction snapshot for room \(roomId)")
         }
     }
     
@@ -507,8 +594,9 @@ extension SocketManagerService {
                         let decodedData = try JSONSerialization.data(withJSONObject: json)
                         let room = try JSONDecoder().decode(RoomModel.self, from: decodedData)
                         
-                        // ✅ Append only if not already present
-                        if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
+                        if let index = self.rooms.firstIndex(where: { $0.room_id == room.room_id }) {
+                            self.rooms[index] = room
+                        } else {
                             self.rooms.append(room)
                         }
                         
@@ -1243,24 +1331,17 @@ extension SocketManagerService {
             if let roomIndex = rooms.firstIndex(where: { $0.room_id == roomId }),
                var updatedRoom = rooms[safe: roomIndex] {
 
-                // Merge updated products into existing list
-                if var existingProducts = updatedRoom.products {
-                    for updatedProduct in updatedProducts {
-                        if let productIndex = existingProducts.firstIndex(where: { $0.id == updatedProduct.id }) {
-                            existingProducts[productIndex] = updatedProduct
-                        }
-                    }
-                    updatedRoom.products = existingProducts
+                if !updatedProducts.isEmpty {
+                    updatedRoom.products = updatedProducts
                 }
 
                 // Save changes to main array
-//                DispatchQueue.main.async {
+                DispatchQueue.main.async {
                     self.rooms[roomIndex] = updatedRoom
                     print("✅ Updated room \(roomId) with next product set")
                     print("✅ Updated room data \(updatedRoom) with next product set")
-//                    completion?(roomId, updatedProducts.first(where: { $0.isCurrent })?.id ?? "")
-                completion?(roomId, "\(updatedProducts.first?.id ?? 0)")
-//                }
+                    completion?(roomId, "\(updatedProducts.first?.id ?? 0)")
+                }
             }
 
             logger.info("✅ Next product set for room \(roomId)")
@@ -1746,7 +1827,8 @@ extension SocketManagerService {
                 return
             }
             
-            let pollId = json["poll_id"] as? String ?? ""
+            let rawPollId = json["poll_id"] ?? json["pollId"]
+            let pollId = Self.stringValue(rawPollId)
             
             print("🛑 Received poll_ended → pollId: \(pollId)")
             
@@ -1808,9 +1890,13 @@ extension SocketManagerService {
         performIfConnected {
             let payload: [String: Any] = [
                 "poll_id": poll.pollId,
+                "pollId": poll.pollId,
                 "room_id": poll.roomId,
+                "roomId": poll.roomId,
                 "user_id": UserDefaults.userId,
-                "option_index": selectedOptionIndex
+                "userId": UserDefaults.userId,
+                "option_index": selectedOptionIndex,
+                "optionIndex": selectedOptionIndex
             ]
             socket.emit("vote_poll", payload)
             print("🗳️ Sent vote_poll:", payload)
@@ -1824,8 +1910,8 @@ extension SocketManagerService {
                 return
             }
             
-            let pollId = json["poll_id"] as? String ?? ""
-            let roomId = json["room_id"] as? String ?? ""
+            let pollId = Self.stringValue(json["poll_id"] ?? json["pollId"])
+            let roomId = Self.stringValue(json["room_id"] ?? json["roomId"])
             let message = json["message"] as? String ?? "Vote error occurred"
             
             print("⚠️ Received vote_error → \(message)")
@@ -1844,6 +1930,13 @@ extension SocketManagerService {
         socket.off("vote_error")
         
         print("🗑️ Removed all poll listeners")
+    }
+
+    private static func stringValue(_ any: Any?) -> String {
+        if let value = any as? String { return value }
+        if let value = any as? Int { return String(value) }
+        if let value = any as? Double { return String(Int(value)) }
+        return ""
     }
 }
 

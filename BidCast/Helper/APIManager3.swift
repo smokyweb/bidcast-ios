@@ -103,6 +103,17 @@ private lazy var optimizedSession: URLSession = {
     config.urlCache = nil   // 🚀 NO DISK, NO MEMORY CACHE
     return URLSession(configuration: config)
 }()
+
+private lazy var uploadSession: URLSession = {
+    let config = URLSessionConfiguration.ephemeral
+    config.waitsForConnectivity = true
+    config.timeoutIntervalForRequest = 600
+    config.timeoutIntervalForResource = 600
+    config.requestCachePolicy = .reloadIgnoringLocalCacheData
+    config.httpMaximumConnectionsPerHost = 2
+    config.urlCache = nil
+    return URLSession(configuration: config)
+}()
     
     // MARK: - Optimization 2: Reusable JSON Decoder
     private lazy var jsonDecoder: JSONDecoder = {
@@ -199,7 +210,7 @@ private lazy var optimizedSession: URLSession = {
         print("✅ \(request.allHTTPHeaderFields as Any)")
         #endif
         
-        let (data, response) = try await optimizedSession.data(for: request)
+        let (data, response) = try await uploadSession.data(for: request)
         
         #if DEBUG
         print("👉 API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
@@ -290,7 +301,7 @@ private lazy var optimizedSession: URLSession = {
         print("Parameters >>> \(parameters)")
         #endif
         
-        let (data, response) = try await optimizedSession.data(for: request)
+        let (data, response) = try await uploadSession.data(for: request)
         
         #if DEBUG
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
@@ -374,7 +385,7 @@ private lazy var optimizedSession: URLSession = {
         let dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = dataBody
         
-        let (data, response) = try await optimizedSession.data(for: request)
+        let (data, response) = try await uploadSession.data(for: request)
                 
         #if DEBUG
         print("👉 API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
@@ -439,7 +450,7 @@ private lazy var optimizedSession: URLSession = {
         headers?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
         request.allHTTPHeaderFields = headers
         
-        let (data, response) = try await optimizedSession.data(for: request)
+        let (data, response) = try await uploadSession.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw DataError.invalidResponse(data)
@@ -507,7 +518,7 @@ private lazy var optimizedSession: URLSession = {
         let dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = dataBody
         
-        let (data, response) = try await optimizedSession.data(for: request)
+        let (data, response) = try await uploadSession.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw DataError.invalidResponse(data)
@@ -580,7 +591,8 @@ private lazy var optimizedSession: URLSession = {
         
         // Extended timeout for multiple files
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForResource = 300
+        config.timeoutIntervalForRequest = 600
+        config.timeoutIntervalForResource = 600
         let session = URLSession(configuration: config)
         
         let (data, response) = try await session.data(for: request)

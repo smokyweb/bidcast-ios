@@ -77,6 +77,7 @@ struct DropDownSelection: View {
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
                 .shadow(color: .gray.opacity(0.7), radius: 1, x: 0, y: 0)
                 .onTapGesture {
+                    hideKeyboardPopup()
                     index += 1
                     zIndex = index
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
@@ -147,4 +148,3 @@ struct DropDownSelection: View {
         case bottom
     }
 }
-
