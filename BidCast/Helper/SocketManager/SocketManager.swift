@@ -1175,6 +1175,23 @@ extension SocketManagerService {
             
         }
     }
+
+    func listenForAuctionEnded(completion: ((_ roomId: String, _ status: String, _ productId: String?) -> Void)? = nil) {
+        socket.off("auction_ended")
+        socket.on("auction_ended") { data, _ in
+            guard let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else {
+                print("❌ Invalid auction_ended data:", data)
+                return
+            }
+            let status = json["status"] as? String ?? ""
+            let productId = (json["product_id"] as? String)
+                ?? (json["product_id"].map { "\($0)" })
+            DispatchQueue.main.async {
+                completion?(roomId, status, productId)
+            }
+        }
+    }
     func observeBidCountdown(for roomId: String,
                              onUpdate: @escaping (Int) -> Void,
                              onStart: @escaping () -> Void,
@@ -1256,7 +1273,8 @@ extension SocketManagerService {
             _ startingBidAmount: String,
             _ requireTime: Int,
             _ counterBidTime: Int,
-            _ suddenDeath: Bool
+            _ suddenDeath: Bool,
+            _ auctionTypeId: Int
         ) -> Void
     ) {
         socket.on("auction_started") { [weak self] data, _ in
@@ -1270,10 +1288,19 @@ extension SocketManagerService {
                 return
             }
             
-            let startingBidAmount = json["starting_bid_amount"] as? String ?? ""
+            let startingBidAmount = (json["starting_bid_amount"] as? String)
+                ?? (json["starting_bid_amount"].map { "\($0)" })
+                ?? ""
             let status = json["status"] as? String ?? ""
-            let requireTime = json["require_time"] as? Int ?? 0
-            let counterBidTime = json["counter_bid_time"] as? Int ?? 0
+            let requireTime = (json["require_time"] as? Int)
+                ?? Int((json["require_time"] as? String) ?? "")
+                ?? 0
+            let counterBidTime = (json["counter_bid_time"] as? Int)
+                ?? Int((json["counter_bid_time"] as? String) ?? "")
+                ?? 0
+            let auctionTypeId = (json["auction_type_id"] as? Int)
+                ?? Int((json["auction_type_id"] as? String) ?? "")
+                ?? 1
             let suddenDeath = json["sudden_death"] as? Bool ?? false
             
             var products: [ProductDataModel1] = []
@@ -1299,7 +1326,8 @@ extension SocketManagerService {
                     startingBidAmount,
                     requireTime,
                     counterBidTime,
-                    suddenDeath
+                    suddenDeath,
+                    auctionTypeId
                 )
             }
 

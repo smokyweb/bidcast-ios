@@ -2703,7 +2703,7 @@ struct RehearsalScreen: View {
                 showPollCard = false
             }
         }
-        socketManager.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+        socketManager.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath,_ in
 //            guard let self else { return }
             print("AUCtioned data")
             print("\(roomId)")

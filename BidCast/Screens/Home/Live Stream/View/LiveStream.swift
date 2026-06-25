@@ -2851,6 +2851,15 @@ extension LiveStream {
         SocketManagerService.shared.listenForBidFinalized { roomId, productId, winner in
             handleBidFinalized(for: roomId, winner: winner)
         }
+
+        SocketManagerService.shared.listenForAuctionEnded { endedRoomId, _, _ in
+            guard endedRoomId == currentRoomID else { return }
+            auctionedProductData = nil
+            currentProductID = nil
+            auctionStartedRooms.remove(endedRoomId)
+            hasObservedBidTimerThisAuction = false
+            fetchProducts(for: endedRoomId)
+        }
         
         SocketManagerService.shared.listenForNextProduct { roomId, _ in
             fetchProducts(for: roomId)
@@ -3282,7 +3291,7 @@ extension LiveStream {
         if currentShowRequiresVerification {
             handleBuyerVerification()
         }
-        socketManagerChat.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+        socketManagerChat.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath,auctionTypeId in
 //            guard let self else { return }
             print("AUCtioned data")
             print("RoomId -> \(roomId)")
@@ -3291,8 +3300,10 @@ extension LiveStream {
             print(" -> \(requireTime)")
             print("-> \(counterBidTime)")
             print("-> \(suddenDeath)")
+            print("-> auctionTypeId \(auctionTypeId)")
             print("Status -> \(status)")
             if status != "sold" && status != ""{
+                self.auctionTypeId = auctionTypeId
                 self.updateProducts(
                     for: roomId,
                     products: products,
@@ -3306,7 +3317,8 @@ extension LiveStream {
                 self.auctionStartedRooms.insert(roomId)
             }else{
 //                auctionedProductData = nil
-                
+                self.auctionedProductData = nil
+                self.currentProductID = nil
                 self.auctionStartedRooms.remove(roomId)
             }
         }
