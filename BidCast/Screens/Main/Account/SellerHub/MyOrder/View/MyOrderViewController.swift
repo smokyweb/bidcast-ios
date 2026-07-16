@@ -65,7 +65,18 @@ class MyOrderViewController: UIViewController {
     
     //MARK: - configureHeaderView.
     func configureHeaderView(){
-        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: true,headerName: AppString.VCName.myOrders)
+        self.headerView.headerViewSetup(
+            rightButtonHidden: false,
+            leftButtonHidden: false,
+            headerName: AppString.VCName.myOrders,
+            setAppBtnImage: UIImage(named: "ic_back"),
+            appButtonAction: didTabBack
+        )
+    }
+
+    //MARK: - didTabBack.
+    @objc private func didTabBack() {
+        self.goToBack()
     }
 }
 
